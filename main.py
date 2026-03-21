@@ -230,7 +230,6 @@ async def main_async():
                 """, (ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
 
     db_conn.commit()
-    db_conn.close()
 
     print("🔨 Exporting Guild Profession Data...")
     prof_data_export = {}
@@ -267,6 +266,8 @@ async def main_async():
     with open("asset/professions.json", "w", encoding="utf-8") as f:
         json.dump(prof_data_export, f)
 
+    db_conn.close()
+    
     print("🌐 Generating final HTML Dashboard...")
     
     # Re-open database read-only to query history for the frontend
