@@ -1182,7 +1182,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
                             ${c.recipes.map(r => `
                                 <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; border: 1px solid #222;">
-                                    <a href="https://www.wowhead.com/wotlk/item=${r.id}" target="_blank" style="color: #fff; text-decoration: none; font-size: 13px; text-shadow: 1px 1px 2px #000;" class="q1">${r.name}</a>
+                                    <a href="https://www.wowhead.com/tbc/spell=${r.id}" target="_blank" style="color: #fff; text-decoration: none; font-size: 13px; text-shadow: 1px 1px 2px #000;" class="q1">${r.name}</a>
                                 </div>
                             `).join('')}
                         </div>
