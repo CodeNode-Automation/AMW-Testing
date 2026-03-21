@@ -1084,82 +1084,134 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- NEW: Guild Crafters Interface ---
+    // --- NEW & IMPROVED: Guild Crafters Directory ---
     function showCraftersView(pData) {
         hideAllViews();
         fullCardContainer.style.display = 'block';
         if (navbar) navbar.style.background = '#111';
-        
+
+        // 1. Group the raw data by Profession instead of by Character
+        const profGroups = {};
+        for (const [charName, profs] of Object.entries(pData)) {
+            for (const [profName, profDetails] of Object.entries(profs)) {
+                if (!profGroups[profName]) profGroups[profName] = [];
+                profGroups[profName].push({
+                    char: charName,
+                    skill: profDetails.skill,
+                    max: profDetails.max,
+                    recipes: profDetails.recipes
+                });
+            }
+        }
+
+        // 2. Sort the crafters within each profession from highest skill to lowest
+        for (const profName in profGroups) {
+            profGroups[profName].sort((a, b) => b.skill - a.skill);
+        }
+
+        // Get an alphabetical list of professions currently in the guild
+        const availableProfs = Object.keys(profGroups).sort();
+
+        // Map icons for the buttons
+        const profIcons = {
+            "Alchemy": "trade_alchemy", "Blacksmithing": "trade_blacksmithing",
+            "Enchanting": "trade_engraving", "Engineering": "trade_engineering",
+            "Herbalism": "spell_nature_naturetouchgrow", "Inscription": "inv_inscription_tradeskill01",
+            "Jewelcrafting": "inv_misc_gem_01", "Leatherworking": "inv_misc_armorkit_17",
+            "Mining": "trade_mining", "Tailoring": "trade_tailoring",
+            "Cooking": "inv_misc_food_15", "First Aid": "spell_holy_sealofsacrifice", "Fishing": "trade_fishing"
+        };
+
         let html = `
-        <div class="char-card faction-alliance" style="border-top-color: #a335ee; animation: fadeInUp 0.4s forwards;">
-            <h2 style="color: #a335ee; font-family: 'Cinzel'; text-align: center; font-size: 32px; text-shadow: 0 2px 4px #000; margin-top: 0;">⚒️ Guild Crafters & Recipes</h2>
-            <p style="text-align: center; color: #aaa; margin-bottom: 30px; font-style: italic;">Search for an item to find out who in the guild can craft it.</p>
-            
-            <div style="margin: 0 auto 30px auto; max-width: 600px; position: relative;">
-                <input type="text" id="recipeSearch" placeholder="Search for a recipe (e.g. 'Linen Bag')..." style="width: 100%; padding: 15px 20px; border-radius: 30px; border: 2px solid #a335ee; background: rgba(0,0,0,0.8); color: #fff; font-family: 'Cinzel'; font-size: 16px; outline: none; box-shadow: 0 5px 15px rgba(163, 53, 238, 0.2);">
+        <div class="char-card faction-alliance" style="border-top-color: #a335ee; animation: fadeInUp 0.4s forwards; padding: 30px;">
+            <h2 style="color: #a335ee; font-family: 'Cinzel'; text-align: center; font-size: 32px; text-shadow: 0 2px 4px #000; margin-top: 0;">⚒️ Guild Crafters</h2>
+            <p style="text-align: center; color: #aaa; margin-bottom: 30px; font-style: italic;">Select a profession to view our crafters and their known recipes.</p>
+
+            <div id="prof-buttons" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px;">
+                ${availableProfs.length === 0 ? '<div style="color:#e74c3c;">No professions synced yet.</div>' : ''}
+                ${availableProfs.map(prof => {
+                    let icon = profIcons[prof] || "inv_misc_questionmark";
+                    return `<button class="prof-btn" data-prof="${prof}" style="background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 8px 16px; border-radius: 8px; font-family: 'Cinzel'; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;">
+                        <img src="https://wow.zamimg.com/images/wow/icons/small/${icon}.jpg" style="border-radius: 4px; border: 1px solid #222;">
+                        ${prof}
+                    </button>`;
+                }).join('')}
             </div>
-            
-            <div id="recipeResults" style="display: flex; flex-direction: column; gap: 12px; max-width: 800px; margin: 0 auto;"></div>
+
+            <div id="crafters-list" style="display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto;"></div>
         </div>`;
-        
+
         fullCardContainer.innerHTML = html;
-        
-        const searchInput = document.getElementById('recipeSearch');
-        const resultsContainer = document.getElementById('recipeResults');
-        
-        function renderRecipes(query) {
-            if (!query || query.trim() === '') {
-                resultsContainer.innerHTML = `<div style="text-align:center; color:#555; font-size: 14px;">Awaiting your search...</div>`;
-                return;
-            }
-            
-            let found = [];
-            query = query.toLowerCase().trim();
-            
-            // Search the JSON tree
-            for (const [charName, profs] of Object.entries(pData)) {
-                for (const [profName, profDetails] of Object.entries(profs)) {
-                    for (const recipe of profDetails.recipes) {
-                        if (recipe.name.toLowerCase().includes(query)) {
-                            found.push({
-                                char: charName,
-                                prof: profName,
-                                skill: profDetails.skill,
-                                recipe: recipe
-                            });
-                        }
-                    }
+
+        const craftersList = document.getElementById('crafters-list');
+        const profButtons = document.querySelectorAll('.prof-btn');
+
+        function renderCrafters(profName) {
+            // Highlight the active button
+            profButtons.forEach(btn => {
+                if (btn.getAttribute('data-prof') === profName) {
+                    btn.style.borderColor = '#a335ee'; btn.style.background = 'rgba(163, 53, 238, 0.1)'; btn.style.color = '#ffd100';
+                } else {
+                    btn.style.borderColor = '#333'; btn.style.background = 'rgba(0,0,0,0.6)'; btn.style.color = '#fff';
                 }
-            }
-            
-            if (found.length === 0) {
-                resultsContainer.innerHTML = `<div style="text-align:center; color:#e74c3c; font-weight:bold; background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c;">❌ No guild members know how to craft that yet.</div>`;
-                return;
-            }
-            
-            // Sort alphabetically by recipe name
-            found.sort((a, b) => a.recipe.name.localeCompare(b.recipe.name));
-            
-            resultsContainer.innerHTML = found.map(item => `
-                <div class="pvp-row" style="border-left: 4px solid #a335ee; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.6);">
-                    <div>
-                        <a href="https://www.wowhead.com/wotlk/item=${item.recipe.id}" target="_blank" style="color: #ffd100; font-weight: bold; font-size: 16px; text-decoration: none; text-shadow: 1px 1px 2px #000;">${item.recipe.name}</a>
-                        <div style="color: #aaa; font-size: 12px; margin-top: 6px;">${item.prof} (Skill: <span style="color:#2ecc71;">${item.skill}</span>)</div>
+            });
+
+            const crafters = profGroups[profName];
+            if (!crafters) return;
+
+            // Generate the expandable accordion for each crafter
+            craftersList.innerHTML = crafters.map((c) => {
+                c.recipes.sort((a, b) => a.name.localeCompare(b.name)); // Sort recipes alphabetically
+
+                return `
+                <div class="crafter-block" style="background: rgba(0,0,0,0.4); border: 1px solid #333; border-left: 4px solid #a335ee; border-radius: 8px; overflow: hidden;">
+                    
+                    <div class="crafter-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none';" style="padding: 15px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span style="color: #ffd100; font-family: 'Cinzel'; font-size: 20px; font-weight: bold; text-shadow: 1px 1px 2px #000;">${c.char}</span>
+                            <span style="color: #aaa; font-size: 13px;">Skill: <span style="color: #2ecc71; font-weight: bold;">${c.skill}</span> / ${c.max}</span>
+                        </div>
+                        <div style="color: #a335ee; font-size: 14px; font-style: italic; font-weight: bold;">
+                            ${c.recipes.length} Recipes ▼
+                        </div>
                     </div>
-                    <button onclick="window.location.hash='${item.char.toLowerCase()}'" style="background: linear-gradient(to bottom, #222, #111); border: 1px solid #a335ee; color: #a335ee; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#a335ee'; this.style.color='#fff';" onmouseout="this.style.background='linear-gradient(to bottom, #222, #111)'; this.style.color='#a335ee';">Inspect ${item.char}</button>
-                </div>
-            `).join('');
-            
-            // Re-run WoWHead tooltips so the links show item stats on hover!
+                    
+                    <div class="crafter-recipes" style="display: none; padding: 20px; border-top: 1px solid #222; max-height: 400px; overflow-y: auto; background: rgba(10,10,10,0.95);">
+                        ${c.recipes.length === 0 ? '<div style="color:#666; font-style:italic;">No recipes synced yet.</div>' : ''}
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+                            ${c.recipes.map(r => `
+                                <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; border: 1px solid #222;">
+                                    <a href="https://www.wowhead.com/wotlk/item=${r.id}" target="_blank" style="color: #fff; text-decoration: none; font-size: 13px; text-shadow: 1px 1px 2px #000;" class="q1">${r.name}</a>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: right;">
+                            <button onclick="window.location.hash='${c.char.toLowerCase()}'" style="background: transparent; border: 1px solid #a335ee; color: #a335ee; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-family: 'Cinzel'; transition: 0.2s;" onmouseover="this.style.background='#a335ee'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#a335ee';">Inspect ${c.char}</button>
+                        </div>
+                    </div>
+
+                </div>`;
+            }).join('');
+
+            // Tell WoWHead to attach tooltips to the newly generated recipe links
             if (typeof $WowheadPower !== 'undefined') {
                 $WowheadPower.refreshLinks();
             }
         }
-        
-        renderRecipes("");
-        searchInput.addEventListener('input', (e) => renderRecipes(e.target.value));
-        // Auto-focus the search bar when the page loads
-        setTimeout(() => searchInput.focus(), 100); 
+
+        // Attach click listeners to the buttons
+        profButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                renderCrafters(e.currentTarget.getAttribute('data-prof'));
+            });
+        });
+
+        // Auto-load the first profession in the list when the page opens
+        if (availableProfs.length > 0) {
+            renderCrafters(availableProfs[0]);
+        }
     }
     
     function route() {
