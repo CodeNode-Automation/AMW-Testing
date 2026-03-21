@@ -40,7 +40,27 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     const rawRes = await fetch('asset/raw_roster.json');
     const rawGuildRoster = await rawRes.json();
-    
+
+    // --- NEW: Fetch Profession Data ---
+    let profData = {};
+    try {
+        const profRes = await fetch('asset/professions.json');
+        if (profRes.ok) profData = await profRes.json();
+    } catch (e) { console.log("Profession data not yet available."); }
+
+    // --- NEW: Inject a "Crafters" button into the Navbar ---
+    const controlsWrapper = document.querySelector('.controls-wrapper');
+    if (controlsWrapper) {
+        const crafterBtn = document.createElement('a');
+        crafterBtn.href = "#crafters";
+        crafterBtn.className = "nav-btn nav-btn-home";
+        crafterBtn.style.borderColor = "#a335ee"; // Epic purple
+        crafterBtn.style.color = "#a335ee";
+        crafterBtn.innerHTML = "⚒️<span class='home-text'> Crafters</span>";
+        // Insert it right after the Home button
+        controlsWrapper.insertBefore(crafterBtn, controlsWrapper.children[1]);
+    }
+
     const active14Days = config.active_14_days;
     const raidReadyCount = config.raid_ready_count;
 
@@ -1064,11 +1084,93 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // --- NEW: Guild Crafters Interface ---
+    function showCraftersView(pData) {
+        hideAllViews();
+        fullCardContainer.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        
+        let html = `
+        <div class="char-card faction-alliance" style="border-top-color: #a335ee; animation: fadeInUp 0.4s forwards;">
+            <h2 style="color: #a335ee; font-family: 'Cinzel'; text-align: center; font-size: 32px; text-shadow: 0 2px 4px #000; margin-top: 0;">⚒️ Guild Crafters & Recipes</h2>
+            <p style="text-align: center; color: #aaa; margin-bottom: 30px; font-style: italic;">Search for an item to find out who in the guild can craft it.</p>
+            
+            <div style="margin: 0 auto 30px auto; max-width: 600px; position: relative;">
+                <input type="text" id="recipeSearch" placeholder="Search for a recipe (e.g. 'Linen Bag')..." style="width: 100%; padding: 15px 20px; border-radius: 30px; border: 2px solid #a335ee; background: rgba(0,0,0,0.8); color: #fff; font-family: 'Cinzel'; font-size: 16px; outline: none; box-shadow: 0 5px 15px rgba(163, 53, 238, 0.2);">
+            </div>
+            
+            <div id="recipeResults" style="display: flex; flex-direction: column; gap: 12px; max-width: 800px; margin: 0 auto;"></div>
+        </div>`;
+        
+        fullCardContainer.innerHTML = html;
+        
+        const searchInput = document.getElementById('recipeSearch');
+        const resultsContainer = document.getElementById('recipeResults');
+        
+        function renderRecipes(query) {
+            if (!query || query.trim() === '') {
+                resultsContainer.innerHTML = `<div style="text-align:center; color:#555; font-size: 14px;">Awaiting your search...</div>`;
+                return;
+            }
+            
+            let found = [];
+            query = query.toLowerCase().trim();
+            
+            // Search the JSON tree
+            for (const [charName, profs] of Object.entries(pData)) {
+                for (const [profName, profDetails] of Object.entries(profs)) {
+                    for (const recipe of profDetails.recipes) {
+                        if (recipe.name.toLowerCase().includes(query)) {
+                            found.push({
+                                char: charName,
+                                prof: profName,
+                                skill: profDetails.skill,
+                                recipe: recipe
+                            });
+                        }
+                    }
+                }
+            }
+            
+            if (found.length === 0) {
+                resultsContainer.innerHTML = `<div style="text-align:center; color:#e74c3c; font-weight:bold; background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #e74c3c;">❌ No guild members know how to craft that yet.</div>`;
+                return;
+            }
+            
+            // Sort alphabetically by recipe name
+            found.sort((a, b) => a.recipe.name.localeCompare(b.recipe.name));
+            
+            resultsContainer.innerHTML = found.map(item => `
+                <div class="pvp-row" style="border-left: 4px solid #a335ee; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.6);">
+                    <div>
+                        <a href="https://www.wowhead.com/wotlk/item=${item.recipe.id}" target="_blank" style="color: #ffd100; font-weight: bold; font-size: 16px; text-decoration: none; text-shadow: 1px 1px 2px #000;">${item.recipe.name}</a>
+                        <div style="color: #aaa; font-size: 12px; margin-top: 6px;">${item.prof} (Skill: <span style="color:#2ecc71;">${item.skill}</span>)</div>
+                    </div>
+                    <button onclick="window.location.hash='${item.char.toLowerCase()}'" style="background: linear-gradient(to bottom, #222, #111); border: 1px solid #a335ee; color: #a335ee; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#a335ee'; this.style.color='#fff';" onmouseout="this.style.background='linear-gradient(to bottom, #222, #111)'; this.style.color='#a335ee';">Inspect ${item.char}</button>
+                </div>
+            `).join('');
+            
+            // Re-run WoWHead tooltips so the links show item stats on hover!
+            if (typeof $WowheadPower !== 'undefined') {
+                $WowheadPower.refreshLinks();
+            }
+        }
+        
+        renderRecipes("");
+        searchInput.addEventListener('input', (e) => renderRecipes(e.target.value));
+        // Auto-focus the search bar when the page loads
+        setTimeout(() => searchInput.focus(), 100); 
+    }
+    
     function route() {
         const hash = decodeURIComponent(window.location.hash.substring(1));
         
         if (!hash || hash === '') {
             showHomeView();
+        } else if (hash === 'crafters') {
+            // NEW: Route to the crafters UI!
+            showCraftersView(profData);
+            updateDropdownLabel('all');
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
             updateDropdownLabel('all');

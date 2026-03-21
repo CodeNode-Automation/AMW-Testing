@@ -232,6 +232,41 @@ async def main_async():
     db_conn.commit()
     db_conn.close()
 
+    print("🔨 Exporting Guild Profession Data...")
+    prof_data_export = {}
+    
+    # 1. Grab all the base profession levels
+    prof_rows = db_c.execute("SELECT * FROM professions").fetchall()
+    for row in prof_rows:
+        char = row['character_name']
+        prof = row['profession']
+        if char not in prof_data_export:
+            prof_data_export[char] = {}
+            
+        prof_data_export[char][prof] = {
+            "skill": row['skill_level'],
+            "max": row['max_level'],
+            "recipes": []
+        }
+        
+    # 2. Grab all the known recipes and attach them to the right character/profession
+    recipe_rows = db_c.execute("SELECT * FROM known_recipes").fetchall()
+    for row in recipe_rows:
+        char = row['character_name']
+        prof = row['profession']
+        
+        # Safety check in case a recipe exists without the parent profession logged
+        if char in prof_data_export and prof in prof_data_export[char]:
+            prof_data_export[char][prof]["recipes"].append({
+                "id": row['recipe_id'],
+                "name": row['recipe_name']
+            })
+
+    # 3. Save it as a JSON file for the website to fetch
+    os.makedirs("asset", exist_ok=True)
+    with open("asset/professions.json", "w", encoding="utf-8") as f:
+        json.dump(prof_data_export, f)
+
     print("🌐 Generating final HTML Dashboard...")
     
     # Re-open database read-only to query history for the frontend
