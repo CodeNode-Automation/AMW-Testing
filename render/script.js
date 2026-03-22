@@ -1216,36 +1216,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     
     // ==========================================
-    // 🕸️ INTERACTIVE SPARK & SPIDERWEB BACKGROUND
+    // 🔥 REALISTIC EMBERS & CORNER WEBS
     // ==========================================
-    function initSpiderWebEffect() {
-        // 1. ADD STATIC GRAPHIC WEBS TO RANDOM CORNERS
-        // We define the 4 corners and rotate the web to fit perfectly
+    function initAtmosphere() {
+        // 1. REALISTIC CORNER WEBS (Using your real web.png image!)
         const corners = [
-            { top: '-10px', left: '-10px', transform: 'rotate(0deg)' },
-            { top: '-10px', right: '-10px', transform: 'rotate(90deg)' },
-            { bottom: '-10px', left: '-10px', transform: 'rotate(-90deg)' },
-            { bottom: '-10px', right: '-10px', transform: 'rotate(180deg)' }
+            { top: '-20px', left: '-20px', transform: 'rotate(0deg)' },
+            { top: '-20px', right: '-20px', transform: 'rotate(90deg)' },
+            { bottom: '-20px', left: '-20px', transform: 'rotate(-90deg)' },
+            { bottom: '-20px', right: '-20px', transform: 'rotate(180deg)' }
         ];
 
-        // Randomly pick 2 or 3 corners so it feels organic every page load
+        // Pick 2 or 3 corners randomly so it looks organic
         const numWebs = Math.floor(Math.random() * 2) + 2; 
         const selectedCorners = corners.sort(() => 0.5 - Math.random()).slice(0, numWebs);
 
-        // Mathematical SVG data for a perfect curved spiderweb (colored Epic Purple)
-        const webSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,0 L100,0 M0,0 L85,35 M0,0 L60,60 M0,0 L35,85 M0,0 L0,100' stroke='rgba(163,53,238,0.4)' stroke-width='1.5' fill='none'/%3E%3Cpath d='M20,0 Q20,10 0,20 M40,0 Q40,20 0,40 M65,0 Q60,30 0,65 M95,0 Q80,45 0,95' stroke='rgba(163,53,238,0.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E")`;
-
         selectedCorners.forEach(pos => {
             const web = document.createElement('div');
-            web.className = 'corner-web'; // Class for CSS animation
+            web.className = 'corner-web'; 
             web.style.position = 'fixed';
-            web.style.width = '280px';
-            web.style.height = '280px';
-            web.style.backgroundImage = webSvg;
+            web.style.width = '450px';  // Made them larger and more imposing
+            web.style.height = '450px';
+            web.style.backgroundImage = 'url("asset/web.png")'; // Pointing to your new real image!
             web.style.backgroundSize = 'contain';
             web.style.backgroundRepeat = 'no-repeat';
-            web.style.zIndex = '-3'; // Sit behind everything
-            web.style.pointerEvents = 'none'; // Don't block mouse clicks
+            web.style.opacity = '0.4'; // Keep them subtle and ghostly
+            web.style.zIndex = '-3'; 
+            web.style.pointerEvents = 'none'; 
             
             if (pos.top) web.style.top = pos.top;
             if (pos.bottom) web.style.bottom = pos.bottom;
@@ -1256,9 +1253,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             document.body.appendChild(web);
         });
 
-        // 2. CREATE THE INTERACTIVE PARTICLE CANVAS
+        // 2. REALISTIC GLOWING EMBERS (No more crypto-startup lines)
         const canvas = document.createElement('canvas');
-        canvas.id = 'spider-canvas';
+        canvas.id = 'ember-canvas';
         canvas.style.position = 'fixed';
         canvas.style.top = '0';
         canvas.style.left = '0';
@@ -1279,7 +1276,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.addEventListener('resize', resize);
         resize();
 
-        let mouse = { x: null, y: null };
+        // Track mouse for wind/push effect
+        let mouse = { x: null, y: null, radius: 120 };
         document.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
@@ -1288,75 +1286,68 @@ window.addEventListener('DOMContentLoaded', async () => {
             mouse.x = null; mouse.y = null;
         });
 
-        class Particle {
+        class Ember {
             constructor() {
                 this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.8; 
-                this.vy = (Math.random() - 0.5) * 1 - 0.5; // Drift slightly upwards
-                this.size = Math.random() * 2 + 1;
+                this.y = Math.random() * height + height; // Start below the screen
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speed = Math.random() * 1.5 + 0.5; // Float upwards
+                this.angle = Math.random() * 360; // For swaying
+                this.spin = (Math.random() - 0.5) * 0.05;
+                this.opacity = Math.random() * 0.8 + 0.2;
             }
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
+                this.y -= this.speed; // Drift up
+                this.angle += this.spin;
+                this.x += Math.sin(this.angle) * 0.5; // Gentle side-to-side sway
                 
-                // Screen wrap
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-                if (this.y < 0) this.y = height;
-                if (this.y > height) this.y = 0;
+                // Mouse Interaction: The mouse acts like wind, pushing embers away!
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        // Push them away gently
+                        this.x -= forceDirectionX * force * 3;
+                        this.y -= forceDirectionY * force * 3;
+                    }
+                }
+
+                // Loop back to the bottom when they float off the top
+                if (this.y < -20) {
+                    this.y = height + 20;
+                    this.x = Math.random() * width;
+                    this.opacity = Math.random() * 0.8 + 0.2;
+                }
             }
             draw() {
-                ctx.fillStyle = 'rgba(255, 209, 0, 0.8)'; // WoW Gold
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                
+                // Add a realistic orange/red glow behind the yellow spark
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#ff4400'; 
+                ctx.fillStyle = `rgba(255, 209, 0, ${this.opacity})`;
                 ctx.fill();
+                
+                ctx.shadowBlur = 0; // Reset so we don't lag the browser
             }
         }
 
-        // Spawn 70 sparks
-        for (let i = 0; i < 70; i++) {
-            particles.push(new Particle());
+        // Spawn 80 embers
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Ember());
         }
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
-            
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
-                
-                // Connect close particles with gold thread
-                for (let j = i; j < particles.length; j++) {
-                    let dx = particles[i].x - particles[j].x;
-                    let dy = particles[i].y - particles[j].y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (dist < 110) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 209, 0, ${(1 - dist / 110) * 0.3})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-                
-                // Connect particles to the mouse with Epic Purple thread!
-                if (mouse.x) {
-                    let dx = particles[i].x - mouse.x;
-                    let dy = particles[i].y - mouse.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (dist < 160) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(163, 53, 238, ${(1 - dist / 160) * 0.5})`; 
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                    }
-                }
             }
             requestAnimationFrame(animate);
         }
@@ -1364,7 +1355,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Fire it up!
-    initSpiderWebEffect();
+    initAtmosphere();   
 
     // Initialize routing
     route();
