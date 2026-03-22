@@ -203,7 +203,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const heatmapGrid = document.getElementById('heatmap-grid');
     if (heatmapGrid && heatmapData && heatmapData.length > 0) {
-        
+
         // --- NEW: Chart.js Line Graph ---
         const ctx = document.getElementById('activityChart');
         if (ctx) {
@@ -221,8 +221,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             pointBackgroundColor: '#a335ee',
                             pointBorderColor: '#fff',
                             tension: 0.3,
-                            fill: true,
-                            yAxisID: 'y' // Bind to left axis
+                            fill: true
                         },
                         {
                             label: 'Level Ups',
@@ -233,30 +232,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             pointBackgroundColor: '#ffd100',
                             pointBorderColor: '#fff',
                             tension: 0.3,
-                            fill: true,
-                            yAxisID: 'y' // Bind to left axis
-                        },
-                        {
-                            label: 'Total Roster',
-                            // Draw a flat baseline using the current raw roster size
-                            data: heatmapData.map(() => rawGuildRoster.length),
-                            borderColor: '#888888', // Grey
-                            borderDash: [5, 5], // Dashed line
-                            borderWidth: 1.5,
-                            pointRadius: 0, // Hide dots to keep it clean
-                            fill: false,
-                            yAxisID: 'y1' // Bind to right axis
-                        },
-                        {
-                            label: 'Active (14 Days)',
-                            // Draw a flat baseline using the current active count
-                            data: heatmapData.map(() => active14Days || 0),
-                            borderColor: '#2ecc71', // Green
-                            borderDash: [5, 5],
-                            borderWidth: 1.5,
-                            pointRadius: 0,
-                            fill: false,
-                            yAxisID: 'y1' // Bind to right axis
+                            fill: true
                         }
                     ]
                 },
@@ -268,36 +244,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                         tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyFont: { family: 'Cinzel' } }
                     },
                     scales: {
-                        // Left Axis: For Activity (Loot/Levels)
-                        y: { 
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            beginAtZero: true, 
-                            ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, 
-                            grid: { color: 'rgba(255,255,255,0.05)' } 
-                        },
-                        // Right Axis: For Guild Population
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            beginAtZero: true,
-                            // Set a dynamic max slightly higher than the total roster so the line sits nicely in the chart
-                            max: Math.ceil(rawGuildRoster.length * 1.2),
-                            ticks: { color: '#555', font: {family: 'Cinzel'} },
-                            grid: { drawOnChartArea: false } // Prevent grid lines from overlapping
-                        },
-                        x: { 
-                            ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, 
-                            grid: { display: false } 
-                        }
+                        y: { beginAtZero: true, ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, grid: { display: false } }
                     },
                     interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
         }
-        
+                
         // --- NEW: Class Distribution Donut Chart ---
         const classCounts = {};
         // Tally up classes from the entire raw roster
@@ -366,7 +320,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-        
+
         // --- Original Heatmap Grid ---
         let heatmapHtml = '';
         
