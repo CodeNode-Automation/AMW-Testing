@@ -1430,10 +1430,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Restored counts for visual impact
-        for (let i = 0; i < 90; i++) sparks.push(new Spark()); // Strong particle presence
-        for (let i = 0; i < 70; i++) silkNodes.push(new SilkNode()); // Dense enough to form webs
-        for (let i = 0; i < 12; i++) spiders.push(new NetherSpider()); // Noticeable but not overwhelming
+        // Thinned out the web and spider count
+        for (let i = 0; i < 90; i++) sparks.push(new Spark()); 
+        for (let i = 0; i < 45; i++) silkNodes.push(new SilkNode()); // Dropped from 70 to 45
+        for (let i = 0; i < 8; i++) spiders.push(new NetherSpider()); // Dropped from 12 to 8
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
@@ -1450,17 +1450,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                     let dist = Math.sqrt(dx * dx + dy * dy);
                     let zDist = Math.abs(silkNodes[i].z - silkNodes[j].z); 
 
-                    if (dist < 350 && zDist < 0.4) {
+                    // Lowered distance from 350 to 280 so the webs are more broken up
+                    if (dist < 280 && zDist < 0.4) {
                         let avgZ = (silkNodes[i].z + silkNodes[j].z) / 2;
                         let sag = dist * 0.35 * avgZ; 
                         let midX = (silkNodes[i].x + silkNodes[j].x) / 2;
                         let midY = (silkNodes[i].y + silkNodes[j].y) / 2 + sag;
 
                         ctx.beginPath();
-                        // DRASTICALLY boosted the alpha (opacity) of the silk threads
-                        let alpha = (1 - dist / 350) * 0.45 * avgZ; 
+                        // Adjusted the math to match the new 280 distance
+                        let alpha = (1 - dist / 280) * 0.35 * avgZ; 
                         ctx.strokeStyle = `rgba(163, 53, 238, ${alpha})`; 
-                        ctx.lineWidth = 1.5 * avgZ; // Made threads thicker
+                        ctx.lineWidth = 1.2 * avgZ; // Slightly thinner threads
                         ctx.moveTo(silkNodes[i].x, silkNodes[i].y);
                         ctx.quadraticCurveTo(midX, midY, silkNodes[j].x, silkNodes[j].y);
                         ctx.stroke();
