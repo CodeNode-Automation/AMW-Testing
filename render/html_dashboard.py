@@ -1,12 +1,11 @@
 import json
-import random
 import os
 from datetime import datetime, timezone, timedelta
+from jinja2 import Environment, FileSystemLoader
 
 def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, raw_guild_roster=None):
     """
-    Generates the interactive, high-performance HTML dashboard by combining 
-    the Python data with the external style.css and script.js files.
+    Generates the interactive, high-performance HTML dashboard utilizing Jinja2 templates.
     """
     if not timeline_data:
         timeline_data = []
@@ -28,17 +27,12 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     }
 
     last_updated_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-
-    # Sort roster alphabetically for the dropdown list
     sorted_roster = sorted(roster_data, key=lambda x: x.get("profile", {}).get("name", "").lower())
-
-    # Pre-sort roster by level then iLvl for the statistics navigation feature
     sorted_stats_roster = sorted(roster_data, key=lambda x: (
         x.get("profile", {}).get("level", 0),
         x.get("profile", {}).get("equipped_item_level", 0)
     ), reverse=True)
 
-    # --- Pre-compute Guild Statistics for the Front Page ---
     total_processed = len(roster_data)
     total_level = 0
     active_14_days = 0 
@@ -70,10 +64,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     avg_level = (total_level // total_processed) if total_processed > 0 else 0
     display_total_members = len(raw_guild_roster)
 
-    avg_level = (total_level // total_processed) if total_processed > 0 else 0
-    display_total_members = len(raw_guild_roster)
-
-    # --- NEW: Process Daily Trends for Global Stats ---
     global_trends = realm_data.get('global_trends', {}) if isinstance(realm_data, dict) else {}
     
     def get_trend_html(trend_val):
@@ -88,13 +78,11 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     trend_active_html = get_trend_html(global_trends.get('trend_active', 0))
     trend_ready_html = get_trend_html(global_trends.get('trend_ready', 0))
 
-    # --- Process Timeline for Heatmap & Chart (Last 7 Days) ---
     activity_counts = {}
     for event in timeline_data:
         ts = event.get("timestamp", "")
-        e_type = event.get("type", "item") # Defaults to item if missing
+        e_type = event.get("type", "item")
         try:
-            # Parse ISO 8601 string safely into a Date
             dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
             date_key = dt.strftime("%Y-%m-%d")
             
@@ -111,12 +99,10 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
 
     today = datetime.now(timezone.utc)
     heatmap_data = []
-    # Create a dense array of the last 7 days
     for i in range(6, -1, -1):
         day = today - timedelta(days=i)
         d_str = day.strftime("%Y-%m-%d")
-        day_name = day.strftime("%a") # Mon, Tue, Wed, etc.
-        
+        day_name = day.strftime("%a")
         day_data = activity_counts.get(d_str, {"total": 0, "loot": 0, "levels": 0})
         heatmap_data.append({
             "date": d_str, 
@@ -128,7 +114,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     
     safe_heatmap_data = json.dumps(heatmap_data)
     
-    # Generate the Class Badge HTML
     class_badges_html = ""
     for cls, count in sorted(class_counts.items(), key=lambda item: item[1], reverse=True):
         if count > 0:
@@ -138,13 +123,11 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             class_badges_html += f'  <span class="stat-badge-count">{count}</span>\n'
             class_badges_html += '</div>'
 
-    # --- Advanced Navbar HTML Generation ---
     nav_controls = f"""
         <div class="controls-wrapper">
             <a href="javascript:void(0)" onclick="returnToHome()" class="nav-btn nav-btn-home" title="Return to guild stats page">
               🛡️<span class="home-text"> Armory Home</span>
             </a>
-            
             <div class="custom-select-wrapper">
                 <div class="custom-select" id="customCharSelect">
                     <span class="selected-value">View Entire Guild</span>
@@ -155,7 +138,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
                         <span style="font-size:16px;">🌍</span> View Entire Guild
                     </div>
     """
-    
     for char in sorted_roster:
         c_name = char.get("profile", {}).get("name", "Unknown")
         c_class_obj = char.get("profile", {}).get("character_class", {})
@@ -182,7 +164,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     nav_controls += """
                 </div>
             </div>
-            
             <div class="search-container">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
@@ -193,178 +174,11 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
         </div>
     """
 
-    # Load CSS and JS from external files safely
-    base_dir = os.path.dirname(__file__)
-    
-    try:
-        with open(os.path.join(base_dir, "style.css"), "r", encoding="utf-8") as f:
-            css_content = f.read()
-    except FileNotFoundError:
-        css_content = "/* style.css not found */"
-        
-    try:
-        with open(os.path.join(base_dir, "script.js"), "r", encoding="utf-8") as f:
-            js_content = f.read()
-    except FileNotFoundError:
-        js_content = "console.error('script.js not found');"
-
-    os.makedirs("asset", exist_ok=True)
-    with open("asset/roster.json", "w", encoding="utf-8") as f:
-        json.dump(sorted_stats_roster, f)
-    with open("asset/raw_roster.json", "w", encoding="utf-8") as f:
-        json.dump(raw_guild_roster, f)
-        
-    dashboard_config = {
-        "last_updated": last_updated_iso,
-        "active_14_days": active_14_days,
-        "raid_ready_count": raid_ready_count
-    }
-    safe_config = json.dumps(dashboard_config)
-
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>&lt;Azeroths Most Wanted&gt; Guild Armory</title>
-    <script>const whTooltips = {{colorLinks: false, iconizeLinks: false, renameLinks: false}};</script>
-    <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        {css_content}
-    </style>
-</head>
-<body>
-    <div id="intro-container">
-        <video id="intro-video" autoplay muted playsinline>
-            <source src="asset/Amw.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-    <script>
-        // Self-contained script to guarantee the video dies and the site loads
-        function killIntro() {{
-            var intro = document.getElementById('intro-container');
-            var dash = document.querySelector('.dashboard-layout');
-            
-            if (intro && !intro.classList.contains('fade-out')) {{
-                intro.classList.add('fade-out'); // Fade it to black
-                
-                if (dash) {{
-                    dash.style.opacity = '1';
-                    dash.style.transition = 'opacity 1.5s ease-in-out';
-                }}
-                
-                // Destroy the video element to free up memory
-                setTimeout(function() {{ 
-                    if (intro) intro.remove(); 
-                }}, 1000);
-            }}
-        }}
-
-        var vid = document.getElementById('intro-video');
-        if (vid) {{
-            vid.playbackRate = 1.5; 
-            vid.addEventListener('ended', killIntro); 
-            vid.addEventListener('error', killIntro); 
-        }}
-        
-        // The absolute guarantee: kill it at 7 seconds now since the video is faster
-        setTimeout(killIntro, 6000);
-    </script>
-    <div class="embers-container">
-"""
-
-
-    html += f"""
-    </div>
-
-    <div class="navbar">
-        {nav_controls}
-    </div>
-    
-    <div id="custom-tooltip" class="custom-tooltip"></div>
-    
-    <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
-        <div class="main-content">
-            <div id="empty-state">
-                
-                <img src="asset/amw.png" alt="Azeroths Most Wanted Logo" style="max-width: 320px; width: 100%; display: block; margin: 0 auto 5px auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); animation: fadeIn 0.8s ease-out;">
-                
-                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
-                <p style="font-family: 'Marcellus', serif; max-width: 600px; margin: 0 auto 30px auto; color: #bbb; font-size: 16px;">
-                    Inspect dynamic equipment, stats, and loot history. Select a member from the dropdown or search above, or click a stat box below to filter.
-                </p>
-                
-                <div class="stat-box-container">
-                    <div id="stat-total" class="stat-box clickable" title="Click to view all {display_total_members} members">
-                        <span class="stat-value" style="display: flex; align-items: center; justify-content: center;">
-                            {display_total_members} 
-                            {trend_total_html}
-                        </span>
-                        <span class="stat-label">Total Roster</span>
-                    </div>
-                    <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
-                        <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
-                            {active_14_days}
-                            {trend_active_html}
-                        </span>
-                        <span class="stat-label">Active (14 Days)</span>
-                    </div>
-                    <div id="stat-raidready" class="stat-box clickable" title="Click to view characters Level 70 with 110+ iLvl">
-                        <span class="stat-value" style="color: #ff8000; display: flex; align-items: center; justify-content: center;">
-                            {raid_ready_count}
-                            {trend_ready_html}
-                        </span>
-                        <span class="stat-label">Raid Ready</span>
-                    </div>
-                    <div class="stat-box" title="Average level of scanned characters">
-                        <span class="stat-value">{avg_level}</span>
-                        <span class="stat-label">Average Level</span>
-                    </div>
-                </div>
-
-                <div class="heatmap-wrapper" style="max-width: 650px;">
-                    <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
-                    <div style="position: relative; height: 180px; width: 100%; margin-bottom: 20px;">
-                        <canvas id="activityChart"></canvas>
-                    </div>
-                    <div id="heatmap-grid" class="heatmap-grid"></div>
-                </div>
-                
-                <div class="class-stat-container">
-                    {class_badges_html}
-                </div>
-
-                <div id="home-spec-container" style="display:none; text-align:center; padding-top: 10px; margin-bottom: 40px; animation: fadeInUp 0.3s forwards;">
-                </div>
-
-                <div id="leaderboards-wrapper" style="display:flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; justify-content: center;">
-                    <div id="pve-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 10 Item Level 🛡️</h3>
-                        <div id="pve-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
-                    <div id="pvp-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 10 Honorable Kills ⚔️</h3>
-                        <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="concise-view">
-                <h2 id="concise-view-title">Guild Overview</h2>
-                <div id="concise-class-badges" class="class-stat-container" style="display:none; margin-bottom: 20px;"></div>
-                <div id="concise-char-list"></div>
-            </div>
-
-            <div id="full-card-container" class="full-card-container"></div>
-        </div> 
-"""
-
+    timeline_html = ""
     if timeline_data:
-        html += f"""
+        timeline_html += f"""
         <div id="timeline" class="timeline-container">
             <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
-            
             <div class="timeline-filters">
                 <div class="filter-group">
                     <button class="tl-btn active" data-type="all">All</button>
@@ -382,7 +196,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
                     </select>
                 </div>
             </div>
-
             <div class="timeline-feed">
 """
         for event in timeline_data:
@@ -397,7 +210,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             except Exception: date_str = ts[:10]
             
             if event.get("type") == "level_up":
-                html += f"""
+                timeline_html += f"""
                 <div onclick="selectCharacter('{c_name.lower()}')" class="concise-item tt-char" data-char="{c_name.lower()}" data-event-type="level_up" data-timestamp="{ts}" style="border-left-color: {c_hex}; cursor: pointer;">
                     <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -412,7 +225,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             else:
                 q = event.get('item_quality', 'COMMON')
                 q_hex = QUALITY_COLORS.get(q, "#ffffff")
-                html += f"""
+                timeline_html += f"""
                 <div onclick="selectCharacter('{c_name.lower()}')" class="concise-item tt-char" data-char="{c_name.lower()}" data-event-type="item" data-quality="{q}" data-timestamp="{ts}" style="border-left-color: {q_hex}; cursor: pointer;">
                     <div class="timeline-node" style="background: {q_hex}; box-shadow: 0 0 8px {q_hex};"></div>
                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -424,34 +237,55 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
                         <a href="https://www.wowhead.com/wotlk/item={event.get('item_id')}" target="_blank" onclick="event.stopPropagation();" style="color: {q_hex}; font-weight:bold; text-decoration: none;">{event.get('item_name')}</a>
                     </div>
                 </div>"""
-        html += """
+        timeline_html += """
             </div>
         </div>
 """
 
-    html += f"""
-    </div> 
+    base_dir = os.path.dirname(__file__)
+    try:
+        with open(os.path.join(base_dir, "style.css"), "r", encoding="utf-8") as f:
+            css_content = f.read()
+    except FileNotFoundError: css_content = ""
+        
+    try:
+        with open(os.path.join(base_dir, "script.js"), "r", encoding="utf-8") as f:
+            js_content = f.read()
+    except FileNotFoundError: js_content = ""
+
+    os.makedirs("asset", exist_ok=True)
+    with open("asset/roster.json", "w", encoding="utf-8") as f:
+        json.dump(sorted_stats_roster, f)
+    with open("asset/raw_roster.json", "w", encoding="utf-8") as f:
+        json.dump(raw_guild_roster, f)
+        
+    dashboard_config = {
+        "last_updated": last_updated_iso,
+        "active_14_days": active_14_days,
+        "raid_ready_count": raid_ready_count
+    }
+    safe_config = json.dumps(dashboard_config)
+
+    # Render Template
+    env = Environment(loader=FileSystemLoader(base_dir))
+    template = env.get_template("dashboard_template.html")
     
-    <div class="dashboard-footer">
-        Automatically generated via GitHub Actions &bull; Database powered by SQLite &bull; Unlimited history stored &bull; Last updated: <span id="update-time" style="color: #ffd100;"></span>
-        <div style="margin-top: 20px; opacity: 0.5; transition: opacity 0.3s ease; display: flex; justify-content: center;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
-            <img src="https://api.visitorbadge.io/api/visitors?path=AzerothsMostWantedArmory_2&label=VIEWS&labelColor=111111&countColor=ffd100&style=flat-square" alt="Visitor Count" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">
-        </div>
-    </div>
-
-    <script id="dashboard-config" type="application/json">
-        {safe_config}
-    </script>
-    <script id="heatmap-data" type="application/json">
-        {safe_heatmap_data}
-    </script>
-
-    <script>
-        {js_content}
-    </script>
-</body>
-</html>
-"""
+    html = template.render(
+        css_content=css_content,
+        nav_controls=nav_controls,
+        display_total_members=display_total_members,
+        trend_total_html=trend_total_html,
+        active_14_days=active_14_days,
+        trend_active_html=trend_active_html,
+        raid_ready_count=raid_ready_count,
+        trend_ready_html=trend_ready_html,
+        avg_level=avg_level,
+        class_badges_html=class_badges_html,
+        timeline_html=timeline_html,
+        safe_config=safe_config,
+        safe_heatmap_data=safe_heatmap_data,
+        js_content=js_content
+    )
     
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)

@@ -45,6 +45,8 @@ def setup_database():
         )
     """)
 
+    c.execute("CREATE INDEX IF NOT EXISTS idx_timeline_timestamp ON timeline (timestamp DESC)")
+
     # Store midnight snapshots to calculate daily stat trends for the dashboard arrows
     c.execute("""
         CREATE TABLE IF NOT EXISTS daily_snapshot (

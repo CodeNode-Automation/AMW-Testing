@@ -104,3 +104,52 @@ async def fetch_guild_metadata(session, token, realm, slug):
             else:
                 return {}
     return {}
+
+async def fetch_static_maps(session, token):
+    """
+    Retrieves dynamic mapping for classes and races from the Blizzard Game Data API.
+    Includes a hardcoded fallback to ensure the script never breaks if the API fails.
+    """
+    print("📚 Fetching dynamic Class and Race maps...")
+    
+    # Static Game Data requires a 'static' namespace variation
+    namespaces = ["static-classicann-eu", "static-classic1x-eu", "static-classic-eu", "static-eu"]
+    
+    class_map = {}
+    race_map = {}
+    
+    # 1. Fetch Classes
+    for ns in namespaces:
+        url = "https://eu.api.blizzard.com/data/wow/playable-class/index?locale=en_US"
+        headers = {"Authorization": f"Bearer {token}", "Battlenet-Namespace": ns}
+        try:
+            async with session.get(url, headers=headers, timeout=5) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    for c in data.get('classes', []):
+                        class_map[c['id']] = c.get('name', 'Unknown')
+                    break
+        except Exception:
+            continue
+            
+    # 2. Fetch Races
+    for ns in namespaces:
+        url = "https://eu.api.blizzard.com/data/wow/playable-race/index?locale=en_US"
+        headers = {"Authorization": f"Bearer {token}", "Battlenet-Namespace": ns}
+        try:
+            async with session.get(url, headers=headers, timeout=5) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    for r in data.get('races', []):
+                        race_map[r['id']] = r.get('name', 'Unknown')
+                    break
+        except Exception:
+            continue
+
+    # 3. Bulletproof Fallback
+    if not class_map:
+        class_map = {1: "Warrior", 2: "Paladin", 3: "Hunter", 4: "Rogue", 5: "Priest", 6: "Death Knight", 7: "Shaman", 8: "Mage", 9: "Warlock", 11: "Druid"}
+    if not race_map:
+        race_map = {1: "Human", 2: "Orc", 3: "Dwarf", 4: "Night Elf", 5: "Undead", 6: "Tauren", 7: "Gnome", 8: "Troll", 10: "Blood Elf", 11: "Draenei"}
+        
+    return class_map, race_map

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&lt;Azeroths Most Wanted&gt; Guild Armory</title>
+    <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false};</script>
+    <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        {{ css_content | safe }}
+    </style>
+</head>
+<body>
+    <div id="intro-container">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="asset/Amw.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <script>
+        function killIntro() {
+            var intro = document.getElementById('intro-container');
+            var dash = document.querySelector('.dashboard-layout');
+            
+            if (intro && !intro.classList.contains('fade-out')) {
+                intro.classList.add('fade-out'); // Fade it to black
+                if (dash) {
+                    dash.style.opacity = '1';
+                    dash.style.transition = 'opacity 1.5s ease-in-out';
+                }
+                setTimeout(function() { if (intro) intro.remove(); }, 1000);
+            }
+        }
+
+        var vid = document.getElementById('intro-video');
+        if (vid) {
+            vid.playbackRate = 1.5; 
+            vid.addEventListener('ended', killIntro); 
+            vid.addEventListener('error', killIntro); 
+        }
+        setTimeout(killIntro, 6500);
+    </script>
+    <div class="embers-container"></div>
+
+    <div class="navbar">
+        {{ nav_controls | safe }}
+    </div>
+    
+    <div id="custom-tooltip" class="custom-tooltip"></div>
+    
+    <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
+        <div class="main-content">
+            <div id="empty-state">
+                
+                <img src="asset/amw.png" alt="Azeroths Most Wanted Logo" style="max-width: 320px; width: 100%; display: block; margin: 0 auto 5px auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); animation: fadeIn 0.8s ease-out;">
+                
+                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
+                <p style="font-family: 'Marcellus', serif; max-width: 600px; margin: 0 auto 30px auto; color: #bbb; font-size: 16px;">
+                    Inspect dynamic equipment, stats, and loot history. Select a member from the dropdown or search above, or click a stat box below to filter.
+                </p>
+                
+                <div class="stat-box-container">
+                    <div id="stat-total" class="stat-box clickable" title="Click to view all {{ display_total_members }} members">
+                        <span class="stat-value" style="display: flex; align-items: center; justify-content: center;">
+                            {{ display_total_members }} 
+                            {{ trend_total_html | safe }}
+                        </span>
+                        <span class="stat-label">Total Roster</span>
+                    </div>
+                    <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
+                        <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
+                            {{ active_14_days }}
+                            {{ trend_active_html | safe }}
+                        </span>
+                        <span class="stat-label">Active (14 Days)</span>
+                    </div>
+                    <div id="stat-raidready" class="stat-box clickable" title="Click to view characters Level 70 with 110+ iLvl">
+                        <span class="stat-value" style="color: #ff8000; display: flex; align-items: center; justify-content: center;">
+                            {{ raid_ready_count }}
+                            {{ trend_ready_html | safe }}
+                        </span>
+                        <span class="stat-label">Raid Ready</span>
+                    </div>
+                    <div class="stat-box" title="Average level of scanned characters">
+                        <span class="stat-value">{{ avg_level }}</span>
+                        <span class="stat-label">Average Level</span>
+                    </div>
+                </div>
+
+                <div class="heatmap-wrapper" style="max-width: 650px;">
+                    <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
+                    <div style="position: relative; height: 180px; width: 100%; margin-bottom: 20px;">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                    <div id="heatmap-grid" class="heatmap-grid"></div>
+                </div>
+                
+                <div class="class-stat-container">
+                    {{ class_badges_html | safe }}
+                </div>
+
+                <div id="home-spec-container" style="display:none; text-align:center; padding-top: 10px; margin-bottom: 40px; animation: fadeInUp 0.3s forwards;">
+                </div>
+
+                <div id="leaderboards-wrapper" style="display:flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; justify-content: center;">
+                    <div id="pve-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
+                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 10 Item Level 🛡️</h3>
+                        <div id="pve-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                    <div id="pvp-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
+                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 10 Honorable Kills ⚔️</h3>
+                        <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="concise-view">
+                <h2 id="concise-view-title">Guild Overview</h2>
+                <div id="concise-class-badges" class="class-stat-container" style="display:none; margin-bottom: 20px;"></div>
+                <div id="concise-char-list"></div>
+            </div>
+
+            <div id="full-card-container" class="full-card-container"></div>
+        </div> 
+
+        {{ timeline_html | safe }}
+
+    </div> 
+    
+    <div class="dashboard-footer">
+        Automatically generated via GitHub Actions &bull; Database powered by SQLite &bull; Unlimited history stored &bull; Last updated: <span id="update-time" style="color: #ffd100;"></span>
+        <div style="margin-top: 20px; opacity: 0.5; transition: opacity 0.3s ease; display: flex; justify-content: center;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+            <img src="https://api.visitorbadge.io/api/visitors?path=AzerothsMostWantedArmory_2&label=VIEWS&labelColor=111111&countColor=ffd100&style=flat-square" alt="Visitor Count" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">
+        </div>
+    </div>
+
+    <script id="dashboard-config" type="application/json">
+        {{ safe_config | safe }}
+    </script>
+    <script id="heatmap-data" type="application/json">
+        {{ safe_heatmap_data | safe }}
+    </script>
+
+    <script>
+        {{ js_content | safe }}
+    </script>
+</body>
+</html>

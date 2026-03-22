@@ -1,13 +1,13 @@
 import os
-import requests
+import aiohttp
 from dotenv import load_dotenv
 
 load_dotenv()
 
-CLIENT_ID = os.getenv("BLIZZARD_CLIENT_ID")
-CLIENT_SECRET = os.getenv("BLIZZARD_CLIENT_SECRET")
+CLIENT_ID = os.getenv("BLIZZARD_CLIENT_ID", "")
+CLIENT_SECRET = os.getenv("BLIZZARD_CLIENT_SECRET", "")
 
-def get_access_token():
+async def get_access_token():
     """
     Retrieves an OAuth2 access token from the Blizzard Battle.net API.
     
@@ -18,10 +18,15 @@ def get_access_token():
         str | None: The access token string if successful, or None if the request fails.
     """
     url = "https://oauth.battle.net/token"
+    auth = aiohttp.BasicAuth(CLIENT_ID, CLIENT_SECRET)
+    
     try:
-        response = requests.post(url, data={"grant_type": "client_credentials"}, auth=(CLIENT_ID, CLIENT_SECRET), timeout=10)
-        response.raise_for_status()
-        return response.json().get("access_token")
+        # Create a temporary session just for the auth request
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data={"grant_type": "client_credentials"}, auth=auth, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                response.raise_for_status()
+                data = await response.json()
+                return data.get("access_token")
     except Exception as e:
         print(f"Error fetching token: {e}")
         return None

@@ -12,7 +12,7 @@ import json
 from datetime import datetime, timezone
 
 from wow.auth import get_access_token
-from wow.api import fetch_realm_data, fetch_guild_metadata
+from wow.api import fetch_realm_data, fetch_guild_metadata, fetch_static_maps
 from wow.character import fetch_character_data, update_character_state
 from render.html_dashboard import generate_html_dashboard
 from render.database import setup_database, get_db_connection
@@ -59,7 +59,7 @@ async def fetch_with_semaphore(sem, session, token, char, history_data):
 async def main_async():
     """Core asynchronous orchestrator."""
     print("\n🔑 Authenticating with Blizzard API...")
-    token = get_access_token()
+    token = await get_access_token()
     if not token:
         print("❌ Failed to authenticate with Blizzard.")
         return
@@ -98,6 +98,8 @@ async def main_async():
 
     print("🚀 Opening Async HTTP Session...\n")
     async with aiohttp.ClientSession() as session:
+        class_map, race_map = await fetch_static_maps(session, token)
+        
         realm_data = await fetch_realm_data(session, token, REALM)
 
         slug = GUILD_NAME.lower().replace(" ", "-").replace("'", "")
@@ -126,10 +128,10 @@ async def main_async():
                             
                             # Convert raw IDs to Strings for the fallback view
                             c_class_id = c.get('playable_class', {}).get('id')
-                            c_class = CLASS_MAP.get(c_class_id, "Unknown")
+                            c_class = class_map.get(c_class_id, "Unknown")
                             
                             c_race_id = c.get('playable_race', {}).get('id')
-                            c_race = RACE_MAP.get(c_race_id, "Unknown")
+                            c_race = race_map.get(c_race_id, "Unknown")
                             
                             # Map the explicit Guild Rank using our manual RANK_MAP
                             rank_id = m.get('rank', 5) # Default to 5 if missing
@@ -158,8 +160,6 @@ async def main_async():
                     print("❌ Fatal Error: Could not fetch guild roster.")
                     # Let the rest of the script continue with an empty roster to prevent a hard crash
 
-        roster_names = roster_names[:50]
-        
         print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters (> Lvl 10).")
 
         sem = asyncio.Semaphore(5)

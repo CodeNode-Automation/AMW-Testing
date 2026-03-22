@@ -36,4 +36,6 @@ desktop.ini
 *.db
 *.sqlite
 *.sqlite3
-dump.py
+create_sql.py
+restore_db.py
+_backup

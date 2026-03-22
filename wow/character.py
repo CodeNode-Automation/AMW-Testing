@@ -115,7 +115,7 @@ def update_character_state(char_data, history_data, timeline_data):
 
     # 1. Process Level-Ups
     if char_data.get("level_up"):
-        timeline_data.insert(0, {
+        timeline_data.append({
             "timestamp": timestamp,
             "character": char_name,
             "class": char_class,
@@ -125,7 +125,7 @@ def update_character_state(char_data, history_data, timeline_data):
 
     # 2. Process Gear Upgrades
     for upgrade in char_data.get("upgrades", []):
-        timeline_data.insert(0, {
+        timeline_data.append({
             "timestamp": timestamp,
             "character": char_name,
             "class": char_class,

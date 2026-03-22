@@ -22,8 +22,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 }
 
 #intro-video {
-    width: 80%;         
-    height: 80%;       
+    width: 90%;         
+    height: 90%;       
     object-fit: contain;
     max-width: 100vw;
     max-height: 100vh;
