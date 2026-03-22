@@ -1219,41 +1219,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 🔥 REALISTIC EMBERS & CORNER WEBS
     // ==========================================
     function initAtmosphere() {
-        // 1. REALISTIC CORNER WEBS (Using your real web.png image!)
-        const corners = [
-            { top: '-20px', left: '-20px', transform: 'rotate(0deg)' },
-            { top: '-20px', right: '-20px', transform: 'rotate(90deg)' },
-            { bottom: '-20px', left: '-20px', transform: 'rotate(-90deg)' },
-            { bottom: '-20px', right: '-20px', transform: 'rotate(180deg)' }
-        ];
+        // 1. STATIC CORNER WEB (Top Left Only)
+        const web = document.createElement('div');
+        web.className = 'corner-web'; 
+        web.style.position = 'fixed';
+        web.style.width = '450px';
+        web.style.height = '450px';
+        web.style.backgroundImage = 'url("asset/web.png")'; 
+        web.style.backgroundSize = 'contain';
+        web.style.backgroundRepeat = 'no-repeat';
+        web.style.opacity = '0.4'; // Keep it subtle and ghostly
+        web.style.zIndex = '-3'; 
+        web.style.pointerEvents = 'none'; 
+        web.style.top = '58px';
+        web.style.left = '-20px';
+        web.style.transform = 'rotate(0deg)';
+        
+        document.body.appendChild(web);
 
-        // Pick 2 or 3 corners randomly so it looks organic
-        const numWebs = Math.floor(Math.random() * 2) + 2; 
-        const selectedCorners = corners.sort(() => 0.5 - Math.random()).slice(0, numWebs);
-
-        selectedCorners.forEach(pos => {
-            const web = document.createElement('div');
-            web.className = 'corner-web'; 
-            web.style.position = 'fixed';
-            web.style.width = '450px';  // Made them larger and more imposing
-            web.style.height = '450px';
-            web.style.backgroundImage = 'url("asset/web.png")'; // Pointing to your new real image!
-            web.style.backgroundSize = 'contain';
-            web.style.backgroundRepeat = 'no-repeat';
-            web.style.opacity = '0.4'; // Keep them subtle and ghostly
-            web.style.zIndex = '-3'; 
-            web.style.pointerEvents = 'none'; 
-            
-            if (pos.top) web.style.top = pos.top;
-            if (pos.bottom) web.style.bottom = pos.bottom;
-            if (pos.left) web.style.left = pos.left;
-            if (pos.right) web.style.right = pos.right;
-            web.style.transform = pos.transform;
-            
-            document.body.appendChild(web);
-        });
-
-        // 2. REALISTIC GLOWING EMBERS (No more crypto-startup lines)
+        // 2. REALISTIC GLOWING EMBERS
         const canvas = document.createElement('canvas');
         canvas.id = 'ember-canvas';
         canvas.style.position = 'fixed';
