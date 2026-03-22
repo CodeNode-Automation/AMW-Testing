@@ -80,27 +80,5 @@ def setup_database():
         )
     """)
 
-    # Store the player's profession levels
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS professions (
-            character_name TEXT, 
-            profession TEXT, 
-            skill_level INTEGER, 
-            max_level INTEGER,
-            PRIMARY KEY (character_name, profession)
-        )
-    """)
-
-    # Store the actual recipes they know
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS known_recipes (
-            character_name TEXT,
-            profession TEXT,
-            recipe_id INTEGER,
-            recipe_name TEXT,
-            PRIMARY KEY (character_name, profession, recipe_id)
-        )
-    """)
-
     conn.commit()
     conn.close()

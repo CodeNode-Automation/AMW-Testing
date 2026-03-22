@@ -237,13 +237,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     <div class="embers-container">
 """
 
-    for _ in range(120):
-        left = random.uniform(0, 100)
-        size = random.uniform(2, 6)
-        color = f"rgb(255, {random.randint(100, 220)}, 0)"
-        blur = random.uniform(0, 3) if size > 3.5 else random.uniform(0, 0.5)
-        html += f'<div class="ember" style="left: {left:.2f}%; width: {size:.1f}px; height: {size:.1f}px; background: {color}; box-shadow: 0 0 {size*2:.1f}px {color}, 0 0 {size*4:.1f}px #ff4400; filter: blur({blur:.1f}px); animation-duration: {random.uniform(5, 18):.1f}s; animation-delay: {random.uniform(0, 10):.1f}s;"></div>\n'
-        
+
     html += f"""
     </div>
 

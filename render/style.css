@@ -189,3 +189,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     .search-box:focus-within input { width: 100%; padding: 0 10px; opacity: 1; cursor: text; }
     .search-autocomplete { width: 100%; top: calc(100% + 5px); }
 }
+
+/* 🕸️ Breathing animation for the corner spiderwebs */
+.corner-web {
+    animation: breatheWeb 6s ease-in-out infinite alternate;
+}
+
+@keyframes breatheWeb {
+    0% { opacity: 0.3; transform: scale(0.98); filter: drop-shadow(0 0 5px rgba(163, 53, 238, 0.2)); }
+    100% { opacity: 0.7; transform: scale(1.02); filter: drop-shadow(0 0 15px rgba(163, 53, 238, 0.6)); }
+}

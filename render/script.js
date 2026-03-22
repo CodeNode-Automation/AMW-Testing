@@ -40,27 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     const rawRes = await fetch('asset/raw_roster.json');
     const rawGuildRoster = await rawRes.json();
-
-    // --- NEW: Fetch Profession Data ---
-    let profData = {};
-    try {
-        const profRes = await fetch('asset/professions.json');
-        if (profRes.ok) profData = await profRes.json();
-    } catch (e) { console.log("Profession data not yet available."); }
-
-    // --- NEW: Inject a "Crafters" button into the Navbar ---
-    const controlsWrapper = document.querySelector('.controls-wrapper');
-    if (controlsWrapper) {
-        const crafterBtn = document.createElement('a');
-        crafterBtn.href = "#crafters";
-        crafterBtn.className = "nav-btn nav-btn-home";
-        crafterBtn.style.borderColor = "#a335ee"; // Epic purple
-        crafterBtn.style.color = "#a335ee";
-        crafterBtn.innerHTML = "⚒️<span class='home-text'> Crafters</span>";
-        // Insert it right after the Home button
-        controlsWrapper.insertBefore(crafterBtn, controlsWrapper.children[1]);
-    }
-
+    
     const active14Days = config.active_14_days;
     const raidReadyCount = config.raid_ready_count;
 
@@ -1084,145 +1064,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- NEW & IMPROVED: Guild Crafters Directory ---
-    function showCraftersView(pData) {
-        hideAllViews();
-        fullCardContainer.style.display = 'block';
-        if (navbar) navbar.style.background = '#111';
-
-        // 1. Group the raw data by Profession instead of by Character
-        const profGroups = {};
-        for (const [charName, profs] of Object.entries(pData)) {
-            for (const [profName, profDetails] of Object.entries(profs)) {
-                if (!profGroups[profName]) profGroups[profName] = [];
-                profGroups[profName].push({
-                    char: charName,
-                    skill: profDetails.skill,
-                    max: profDetails.max,
-                    recipes: profDetails.recipes
-                });
-            }
-        }
-
-        // 2. Sort the crafters within each profession from highest skill to lowest
-        for (const profName in profGroups) {
-            profGroups[profName].sort((a, b) => b.skill - a.skill);
-        }
-
-        // Get an alphabetical list of professions currently in the guild
-        const availableProfs = Object.keys(profGroups).sort();
-
-        // Map icons for the buttons
-        const profIcons = {
-            "Alchemy": "trade_alchemy", "Blacksmithing": "trade_blacksmithing",
-            "Enchanting": "trade_engraving", "Engineering": "trade_engineering",
-            "Herbalism": "spell_nature_naturetouchgrow", "Inscription": "inv_inscription_tradeskill01",
-            "Jewelcrafting": "inv_misc_gem_01", "Leatherworking": "inv_misc_armorkit_17",
-            "Mining": "trade_mining", "Tailoring": "trade_tailoring",
-            "Cooking": "inv_misc_food_15", "First Aid": "spell_holy_sealofsacrifice", "Fishing": "trade_fishing"
-        };
-
-        let html = `
-        <div class="char-card faction-alliance" style="border-top-color: #a335ee; animation: fadeInUp 0.4s forwards; padding: 30px;">
-            <h2 style="color: #a335ee; font-family: 'Cinzel'; text-align: center; font-size: 32px; text-shadow: 0 2px 4px #000; margin-top: 0;">⚒️ Guild Crafters</h2>
-            <p style="text-align: center; color: #aaa; margin-bottom: 30px; font-style: italic;">Select a profession to view our crafters and their known recipes.</p>
-
-            <div id="prof-buttons" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px;">
-                ${availableProfs.length === 0 ? '<div style="color:#e74c3c;">No professions synced yet.</div>' : ''}
-                ${availableProfs.map(prof => {
-                    let icon = profIcons[prof] || "inv_misc_questionmark";
-                    return `<button class="prof-btn" data-prof="${prof}" style="background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 8px 16px; border-radius: 8px; font-family: 'Cinzel'; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;">
-                        <img src="https://wow.zamimg.com/images/wow/icons/small/${icon}.jpg" style="border-radius: 4px; border: 1px solid #222;">
-                        ${prof}
-                    </button>`;
-                }).join('')}
-            </div>
-
-            <div id="crafters-list" style="display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto;"></div>
-        </div>`;
-
-        fullCardContainer.innerHTML = html;
-
-        const craftersList = document.getElementById('crafters-list');
-        const profButtons = document.querySelectorAll('.prof-btn');
-
-        function renderCrafters(profName) {
-            // Highlight the active button
-            profButtons.forEach(btn => {
-                if (btn.getAttribute('data-prof') === profName) {
-                    btn.style.borderColor = '#a335ee'; btn.style.background = 'rgba(163, 53, 238, 0.1)'; btn.style.color = '#ffd100';
-                } else {
-                    btn.style.borderColor = '#333'; btn.style.background = 'rgba(0,0,0,0.6)'; btn.style.color = '#fff';
-                }
-            });
-
-            const crafters = profGroups[profName];
-            if (!crafters) return;
-
-            // Generate the expandable accordion for each crafter
-            craftersList.innerHTML = crafters.map((c) => {
-                c.recipes.sort((a, b) => a.name.localeCompare(b.name)); // Sort recipes alphabetically
-
-                return `
-                <div class="crafter-block" style="background: rgba(0,0,0,0.4); border: 1px solid #333; border-left: 4px solid #a335ee; border-radius: 8px; overflow: hidden;">
-                    
-                    <div class="crafter-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none';" style="padding: 15px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;">
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <span style="color: #ffd100; font-family: 'Cinzel'; font-size: 20px; font-weight: bold; text-shadow: 1px 1px 2px #000;">${c.char}</span>
-                            <span style="color: #aaa; font-size: 13px;">Skill: <span style="color: #2ecc71; font-weight: bold;">${c.skill}</span> / ${c.max}</span>
-                        </div>
-                        <div style="color: #a335ee; font-size: 14px; font-style: italic; font-weight: bold;">
-                            ${c.recipes.length} Recipes ▼
-                        </div>
-                    </div>
-                    
-                    <div class="crafter-recipes" style="display: none; padding: 20px; border-top: 1px solid #222; max-height: 400px; overflow-y: auto; background: rgba(10,10,10,0.95);">
-                        ${c.recipes.length === 0 ? '<div style="color:#666; font-style:italic;">No recipes synced yet.</div>' : ''}
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
-                            ${c.recipes.map(r => `
-                                <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; border: 1px solid #222;">
-                                    <a href="https://www.wowhead.com/tbc/spell=${r.id}" target="_blank" style="color: #fff; text-decoration: none; font-size: 13px; text-shadow: 1px 1px 2px #000;" class="q1">${r.name}</a>
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <div style="margin-top: 20px; text-align: right;">
-                            <button onclick="window.location.hash='${c.char.toLowerCase()}'" style="background: transparent; border: 1px solid #a335ee; color: #a335ee; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-family: 'Cinzel'; transition: 0.2s;" onmouseover="this.style.background='#a335ee'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#a335ee';">Inspect ${c.char}</button>
-                        </div>
-                    </div>
-
-                </div>`;
-            }).join('');
-
-            // Tell WoWHead to attach tooltips to the newly generated recipe links
-            if (typeof $WowheadPower !== 'undefined') {
-                $WowheadPower.refreshLinks();
-            }
-        }
-
-        // Attach click listeners to the buttons
-        profButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                renderCrafters(e.currentTarget.getAttribute('data-prof'));
-            });
-        });
-
-        // Auto-load the first profession in the list when the page opens
-        if (availableProfs.length > 0) {
-            renderCrafters(availableProfs[0]);
-        }
-    }
-    
     function route() {
         const hash = decodeURIComponent(window.location.hash.substring(1));
         
         if (!hash || hash === '') {
             showHomeView();
-        } else if (hash === 'crafters') {
-            // NEW: Route to the crafters UI!
-            showCraftersView(profData);
-            updateDropdownLabel('all');
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
             updateDropdownLabel('all');
@@ -1369,6 +1215,157 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
+    // ==========================================
+    // 🕸️ INTERACTIVE SPARK & SPIDERWEB BACKGROUND
+    // ==========================================
+    function initSpiderWebEffect() {
+        // 1. ADD STATIC GRAPHIC WEBS TO RANDOM CORNERS
+        // We define the 4 corners and rotate the web to fit perfectly
+        const corners = [
+            { top: '-10px', left: '-10px', transform: 'rotate(0deg)' },
+            { top: '-10px', right: '-10px', transform: 'rotate(90deg)' },
+            { bottom: '-10px', left: '-10px', transform: 'rotate(-90deg)' },
+            { bottom: '-10px', right: '-10px', transform: 'rotate(180deg)' }
+        ];
+
+        // Randomly pick 2 or 3 corners so it feels organic every page load
+        const numWebs = Math.floor(Math.random() * 2) + 2; 
+        const selectedCorners = corners.sort(() => 0.5 - Math.random()).slice(0, numWebs);
+
+        // Mathematical SVG data for a perfect curved spiderweb (colored Epic Purple)
+        const webSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,0 L100,0 M0,0 L85,35 M0,0 L60,60 M0,0 L35,85 M0,0 L0,100' stroke='rgba(163,53,238,0.4)' stroke-width='1.5' fill='none'/%3E%3Cpath d='M20,0 Q20,10 0,20 M40,0 Q40,20 0,40 M65,0 Q60,30 0,65 M95,0 Q80,45 0,95' stroke='rgba(163,53,238,0.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E")`;
+
+        selectedCorners.forEach(pos => {
+            const web = document.createElement('div');
+            web.className = 'corner-web'; // Class for CSS animation
+            web.style.position = 'fixed';
+            web.style.width = '280px';
+            web.style.height = '280px';
+            web.style.backgroundImage = webSvg;
+            web.style.backgroundSize = 'contain';
+            web.style.backgroundRepeat = 'no-repeat';
+            web.style.zIndex = '-3'; // Sit behind everything
+            web.style.pointerEvents = 'none'; // Don't block mouse clicks
+            
+            if (pos.top) web.style.top = pos.top;
+            if (pos.bottom) web.style.bottom = pos.bottom;
+            if (pos.left) web.style.left = pos.left;
+            if (pos.right) web.style.right = pos.right;
+            web.style.transform = pos.transform;
+            
+            document.body.appendChild(web);
+        });
+
+        // 2. CREATE THE INTERACTIVE PARTICLE CANVAS
+        const canvas = document.createElement('canvas');
+        canvas.id = 'spider-canvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.zIndex = '-2'; 
+        canvas.style.pointerEvents = 'none'; 
+        document.body.prepend(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let mouse = { x: null, y: null };
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        document.addEventListener('mouseleave', () => {
+            mouse.x = null; mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.8; 
+                this.vy = (Math.random() - 0.5) * 1 - 0.5; // Drift slightly upwards
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Screen wrap
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 209, 0, 0.8)'; // WoW Gold
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Spawn 70 sparks
+        for (let i = 0; i < 70; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                // Connect close particles with gold thread
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 110) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 209, 0, ${(1 - dist / 110) * 0.3})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Connect particles to the mouse with Epic Purple thread!
+                if (mouse.x) {
+                    let dx = particles[i].x - mouse.x;
+                    let dy = particles[i].y - mouse.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 160) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(163, 53, 238, ${(1 - dist / 160) * 0.5})`; 
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // Fire it up!
+    initSpiderWebEffect();
+
     // Initialize routing
     route();
     window.addEventListener('hashchange', route);
