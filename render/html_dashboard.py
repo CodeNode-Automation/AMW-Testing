@@ -263,13 +263,13 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
 
         var vid = document.getElementById('intro-video');
         if (vid) {{
-            vid.playbackRate = 1.25; // Forces the video to play at 1.25x speed!
+            vid.playbackRate = 1.5; 
             vid.addEventListener('ended', killIntro); 
             vid.addEventListener('error', killIntro); 
         }}
         
         // The absolute guarantee: kill it at 7 seconds now since the video is faster
-        setTimeout(killIntro, 7000);
+        setTimeout(killIntro, 6000);
     </script>
     <div class="embers-container">
 """

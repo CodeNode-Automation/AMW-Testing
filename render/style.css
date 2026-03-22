@@ -13,29 +13,29 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; /* Black background behind video */
-    z-index: 9999; /* Keep it above everything */
+    background-color: #000; 
+    z-index: 9999; 
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 1s ease-in-out; /* Fade out effect */
+    transition: opacity 1.5s ease-in-out;
 }
 
 #intro-video {
-    width: 80%;         /* Shrunk from 100% */
-    height: 80%;        /* Shrunk from 100% */
+    width: 80%;         
+    height: 80%;       
     object-fit: contain;
     max-width: 100vw;
     max-height: 100vh;
 }
 
-/* Helper class to fade out */
+
 #intro-container.fade-out {
     opacity: 0 !important;
     pointer-events: none !important; 
 }
 
-/* Helper class to fade in */
+
 .fade-in {
     opacity: 1 !important;
 }
