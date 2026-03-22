@@ -1216,20 +1216,20 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     
     // ==========================================
-    // 🌌 TBC ATMOSPHERE: AMBIENT & SUBDUED
+    // 🌌 TBC ATMOSPHERE: NETHERSTORM
     // ==========================================
     function initAtmosphere() {
         // 1. STATIC CORNER WEB
         const web = document.createElement('div');
         web.className = 'corner-web'; 
         web.style.position = 'fixed';
-        web.style.width = '550px'; 
-        web.style.height = '550px';
+        web.style.width = '400px'; 
+        web.style.height = '400px';
         web.style.backgroundImage = 'url("asset/web.png")'; 
         web.style.backgroundSize = 'contain';
         web.style.backgroundRepeat = 'no-repeat';
-        web.style.opacity = '0.25'; // Dimmed the static web slightly
-        web.style.filter = 'drop-shadow(0 0 10px rgba(163, 53, 238, 0.3))';
+        web.style.opacity = '0.4'; // Restored visibility
+        web.style.filter = 'drop-shadow(0 0 15px rgba(163, 53, 238, 0.6))';
         web.style.zIndex = '-3'; 
         web.style.pointerEvents = 'none'; 
         web.style.top = '60px';
@@ -1264,34 +1264,34 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.addEventListener('resize', resize);
         resize();
 
-        let mouse = { x: null, y: null, radius: 120 };
+        let mouse = { x: null, y: null, radius: 150 };
         document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
         document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
 
-        // --- CLASS 1: AMBIENT SPARKS ---
+        // --- CLASS 1: FEL & NETHER SPARKS ---
         class Spark {
             constructor() {
                 this.z = Math.random() * 0.8 + 0.2; 
                 this.x = Math.random() * width;
                 this.y = Math.random() * height + height; 
-                this.size = (Math.random() * 1.5 + 0.5) * this.z; // Much smaller
-                this.speed = (Math.random() * 0.6 + 0.2) * this.z; // Much slower
+                this.size = (Math.random() * 2.5 + 1) * this.z; // Restored size
+                this.speed = (Math.random() * 1.5 + 0.5) * this.z * 1.5; 
                 this.angle = Math.random() * 360; 
-                this.spin = (Math.random() - 0.5) * 0.02;
-                this.opacity = (Math.random() * 0.4 + 0.1) * this.z; // Much dimmer
+                this.spin = (Math.random() - 0.5) * 0.05;
+                this.opacity = (Math.random() * 0.8 + 0.2) * this.z;
 
                 if (Math.random() > 0.4) {
                     this.coreColor = `rgba(180, 255, 180, ${this.opacity})`; 
-                    this.glowColor = '#1eff00'; 
+                    this.glowColor = '#1eff00'; // Fel Green
                 } else {
                     this.coreColor = `rgba(230, 180, 255, ${this.opacity})`; 
-                    this.glowColor = '#a335ee'; 
+                    this.glowColor = '#a335ee'; // Nether Purple
                 }
             }
             update() {
                 this.y -= this.speed; 
                 this.angle += this.spin;
-                this.x += (Math.sin(this.angle) * 0.3 + windForce * 1.5) * this.z; 
+                this.x += (Math.sin(this.angle) * 0.5 + windForce * 2.5) * this.z; 
                 
                 if (mouse.x != null) {
                     let dx = mouse.x - this.x;
@@ -1299,20 +1299,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     if (distance < mouse.radius) {
                         const force = (mouse.radius - distance) / mouse.radius;
-                        this.x -= (dx / distance) * force * 2 * this.z;
-                        this.y -= (dy / distance) * force * 2 * this.z;
+                        this.x -= (dx / distance) * force * 3 * this.z;
+                        this.y -= (dy / distance) * force * 3 * this.z;
                     }
                 }
                 if (this.y < -20) {
                     this.y = height + 20;
                     this.x = Math.random() * width;
-                    this.opacity = (Math.random() * 0.4 + 0.1) * this.z;
+                    this.opacity = (Math.random() * 0.8 + 0.2) * this.z;
                 }
             }
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.shadowBlur = 8 * this.z; // Less harsh glow
+                ctx.shadowBlur = 12 * this.z; 
                 ctx.shadowColor = this.glowColor; 
                 ctx.fillStyle = this.coreColor;
                 ctx.fill();
@@ -1320,25 +1320,19 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // --- CLASS 2: EDGED SILK NODES ---
+        // --- CLASS 2: FULL-SCREEN SILK NODES ---
         class SilkNode {
             constructor() {
                 this.z = Math.random() * 0.8 + 0.2; 
-                
-                // Push nodes to the top 40% or the outer 20% edges of the screen!
-                if (Math.random() > 0.5) {
-                    this.y = Math.random() * (height * 0.4); 
-                    this.x = Math.random() * width;
-                } else {
-                    this.y = Math.random() * height;
-                    this.x = Math.random() > 0.5 ? Math.random() * (width * 0.2) : width - Math.random() * (width * 0.2);
-                }
+                // Restored full-screen spread so they actually connect!
+                this.x = Math.random() * width;
+                this.y = Math.random() * height; 
 
-                this.vx = (Math.random() - 0.5) * 0.1 * this.z; 
-                this.vy = (Math.random() - 0.5) * 0.1 * this.z;
+                this.vx = (Math.random() - 0.5) * 0.15 * this.z; 
+                this.vy = (Math.random() - 0.5) * 0.15 * this.z;
             }
             update() {
-                this.x += this.vx + (windForce * 0.3 * this.z);
+                this.x += this.vx + (windForce * 0.5 * this.z);
                 this.y += this.vy;
                 
                 if (mouse.x != null) {
@@ -1346,10 +1340,15 @@ window.addEventListener('DOMContentLoaded', async () => {
                     let dy = mouse.y - this.y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < 150) {
-                        this.x -= (dx / dist) * 0.3 * this.z;
-                        this.y -= (dy / dist) * 0.3 * this.z;
+                        this.x -= (dx / dist) * 0.5 * this.z;
+                        this.y -= (dy / dist) * 0.5 * this.z;
                     }
                 }
+
+                if (this.x < -100) this.x = width + 100;
+                if (this.x > width + 100) this.x = -100;
+                if (this.y < -100) this.y = height + 100;
+                if (this.y > height + 100) this.y = -100;
             }
         }
 
@@ -1359,8 +1358,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 this.currentNode = silkNodes[Math.floor(Math.random() * silkNodes.length)];
                 this.targetNode = null;
                 this.progress = 0; 
-                this.speed = Math.random() * 0.002 + 0.001; 
-                this.pauseTimer = Math.random() * 200;
+                this.speed = Math.random() * 0.003 + 0.001; 
+                this.pauseTimer = Math.random() * 100;
                 this.x = this.currentNode.x;
                 this.y = this.currentNode.y;
                 this.z = this.currentNode.z;
@@ -1377,7 +1376,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (n === this.currentNode) return false;
                         let dx = n.x - this.currentNode.x;
                         let dy = n.y - this.currentNode.y;
-                        return Math.sqrt(dx * dx + dy * dy) < 250 && Math.abs(n.z - this.currentNode.z) < 0.3;
+                        // Restored forgiving connection distance
+                        return Math.sqrt(dx * dx + dy * dy) < 350 && Math.abs(n.z - this.currentNode.z) < 0.4;
                     });
                     if (neighbors.length > 0) {
                         this.targetNode = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -1391,7 +1391,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         this.currentNode = this.targetNode;
                         this.targetNode = null;
                         this.z = this.currentNode.z;
-                        this.pauseTimer = Math.random() * 300 + 100; 
+                        this.pauseTimer = Math.random() * 150 + 50; 
                     } else {
                         let t = this.progress;
                         let p0 = this.currentNode;
@@ -1411,17 +1411,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }
             draw() {
-                ctx.fillStyle = `rgba(200, 100, 255, ${0.7 * this.z})`;
-                ctx.shadowBlur = 3 * this.z;
+                ctx.fillStyle = `rgba(200, 100, 255, ${0.9 * this.z})`;
+                ctx.shadowBlur = 5 * this.z;
                 ctx.shadowColor = '#a335ee';
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 2 * this.z, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, 2.5 * this.z, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.shadowBlur = 0;
-                ctx.strokeStyle = `rgba(163, 53, 238, ${0.5 * this.z})`;
-                ctx.lineWidth = 0.8 * this.z;
+                ctx.strokeStyle = `rgba(163, 53, 238, ${0.8 * this.z})`;
+                ctx.lineWidth = 1 * this.z;
                 ctx.beginPath();
-                let lSize = 2.5 * this.z;
+                let lSize = 3.5 * this.z;
                 ctx.moveTo(this.x - lSize, this.y - lSize); ctx.lineTo(this.x + lSize, this.y + lSize);
                 ctx.moveTo(this.x + lSize, this.y - lSize); ctx.lineTo(this.x - lSize, this.y + lSize);
                 ctx.moveTo(this.x - lSize - 1, this.y); ctx.lineTo(this.x + lSize + 1, this.y);
@@ -1430,16 +1430,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Drastically reduced counts
-        for (let i = 0; i < 30; i++) sparks.push(new Spark()); // Was 120
-        for (let i = 0; i < 35; i++) silkNodes.push(new SilkNode()); // Was 60
-        for (let i = 0; i < 6; i++) spiders.push(new NetherSpider()); // Was 18
+        // Restored counts for visual impact
+        for (let i = 0; i < 90; i++) sparks.push(new Spark()); // Strong particle presence
+        for (let i = 0; i < 70; i++) silkNodes.push(new SilkNode()); // Dense enough to form webs
+        for (let i = 0; i < 12; i++) spiders.push(new NetherSpider()); // Noticeable but not overwhelming
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
 
-            windTime += 0.005; // Softer wind
-            windForce = (Math.sin(windTime) * 0.5 + Math.sin(windTime * 0.3) * 0.8) * 0.4;
+            windTime += 0.01;
+            windForce = (Math.sin(windTime) * 0.5 + Math.sin(windTime * 0.3) * 0.8) * 0.6;
 
             // 1. Draw Webs
             for (let i = 0; i < silkNodes.length; i++) {
@@ -1450,16 +1450,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                     let dist = Math.sqrt(dx * dx + dy * dy);
                     let zDist = Math.abs(silkNodes[i].z - silkNodes[j].z); 
 
-                    if (dist < 250 && zDist < 0.3) { // Shorter connection distance
+                    if (dist < 350 && zDist < 0.4) {
                         let avgZ = (silkNodes[i].z + silkNodes[j].z) / 2;
                         let sag = dist * 0.35 * avgZ; 
                         let midX = (silkNodes[i].x + silkNodes[j].x) / 2;
                         let midY = (silkNodes[i].y + silkNodes[j].y) / 2 + sag;
 
                         ctx.beginPath();
-                        let alpha = (1 - dist / 250) * 0.12 * avgZ; // Fainter lines
+                        // DRASTICALLY boosted the alpha (opacity) of the silk threads
+                        let alpha = (1 - dist / 350) * 0.45 * avgZ; 
                         ctx.strokeStyle = `rgba(163, 53, 238, ${alpha})`; 
-                        ctx.lineWidth = 1.2 * avgZ; 
+                        ctx.lineWidth = 1.5 * avgZ; // Made threads thicker
                         ctx.moveTo(silkNodes[i].x, silkNodes[i].y);
                         ctx.quadraticCurveTo(midX, midY, silkNodes[j].x, silkNodes[j].y);
                         ctx.stroke();
@@ -1467,15 +1468,23 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            for (let i = 0; i < spiders.length; i++) { spiders[i].update(); spiders[i].draw(); }
-            for (let i = 0; i < sparks.length; i++) { sparks[i].update(); sparks[i].draw(); }
+            // 2. Draw Spiders
+            for (let i = 0; i < spiders.length; i++) {
+                spiders[i].update();
+                spiders[i].draw();
+            }
+
+            // 3. Draw Sparks
+            for (let i = 0; i < sparks.length; i++) {
+                sparks[i].update();
+                sparks[i].draw();
+            }
 
             requestAnimationFrame(animate);
         }
         animate();
     }
 
-    // Fire it up!
     initAtmosphere();
 
 
