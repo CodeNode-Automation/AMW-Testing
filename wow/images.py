@@ -1,4 +1,3 @@
-import base64
 import re
 import asyncio
 
@@ -98,17 +97,10 @@ async def fetch_wowhead_icon_url(session, item_id):
         
     return None
 
-async def get_base64_image(session, url):
+def get_standardized_image_url(url):
     """
-    Downloads an image payload from a given URL and encodes it into a Base64 data URI.
-    
-    Args:
-        session (aiohttp.ClientSession): The active asynchronous HTTP session.
-        url (str): The direct URL to the image resource.
-        
-    Returns:
-        str | None: The Base64 encoded string format suitable for inline HTML/SVG rendering, 
-                    or None if the download fails.
+    Standardizes image domains if pointing to a deprecated or restricted render URL.
+    Returns the direct URL for the HTML to render natively.
     """
     if not url:
         return None
@@ -122,17 +114,4 @@ async def get_base64_image(session, url):
         except Exception:
             pass 
             
-    try:
-        headers = {"User-Agent": REAL_BROWSER_UA}
-        # Append referer header for strict external CDNs
-        if "zamimg.com" in url or "wowhead.com" in url:
-            headers["Referer"] = "https://www.wowhead.com/"
-            
-        async with session.get(url, headers=headers, timeout=5) as response:
-            response.raise_for_status()
-            content = await response.read()
-            encoded = base64.b64encode(content).decode('utf-8')
-            return f"data:image/jpeg;base64,{encoded}"
-    except Exception as e:
-        # Fails silently to allow upstream logic to apply fallback icons
-        return None
+    return url

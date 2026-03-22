@@ -1,7 +1,7 @@
 import asyncio
 from wow.api import fetch_wow_endpoint
 from wow.items import process_equipment
-from wow.images import get_base64_image
+from wow.images import get_standardized_image_url
 from config import REALM
 from datetime import datetime, timezone
 
@@ -56,8 +56,7 @@ async def fetch_character_data(session, token, char, history_data):
                 if asset.get('key') == 'avatar':
                     render_url = asset.get('value')
 
-    # Convert the render URL into a Base64 string so the HTML can embed it directly without external calls
-    portrait_base64 = await get_base64_image(session, render_url) if render_url else None
+    portrait_url = get_standardized_image_url(render_url) if render_url else None
 
     # Compare current equipment against historical state to detect new upgrades
     past_gear = history_data.get(char, {})
@@ -97,7 +96,7 @@ async def fetch_character_data(session, token, char, history_data):
         "profile": profile,
         "equipped": equipped_dict,
         "stats": stats,
-        "render_url": render_url,
+        "render_url": portrait_url,
         "upgrades": upgrades,
         "level_up": level_up,
         "current_level": current_level
