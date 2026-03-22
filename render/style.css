@@ -22,9 +22,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 }
 
 #intro-video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Changed from cover to contain! */
+    width: 80%;         /* Shrunk from 100% */
+    height: 80%;        /* Shrunk from 100% */
+    object-fit: contain;
     max-width: 100vw;
     max-height: 100vh;
 }
