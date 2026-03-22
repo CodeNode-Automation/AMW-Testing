@@ -297,7 +297,76 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
+        
+        // --- NEW: Class Distribution Donut Chart ---
+        const classCounts = {};
+        // Tally up classes from the entire raw roster
+        rawGuildRoster.forEach(char => {
+            const cClass = char.class || 'Unknown';
+            if (cClass !== 'Unknown') {
+                classCounts[cClass] = (classCounts[cClass] || 0) + 1;
+            }
+        });
 
+        // Sort classes by highest count first
+        const sortedClasses = Object.keys(classCounts).sort((a, b) => classCounts[b] - classCounts[a]);
+        const donutLabels = sortedClasses;
+        const donutData = sortedClasses.map(cls => classCounts[cls]);
+        const donutColors = sortedClasses.map(cls => CLASS_COLORS[cls] || '#888');
+
+        const donutCtx = document.getElementById('classDonutChart');
+        if (donutCtx) {
+            new Chart(donutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: donutLabels,
+                    datasets: [{
+                        data: donutData,
+                        backgroundColor: donutColors,
+                        borderColor: '#111', // Matches dark theme background
+                        borderWidth: 2,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%', // Makes the donut ring thinner and sleeker
+                    plugins: {
+                        legend: {
+                            position: 'right', // Put the legend on the right so it fits nicely
+                            labels: {
+                                color: '#bbb',
+                                font: { family: 'Cinzel', size: 11 },
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.9)',
+                            titleColor: '#fff',
+                            bodyFont: { family: 'Cinzel', size: 14, weight: 'bold' },
+                            borderColor: '#ffd100',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed !== null) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((context.parsed / total) * 100);
+                                        // Shows "Warrior: 45 (20%)"
+                                        label += context.parsed + ' (' + percentage + '%)'; 
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
         // --- Original Heatmap Grid ---
         let heatmapHtml = '';
         
