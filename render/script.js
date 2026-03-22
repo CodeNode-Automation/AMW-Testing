@@ -1486,34 +1486,43 @@ window.addEventListener('DOMContentLoaded', async () => {
         animate();
     }
     initAtmosphere();
-    
+
     document.addEventListener('DOMContentLoaded', () => {
     const introContainer = document.getElementById('intro-container');
     const introVideo = document.getElementById('intro-video');
     const mainDashboard = document.getElementById('main-dashboard');
 
-        if (introVideo && introContainer && mainDashboard) {
-            // When the video ends, fade it out and fade in the dashboard
-            introVideo.addEventListener('ended', () => {
-                introContainer.classList.add('fade-out');
-                mainDashboard.classList.add('fade-in');
-                
-                // Optional: Completely remove the video container from the DOM after the fade
-                setTimeout(() => {
-                    introContainer.remove();
-                }, 1000); // Matches the 1s transition in CSS
-            });
-            
-            // Failsafe: If the video fails to load or play, show the dashboard anyway
-            introVideo.addEventListener('error', () => {
-                introContainer.style.display = 'none';
-                mainDashboard.classList.add('fade-in');
-            });
-        } else {
-            // If video elements aren't found, just show the dashboard
-            if(mainDashboard) mainDashboard.classList.add('fade-in');
+        if (introContainer && mainDashboard) {
+            // The master function to fade out the video and fade in the site
+            const fadeOutIntro = () => {
+                // Check to make sure we don't accidentally run this twice
+                if (!introContainer.classList.contains('fade-out')) {
+                    introContainer.classList.add('fade-out');
+                    mainDashboard.classList.add('fade-in');
+                    
+                    // Completely remove the video player from the site 1 second after fading
+                    setTimeout(() => {
+                        introContainer.remove();
+                    }, 1000); 
+                }
+            };
+
+            // Trigger 1: Try to fire the fade normally when the video says it ended
+            if (introVideo) {
+                introVideo.addEventListener('ended', fadeOutIntro);
+                introVideo.addEventListener('error', fadeOutIntro); // Failsafe if video crashes
+            }
+
+            // Trigger 2: The Bulletproof Backup Timer!
+            // Your video is 8 seconds long. If the browser gets confused and doesn't 
+            // fire the 'ended' event, this forces the fade out at exactly 8.5 seconds.
+            setTimeout(fadeOutIntro, 8500); 
+
+        } else if (mainDashboard) {
+            // Failsafe: if the intro stuff is missing, just show the dashboard immediately
+            mainDashboard.classList.add('fade-in');
         }
-    }); 
+    });
 
     
 

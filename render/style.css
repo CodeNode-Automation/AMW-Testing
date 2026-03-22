@@ -11,8 +11,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     position: fixed;
     top: 0;
     left: 0;
-    width: 75%;
-    height: 75%;
+    width: 100%;
+    height: 100%;
     background-color: #000; /* Black background behind video */
     z-index: 9999; /* Keep it above everything */
     display: flex;
@@ -24,7 +24,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 #intro-video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Make sure video fills the screen */
+    object-fit: contain; /* Changed from cover to contain! */
+    max-width: 100vw;
+    max-height: 100vh;
 }
 
 /* Helper class to fade out */
