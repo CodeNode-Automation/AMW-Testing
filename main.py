@@ -158,6 +158,8 @@ async def main_async():
                     print("❌ Fatal Error: Could not fetch guild roster.")
                     # Let the rest of the script continue with an empty roster to prevent a hard crash
 
+        roster_names = roster_names[:50]
+        
         print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters (> Lvl 10).")
 
         sem = asyncio.Semaphore(5)
