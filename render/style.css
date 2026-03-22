@@ -30,9 +30,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 }
 
 /* Helper class to fade out */
-.fade-out {
-    opacity: 0;
-    pointer-events: none; /* Prevent clicks while fading */
+#intro-container.fade-out {
+    opacity: 0 !important;
+    pointer-events: none !important; 
 }
 
 /* Helper class to fade in */

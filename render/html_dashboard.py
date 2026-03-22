@@ -240,6 +240,36 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             Your browser does not support the video tag.
         </video>
     </div>
+    <script>
+        // Self-contained script to guarantee the video dies and the site loads
+        function killIntro() {{
+            var intro = document.getElementById('intro-container');
+            var dash = document.querySelector('.dashboard-layout');
+            
+            if (intro && !intro.classList.contains('fade-out')) {{
+                intro.classList.add('fade-out'); // Fade it to black
+                
+                if (dash) {{
+                    dash.style.opacity = '1';
+                    dash.style.transition = 'opacity 1.5s ease-in-out';
+                }}
+                
+                // Destroy the video element to free up memory
+                setTimeout(function() {{ 
+                    if (intro) intro.remove(); 
+                }}, 1000);
+            }}
+        }}
+
+        var vid = document.getElementById('intro-video');
+        if (vid) {{
+            vid.addEventListener('ended', killIntro); // Fade on end
+            vid.addEventListener('error', killIntro); // Fade if the video file goes missing
+        }}
+        
+        // The absolute guarantee: kill it at 8.5 seconds no matter what
+        setTimeout(killIntro, 8500);
+    </script>
     <div class="embers-container">
 """
 
