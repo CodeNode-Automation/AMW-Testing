@@ -1485,8 +1485,37 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         animate();
     }
-
     initAtmosphere();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+    const introContainer = document.getElementById('intro-container');
+    const introVideo = document.getElementById('intro-video');
+    const mainDashboard = document.getElementById('main-dashboard');
+
+        if (introVideo && introContainer && mainDashboard) {
+            // When the video ends, fade it out and fade in the dashboard
+            introVideo.addEventListener('ended', () => {
+                introContainer.classList.add('fade-out');
+                mainDashboard.classList.add('fade-in');
+                
+                // Optional: Completely remove the video container from the DOM after the fade
+                setTimeout(() => {
+                    introContainer.remove();
+                }, 1000); // Matches the 1s transition in CSS
+            });
+            
+            // Failsafe: If the video fails to load or play, show the dashboard anyway
+            introVideo.addEventListener('error', () => {
+                introContainer.style.display = 'none';
+                mainDashboard.classList.add('fade-in');
+            });
+        } else {
+            // If video elements aren't found, just show the dashboard
+            if(mainDashboard) mainDashboard.classList.add('fade-in');
+        }
+    }); 
+
+    
 
 
     // Initialize routing

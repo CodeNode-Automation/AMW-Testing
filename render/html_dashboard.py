@@ -234,6 +234,12 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     </style>
 </head>
 <body>
+    <div id="intro-container">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="asset/Amw.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
     <div class="embers-container">
 """
 
@@ -247,7 +253,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     
     <div id="custom-tooltip" class="custom-tooltip"></div>
     
-    <div class="dashboard-layout">
+    <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
         <div class="main-content">
             <div id="empty-state">
                 
