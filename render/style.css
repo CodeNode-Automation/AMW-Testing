@@ -11,8 +11,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 75%;
+    height: 75%;
     background-color: #000; /* Black background behind video */
     z-index: 9999; /* Keep it above everything */
     display: flex;
