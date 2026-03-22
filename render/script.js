@@ -1219,12 +1219,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 🌌 TBC ATMOSPHERE: NETHERSTORM (SPARKS ONLY)
     // ==========================================
     function initAtmosphere() {
-        // 1. STATIC CORNER WEB
+        // 1. DYNAMIC CORNER WEB
         const web = document.createElement('div');
-        web.className = 'corner-web'; 
+        // We removed the class name so our JS physics can take full control!
         web.style.position = 'fixed';
-        web.style.width = '400px'; 
-        web.style.height = '400px';
+        web.style.width = '250px'; 
+        web.style.height = '250px';
         web.style.backgroundImage = 'url("asset/web.png")'; 
         web.style.backgroundSize = 'contain';
         web.style.backgroundRepeat = 'no-repeat';
@@ -1234,7 +1234,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         web.style.pointerEvents = 'none'; 
         web.style.top = '60px';
         web.style.left = '-30px';
-        web.style.transform = 'rotate(0deg)';
+        // NEW: Anchor the web to the top-left corner so it swings naturally!
+        web.style.transformOrigin = 'top left'; 
         document.body.appendChild(web);
 
         // 2. CANVAS FOR PHYSICS & PARTICLES
@@ -1327,6 +1328,31 @@ window.addEventListener('DOMContentLoaded', async () => {
             windTime += 0.01;
             windForce = (Math.sin(windTime) * 0.5 + Math.sin(windTime * 0.3) * 0.8) * 0.6;
 
+            // --- NEW: WEB PHYSICS ---
+            // 1. Sway with the wind and gently breathe
+            let webSway = windForce * 12; // Swings up to 12 degrees
+            let webScale = 1 + (Math.sin(windTime * 2) * 0.03); 
+
+            // 2. Flinch away from the mouse
+            let mousePushX = 0;
+            let mousePushY = 0;
+            if (mouse.x != null) {
+                // Estimate the physical center of the web image
+                let dx = mouse.x - 80; 
+                let dy = mouse.y - 150; 
+                let dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 200) { // If mouse is within 200px of the web
+                    let force = (200 - dist) / 200;
+                    mousePushX = -(dx / dist) * force * 15; // Push away on X
+                    mousePushY = -(dy / dist) * force * 15; // Push away on Y
+                }
+            }
+
+            // Apply the physics!
+            web.style.transform = `translate(${mousePushX}px, ${mousePushY}px) rotate(${webSway}deg) scale(${webScale})`;
+            // ------------------------
+
             // Draw Sparks
             for (let i = 0; i < sparks.length; i++) {
                 sparks[i].update();
@@ -1334,7 +1360,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             requestAnimationFrame(animate);
-        }
+        }   
         animate();
     }
 
