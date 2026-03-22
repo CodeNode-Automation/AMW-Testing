@@ -1216,7 +1216,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     
     // ==========================================
-    // 🌌 TBC ATMOSPHERE: NETHERSTORM
+    // 🌌 TBC ATMOSPHERE: NETHERSTORM (SPARKS ONLY)
     // ==========================================
     function initAtmosphere() {
         // 1. STATIC CORNER WEB
@@ -1228,7 +1228,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         web.style.backgroundImage = 'url("asset/web.png")'; 
         web.style.backgroundSize = 'contain';
         web.style.backgroundRepeat = 'no-repeat';
-        web.style.opacity = '0.4'; // Restored visibility
+        web.style.opacity = '0.4'; 
         web.style.filter = 'drop-shadow(0 0 15px rgba(163, 53, 238, 0.6))';
         web.style.zIndex = '-3'; 
         web.style.pointerEvents = 'none'; 
@@ -1252,8 +1252,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         const ctx = canvas.getContext('2d');
         let width, height;
         let sparks = [];
-        let silkNodes = [];
-        let spiders = [];
         let windTime = 0;
         let windForce = 0;
 
@@ -1274,7 +1272,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 this.z = Math.random() * 0.8 + 0.2; 
                 this.x = Math.random() * width;
                 this.y = Math.random() * height + height; 
-                this.size = (Math.random() * 2.5 + 1) * this.z; // Restored size
+                this.size = (Math.random() * 2.5 + 1) * this.z; 
                 this.speed = (Math.random() * 1.5 + 0.5) * this.z * 1.5; 
                 this.angle = Math.random() * 360; 
                 this.spin = (Math.random() - 0.5) * 0.05;
@@ -1320,120 +1318,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // --- CLASS 2: FULL-SCREEN SILK NODES ---
-        class SilkNode {
-            constructor() {
-                this.z = Math.random() * 0.8 + 0.2; 
-                // Restored full-screen spread so they actually connect!
-                this.x = Math.random() * width;
-                this.y = Math.random() * height; 
-
-                this.vx = (Math.random() - 0.5) * 0.15 * this.z; 
-                this.vy = (Math.random() - 0.5) * 0.15 * this.z;
-            }
-            update() {
-                this.x += this.vx + (windForce * 0.5 * this.z);
-                this.y += this.vy;
-                
-                if (mouse.x != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150) {
-                        this.x -= (dx / dist) * 0.5 * this.z;
-                        this.y -= (dy / dist) * 0.5 * this.z;
-                    }
-                }
-
-                if (this.x < -100) this.x = width + 100;
-                if (this.x > width + 100) this.x = -100;
-                if (this.y < -100) this.y = height + 100;
-                if (this.y > height + 100) this.y = -100;
-            }
-        }
-
-        // --- CLASS 3: NETHER SPIDERS ---
-        class NetherSpider {
-            constructor() {
-                this.currentNode = silkNodes[Math.floor(Math.random() * silkNodes.length)];
-                this.targetNode = null;
-                this.progress = 0; 
-                this.speed = Math.random() * 0.003 + 0.001; 
-                this.pauseTimer = Math.random() * 100;
-                this.x = this.currentNode.x;
-                this.y = this.currentNode.y;
-                this.z = this.currentNode.z;
-            }
-            update() {
-                if (this.pauseTimer > 0) {
-                    this.pauseTimer--;
-                    this.x = this.currentNode.x;
-                    this.y = this.currentNode.y;
-                    return;
-                }
-                if (!this.targetNode) {
-                    let neighbors = silkNodes.filter(n => {
-                        if (n === this.currentNode) return false;
-                        let dx = n.x - this.currentNode.x;
-                        let dy = n.y - this.currentNode.y;
-                        // Restored forgiving connection distance
-                        return Math.sqrt(dx * dx + dy * dy) < 350 && Math.abs(n.z - this.currentNode.z) < 0.4;
-                    });
-                    if (neighbors.length > 0) {
-                        this.targetNode = neighbors[Math.floor(Math.random() * neighbors.length)];
-                        this.progress = 0;
-                    } else {
-                        this.pauseTimer = 100; 
-                    }
-                } else {
-                    this.progress += this.speed;
-                    if (this.progress >= 1) {
-                        this.currentNode = this.targetNode;
-                        this.targetNode = null;
-                        this.z = this.currentNode.z;
-                        this.pauseTimer = Math.random() * 150 + 50; 
-                    } else {
-                        let t = this.progress;
-                        let p0 = this.currentNode;
-                        let p2 = this.targetNode;
-                        let dx = p0.x - p2.x;
-                        let dy = p0.y - p2.y;
-                        let dist = Math.sqrt(dx * dx + dy * dy);
-                        let avgZ = (p0.z + p2.z) / 2;
-                        let sag = dist * 0.35 * avgZ; 
-                        let p1 = { x: (p0.x + p2.x) / 2, y: (p0.y + p2.y) / 2 + sag };
-                        
-                        let invT = 1 - t;
-                        this.x = invT * invT * p0.x + 2 * invT * t * p1.x + t * t * p2.x;
-                        this.y = invT * invT * p0.y + 2 * invT * t * p1.y + t * t * p2.y;
-                        this.z = p0.z + (p2.z - p0.z) * t;
-                    }
-                }
-            }
-            draw() {
-                ctx.fillStyle = `rgba(200, 100, 255, ${0.9 * this.z})`;
-                ctx.shadowBlur = 5 * this.z;
-                ctx.shadowColor = '#a335ee';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 2.5 * this.z, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                ctx.strokeStyle = `rgba(163, 53, 238, ${0.8 * this.z})`;
-                ctx.lineWidth = 1 * this.z;
-                ctx.beginPath();
-                let lSize = 3.5 * this.z;
-                ctx.moveTo(this.x - lSize, this.y - lSize); ctx.lineTo(this.x + lSize, this.y + lSize);
-                ctx.moveTo(this.x + lSize, this.y - lSize); ctx.lineTo(this.x - lSize, this.y + lSize);
-                ctx.moveTo(this.x - lSize - 1, this.y); ctx.lineTo(this.x + lSize + 1, this.y);
-                ctx.moveTo(this.x, this.y - lSize - 1); ctx.lineTo(this.x, this.y + lSize + 1);
-                ctx.stroke();
-            }
-        }
-
-        // Thinned out the web and spider count
+        // Spawn Sparks
         for (let i = 0; i < 90; i++) sparks.push(new Spark()); 
-        for (let i = 0; i < 45; i++) silkNodes.push(new SilkNode()); // Dropped from 70 to 45
-        for (let i = 0; i < 8; i++) spiders.push(new NetherSpider()); // Dropped from 12 to 8
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
@@ -1441,41 +1327,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             windTime += 0.01;
             windForce = (Math.sin(windTime) * 0.5 + Math.sin(windTime * 0.3) * 0.8) * 0.6;
 
-            // 1. Draw Webs
-            for (let i = 0; i < silkNodes.length; i++) {
-                silkNodes[i].update();
-                for (let j = i + 1; j < silkNodes.length; j++) {
-                    let dx = silkNodes[i].x - silkNodes[j].x;
-                    let dy = silkNodes[i].y - silkNodes[j].y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    let zDist = Math.abs(silkNodes[i].z - silkNodes[j].z); 
-
-                    // Lowered distance from 350 to 280 so the webs are more broken up
-                    if (dist < 280 && zDist < 0.4) {
-                        let avgZ = (silkNodes[i].z + silkNodes[j].z) / 2;
-                        let sag = dist * 0.35 * avgZ; 
-                        let midX = (silkNodes[i].x + silkNodes[j].x) / 2;
-                        let midY = (silkNodes[i].y + silkNodes[j].y) / 2 + sag;
-
-                        ctx.beginPath();
-                        // Adjusted the math to match the new 280 distance
-                        let alpha = (1 - dist / 280) * 0.35 * avgZ; 
-                        ctx.strokeStyle = `rgba(163, 53, 238, ${alpha})`; 
-                        ctx.lineWidth = 1.2 * avgZ; // Slightly thinner threads
-                        ctx.moveTo(silkNodes[i].x, silkNodes[i].y);
-                        ctx.quadraticCurveTo(midX, midY, silkNodes[j].x, silkNodes[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            // 2. Draw Spiders
-            for (let i = 0; i < spiders.length; i++) {
-                spiders[i].update();
-                spiders[i].draw();
-            }
-
-            // 3. Draw Sparks
+            // Draw Sparks
             for (let i = 0; i < sparks.length; i++) {
                 sparks[i].update();
                 sparks[i].draw();
@@ -1485,6 +1337,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         animate();
     }
+
     initAtmosphere();
 
     document.addEventListener('DOMContentLoaded', () => {
