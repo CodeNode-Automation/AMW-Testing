@@ -1216,27 +1216,28 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     
     // ==========================================
-    // 🔥 REALISTIC EMBERS & DROOPING COBWEBS
+    // 🌌 TBC ATMOSPHERE: AMBIENT & SUBDUED
     // ==========================================
     function initAtmosphere() {
         // 1. STATIC CORNER WEB
         const web = document.createElement('div');
         web.className = 'corner-web'; 
         web.style.position = 'fixed';
-        web.style.width = '450px';
-        web.style.height = '450px';
+        web.style.width = '550px'; 
+        web.style.height = '550px';
         web.style.backgroundImage = 'url("asset/web.png")'; 
         web.style.backgroundSize = 'contain';
         web.style.backgroundRepeat = 'no-repeat';
-        web.style.opacity = '0.4'; 
+        web.style.opacity = '0.25'; // Dimmed the static web slightly
+        web.style.filter = 'drop-shadow(0 0 10px rgba(163, 53, 238, 0.3))';
         web.style.zIndex = '-3'; 
         web.style.pointerEvents = 'none'; 
         web.style.top = '60px';
-        web.style.left = '-20px';
+        web.style.left = '-30px';
         web.style.transform = 'rotate(0deg)';
         document.body.appendChild(web);
 
-        // 2. CANVAS FOR EMBERS & DYNAMIC SILK
+        // 2. CANVAS FOR PHYSICS & PARTICLES
         const canvas = document.createElement('canvas');
         canvas.id = 'ember-canvas';
         canvas.style.position = 'fixed';
@@ -1250,8 +1251,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const ctx = canvas.getContext('2d');
         let width, height;
-        let embers = [];
+        let sparks = [];
         let silkNodes = [];
+        let spiders = [];
+        let windTime = 0;
+        let windForce = 0;
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -1261,29 +1265,33 @@ window.addEventListener('DOMContentLoaded', async () => {
         resize();
 
         let mouse = { x: null, y: null, radius: 120 };
-        document.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-        document.addEventListener('mouseleave', () => {
-            mouse.x = null; mouse.y = null;
-        });
+        document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
 
-        // --- CLASS 1: THE FIRE EMBERS ---
-        class Ember {
+        // --- CLASS 1: AMBIENT SPARKS ---
+        class Spark {
             constructor() {
+                this.z = Math.random() * 0.8 + 0.2; 
                 this.x = Math.random() * width;
                 this.y = Math.random() * height + height; 
-                this.size = Math.random() * 2.5 + 0.5;
-                this.speed = Math.random() * 1.5 + 0.5; 
+                this.size = (Math.random() * 1.5 + 0.5) * this.z; // Much smaller
+                this.speed = (Math.random() * 0.6 + 0.2) * this.z; // Much slower
                 this.angle = Math.random() * 360; 
-                this.spin = (Math.random() - 0.5) * 0.05;
-                this.opacity = Math.random() * 0.8 + 0.2;
+                this.spin = (Math.random() - 0.5) * 0.02;
+                this.opacity = (Math.random() * 0.4 + 0.1) * this.z; // Much dimmer
+
+                if (Math.random() > 0.4) {
+                    this.coreColor = `rgba(180, 255, 180, ${this.opacity})`; 
+                    this.glowColor = '#1eff00'; 
+                } else {
+                    this.coreColor = `rgba(230, 180, 255, ${this.opacity})`; 
+                    this.glowColor = '#a335ee'; 
+                }
             }
             update() {
                 this.y -= this.speed; 
                 this.angle += this.spin;
-                this.x += Math.sin(this.angle) * 0.5; 
+                this.x += (Math.sin(this.angle) * 0.3 + windForce * 1.5) * this.z; 
                 
                 if (mouse.x != null) {
                     let dx = mouse.x - this.x;
@@ -1291,94 +1299,176 @@ window.addEventListener('DOMContentLoaded', async () => {
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     if (distance < mouse.radius) {
                         const force = (mouse.radius - distance) / mouse.radius;
-                        this.x -= (dx / distance) * force * 3;
-                        this.y -= (dy / distance) * force * 3;
+                        this.x -= (dx / distance) * force * 2 * this.z;
+                        this.y -= (dy / distance) * force * 2 * this.z;
                     }
                 }
                 if (this.y < -20) {
                     this.y = height + 20;
                     this.x = Math.random() * width;
-                    this.opacity = Math.random() * 0.8 + 0.2;
+                    this.opacity = (Math.random() * 0.4 + 0.1) * this.z;
                 }
             }
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = '#ff4400'; 
-                ctx.fillStyle = `rgba(255, 209, 0, ${this.opacity})`;
+                ctx.shadowBlur = 8 * this.z; // Less harsh glow
+                ctx.shadowColor = this.glowColor; 
+                ctx.fillStyle = this.coreColor;
                 ctx.fill();
                 ctx.shadowBlur = 0; 
             }
         }
 
-        // --- CLASS 2: THE DROOPING COBWEBS ---
+        // --- CLASS 2: EDGED SILK NODES ---
         class SilkNode {
             constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * (height * 0.7); // Mostly upper screen
-                this.vx = (Math.random() - 0.5) * 0.15; // Drift extremely slowly
-                this.vy = (Math.random() - 0.5) * 0.15;
+                this.z = Math.random() * 0.8 + 0.2; 
+                
+                // Push nodes to the top 40% or the outer 20% edges of the screen!
+                if (Math.random() > 0.5) {
+                    this.y = Math.random() * (height * 0.4); 
+                    this.x = Math.random() * width;
+                } else {
+                    this.y = Math.random() * height;
+                    this.x = Math.random() > 0.5 ? Math.random() * (width * 0.2) : width - Math.random() * (width * 0.2);
+                }
+
+                this.vx = (Math.random() - 0.5) * 0.1 * this.z; 
+                this.vy = (Math.random() - 0.5) * 0.1 * this.z;
             }
             update() {
-                this.x += this.vx;
+                this.x += this.vx + (windForce * 0.3 * this.z);
                 this.y += this.vy;
                 
-                // Mouse pushes the webs gently out of the way
                 if (mouse.x != null) {
                     let dx = mouse.x - this.x;
                     let dy = mouse.y - this.y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < 150) {
-                        this.x -= (dx / dist) * 0.5;
-                        this.y -= (dy / dist) * 0.5;
+                        this.x -= (dx / dist) * 0.3 * this.z;
+                        this.y -= (dy / dist) * 0.3 * this.z;
                     }
                 }
-
-                // Gently bounce off invisible borders
-                if (this.x < -50 || this.x > width + 50) this.vx *= -1;
-                if (this.y < -50 || this.y > height) this.vy *= -1;
             }
         }
 
-        // Spawn the particles
-        for (let i = 0; i < 80; i++) embers.push(new Ember());
-        for (let i = 0; i < 28; i++) silkNodes.push(new SilkNode());
+        // --- CLASS 3: NETHER SPIDERS ---
+        class NetherSpider {
+            constructor() {
+                this.currentNode = silkNodes[Math.floor(Math.random() * silkNodes.length)];
+                this.targetNode = null;
+                this.progress = 0; 
+                this.speed = Math.random() * 0.002 + 0.001; 
+                this.pauseTimer = Math.random() * 200;
+                this.x = this.currentNode.x;
+                this.y = this.currentNode.y;
+                this.z = this.currentNode.z;
+            }
+            update() {
+                if (this.pauseTimer > 0) {
+                    this.pauseTimer--;
+                    this.x = this.currentNode.x;
+                    this.y = this.currentNode.y;
+                    return;
+                }
+                if (!this.targetNode) {
+                    let neighbors = silkNodes.filter(n => {
+                        if (n === this.currentNode) return false;
+                        let dx = n.x - this.currentNode.x;
+                        let dy = n.y - this.currentNode.y;
+                        return Math.sqrt(dx * dx + dy * dy) < 250 && Math.abs(n.z - this.currentNode.z) < 0.3;
+                    });
+                    if (neighbors.length > 0) {
+                        this.targetNode = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        this.progress = 0;
+                    } else {
+                        this.pauseTimer = 100; 
+                    }
+                } else {
+                    this.progress += this.speed;
+                    if (this.progress >= 1) {
+                        this.currentNode = this.targetNode;
+                        this.targetNode = null;
+                        this.z = this.currentNode.z;
+                        this.pauseTimer = Math.random() * 300 + 100; 
+                    } else {
+                        let t = this.progress;
+                        let p0 = this.currentNode;
+                        let p2 = this.targetNode;
+                        let dx = p0.x - p2.x;
+                        let dy = p0.y - p2.y;
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+                        let avgZ = (p0.z + p2.z) / 2;
+                        let sag = dist * 0.35 * avgZ; 
+                        let p1 = { x: (p0.x + p2.x) / 2, y: (p0.y + p2.y) / 2 + sag };
+                        
+                        let invT = 1 - t;
+                        this.x = invT * invT * p0.x + 2 * invT * t * p1.x + t * t * p2.x;
+                        this.y = invT * invT * p0.y + 2 * invT * t * p1.y + t * t * p2.y;
+                        this.z = p0.z + (p2.z - p0.z) * t;
+                    }
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(200, 100, 255, ${0.7 * this.z})`;
+                ctx.shadowBlur = 3 * this.z;
+                ctx.shadowColor = '#a335ee';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2 * this.z, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = `rgba(163, 53, 238, ${0.5 * this.z})`;
+                ctx.lineWidth = 0.8 * this.z;
+                ctx.beginPath();
+                let lSize = 2.5 * this.z;
+                ctx.moveTo(this.x - lSize, this.y - lSize); ctx.lineTo(this.x + lSize, this.y + lSize);
+                ctx.moveTo(this.x + lSize, this.y - lSize); ctx.lineTo(this.x - lSize, this.y + lSize);
+                ctx.moveTo(this.x - lSize - 1, this.y); ctx.lineTo(this.x + lSize + 1, this.y);
+                ctx.moveTo(this.x, this.y - lSize - 1); ctx.lineTo(this.x, this.y + lSize + 1);
+                ctx.stroke();
+            }
+        }
+
+        // Drastically reduced counts
+        for (let i = 0; i < 30; i++) sparks.push(new Spark()); // Was 120
+        for (let i = 0; i < 35; i++) silkNodes.push(new SilkNode()); // Was 60
+        for (let i = 0; i < 6; i++) spiders.push(new NetherSpider()); // Was 18
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
 
-            // 1. Draw the Drooping Silk first (so it sits behind the fire)
-            ctx.lineWidth = 0.6;
+            windTime += 0.005; // Softer wind
+            windForce = (Math.sin(windTime) * 0.5 + Math.sin(windTime * 0.3) * 0.8) * 0.4;
+
+            // 1. Draw Webs
             for (let i = 0; i < silkNodes.length; i++) {
                 silkNodes[i].update();
                 for (let j = i + 1; j < silkNodes.length; j++) {
                     let dx = silkNodes[i].x - silkNodes[j].x;
                     let dy = silkNodes[i].y - silkNodes[j].y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
+                    let zDist = Math.abs(silkNodes[i].z - silkNodes[j].z); 
 
-                    if (dist < 300) {
-                        // This creates the "Gravity" sag effect on the strings
-                        let sag = dist * 0.25; 
+                    if (dist < 250 && zDist < 0.3) { // Shorter connection distance
+                        let avgZ = (silkNodes[i].z + silkNodes[j].z) / 2;
+                        let sag = dist * 0.35 * avgZ; 
                         let midX = (silkNodes[i].x + silkNodes[j].x) / 2;
                         let midY = (silkNodes[i].y + silkNodes[j].y) / 2 + sag;
 
                         ctx.beginPath();
-                        // Faint, dusty white color that fades as nodes get further apart
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 300) * 0.12})`; 
+                        let alpha = (1 - dist / 250) * 0.12 * avgZ; // Fainter lines
+                        ctx.strokeStyle = `rgba(163, 53, 238, ${alpha})`; 
+                        ctx.lineWidth = 1.2 * avgZ; 
                         ctx.moveTo(silkNodes[i].x, silkNodes[i].y);
-                        // Draw a curved line instead of a straight one
                         ctx.quadraticCurveTo(midX, midY, silkNodes[j].x, silkNodes[j].y);
                         ctx.stroke();
                     }
                 }
             }
 
-            // 2. Draw the Embers over top
-            for (let i = 0; i < embers.length; i++) {
-                embers[i].update();
-                embers[i].draw();
-            }
+            for (let i = 0; i < spiders.length; i++) { spiders[i].update(); spiders[i].draw(); }
+            for (let i = 0; i < sparks.length; i++) { sparks[i].update(); sparks[i].draw(); }
 
             requestAnimationFrame(animate);
         }
@@ -1386,7 +1476,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Fire it up!
-    initAtmosphere();    
+    initAtmosphere();
+
 
     // Initialize routing
     route();
