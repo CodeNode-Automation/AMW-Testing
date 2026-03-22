@@ -1216,10 +1216,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     
     // ==========================================
-    // 🔥 REALISTIC EMBERS & CORNER WEBS
+    // 🔥 REALISTIC EMBERS & DROOPING COBWEBS
     // ==========================================
     function initAtmosphere() {
-        // 1. STATIC CORNER WEB (Top Left Only)
+        // 1. STATIC CORNER WEB
         const web = document.createElement('div');
         web.className = 'corner-web'; 
         web.style.position = 'fixed';
@@ -1228,16 +1228,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         web.style.backgroundImage = 'url("asset/web.png")'; 
         web.style.backgroundSize = 'contain';
         web.style.backgroundRepeat = 'no-repeat';
-        web.style.opacity = '0.4'; // Keep it subtle and ghostly
+        web.style.opacity = '0.4'; 
         web.style.zIndex = '-3'; 
         web.style.pointerEvents = 'none'; 
-        web.style.top = '58px';
+        web.style.top = '60px';
         web.style.left = '-20px';
         web.style.transform = 'rotate(0deg)';
-        
         document.body.appendChild(web);
 
-        // 2. REALISTIC GLOWING EMBERS
+        // 2. CANVAS FOR EMBERS & DYNAMIC SILK
         const canvas = document.createElement('canvas');
         canvas.id = 'ember-canvas';
         canvas.style.position = 'fixed';
@@ -1251,7 +1250,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const ctx = canvas.getContext('2d');
         let width, height;
-        let particles = [];
+        let embers = [];
+        let silkNodes = [];
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -1260,7 +1260,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.addEventListener('resize', resize);
         resize();
 
-        // Track mouse for wind/push effect
         let mouse = { x: null, y: null, radius: 120 };
         document.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
@@ -1270,38 +1269,32 @@ window.addEventListener('DOMContentLoaded', async () => {
             mouse.x = null; mouse.y = null;
         });
 
+        // --- CLASS 1: THE FIRE EMBERS ---
         class Ember {
             constructor() {
                 this.x = Math.random() * width;
-                this.y = Math.random() * height + height; // Start below the screen
+                this.y = Math.random() * height + height; 
                 this.size = Math.random() * 2.5 + 0.5;
-                this.speed = Math.random() * 1.5 + 0.5; // Float upwards
-                this.angle = Math.random() * 360; // For swaying
+                this.speed = Math.random() * 1.5 + 0.5; 
+                this.angle = Math.random() * 360; 
                 this.spin = (Math.random() - 0.5) * 0.05;
                 this.opacity = Math.random() * 0.8 + 0.2;
             }
             update() {
-                this.y -= this.speed; // Drift up
+                this.y -= this.speed; 
                 this.angle += this.spin;
-                this.x += Math.sin(this.angle) * 0.5; // Gentle side-to-side sway
+                this.x += Math.sin(this.angle) * 0.5; 
                 
-                // Mouse Interaction: The mouse acts like wind, pushing embers away!
                 if (mouse.x != null) {
                     let dx = mouse.x - this.x;
                     let dy = mouse.y - this.y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    
                     if (distance < mouse.radius) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
                         const force = (mouse.radius - distance) / mouse.radius;
-                        // Push them away gently
-                        this.x -= forceDirectionX * force * 3;
-                        this.y -= forceDirectionY * force * 3;
+                        this.x -= (dx / distance) * force * 3;
+                        this.y -= (dy / distance) * force * 3;
                     }
                 }
-
-                // Loop back to the bottom when they float off the top
                 if (this.y < -20) {
                     this.y = height + 20;
                     this.x = Math.random() * width;
@@ -1311,35 +1304,89 @@ window.addEventListener('DOMContentLoaded', async () => {
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                
-                // Add a realistic orange/red glow behind the yellow spark
                 ctx.shadowBlur = 12;
                 ctx.shadowColor = '#ff4400'; 
                 ctx.fillStyle = `rgba(255, 209, 0, ${this.opacity})`;
                 ctx.fill();
-                
-                ctx.shadowBlur = 0; // Reset so we don't lag the browser
+                ctx.shadowBlur = 0; 
             }
         }
 
-        // Spawn 80 embers
-        for (let i = 0; i < 80; i++) {
-            particles.push(new Ember());
+        // --- CLASS 2: THE DROOPING COBWEBS ---
+        class SilkNode {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * (height * 0.7); // Mostly upper screen
+                this.vx = (Math.random() - 0.5) * 0.15; // Drift extremely slowly
+                this.vy = (Math.random() - 0.5) * 0.15;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Mouse pushes the webs gently out of the way
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        this.x -= (dx / dist) * 0.5;
+                        this.y -= (dy / dist) * 0.5;
+                    }
+                }
+
+                // Gently bounce off invisible borders
+                if (this.x < -50 || this.x > width + 50) this.vx *= -1;
+                if (this.y < -50 || this.y > height) this.vy *= -1;
+            }
         }
+
+        // Spawn the particles
+        for (let i = 0; i < 80; i++) embers.push(new Ember());
+        for (let i = 0; i < 28; i++) silkNodes.push(new SilkNode());
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
+
+            // 1. Draw the Drooping Silk first (so it sits behind the fire)
+            ctx.lineWidth = 0.6;
+            for (let i = 0; i < silkNodes.length; i++) {
+                silkNodes[i].update();
+                for (let j = i + 1; j < silkNodes.length; j++) {
+                    let dx = silkNodes[i].x - silkNodes[j].x;
+                    let dy = silkNodes[i].y - silkNodes[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 300) {
+                        // This creates the "Gravity" sag effect on the strings
+                        let sag = dist * 0.25; 
+                        let midX = (silkNodes[i].x + silkNodes[j].x) / 2;
+                        let midY = (silkNodes[i].y + silkNodes[j].y) / 2 + sag;
+
+                        ctx.beginPath();
+                        // Faint, dusty white color that fades as nodes get further apart
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 300) * 0.12})`; 
+                        ctx.moveTo(silkNodes[i].x, silkNodes[i].y);
+                        // Draw a curved line instead of a straight one
+                        ctx.quadraticCurveTo(midX, midY, silkNodes[j].x, silkNodes[j].y);
+                        ctx.stroke();
+                    }
+                }
             }
+
+            // 2. Draw the Embers over top
+            for (let i = 0; i < embers.length; i++) {
+                embers[i].update();
+                embers[i].draw();
+            }
+
             requestAnimationFrame(animate);
         }
         animate();
     }
 
     // Fire it up!
-    initAtmosphere();   
+    initAtmosphere();    
 
     // Initialize routing
     route();
