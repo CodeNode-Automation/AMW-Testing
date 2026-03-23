@@ -173,16 +173,11 @@ async def main_async():
         snapshots = {}
         for row in db_c.execute("SELECT * FROM daily_snapshot").fetchall():
             snapshots[row['id']] = dict(row)
-            
-        # Load Character Trends
-        char_trends = {}
-        for row in db_c.execute("SELECT * FROM character_trends").fetchall():
-            char_trends[row['char_name']] = dict(row)
 
         for result in results:
             if isinstance(result, dict) and result:
                 # 1. Process math and save trends to SQLite
-                result = process_character_trends(db_c, result, char_ranks, char_trends)
+                result = process_character_trends(db_c, result, char_ranks)
                 
                 # 2. Check gear state and append any new drops to timeline_data_new
                 history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
@@ -241,8 +236,8 @@ async def main_async():
     render_conn.row_factory = sqlite3.Row
     render_c = render_conn.cursor()
     
-    # Query latest 2000 events for the HTML feed so the page doesn't bloat endlessly
-    dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 2000").fetchall()]
+    # Query latest 3000 events for the HTML feed so the page doesn't bloat endlessly
+    dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000").fetchall()]
     # Query the last 7 days of population trends
     roster_history = {row['date']: dict(row) for row in render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7").fetchall()}
     

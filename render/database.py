@@ -90,6 +90,17 @@ def setup_database():
             active_roster INTEGER DEFAULT 0
         )
     ''')
+    
+    # Historical daily tracking for characters (replaces character_trends)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS char_history (
+            char_name TEXT,
+            record_date TEXT,
+            ilvl INTEGER,
+            hks INTEGER,
+            PRIMARY KEY (char_name, record_date)
+        )
+    """)
 
     conn.commit()
     conn.close()

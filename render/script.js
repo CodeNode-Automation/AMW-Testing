@@ -345,7 +345,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPve = rosterData
         .filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
         .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
-        .slice(0, 10);
+        .slice(0, 25);
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
@@ -393,7 +393,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPvp = rosterData
         .filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
         .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0))
-        .slice(0, 10);
+        .slice(0, 25);
 
     if (topPvp.length > 0 && pvpContainer) {
         pvpWrapper.style.display = 'block';

@@ -1,51 +1,47 @@
 from datetime import datetime, timezone
 
-def process_character_trends(db_c, result, char_ranks, char_trends):
+def process_character_trends(db_c, result, char_ranks):
     """Calculates and persists item level and HK trends for an individual character."""
     char_name_lower = result['char'].lower()
     
-    # DATA SANITIZATION: Only assign the guild rank if the API successfully returned a profile payload
     if isinstance(result.get('profile'), dict):
         result['profile']['guild_rank'] = char_ranks.get(char_name_lower, "Member")
         
         cur_ilvl = result['profile'].get('equipped_item_level', 0)
         cur_hks = result['profile'].get('honorable_kills', 0)
         
-        ct = char_trends.get(char_name_lower)
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        if ct:
-            last_ilvl = ct['last_ilvl']
-            trend_ilvl = ct['trend_ilvl']
-            last_hks = ct['last_hks']
-            trend_hks = ct['trend_hks']
-            
-            # Check for iLvl changes
-            if cur_ilvl != last_ilvl:
-                trend_ilvl = cur_ilvl - last_ilvl
-                last_ilvl = cur_ilvl
-                
-            # Check for HK changes
-            if cur_hks != last_hks:
-                trend_hks = cur_hks - last_hks
-                last_hks = cur_hks
-                
-            # Save the updated persistent trend back to the DB
-            db_c.execute("""
-                INSERT OR REPLACE INTO character_trends 
-                (char_name, last_ilvl, trend_ilvl, last_hks, trend_hks) 
-                VALUES (?, ?, ?, ?, ?)
-            """, (char_name_lower, last_ilvl, trend_ilvl, last_hks, trend_hks))
-            
+        # 1. Create a historical tracking table to accurately track going up or down over time
+        db_c.execute("""
+            CREATE TABLE IF NOT EXISTS char_history (
+                char_name TEXT,
+                record_date TEXT,
+                ilvl INTEGER,
+                hks INTEGER,
+                PRIMARY KEY (char_name, record_date)
+            )
+        """)
+        
+        # 2. Store today's stats
+        db_c.execute("""
+            INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
+            VALUES (?, ?, ?, ?)
+        """, (char_name_lower, today_str, cur_ilvl, cur_hks))
+        
+        # 3. Query the most recent past snapshot to calculate accurate trends
+        past_record = db_c.execute("""
+            SELECT ilvl, hks FROM char_history 
+            WHERE char_name = ? AND record_date < ? 
+            ORDER BY record_date DESC LIMIT 1
+        """, (char_name_lower, today_str)).fetchone()
+        
+        if past_record:
+            trend_ilvl = cur_ilvl - past_record['ilvl']
+            trend_hks = cur_hks - past_record['hks']
         else:
-            # First time seeing this character: set baseline, trend is 0
             trend_ilvl, trend_hks = 0, 0
-            db_c.execute("""
-                INSERT INTO character_trends 
-                (char_name, last_ilvl, trend_ilvl, last_hks, trend_hks) 
-                VALUES (?, ?, 0, ?, 0)
-            """, (char_name_lower, cur_ilvl, cur_hks))
             
-        # Inject the persistent math directly into the profile so JS can read it
         result['profile']['trend_pve'] = trend_ilvl
         result['profile']['trend_pvp'] = trend_hks
 
