@@ -1363,6 +1363,25 @@ window.addEventListener('DOMContentLoaded', async () => {
             data: { labels: donutLabels, datasets: [{ data: donutData, backgroundColor: donutColors, borderColor: '#111', borderWidth: 2, hoverOffset: 6 }] },
             options: {
                 responsive: true, maintainAspectRatio: false, cutout: '65%',
+                onClick: (event, elements, chart) => {
+                    if (elements.length > 0) {
+                        // Get the name of the class that was clicked (e.g., "Paladin")
+                        const clickedClass = chart.data.labels[elements[0].index];
+                        const dynamicBadge = document.querySelector(`.dynamic-badge[data-class="${clickedClass}"]`);
+                        
+                        // If we are on a concise view with the class badges visible, trigger the in-place filter
+                        if (dynamicBadge && document.getElementById('concise-view').style.display !== 'none') {
+                            dynamicBadge.click(); 
+                        } else {
+                            // Otherwise (on the Home dashboard), route to the dedicated class roster page
+                            window.location.hash = 'class-' + clickedClass.toLowerCase();
+                        }
+                    }
+                },
+                onHover: (event, elements) => {
+                    // Change cursor to pointer when hovering over a slice
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                },
                 plugins: {
                     legend: {
                         position: 'right',
