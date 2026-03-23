@@ -834,7 +834,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Generate the HTML for the list
         let listHTML = sortedCharacters.map(char => {
-            // ... (Keep ALL of your exact existing mapping logic inside here) ...
             
             if (isRawMode) {
                 const deepChar = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === char.name.toLowerCase());
@@ -849,6 +848,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const specIconUrl = getSpecIcon(cClass, activeSpec);
                     const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
                     const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+                    
+                    // --- NEW: Dynamic stat based on sort filter ---
+                    let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
+                    let statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
+                    let statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
+
                     return `
                     <a href="javascript:void(0)" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" class="concise-char-bar tt-char" data-char="${(p.name || '').toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex};">
                         <div class="c-main-info">
@@ -858,13 +863,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <div class="c-stats-info">
                             <span>Level <span class="c-val-lvl">${p.level || 0}</span></span>
-                            <span>iLvl <span class="c-val-ilvl">${p.equipped_item_level || 0}</span></span>
+                            <span>${statLabel} <span class="c-val-ilvl" style="${statColor}">${statValue}</span></span>
                         </div>
                     </a>`;
                 } else {
                     const charClass = char.class || 'Unknown';
                     const cHex = CLASS_COLORS[charClass] || "#fff";
                     const portraitURL = getClassIcon(charClass);
+                    
+                    // --- NEW: Dynamic stat label for missing profiles ---
+                    let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
+
                     return `
                     <div class="concise-char-bar" data-class="${charClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default;">
                         <div class="c-main-info">
@@ -874,7 +883,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <div class="c-stats-info">
                             <span>Level <span class="c-val-lvl">${char.level || 0}</span></span>
-                            <span>iLvl <span class="c-val-ilvl" style="color:#666;">???</span></span>
+                            <span>${statLabel} <span class="c-val-ilvl" style="color:#666;">???</span></span>
                         </div>
                     </div>`;
                 }
@@ -891,6 +900,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
             
+            // --- NEW: Dynamic stat based on sort filter ---
+            let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
+            let statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
+            let statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
+
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" class="concise-char-bar tt-char" data-char="${(p.name || '').toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex};">
                 <div class="c-main-info">
@@ -900,7 +914,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="c-stats-info">
                     <span>Level <span class="c-val-lvl">${p.level || 0}</span></span>
-                    <span>iLvl <span class="c-val-ilvl">${p.equipped_item_level || 0}</span></span>
+                    <span>${statLabel} <span class="c-val-ilvl" style="${statColor}">${statValue}</span></span>
                 </div>
             </a>`;
         }).join('');
