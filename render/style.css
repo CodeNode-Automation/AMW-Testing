@@ -288,15 +288,27 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 6px 20px rgba(255, 209, 0, 0.4);
 }
 
-/* 2. Sticky Timeline Filters */
+/* 2. Sticky Timeline Filters (Fixed Overlap) */
+.timeline-container {
+    padding-top: 0 !important; /* Remove container top padding so items don't show above the sticky bar */
+}
+
+.timeline-title {
+    padding-top: 25px; /* Move the 25px spacing here so the original layout looks identical */
+    background: #161616; /* Add background to prevent transparency issues */
+    position: relative;
+    z-index: 10;
+}
+
 .timeline-filters {
     position: sticky;
     top: 0;
-    background: #161616; /* Match timeline container background */
-    z-index: 10;
+    background: #161616; /* Match timeline container background to block scrolled items */
+    z-index: 15; /* Ensure it stays above the timeline feed elements */
     padding-top: 10px;
-    margin-top: -10px; /* Offset the padding for visual balance */
-    box-shadow: 0 10px 10px -10px rgba(0,0,0,0.8); /* Subtle shadow when scrolling */
+    padding-bottom: 15px;
+    margin-top: 0; 
+    box-shadow: 0 15px 15px -15px rgba(0,0,0,0.9); /* Stronger bottom shadow to cover scrolling items */
 }
 
 /* 3. 3D Hover Effect for Holographic Character Cards */
