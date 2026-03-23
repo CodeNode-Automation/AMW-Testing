@@ -146,6 +146,9 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             <a href="javascript:void(0)" onclick="returnToHome()" class="nav-btn nav-btn-home" title="Return to guild stats page">
               🛡️<span class="home-text"> Armory Home</span>
             </a>
+            <a href="#analytics" class="nav-btn" title="View Guild Analytics" style="text-decoration: none;">
+              📊<span class="home-text"> Analytics</span>
+            </a>
             <div class="custom-select-wrapper">
                 <div class="custom-select" id="customCharSelect">
                     <span class="selected-value">View Entire Guild</span>

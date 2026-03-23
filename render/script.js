@@ -55,7 +55,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.currentFilteredChars = null;
     window.activeClassExpanded = null;
     let mainDonutChartInstance = null;     
-    let conciseDonutChartInstance = null;   
+    let conciseDonutChartInstance = null;
+    let levelChartInstance = null;
+    let ilvlChartInstance = null;
+    let raceChartInstance = null;
+    const analyticsView = document.getElementById('analytics-view');   
     
     const navbar = document.querySelector('.navbar');
     const emptyState = document.getElementById('empty-state');
@@ -997,10 +1001,91 @@ window.addEventListener('DOMContentLoaded', async () => {
         emptyState.style.display = 'none';
         conciseView.style.display = 'none';
         fullCardContainer.style.display = 'none';
+        if (analyticsView) analyticsView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showAnalyticsView() {
+        hideAllViews();
+        if (analyticsView) analyticsView.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        if (timeline) timeline.style.display = 'none'; // Optional: hide timeline on analytics page
+        
+        // 1. Level Distribution Chart
+        const levelRanges = {"1-9":0, "10-19":0, "20-29":0, "30-39":0, "40-49":0, "50-59":0, "60-69":0, "70":0};
+        rawGuildRoster.forEach(c => {
+            const lvl = c.level || 0;
+            if(lvl >= 70) levelRanges["70"]++;
+            else if(lvl >= 60) levelRanges["60-69"]++;
+            else if(lvl >= 50) levelRanges["50-59"]++;
+            else if(lvl >= 40) levelRanges["40-49"]++;
+            else if(lvl >= 30) levelRanges["30-39"]++;
+            else if(lvl >= 20) levelRanges["20-29"]++;
+            else if(lvl >= 10) levelRanges["10-19"]++;
+            else levelRanges["1-9"]++;
+        });
+
+        if(levelChartInstance) levelChartInstance.destroy();
+        levelChartInstance = new Chart(document.getElementById('levelDistChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(levelRanges),
+                datasets: [{ label: 'Characters', data: Object.values(levelRanges), backgroundColor: '#ffd100', borderColor: '#b39200', borderWidth: 1 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}} }
+        });
+
+        // 2. Max Level iLvl Spread
+        const ilvlRanges = {"<100":0, "100-109":0, "110-119":0, "120-129":0, "130+":0};
+        rosterData.forEach(c => {
+            const p = c.profile;
+            if(p && p.level >= 70) {
+                const ilvl = p.equipped_item_level || 0;
+                if(ilvl >= 130) ilvlRanges["130+"]++;
+                else if(ilvl >= 120) ilvlRanges["120-129"]++;
+                else if(ilvl >= 110) ilvlRanges["110-119"]++;
+                else if(ilvl >= 100) ilvlRanges["100-109"]++;
+                else ilvlRanges["<100"]++;
+            }
+        });
+
+        if(ilvlChartInstance) ilvlChartInstance.destroy();
+        ilvlChartInstance = new Chart(document.getElementById('ilvlDistChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(ilvlRanges),
+                datasets: [{ label: 'Level 70 Characters', data: Object.values(ilvlRanges), backgroundColor: '#ff8000', borderColor: '#cc6600', borderWidth: 1 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}} }
+        });
+
+        // 3. Race Distribution
+        const raceCounts = {};
+        rosterData.forEach(c => {
+            const p = c.profile;
+            if(p && p.race && p.race.name) {
+                const raceName = typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown');
+                raceCounts[raceName] = (raceCounts[raceName] || 0) + 1;
+            }
+        });
+        
+        const RACE_COLORS = {
+            "Human": "#3498db", "Orc": "#2ecc71", "Dwarf": "#f1c40f", "Night Elf": "#9b59b6",
+            "Undead": "#7f8c8d", "Tauren": "#e67e22", "Gnome": "#e74c3c", "Troll": "#1abc9c",
+            "Blood Elf": "#e84393", "Draenei": "#0984e3", "Unknown": "#888"
+        };
+
+        if(raceChartInstance) raceChartInstance.destroy();
+        raceChartInstance = new Chart(document.getElementById('raceDistChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(raceCounts),
+                datasets: [{ data: Object.values(raceCounts), backgroundColor: Object.keys(raceCounts).map(r => RACE_COLORS[r] || '#555'), borderColor: '#111', borderWidth: 2 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {position: 'right', labels:{color:'#bbb', font:{family:'Cinzel'}}} } }
+        });
     }
 
     window.returnToHome = function() {
@@ -1090,6 +1175,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (!hash || hash === '') {
             showHomeView();
+        } else if (hash === 'analytics') {
+            showAnalyticsView();
+            updateDropdownLabel('all');
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
             updateDropdownLabel('all');

@@ -147,8 +147,33 @@
                         <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
                 </div>
-            </div>
+            </div> <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
+                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 30px; font-size: 32px;">Guild Analytics</h2>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto;">
+                    
+                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
+                        <h3 class="heatmap-title" style="justify-content: center;">📈 Level Distribution <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Entire Roster</span></h3>
+                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                            <canvas id="levelDistChart"></canvas>
+                        </div>
+                    </div>
 
+                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
+                        <h3 class="heatmap-title" style="justify-content: center;">⚔️ Max Level iLvl Spread <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Lvl 70s Only</span></h3>
+                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                            <canvas id="ilvlDistChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
+                        <h3 class="heatmap-title" style="justify-content: center;">🧬 Race Distribution <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Scanned Roster</span></h3>
+                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                            <canvas id="raceDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
