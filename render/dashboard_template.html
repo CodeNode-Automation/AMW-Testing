@@ -11,14 +11,20 @@
     </style>
 </head>
 <body>
-    <div id="intro-container">
+    <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
         <video id="intro-video" autoplay muted playsinline>
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+        <div style="position: absolute; bottom: 30px; right: 30px; color: rgba(255,255,255,0.7); font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; z-index: 10; text-shadow: 1px 1px 3px #000; background: rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            Click anywhere to skip ⏭️
+        </div>
     </div>
     <script>
         function killIntro() {
+            // Set a flag in the browser's session storage so it doesn't play on reload
+            sessionStorage.setItem('amwIntroPlayed', 'true');
+            
             var intro = document.getElementById('intro-container');
             var dash = document.querySelector('.dashboard-layout');
             
@@ -32,13 +38,31 @@
             }
         }
 
-        var vid = document.getElementById('intro-video');
-        if (vid) {
-            vid.playbackRate = 1.75; 
-            vid.addEventListener('ended', killIntro); 
-            vid.addEventListener('error', killIntro); 
+        // Check if the intro has already been played this session
+        if (sessionStorage.getItem('amwIntroPlayed') === 'true') {
+            // Remove the video container immediately
+            var intro = document.getElementById('intro-container');
+            if (intro) intro.remove();
+            
+            // Wait for the DOM to load, then instantly show the dashboard without the fade-in
+            document.addEventListener('DOMContentLoaded', function() {
+                var dash = document.querySelector('.dashboard-layout');
+                if (dash) {
+                    dash.style.opacity = '1';
+                    dash.style.transition = 'none';
+                }
+            });
+        } else {
+            // If it hasn't played, run the normal video logic
+            var vid = document.getElementById('intro-video');
+            if (vid) {
+                vid.playbackRate = 1.75; 
+                vid.addEventListener('ended', killIntro); 
+                vid.addEventListener('error', killIntro); 
+            }
+            // Failsafe to kill intro after 6 seconds
+            setTimeout(killIntro, 6000);
         }
-        setTimeout(killIntro, 6000);
     </script>
     <div class="embers-container"></div>
 
@@ -97,7 +121,7 @@
                         <div id="heatmap-grid" class="heatmap-grid"></div>
                     </div>
 
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 300px; max-width: 400px; margin: 0; display: flex; flex-direction: column;">
+                    <div class="heatmap-wrapper" style="flex: 1.2; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column;">
                         <h3 class="heatmap-title">📊 Class Distribution <span style="color:#aaa; font-size: 11px;">Entire Roster</span></h3>
                         <div style="position: relative; flex: 1; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 250px;">
                             <canvas id="classDonutChart"></canvas>
@@ -130,7 +154,7 @@
                 
                 <div id="concise-top-stats" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
                     
-                    <div id="concise-donut-container" class="heatmap-wrapper" style="flex: 1; min-width: 300px; max-width: 400px; margin: 0; display: none; flex-direction: column;">
+                    <div id="concise-donut-container" class="heatmap-wrapper" style="flex: 1.2; min-width: 300px; max-width: 480px; margin: 0; display: none; flex-direction: column;">
                         <h3 class="heatmap-title" style="justify-content: center;">📊 Class Distribution</h3>
                         <div style="position: relative; height: 250px; width: 100%; display: flex; justify-content: center; align-items: center;">
                             <canvas id="conciseDonutChart"></canvas>

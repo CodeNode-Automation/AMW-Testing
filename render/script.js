@@ -999,6 +999,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         fullCardContainer.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.returnToHome = function() {
@@ -1386,7 +1388,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     legend: {
                         position: 'right',
                         labels: {
-                            color: '#bbb', font: { family: 'Cinzel', size: 12 }, padding: 10,
+                            color: '#bbb', font: { family: 'Cinzel', size: 11 }, padding: 8, boxWidth: 12,
                             generateLabels: function(chart) {
                                 const data = chart.data;
                                 if (data.labels.length && data.datasets.length) {
