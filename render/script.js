@@ -1015,7 +1015,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (navbar) navbar.style.background = '#111';
         if (timeline) timeline.style.display = 'none'; 
         
-        // 1. Level Distribution (Fixed Ordering via explicit arrays)
+        // 1. Level Distribution Data & Chart
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
         const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
         rawGuildRoster.forEach(c => {
@@ -1030,7 +1030,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             else levelData[0]++;
         });
 
-        // 1. Level Distribution Chart
         if(levelChartInstance) levelChartInstance.destroy();
         levelChartInstance = new Chart(document.getElementById('levelDistChart'), {
             type: 'bar',
@@ -1053,7 +1052,21 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 2. Max Level iLvl Spread
+        // 2. Max Level iLvl Spread Data & Chart
+        const ilvlLabels = ["<100", "100-109", "110-119", "120-129", "130+"];
+        const ilvlData = [0, 0, 0, 0, 0];
+        rosterData.forEach(c => {
+            const p = c.profile;
+            if(p && p.level >= 70) {
+                const ilvl = p.equipped_item_level || 0;
+                if(ilvl >= 130) ilvlData[4]++;
+                else if(ilvl >= 120) ilvlData[3]++;
+                else if(ilvl >= 110) ilvlData[2]++;
+                else if(ilvl >= 100) ilvlData[1]++;
+                else ilvlData[0]++;
+            }
+        });
+
         if(ilvlChartInstance) ilvlChartInstance.destroy();
         ilvlChartInstance = new Chart(document.getElementById('ilvlDistChart'), {
             type: 'bar',
@@ -1076,7 +1089,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 3. Race Distribution Chart
+        // 3. Race Distribution Data & Chart
+        const raceCounts = {};
+        rosterData.forEach(c => {
+            const p = c.profile;
+            if(p && p.race && p.race.name) {
+                const raceName = typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown');
+                raceCounts[raceName] = (raceCounts[raceName] || 0) + 1;
+            }
+        });
+        
+        const RACE_COLORS = {
+            "Human": "#0033aa", "Draenei": "#ba55d3", "Dwarf": "#8B4513", "Night Elf": "#800080",
+            "Gnome": "#FF69B4", "Orc": "#8B0000", "Undead": "#556B2F", "Tauren": "#D2B48C",
+            "Troll": "#008B8B", "Blood Elf": "#DC143C", "Unknown": "#888"
+        };
+
         if(raceChartInstance) raceChartInstance.destroy();
         raceChartInstance = new Chart(document.getElementById('raceDistChart'), {
             type: 'doughnut',
