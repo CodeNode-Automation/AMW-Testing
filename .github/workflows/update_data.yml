@@ -1,9 +1,7 @@
 name: Update WoW Guild Data
 
 on:
-  schedule:
-    - cron: '5/20 * * * *'
-  workflow_dispatch:
+  workflow_dispatch: # This allows manual triggers and API triggers
 
 # NEW: We must give the action global permission to write to both the repo and GitHub Pages
 permissions:
