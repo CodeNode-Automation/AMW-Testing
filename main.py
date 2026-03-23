@@ -176,13 +176,19 @@ async def main_async():
 
         for result in results:
             if isinstance(result, dict) and result:
-                # 1. Process math and save trends to SQLite
-                result = process_character_trends(db_c, result, char_ranks)
-                
-                # 2. Check gear state and append any new drops to timeline_data_new
-                history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
-                
-                roster_data.append(result)
+                try:
+                    # 1. Process math and save trends to SQLite
+                    result = process_character_trends(db_c, result, char_ranks)
+                    
+                    # 2. Check gear state and append any new drops to timeline_data_new
+                    history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
+                    
+                    roster_data.append(result)
+                except Exception as e:
+                    char_name = result.get('char', 'Unknown')
+                    print(f"⚠️ Data processing failed for {char_name}: {e}")
+                    # Skip this character and continue the loop without crashing the whole script
+                    continue
 
         # --- PERSISTENT TREND CALCULATIONS: Global Guild Stats ---
         realm_data = process_global_trends(db_c, roster_data, raw_guild_roster, realm_data)
