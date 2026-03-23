@@ -1288,25 +1288,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 🌌 TBC ATMOSPHERE: NETHERSTORM (SPARKS ONLY)
     // ==========================================
     function initAtmosphere() {
-        // 1. STATIC CORNER WEB
-        const web = document.createElement('div');
-        web.className = 'corner-web'; 
-        web.style.position = 'fixed';
-        web.style.width = '300px'; 
-        web.style.height = '300px';
-        web.style.backgroundImage = 'url("asset/web.png")'; 
-        web.style.backgroundSize = 'contain';
-        web.style.backgroundRepeat = 'no-repeat';
-        web.style.opacity = '0.4'; 
-        web.style.filter = 'drop-shadow(0 0 15px rgba(163, 53, 238, 0.6))';
-        web.style.zIndex = '-3'; 
-        web.style.pointerEvents = 'none'; 
-        web.style.top = '60px';
-        web.style.left = '-30px';
-        web.style.transform = 'rotate(0deg)';
-        document.body.appendChild(web);
-
-        // 2. CANVAS FOR PHYSICS & PARTICLES
+        // 1. CANVAS FOR PHYSICS & PARTICLES
         const canvas = document.createElement('canvas');
         canvas.id = 'ember-canvas';
         canvas.style.position = 'fixed';

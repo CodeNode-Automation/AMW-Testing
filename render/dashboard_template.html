@@ -26,7 +26,7 @@
                 intro.classList.add('fade-out'); // Fade it to black
                 if (dash) {
                     dash.style.opacity = '1';
-                    dash.style.transition = 'opacity 1.5s ease-in-out';
+                    dash.style.transition = 'opacity 2s ease-in-out';
                 }
                 setTimeout(function() { if (intro) intro.remove(); }, 1000);
             }
@@ -34,11 +34,11 @@
 
         var vid = document.getElementById('intro-video');
         if (vid) {
-            vid.playbackRate = 1.5; 
+            vid.playbackRate = 1.75; 
             vid.addEventListener('ended', killIntro); 
             vid.addEventListener('error', killIntro); 
         }
-        setTimeout(killIntro, 6500);
+        setTimeout(killIntro, 6000);
     </script>
     <div class="embers-container"></div>
 
