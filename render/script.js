@@ -606,7 +606,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             specContainer.style.textAlign = 'center';
             specContainer.style.marginBottom = '20px';
             specContainer.style.animation = 'fadeInUp 0.3s forwards';
-            container.parentNode.insertBefore(specContainer, document.getElementById('concise-char-list'));
+            container.parentNode.appendChild(specContainer); 
         } else {
             specContainer.style.display = 'none';
         }
@@ -1052,7 +1052,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Draw the secondary Pie Chart
         const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
-        if (hash === 'total' || hash === 'active') {
+        if (hash === 'total' || hash === 'active' || hash === 'raidready') {
             if (donutContainer) {
                 donutContainer.style.display = 'flex';
                 if (conciseDonutChartInstance) conciseDonutChartInstance.destroy();
@@ -1365,7 +1365,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 responsive: true, maintainAspectRatio: false, cutout: '65%',
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: 'bottom',
                         labels: {
                             color: '#bbb', font: { family: 'Cinzel', size: 12 }, padding: 10,
                             generateLabels: function(chart) {
