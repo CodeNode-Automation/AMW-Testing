@@ -1365,7 +1365,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 responsive: true, maintainAspectRatio: false, cutout: '65%',
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: 'right',
                         labels: {
                             color: '#bbb', font: { family: 'Cinzel', size: 12 }, padding: 10,
                             generateLabels: function(chart) {
@@ -1380,7 +1380,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                                         return {
                                             text: `${label}: ${value} (${pct})`, // Visible Math
                                             fillStyle: style.backgroundColor, strokeStyle: style.borderColor,
-                                            lineWidth: style.borderWidth, hidden: isNaN(value) || meta.data[i].hidden, index: i
+                                            lineWidth: style.borderWidth, hidden: isNaN(value) || meta.data[i].hidden, index: i,
+                                            fontColor: '#bbb' // Fixes the black text issue
                                         };
                                     });
                                 }
