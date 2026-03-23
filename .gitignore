@@ -39,3 +39,4 @@ desktop.ini
 create_sql.py
 restore_db.py
 _backup
+dump.py
