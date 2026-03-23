@@ -785,7 +785,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Variable to track current sort method
-    let currentSortMethod = 'ilvl'; 
+    let currentSortMethod = 'level';
 
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
@@ -1277,6 +1277,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         conciseView.style.display = 'flex';
         if (navbar) navbar.style.background = '#111';
+        
+        // Force the filter to always reset to Character Level
+        currentSortMethod = 'level';
+        
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
