@@ -2,10 +2,10 @@ import aiohttp
 import asyncio
 from config import PROFILE_NAMESPACE
 
-async def fetch_wow_endpoint(session, token, realm, character_name, endpoint="", retries=3):
+async def fetch_wow_endpoint(session, token, realm, character_name, endpoint="", retries=4):
     """
     Fetches character-specific data from the Blizzard WoW API.
-    Includes an automatic retry mechanism with backoff for 429 Rate Limits.
+    Includes an automatic retry mechanism with exponential backoff for 429 Rate Limits and 50x Server Errors.
     """
     url_suffix = f"/{endpoint}" if endpoint else ""
     
@@ -16,10 +16,10 @@ async def fetch_wow_endpoint(session, token, realm, character_name, endpoint="",
     for attempt in range(retries):
         try:
             async with session.get(url, headers=headers, timeout=10) as response:
-                if response.status == 429:
-                    # Blizzard Rate Limit Hit: Calculate backoff and retry
-                    wait_time = (attempt + 1) * 2
-                    print(f"   ⏳ [429 Rate Limit] Pausing {wait_time}s for {character_name} ({endpoint or 'profile'})...")
+                # Catch Rate Limits and Blizzard Gateway/Server Errors
+                if response.status in [429, 500, 502, 503, 504]:
+                    wait_time = 2 ** attempt  # True Exponential Backoff: 1s, 2s, 4s, 8s...
+                    print(f"   ⏳ [HTTP {response.status}] Pausing {wait_time}s for {character_name} ({endpoint or 'profile'})...")
                     await asyncio.sleep(wait_time)
                     continue
                     
@@ -33,7 +33,9 @@ async def fetch_wow_endpoint(session, token, realm, character_name, endpoint="",
                 else:
                     print(f"❌ Error fetching {endpoint or 'profile'} for {character_name}: {e}")
             else:
-                await asyncio.sleep(1) # Brief pause for generic transient network errors
+                # Apply exponential backoff for generic network timeouts/disconnects as well
+                wait_time = 2 ** attempt
+                await asyncio.sleep(wait_time)
                 
     return None
 
