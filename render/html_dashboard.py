@@ -109,7 +109,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
         day_name = day.strftime("%a")
         day_data = activity_counts.get(d_str, {"total": 0, "loot": 0, "levels": 0})
         
-        # --- NEW: Grab historical stats if they exist in the DB for this date ---
+        # --- Grab historical stats if they exist in the DB for this date ---
         hist_data = roster_history.get(d_str, {})
         
         # Ensure 'today' always has the live exact count, even if the DB hasn't committed yet
@@ -146,7 +146,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             <a href="javascript:void(0)" onclick="returnToHome()" class="nav-btn nav-btn-home" title="Return to guild stats page">
               🛡️<span class="home-text"> Armory Home</span>
             </a>
-            <a href="#analytics" class="nav-btn" title="View Guild Analytics" style="text-decoration: none;">
+            <a href="#analytics" class="nav-btn nav-btn-home" title="View Guild Analytics" style="margin-left: 10px;">
               📊<span class="home-text"> Analytics</span>
             </a>
             <div class="custom-select-wrapper">

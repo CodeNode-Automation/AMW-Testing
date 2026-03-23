@@ -59,6 +59,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     let levelChartInstance = null;
     let ilvlChartInstance = null;
     let raceChartInstance = null;
+    let analyticsActivityChartInst = null;
+    let analyticsClassChartInst = null;
     const analyticsView = document.getElementById('analytics-view');   
     
     const navbar = document.querySelector('.navbar');
@@ -1011,43 +1013,45 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         if (analyticsView) analyticsView.style.display = 'block';
         if (navbar) navbar.style.background = '#111';
-        if (timeline) timeline.style.display = 'none'; // Optional: hide timeline on analytics page
+        if (timeline) timeline.style.display = 'none'; 
         
-        // 1. Level Distribution Chart
-        const levelRanges = {"1-9":0, "10-19":0, "20-29":0, "30-39":0, "40-49":0, "50-59":0, "60-69":0, "70":0};
+        // 1. Level Distribution (Fixed Ordering via explicit arrays)
+        const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
+        const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
         rawGuildRoster.forEach(c => {
             const lvl = c.level || 0;
-            if(lvl >= 70) levelRanges["70"]++;
-            else if(lvl >= 60) levelRanges["60-69"]++;
-            else if(lvl >= 50) levelRanges["50-59"]++;
-            else if(lvl >= 40) levelRanges["40-49"]++;
-            else if(lvl >= 30) levelRanges["30-39"]++;
-            else if(lvl >= 20) levelRanges["20-29"]++;
-            else if(lvl >= 10) levelRanges["10-19"]++;
-            else levelRanges["1-9"]++;
+            if(lvl >= 70) levelData[7]++;
+            else if(lvl >= 60) levelData[6]++;
+            else if(lvl >= 50) levelData[5]++;
+            else if(lvl >= 40) levelData[4]++;
+            else if(lvl >= 30) levelData[3]++;
+            else if(lvl >= 20) levelData[2]++;
+            else if(lvl >= 10) levelData[1]++;
+            else levelData[0]++;
         });
 
         if(levelChartInstance) levelChartInstance.destroy();
         levelChartInstance = new Chart(document.getElementById('levelDistChart'), {
             type: 'bar',
             data: {
-                labels: Object.keys(levelRanges),
-                datasets: [{ label: 'Characters', data: Object.values(levelRanges), backgroundColor: '#ffd100', borderColor: '#b39200', borderWidth: 1 }]
+                labels: levelLabels,
+                datasets: [{ label: 'Characters', data: levelData, backgroundColor: '#ffd100', borderColor: '#b39200', borderWidth: 1 }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}} }
         });
 
         // 2. Max Level iLvl Spread
-        const ilvlRanges = {"<100":0, "100-109":0, "110-119":0, "120-129":0, "130+":0};
+        const ilvlLabels = ["<100", "100-109", "110-119", "120-129", "130+"];
+        const ilvlData = [0, 0, 0, 0, 0];
         rosterData.forEach(c => {
             const p = c.profile;
             if(p && p.level >= 70) {
                 const ilvl = p.equipped_item_level || 0;
-                if(ilvl >= 130) ilvlRanges["130+"]++;
-                else if(ilvl >= 120) ilvlRanges["120-129"]++;
-                else if(ilvl >= 110) ilvlRanges["110-119"]++;
-                else if(ilvl >= 100) ilvlRanges["100-109"]++;
-                else ilvlRanges["<100"]++;
+                if(ilvl >= 130) ilvlData[4]++;
+                else if(ilvl >= 120) ilvlData[3]++;
+                else if(ilvl >= 110) ilvlData[2]++;
+                else if(ilvl >= 100) ilvlData[1]++;
+                else ilvlData[0]++;
             }
         });
 
@@ -1055,13 +1059,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         ilvlChartInstance = new Chart(document.getElementById('ilvlDistChart'), {
             type: 'bar',
             data: {
-                labels: Object.keys(ilvlRanges),
-                datasets: [{ label: 'Level 70 Characters', data: Object.values(ilvlRanges), backgroundColor: '#ff8000', borderColor: '#cc6600', borderWidth: 1 }]
+                labels: ilvlLabels,
+                datasets: [{ label: 'Level 70 Characters', data: ilvlData, backgroundColor: '#ff8000', borderColor: '#cc6600', borderWidth: 1 }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}} }
         });
 
-        // 3. Race Distribution
+        // 3. Race Distribution (Fixed WoW-Realistic Colors)
         const raceCounts = {};
         rosterData.forEach(c => {
             const p = c.profile;
@@ -1072,9 +1076,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         const RACE_COLORS = {
-            "Human": "#3498db", "Orc": "#2ecc71", "Dwarf": "#f1c40f", "Night Elf": "#9b59b6",
-            "Undead": "#7f8c8d", "Tauren": "#e67e22", "Gnome": "#e74c3c", "Troll": "#1abc9c",
-            "Blood Elf": "#e84393", "Draenei": "#0984e3", "Unknown": "#888"
+            "Human": "#0033aa",      // Alliance Blue
+            "Draenei": "#ba55d3",    // Light Purple/Crystal
+            "Dwarf": "#8B4513",      // Brown
+            "Night Elf": "#800080",  // Deep Purple
+            "Gnome": "#FF69B4",      // Pink
+            "Orc": "#8B0000",        // Horde Red
+            "Undead": "#556B2F",     // Sickly Green
+            "Tauren": "#D2B48C",     // Tan
+            "Troll": "#008B8B",      // Teal
+            "Blood Elf": "#DC143C",  // Crimson
+            "Unknown": "#888"
         };
 
         if(raceChartInstance) raceChartInstance.destroy();
@@ -1086,6 +1098,40 @@ window.addEventListener('DOMContentLoaded', async () => {
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {position: 'right', labels:{color:'#bbb', font:{family:'Cinzel'}}} } }
         });
+
+        // 4. Duplicate Activity Chart from Main Page
+        const actCtx = document.getElementById('analyticsActivityChart');
+        if (actCtx && heatmapData && heatmapData.length > 0) {
+            if(analyticsActivityChartInst) analyticsActivityChartInst.destroy();
+            analyticsActivityChartInst = new Chart(actCtx, {
+                type: 'line',
+                data: {
+                    labels: heatmapData.map(d => d.day_name),
+                    datasets: [
+                        {
+                            label: 'Loot Drops', data: heatmapData.map(d => d.loot || 0),
+                            borderColor: '#a335ee', backgroundColor: 'rgba(163, 53, 238, 0.1)',
+                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true
+                        },
+                        {
+                            label: 'Level Ups', data: heatmapData.map(d => d.levels || 0),
+                            borderColor: '#ffd100', backgroundColor: 'rgba(255, 209, 0, 0.1)',
+                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#bbb', font: { family: 'Cinzel' }, boxWidth: 12 } }, tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyFont: { family: 'Cinzel' } } },
+                    scales: { y: { beginAtZero: true, ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, grid: { display: false } } },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
+            });
+        }
+
+        // 5. Duplicate Class Donut Chart from Main Page
+        if(analyticsClassChartInst) analyticsClassChartInst.destroy();
+        analyticsClassChartInst = createDonutChart('analyticsClassDonutChart', rawGuildRoster, true);
     }
 
     window.returnToHome = function() {
@@ -1098,6 +1144,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         if (timeline) {
+            timeline.style.display = 'block';
             timelineTitle.innerHTML = "📜 Guild Recent Activity";
             window.currentFilteredChars = null; 
             applyTimelineFilters();

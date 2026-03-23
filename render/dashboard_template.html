@@ -147,9 +147,25 @@
                         <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
                 </div>
-            </div> <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
+            </div> 
+            <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 30px; font-size: 32px;">Guild Analytics</h2>
                 
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
+                    <div class="heatmap-wrapper" style="flex: 2; min-width: 320px; max-width: 650px; margin: 0;">
+                        <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days)</h3>
+                        <div style="position: relative; height: 180px; width: 100%; margin-bottom: 20px;">
+                            <canvas id="analyticsActivityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="heatmap-wrapper" style="flex: 1.2; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column;">
+                        <h3 class="heatmap-title" style="justify-content: center;">📊 Class Distribution</h3>
+                        <div style="position: relative; flex: 1; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 250px;">
+                            <canvas id="analyticsClassDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto;">
                     
                     <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
