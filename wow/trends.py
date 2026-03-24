@@ -1,21 +1,19 @@
 from datetime import datetime, timezone
 
 def process_character_trends(result, char_ranks, past_history_map, batch_char_history):
-    """Calculates item level and HK trends purely in memory for batching."""
+    """Calculates trends in memory. No database calls here."""
     char_name_lower = result['char'].lower()
     
     if isinstance(result.get('profile'), dict):
         result['profile']['guild_rank'] = char_ranks.get(char_name_lower, "Member")
-        
         cur_ilvl = result['profile'].get('equipped_item_level', 0)
         cur_hks = result['profile'].get('honorable_kills', 0)
-        
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # Prepare the row for the mass database insertion later
+        # Add to the list we will insert later
         batch_char_history.append((char_name_lower, today_str, cur_ilvl, cur_hks))
         
-        # Calculate trends instantly using the pre-fetched memory map
+        # Use the map we fetched at the start of main.py
         past_record = past_history_map.get(char_name_lower)
         if past_record:
             trend_ilvl = cur_ilvl - past_record['ilvl']
@@ -25,7 +23,6 @@ def process_character_trends(result, char_ranks, past_history_map, batch_char_hi
             
         result['profile']['trend_pve'] = trend_ilvl
         result['profile']['trend_pvp'] = trend_hks
-
     return result
 
 def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
