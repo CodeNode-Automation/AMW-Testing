@@ -8,8 +8,7 @@ def get_db_connection():
 
     if turso_url and turso_token:
         # Connect to Turso Cloud
-        conn_str = f"{turso_url}?authToken={turso_token}"
-        return sqlite3.connect(conn_str)
+        return sqlite3.connect(turso_url, auth_token=turso_token)
     else:
         # Fallback to local SQLite for local testing
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
