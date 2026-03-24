@@ -1087,8 +1087,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             // --- NEW: Rarity Filtering Logic ---
             if (tlTypeFilter === 'rare_plus') {
-                // Default: Blue, Purple, Orange
-                if (eventType !== 'item' && eventType !== 'level_up') show = false;
+                // Only show items
+                if (eventType !== 'item') show = false; 
+                
+                // Hide low quality items
                 if (eventType === 'item' && (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON')) show = false;
             } else if (tlTypeFilter === 'epic') {
                 // If they click Epics+, show ONLY Epic OR Legendary items

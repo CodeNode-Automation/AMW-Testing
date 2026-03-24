@@ -116,10 +116,29 @@ async def main_async():
     timeline_data_new = [] 
     roster_data = []
 
+    print("📂 Fetching historical state into memory to eliminate network latency...")
+    # 1. Load Character History
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    db_c.execute("SELECT char_name, ilvl, hks, max(record_date) FROM char_history WHERE record_date < ? GROUP BY char_name", (today_str,))
+    past_char_records = {row['char_name']: row for row in fetch_all_dicts(db_c)}
+    
+    # 2. Load Global Trends
+    db_c.execute("SELECT * FROM global_trends WHERE id='__GLOBAL__'")
+    gt_rows = fetch_all_dicts(db_c)
+    global_trend_record = gt_rows[0] if gt_rows else None
+    
+    # 3. Load Timeline Memory (to prevent duplicates without querying the DB)
+    db_c.execute("SELECT character_name, type, level, item_id FROM timeline")
+    known_timeline = set()
+    for row in fetch_all_dicts(db_c):
+        if row['type'] == 'level_up':
+            known_timeline.add(f"{row['character_name']}_level_{row['level']}")
+        else:
+            known_timeline.add(f"{row['character_name']}_item_{row['item_id']}")
+
     print("🚀 Opening Async HTTP Session...\n")
     async with aiohttp.ClientSession() as session:
         class_map, race_map = await fetch_static_maps(session, token)
-        
         realm_data = await fetch_realm_data(session, token, REALM)
 
         slug = GUILD_NAME.lower().replace(" ", "-").replace("'", "")
@@ -129,168 +148,125 @@ async def main_async():
         url = f"https://eu.api.blizzard.com/data/wow/guild/{REALM}/{slug}/roster?namespace=profile-classicann-eu&locale=en_US"
         headers = {"Authorization": f"Bearer {token}"}
         
-        roster_names = []
-        raw_guild_roster = [] # Captures EVERYONE, even level 1s, for the total roster view
-        char_ranks = {} # Temporary mapping to inject ranks into the deep character profiles
+        roster_names, raw_guild_roster, char_ranks = [], [], {}
         
         max_retries = 3
         for attempt in range(max_retries):
             try:
                 async with session.get(url, headers=headers) as resp:
                     if resp.status == 200:
-                        raw_data = await resp.json()
-                        all_m = raw_data.get('members', [])
-                        
+                        all_m = (await resp.json()).get('members', [])
                         for m in all_m:
                             c = m.get('character', {})
-                            c_name = c.get('name', 'Unknown')
-                            c_level = c.get('level', 0)
+                            c_name, c_level = c.get('name', 'Unknown'), c.get('level', 0)
                             
-                            # Convert raw IDs to Strings for the fallback view
-                            c_class_id = c.get('playable_class', {}).get('id')
-                            c_class = class_map.get(c_class_id, "Unknown")
+                            c_class = class_map.get(c.get('playable_class', {}).get('id'), "Unknown")
+                            c_race = race_map.get(c.get('playable_race', {}).get('id'), "Unknown")
                             
-                            c_race_id = c.get('playable_race', {}).get('id')
-                            c_race = race_map.get(c_race_id, "Unknown")
-                            
-                            # Map the explicit Guild Rank using our manual RANK_MAP
-                            rank_id = m.get('rank', 5) # Default to 5 if missing
-                            rank_name = RANK_MAP.get(rank_id, f"Rank {rank_id}")
+                            rank_name = RANK_MAP.get(m.get('rank', 5), f"Rank {m.get('rank', 5)}")
                             char_ranks[c_name.lower()] = rank_name
                             
                             raw_guild_roster.append({
-                                "name": c_name.title(),
-                                "level": c_level,
-                                "class": c_class,
-                                "race": c_race,
-                                "rank": rank_name
+                                "name": c_name.title(), "level": c_level,
+                                "class": c_class, "race": c_race, "rank": rank_name
                             })
-                            
-                            # Only process full API deep-scans for chars > level 10
-                            if c_level > 10:
-                                roster_names.append(c_name.lower())
-                        break # Successfully fetched and parsed, break out of the retry loop
-                    else:
-                        resp.raise_for_status()
+                            if c_level > 10: roster_names.append(c_name.lower())
+                        break 
+                    else: resp.raise_for_status()
             except Exception as e:
-                print(f"⚠️ Roster fetch failed (Attempt {attempt + 1}/{max_retries}): {e}")
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(5)
-                else:
-                    print("❌ Fatal Error: Could not fetch guild roster.")
-                    # Let the rest of the script continue with an empty roster to prevent a hard crash
+                print(f"⚠️ Roster fetch failed: {e}")
+                if attempt < max_retries - 1: await asyncio.sleep(5)
 
-        print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters (> Lvl 10).")
+        print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters.")
 
         sem = asyncio.Semaphore(5)
         tasks = [fetch_with_semaphore(sem, session, token, char, history_data) for char in roster_names]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        # --- TREND LOGIC: Load Persistent Trends & Daily Snapshots ---
-        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        
-        # OLD: for row in db_c.execute("SELECT * FROM daily_snapshot").fetchall():
-        #          snapshots[row['id']] = dict(row)
-        
-        # NEW:
-        snapshots = {}
-        db_c.execute("SELECT * FROM daily_snapshot")
-        for row in fetch_all_dicts(db_c):
-            snapshots[row['id']] = row
-
-        # EXPLICIT BATCH START
-        db_c.execute("BEGIN TRANSACTION")
-
+        # Process everything purely in Python memory (Instantaneous)
+        char_history_inserts = []
         for result in results:
             if isinstance(result, dict) and result:
                 try:
-                    result = process_character_trends(db_c, result, char_ranks)
+                    past_record = past_char_records.get(result['char'].lower())
+                    result, new_hist_row = process_character_trends(result, char_ranks, past_record)
+                    if new_hist_row:
+                        char_history_inserts.append(new_hist_row)
+                        
                     history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
                     roster_data.append(result)
                 except Exception as e:
-                    char_name = result.get('char', 'Unknown')
-                    print(f"⚠️ Data processing failed for {char_name}: {e}")
                     continue
 
-        # --- PERSISTENT TREND CALCULATIONS: Global Guild Stats ---
-        realm_data = process_global_trends(db_c, roster_data, raw_guild_roster, realm_data)
-        
-        # EXPLICIT BATCH END
-        db_c.execute("COMMIT")
+        realm_data, new_gt_row, new_daily_stats_row = process_global_trends(roster_data, raw_guild_roster, realm_data, global_trend_record)
 
     print("\n===========================================")
-    print("💾 Commit today's updates to SQLite database...")
+    print("💾 Pushing Batch Updates to Turso in 5 Network Calls...")
     
-    # EXPLICIT BATCH START
-    db_c.execute("BEGIN TRANSACTION")
-
-    # Save character level updates and gear state back to SQLite
+    # 1. Characters Batch
+    char_inserts = [(char_name, data.get('level', 0)) for char_name, data in history_data.items()]
+    db_c.executemany("INSERT OR REPLACE INTO characters (name, level) VALUES (?, ?)", char_inserts)
+    
+    # 2. Gear Batch
+    gear_inserts = []
     for char_name, data in history_data.items():
-        level = data.get('level', 0)
-        db_c.execute("INSERT OR REPLACE INTO characters (name, level) VALUES (?, ?)", (char_name, level))
         for slot, item in data.items():
             if isinstance(item, dict) and 'item_id' in item:
-                db_c.execute("""
-                    INSERT OR REPLACE INTO gear 
-                    (character_name, slot, item_id, name, quality, icon_data, tooltip_params)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon'), item.get('params')))
+                gear_inserts.append((
+                    char_name, slot, item.get('item_id'), item.get('name'), 
+                    item.get('quality'), item.get('icon'), item.get('params')
+                ))
+    db_c.executemany("""
+        INSERT OR REPLACE INTO gear 
+        (character_name, slot, item_id, name, quality, icon_data, tooltip_params)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, gear_inserts)
 
-    # Commit dynamic timeline events (level ups/loot drops)
+    # 3. Timeline Batch
+    timeline_inserts = []
     for ev in timeline_data_new:
         char_name = ev.get('character')
-        
         if ev.get('type') == 'level_up':
             level = ev.get('level')
-            if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'level_up' AND level = ?", (char_name, level)).fetchone():
-                db_c.execute("""
-                    INSERT INTO timeline 
-                    (timestamp, character_name, class, type, level)
-                    VALUES (?, ?, ?, 'level_up', ?)
-                """, (ev.get('timestamp'), char_name, ev.get('class'), level))
+            if f"{char_name}_level_{level}" not in known_timeline:
+                timeline_inserts.append((ev.get('timestamp'), char_name, ev.get('class'), 'level_up', None, None, None, None, level))
+                known_timeline.add(f"{char_name}_level_{level}")
         else:
             it = ev.get('item', {})
             item_id = it.get('item_id')
-            if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'item' AND item_id = ?", (char_name, item_id)).fetchone():
-                db_c.execute("""
-                    INSERT INTO timeline 
-                    (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon)
-                    VALUES (?, ?, ?, 'item', ?, ?, ?, ?)
-                """, (ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
+            if f"{char_name}_item_{item_id}" not in known_timeline:
+                timeline_inserts.append((ev.get('timestamp'), char_name, ev.get('class'), 'item', item_id, it.get('name'), it.get('quality'), it.get('icon_data'), None))
+                known_timeline.add(f"{char_name}_item_{item_id}")
+                
+    db_c.executemany("""
+        INSERT INTO timeline 
+        (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon, level)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, timeline_inserts)
 
-    # EXPLICIT BATCH END
-    db_c.execute("COMMIT")
+    # 4. Trend Batches
+    db_c.executemany("INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) VALUES (?, ?, ?, ?)", char_history_inserts)
+    db_c.execute("INSERT OR REPLACE INTO global_trends (id, last_total, trend_total, last_active, trend_active, last_ready, trend_ready) VALUES (?, ?, ?, ?, ?, ?, ?)", new_gt_row)
+    db_c.execute("INSERT OR REPLACE INTO daily_roster_stats (date, total_roster, active_roster) VALUES (?, ?, ?)", new_daily_stats_row)
 
     db_conn.commit()
-    
-    # Push all the fast local changes up to the remote Turso database
     if hasattr(db_conn, 'sync'):
-        print("☁️ Syncing batch updates back to Turso...")
+        print("☁️ Syncing payload to remote Turso cluster...")
         db_conn.sync()
-        
     db_conn.close()
 
     print("🌐 Generating final HTML Dashboard...")
     
-    # Re-open database read-only to query history for the frontend
     render_conn = get_db_connection()
-
     render_c = render_conn.cursor()
     
-    # OLD: 
-    # dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000").fetchall()]
-    # roster_history = {row['date']: dict(row) for row in render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7").fetchall()}
-    
-    # NEW:
     render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000")
     dashboard_feed = fetch_all_dicts(render_c)
     
     render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7")
     roster_history = {row['date']: row for row in fetch_all_dicts(render_c)}
-
     render_conn.close()
 
-    # Pass historical data and the FULL raw roster into generator
     generate_html_dashboard(roster_data, realm_data, dashboard_feed, raw_guild_roster, roster_history)
     print("🎉 ALL DONE! The SQLite-powered pipeline ran successfully.")
 

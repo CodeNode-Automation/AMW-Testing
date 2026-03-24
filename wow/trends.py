@@ -1,43 +1,33 @@
 from datetime import datetime, timezone
 
-def process_character_trends(db_c, result, char_ranks):
-    """Calculates and persists item level and HK trends for an individual character."""
+def process_character_trends(result, char_ranks, past_record):
+    """Calculates item level and HK trends purely in memory."""
     char_name_lower = result['char'].lower()
+    new_history_row = None
     
     if isinstance(result.get('profile'), dict):
         result['profile']['guild_rank'] = char_ranks.get(char_name_lower, "Member")
         
         cur_ilvl = result['profile'].get('equipped_item_level', 0)
         cur_hks = result['profile'].get('honorable_kills', 0)
-        
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # 1. Store today's stats
-        db_c.execute("""
-            INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
-            VALUES (?, ?, ?, ?)
-        """, (char_name_lower, today_str, cur_ilvl, cur_hks))
-        
-        # 2. Query the most recent past snapshot to calculate accurate trends
-        past_record = db_c.execute("""
-            SELECT ilvl, hks FROM char_history 
-            WHERE char_name = ? AND record_date < ? 
-            ORDER BY record_date DESC LIMIT 1
-        """, (char_name_lower, today_str)).fetchone()
+        # Prepare the row for bulk insertion later
+        new_history_row = (char_name_lower, today_str, cur_ilvl, cur_hks)
         
         if past_record:
-            trend_ilvl = cur_ilvl - past_record[0]
-            trend_hks = cur_hks - past_record[1]
+            trend_ilvl = cur_ilvl - past_record.get('ilvl', 0)
+            trend_hks = cur_hks - past_record.get('hks', 0)
         else:
             trend_ilvl, trend_hks = 0, 0
             
         result['profile']['trend_pve'] = trend_ilvl
         result['profile']['trend_pvp'] = trend_hks
 
-    return result
+    return result, new_history_row
 
-def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
-    """Calculates and persists trends for the top global guild stat boxes."""
+def process_global_trends(roster_data, raw_guild_roster, realm_data, gt_row):
+    """Calculates global guild stat trends purely in memory."""
     total_members = len(raw_guild_roster)
     active_14_days = 0 
     raid_ready_count = 0
@@ -52,15 +42,12 @@ def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
         if lvl == 70 and ilvl >= 110: raid_ready_count += 1
         if current_time_ms - p.get('last_login_timestamp', 0) <= fourteen_days_ms: active_14_days += 1
             
-    gt_row = db_c.execute("""
-        SELECT last_total, last_active, last_ready, trend_total, trend_active, trend_ready 
-        FROM global_trends WHERE id='__GLOBAL__'
-    """).fetchone()
-    
     trend_total, trend_active, trend_ready = 0, 0, 0
     
     if gt_row:
-        last_total, last_active, last_ready, trend_total, trend_active, trend_ready = gt_row
+        last_total = gt_row.get('last_total', 0)
+        last_active = gt_row.get('last_active', 0)
+        last_ready = gt_row.get('last_ready', 0)
         
         if total_members != last_total:
             trend_total = total_members - last_total
@@ -74,25 +61,12 @@ def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
             trend_ready = raid_ready_count - last_ready
             last_ready = raid_ready_count
             
-        db_c.execute("""
-            INSERT OR REPLACE INTO global_trends 
-            (id, last_total, trend_total, last_active, trend_active, last_ready, trend_ready) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, ('__GLOBAL__', last_total, trend_total, last_active, trend_active, last_ready, trend_ready))
+        new_gt_row = ('__GLOBAL__', last_total, trend_total, last_active, trend_active, last_ready, trend_ready)
     else:
-        db_c.execute("""
-            INSERT INTO global_trends 
-            (id, last_total, trend_total, last_active, trend_active, last_ready, trend_ready) 
-            VALUES (?, ?, 0, ?, 0, ?, 0)
-        """, ('__GLOBAL__', total_members, active_14_days, raid_ready_count))
+        new_gt_row = ('__GLOBAL__', total_members, 0, active_14_days, 0, raid_ready_count, 0)
 
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    
-    db_c.execute("""
-        INSERT OR REPLACE INTO daily_roster_stats 
-        (date, total_roster, active_roster) 
-        VALUES (?, ?, ?)
-    """, (today_str, total_members, active_14_days))
+    new_daily_stats_row = (today_str, total_members, active_14_days)
 
     if realm_data is None: realm_data = {}
     realm_data['global_trends'] = {
@@ -100,4 +74,4 @@ def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
         'trend_active': trend_active,
         'trend_ready': trend_ready
     }
-    return realm_data
+    return realm_data, new_gt_row, new_daily_stats_row
