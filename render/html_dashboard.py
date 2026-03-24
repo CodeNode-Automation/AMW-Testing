@@ -149,40 +149,21 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             <a href="#analytics" class="nav-btn nav-btn-home" title="View Guild Analytics" style="margin-left: 10px;">
               📊<span class="home-text"> Analytics</span>
             </a>
-            <div class="custom-select-wrapper">
-                <div class="custom-select" id="customCharSelect">
-                    <span class="selected-value">View Entire Guild</span>
-                    <span style="font-size: 12px; color: #888;">▼</span>
+            <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
+                <div class="custom-select" id="customCharSelect" tabindex="0">
+                    <span class="selected-value">Select View...</span>
+                    <span style="font-size: 12px; color: #aaa;">▼</span>
                 </div>
-                <div class="custom-select-options" id="customCharOptions">
-                    <div class="custom-option" data-value="all">
+                <div class="custom-select-options" id="customCharOptions" role="listbox">
+                    <div class="custom-option" data-value="all" role="option">
                         <span style="font-size:16px;">🌍</span> View Entire Guild
                     </div>
-    """
-    for char in sorted_roster:
-        c_name = char.get("profile", {}).get("name", "Unknown")
-        c_class_obj = char.get("profile", {}).get("character_class", {})
-        
-        c_class = "Unknown"
-        if isinstance(c_class_obj, str):
-            c_class = c_class_obj
-        elif isinstance(c_class_obj, dict):
-            name_val = c_class_obj.get("name", "Unknown")
-            if isinstance(name_val, str):
-                c_class = name_val
-            elif isinstance(name_val, dict):
-                c_class = name_val.get("en_US", "Unknown")
-        
-        clean_class = c_class.lower().replace(' ', '')
-        icon_url = f"https://wow.zamimg.com/images/wow/icons/large/class_{clean_class}.jpg"
-        
-        nav_controls += f"""
-                    <div class="custom-option" data-value="{c_name.lower()}">
-                        <img src="{icon_url}" class="opt-icon">
-                        {c_name}
-                    </div>\n"""
-        
-    nav_controls += """
+                    <div class="custom-option" data-value="active" role="option">
+                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
+                    </div>
+                    <div class="custom-option" data-value="raidready" role="option">
+                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                    </div>
                 </div>
             </div>
             <div class="search-container">
@@ -202,10 +183,9 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
             <div class="timeline-filters">
                 <div class="filter-group">
-                    <button class="tl-btn active" data-type="all">All</button>
-                    <button class="tl-btn" data-type="item">All Loot</button>
+                    <button class="tl-btn" data-type="all">All</button>
+                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
                     <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
-                    <button class="tl-btn" style="color: #ff8000; border-color: rgba(255, 128, 0, 0.5);" data-type="legendary">Legendaries</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
                 </div>
                 <div class="filter-group">
