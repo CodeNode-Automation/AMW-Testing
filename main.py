@@ -91,8 +91,13 @@ async def main_async():
 
     print("📂 Synchronizing Local SQLite Database...")
     db_conn = get_db_connection()
-    setup_database(db_conn) # We now pass the active connection directly
     
+    # NEW: Pull the latest data from Turso before doing any work
+    if hasattr(db_conn, 'sync'):
+        print("🔄 Pulling latest data from Turso cloud...")
+        db_conn.sync()
+
+    setup_database(db_conn) 
     db_c = DictCursor(db_conn.cursor())
 
     # Load known gear state into memory format required by update_character_state
@@ -299,6 +304,12 @@ async def main_async():
     """, timeline_item_updates)
 
     db_conn.commit()
+    
+    # NEW: Push all the batched changes back up to Turso
+    if hasattr(db_conn, 'sync'):
+        print("🔄 Pushing updates to Turso cloud...")
+        db_conn.sync()
+        
     db_conn.close()
 
     print("🌐 Generating final HTML Dashboard...")
