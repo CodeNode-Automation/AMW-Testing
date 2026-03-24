@@ -17,9 +17,13 @@ def get_db_connection():
         os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
         return sqlite3.connect(DB_FILE)
 
-def setup_database():
+def setup_database(conn=None):
     """Ensures database schema exists. Migration handles initial data population."""
-    conn = get_db_connection()
+    is_own_conn = False
+    if conn is None:
+        conn = get_db_connection()
+        is_own_conn = True
+        
     c = conn.cursor()
     
     # Store character summary data, stats, and metadata like faction/class
@@ -108,4 +112,5 @@ def setup_database():
     """)
 
     conn.commit()
-    conn.close()
+    if is_own_conn:
+        conn.close()

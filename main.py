@@ -66,8 +66,9 @@ async def main_async():
     print("✅ Authentication successful!\n")
 
     print("📂 Synchronizing Local SQLite Database...")
-    setup_database()
     db_conn = get_db_connection()
+    setup_database(db_conn) # We now pass the active connection directly
+    
     db_conn.row_factory = sqlite3.Row # Allows access by column name
     db_c = db_conn.cursor()
 
