@@ -19,6 +19,13 @@ from render.database import setup_database, get_db_connection
 from wow.trends import process_character_trends, process_global_trends
 from config import REALM, GUILD_NAME
 
+def dict_factory(cursor, row):
+    """Safely converts database rows to dictionaries for libsql."""
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 # Map Blizzard's raw integer IDs to strings for the base roster view
 CLASS_MAP = {
     1: "Warrior", 2: "Paladin", 3: "Hunter", 4: "Rogue", 5: "Priest", 
@@ -69,7 +76,7 @@ async def main_async():
     db_conn = get_db_connection()
     setup_database(db_conn) # We now pass the active connection directly
     
-    db_conn.row_factory = sqlite3.Row # Allows access by column name
+    db_conn.row_factory = dict_factory # Replaced sqlite3.Row
     db_c = db_conn.cursor()
 
     # Load known gear state into memory format required by update_character_state
@@ -240,7 +247,7 @@ async def main_async():
     
     # Re-open database read-only to query history for the frontend
     render_conn = get_db_connection()
-    render_conn.row_factory = sqlite3.Row
+    render_conn.row_factory = dict_factory 
     render_c = render_conn.cursor()
     
     # Query latest 3000 events for the HTML feed so the page doesn't bloat endlessly
