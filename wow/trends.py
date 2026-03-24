@@ -12,24 +12,13 @@ def process_character_trends(db_c, result, char_ranks):
         
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # 1. Create a historical tracking table to accurately track going up or down over time
-        db_c.execute("""
-            CREATE TABLE IF NOT EXISTS char_history (
-                char_name TEXT,
-                record_date TEXT,
-                ilvl INTEGER,
-                hks INTEGER,
-                PRIMARY KEY (char_name, record_date)
-            )
-        """)
-        
-        # 2. Store today's stats
+        # 1. Store today's stats
         db_c.execute("""
             INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
             VALUES (?, ?, ?, ?)
         """, (char_name_lower, today_str, cur_ilvl, cur_hks))
         
-        # 3. Query the most recent past snapshot to calculate accurate trends
+        # 2. Query the most recent past snapshot to calculate accurate trends
         past_record = db_c.execute("""
             SELECT ilvl, hks FROM char_history 
             WHERE char_name = ? AND record_date < ? 
@@ -37,8 +26,8 @@ def process_character_trends(db_c, result, char_ranks):
         """, (char_name_lower, today_str)).fetchone()
         
         if past_record:
-            trend_ilvl = cur_ilvl - past_record['ilvl']
-            trend_hks = cur_hks - past_record['hks']
+            trend_ilvl = cur_ilvl - past_record[0]
+            trend_hks = cur_hks - past_record[1]
         else:
             trend_ilvl, trend_hks = 0, 0
             
@@ -63,13 +52,15 @@ def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
         if lvl == 70 and ilvl >= 110: raid_ready_count += 1
         if current_time_ms - p.get('last_login_timestamp', 0) <= fourteen_days_ms: active_14_days += 1
             
-    gt_row = db_c.execute("SELECT * FROM global_trends WHERE id='__GLOBAL__'").fetchone()
+    gt_row = db_c.execute("""
+        SELECT last_total, last_active, last_ready, trend_total, trend_active, trend_ready 
+        FROM global_trends WHERE id='__GLOBAL__'
+    """).fetchone()
+    
     trend_total, trend_active, trend_ready = 0, 0, 0
     
     if gt_row:
-        gt = dict(gt_row)
-        last_total, last_active, last_ready = gt['last_total'], gt['last_active'], gt['last_ready']
-        trend_total, trend_active, trend_ready = gt['trend_total'], gt['trend_active'], gt['trend_ready']
+        last_total, last_active, last_ready, trend_total, trend_active, trend_ready = gt_row
         
         if total_members != last_total:
             trend_total = total_members - last_total
@@ -95,10 +86,8 @@ def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):
             VALUES (?, ?, 0, ?, 0, ?, 0)
         """, ('__GLOBAL__', total_members, active_14_days, raid_ready_count))
 
-    # --- Save today's exact roster size for the historical line chart ---
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     
-    # Using INSERT OR REPLACE ensures we only keep the latest snapshot for any given day
     db_c.execute("""
         INSERT OR REPLACE INTO daily_roster_stats 
         (date, total_roster, active_roster) 

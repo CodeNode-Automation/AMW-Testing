@@ -198,28 +198,32 @@ async def main_async():
         for row in fetch_all_dicts(db_c):
             snapshots[row['id']] = row
 
+        # EXPLICIT BATCH START
+        db_c.execute("BEGIN TRANSACTION")
+
         for result in results:
             if isinstance(result, dict) and result:
                 try:
-                    # 1. Process math and save trends to SQLite
                     result = process_character_trends(db_c, result, char_ranks)
-                    
-                    # 2. Check gear state and append any new drops to timeline_data_new
                     history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
-                    
                     roster_data.append(result)
                 except Exception as e:
                     char_name = result.get('char', 'Unknown')
                     print(f"⚠️ Data processing failed for {char_name}: {e}")
-                    # Skip this character and continue the loop without crashing the whole script
                     continue
 
         # --- PERSISTENT TREND CALCULATIONS: Global Guild Stats ---
         realm_data = process_global_trends(db_c, roster_data, raw_guild_roster, realm_data)
+        
+        # EXPLICIT BATCH END
+        db_c.execute("COMMIT")
 
     print("\n===========================================")
     print("💾 Commit today's updates to SQLite database...")
     
+    # EXPLICIT BATCH START
+    db_c.execute("BEGIN TRANSACTION")
+
     # Save character level updates and gear state back to SQLite
     for char_name, data in history_data.items():
         level = data.get('level', 0)
@@ -238,7 +242,6 @@ async def main_async():
         
         if ev.get('type') == 'level_up':
             level = ev.get('level')
-            # Check if this exact level up was already recorded to prevent duplicates
             if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'level_up' AND level = ?", (char_name, level)).fetchone():
                 db_c.execute("""
                     INSERT INTO timeline 
@@ -248,13 +251,15 @@ async def main_async():
         else:
             it = ev.get('item', {})
             item_id = it.get('item_id')
-            # Check if this character has EVER received this item ID before
             if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'item' AND item_id = ?", (char_name, item_id)).fetchone():
                 db_c.execute("""
                     INSERT INTO timeline 
                     (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon)
                     VALUES (?, ?, ?, 'item', ?, ?, ?, ?)
                 """, (ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
+
+    # EXPLICIT BATCH END
+    db_c.execute("COMMIT")
 
     db_conn.commit()
     
