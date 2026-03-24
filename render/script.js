@@ -264,7 +264,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                             pointBackgroundColor: '#a335ee',
                             pointBorderColor: '#fff',
                             tension: 0.3,
-                            fill: true
+                            fill: true,
+                            yAxisID: 'y'
                         },
                         {
                             label: 'Level Ups',
@@ -275,7 +276,32 @@ window.addEventListener('DOMContentLoaded', async () => {
                             pointBackgroundColor: '#ffd100',
                             pointBorderColor: '#fff',
                             tension: 0.3,
-                            fill: true
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total Roster',
+                            data: heatmapData.map(d => d.total_roster || 0),
+                            borderColor: '#3498db', // Blue
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#3498db',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y-roster'
+                        },
+                        {
+                            label: 'Active Roster',
+                            data: heatmapData.map(d => d.active_roster || 0),
+                            borderColor: '#2ecc71', // Green
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#2ecc71',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y-roster'
                         }
                     ]
                 },
@@ -287,7 +313,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                         tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyFont: { family: 'Cinzel' } }
                     },
                     scales: {
-                        y: { beginAtZero: true, ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { 
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Activity Count', color: '#888', font: {family: 'Cinzel'} },
+                            ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, 
+                            grid: { color: 'rgba(255,255,255,0.05)' } 
+                        },
+                        'y-roster': {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: false, // Setting false so large roster numbers don't compress the lines
+                            title: { display: true, text: 'Player Count', color: '#888', font: {family: 'Cinzel'} },
+                            ticks: { color: '#888', font: {family: 'Cinzel'} },
+                            grid: { drawOnChartArea: false } // Prevents overlapping grid lines
+                        },
                         x: { ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, grid: { display: false } }
                     },
                     interaction: { mode: 'nearest', axis: 'x', intersect: false }
@@ -1260,19 +1301,33 @@ window.addEventListener('DOMContentLoaded', async () => {
                         {
                             label: 'Loot Drops', data: heatmapData.map(d => d.loot || 0),
                             borderColor: '#a335ee', backgroundColor: 'rgba(163, 53, 238, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true
+                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
                         },
                         {
                             label: 'Level Ups', data: heatmapData.map(d => d.levels || 0),
                             borderColor: '#ffd100', backgroundColor: 'rgba(255, 209, 0, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true
+                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total Roster', data: heatmapData.map(d => d.total_roster || 0),
+                            borderColor: '#3498db', backgroundColor: 'transparent',
+                            borderWidth: 2, pointBackgroundColor: '#3498db', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
+                        },
+                        {
+                            label: 'Active Roster', data: heatmapData.map(d => d.active_roster || 0),
+                            borderColor: '#2ecc71', backgroundColor: 'transparent',
+                            borderWidth: 2, pointBackgroundColor: '#2ecc71', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
                         }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { labels: { color: '#bbb', font: { family: 'Cinzel' }, boxWidth: 12 } }, tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyFont: { family: 'Cinzel' } } },
-                    scales: { y: { beginAtZero: true, ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, grid: { display: false } } },
+                    scales: { 
+                        y: { type: 'linear', position: 'left', beginAtZero: true, title: { display: true, text: 'Activity Count', color: '#888', font: {family: 'Cinzel'} }, ticks: { color: '#888', stepSize: 1, font: {family: 'Cinzel'} }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        'y-roster': { type: 'linear', position: 'right', beginAtZero: false, title: { display: true, text: 'Player Count', color: '#888', font: {family: 'Cinzel'} }, ticks: { color: '#888', font: {family: 'Cinzel'} }, grid: { drawOnChartArea: false } },
+                        x: { ticks: { color: '#888', font: { family: 'Cinzel', weight: 'bold' } }, grid: { display: false } } 
+                    },
                     interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
