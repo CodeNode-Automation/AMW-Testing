@@ -1,35 +1,40 @@
 import os
 import libsql_experimental as libsql
 
-# Dynamically find the project root directory (one folder up from /render)
+# Dynamically find the project root directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Safely construct the absolute path to asset/guild.db
 DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
 
 def get_db_connection():
-    """Establishes a connection using Turso's Embedded Replica for maximum speed."""
+    """Establishes a connection using Turso's Embedded Replica for instant local speeds."""
     turso_url = os.environ.get("TURSO_DATABASE_URL")
     turso_token = os.environ.get("TURSO_AUTH_TOKEN")
     
     os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
     
     if turso_url and turso_token:
-        # Create a local database that syncs with the remote Turso database
+        # DB_FILE MUST be the first argument to force a local Embedded Replica
         conn = libsql.connect(DB_FILE, sync_url=turso_url, auth_token=turso_token)
-        # Pull the latest data from Turso before starting
+        
+        # Pull the latest data from Turso before starting the script
         conn.sync()
-        return conn
     else:
         # Local testing fallback
-        return libsql.connect(DB_FILE)
+        conn = libsql.connect(DB_FILE)
+
+    # Force maximum write speed on the local file
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA synchronous = OFF;")
+    
+    return conn
 
 def setup_database():
     """Ensures database schema exists. Migration handles initial data population."""
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Store character summary data, stats, and metadata like faction/class
     c.execute("""
         CREATE TABLE IF NOT EXISTS characters (
             name TEXT PRIMARY KEY, class TEXT, race TEXT, faction TEXT, guild TEXT,
@@ -38,7 +43,6 @@ def setup_database():
         )
     """)
 
-    # Store loot/gear historical state.
     c.execute("""
         CREATE TABLE IF NOT EXISTS gear (
             character_name TEXT, slot TEXT, item_id INTEGER, name TEXT, quality TEXT,
@@ -48,7 +52,6 @@ def setup_database():
         )
     """)
 
-    # Store timeline events (loot drops and level ups). No longer capped.
     c.execute("""
         CREATE TABLE IF NOT EXISTS timeline (
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, character_name TEXT,
@@ -59,7 +62,6 @@ def setup_database():
 
     c.execute("CREATE INDEX IF NOT EXISTS idx_timeline_timestamp ON timeline (timestamp DESC)")
 
-    # Store midnight snapshots to calculate daily stat trends for the dashboard arrows
     c.execute("""
         CREATE TABLE IF NOT EXISTS daily_snapshot (
             id TEXT PRIMARY KEY,
@@ -70,7 +72,6 @@ def setup_database():
         )
     """)
 
-    # Persistent trend tracker for characters
     c.execute("""
         CREATE TABLE IF NOT EXISTS character_trends (
             char_name TEXT PRIMARY KEY,
@@ -81,7 +82,6 @@ def setup_database():
         )
     """)
 
-    # Persistent trend tracker for global guild stats
     c.execute("""
         CREATE TABLE IF NOT EXISTS global_trends (
             id TEXT PRIMARY KEY,
@@ -94,7 +94,6 @@ def setup_database():
         )
     """)
 
-    # Create the new historical daily tracking table
     c.execute('''
         CREATE TABLE IF NOT EXISTS daily_roster_stats (
             date TEXT PRIMARY KEY,
@@ -103,7 +102,6 @@ def setup_database():
         )
     ''')
     
-    # Historical daily tracking for characters
     c.execute("""
         CREATE TABLE IF NOT EXISTS char_history (
             char_name TEXT,
