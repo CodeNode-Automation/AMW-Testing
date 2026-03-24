@@ -34,15 +34,20 @@ window.addEventListener('DOMContentLoaded', async () => {
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
     const heatmapData = JSON.parse(document.getElementById('heatmap-data').textContent);
     
-    // NEW: Download the heavy roster files silently in the background with error handling
+    // NEW: Download the heavy files silently in the background with error handling
     let rosterData = [];
     let rawGuildRoster = [];
+    let timelineDataRaw = [];
+    
     try {
         const rosterRes = await fetch('asset/roster.json');
         rosterData = await rosterRes.json();
         
         const rawRes = await fetch('asset/raw_roster.json');
         rawGuildRoster = await rawRes.json();
+
+        const timelineRes = await fetch('asset/timeline.json');
+        timelineDataRaw = await timelineRes.json();
     } catch (error) {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
@@ -1068,60 +1073,85 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function applyTimelineFilters() {
-        if (!timeline) return;
+    let currentTimelinePage = 1;
+    const TIMELINE_PAGE_SIZE = 50;
+    let filteredTimelineData = [];
 
-        let visibleCount = 0;
-        const now = Date.now();
-        const feedContainer = document.querySelector('.timeline-feed');
+    function renderTimelineChunk(append = false) {
+        const feedContainer = document.getElementById('timeline-feed-container');
+        const loadMoreBtn = document.getElementById('load-more-timeline');
+        if (!feedContainer) return;
 
-        document.querySelectorAll('#timeline .concise-item').forEach(el => {
-            const charName = el.getAttribute('data-char');
-            const eventType = el.getAttribute('data-event-type');
-            const timestampStr = el.getAttribute('data-timestamp');
-            const itemQuality = el.getAttribute('data-quality'); // NEW: Grab the quality tag!
-            
-            let show = true;
-            
-            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) show = false;
-            
-            // --- NEW: Rarity Filtering Logic ---
-            if (tlTypeFilter === 'rare_plus') {
-                // Default: Blue, Purple, Orange
-                if (eventType !== 'item' && eventType !== 'level_up') show = false;
-                if (eventType === 'item' && (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON')) show = false;
-            } else if (tlTypeFilter === 'epic') {
-                // If they click Epics+, show ONLY Epic OR Legendary items
-                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) show = false;
-            } else if (tlTypeFilter === 'legendary') {
-                // If they click Legendaries, show ONLY Orange items
-                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') show = false;
-            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
-                // Normal "Loot" or "Levels" logic
-                show = false;
-            }
+        if (!append) feedContainer.innerHTML = '';
 
-            if (tlSpecificDate && timestampStr) {
-                if (!timestampStr.startsWith(tlSpecificDate)) {
-                    show = false;
-                }
-            } else if (tlDateFilter !== 'all' && timestampStr) {
-                let cleanTs = timestampStr.replace('Z', '+00:00');
+        const startIndex = (currentTimelinePage - 1) * TIMELINE_PAGE_SIZE;
+        const endIndex = startIndex + TIMELINE_PAGE_SIZE;
+        const chunk = filteredTimelineData.slice(startIndex, endIndex);
+
+        let html = '';
+        chunk.forEach(event => {
+            const cNameRaw = event.character_name || 'Unknown';
+            const cNameTitle = cNameRaw.charAt(0).toUpperCase() + cNameRaw.slice(1).toLowerCase();
+            const cNameLower = cNameRaw.toLowerCase();
+            const cCls = event.class || 'Unknown';
+            const cHex = CLASS_COLORS[cCls] || '#ffd100';
+            const ts = event.timestamp || '';
+            
+            let dateStr = ts.substring(0, 10);
+            try {
+                let cleanTs = ts.replace('Z', '+00:00');
                 if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                
-                const eventDate = new Date(cleanTs).getTime();
-                if (!isNaN(eventDate)) {
-                    const daysMs = parseInt(tlDateFilter) * 24 * 60 * 60 * 1000;
-                    if ((now - eventDate) > daysMs) show = false;
-                }
-            }
+                const dt = new Date(cleanTs);
+                if (!isNaN(dt)) dateStr = dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            } catch(e) {}
 
-            el.style.display = show ? 'flex' : 'none';
-            if (show) visibleCount++;
+            if (event.type === 'level_up') {
+                html += `
+                <div onclick="selectCharacter('${cNameLower}')" class="concise-item tt-char" data-char="${cNameLower}" style="border-left-color: ${cHex}; cursor: pointer; animation: fadeIn 0.3s forwards;">
+                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${cHex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${cNameTitle}</span>
+                        <span style="color:#888; font-size:11px;">${dateStr}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: #ffd100;">
+                        <span style="font-size: 14px;">⭐</span>
+                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level ${event.level}</span>
+                    </div>
+                </div>`;
+            } else {
+                const q = event.item_quality || 'COMMON';
+                const qHex = QUALITY_COLORS[q] || '#ffffff';
+                html += `
+                <div onclick="selectCharacter('${cNameLower}')" class="concise-item tt-char" data-char="${cNameLower}" style="border-left-color: ${qHex}; cursor: pointer; animation: fadeIn 0.3s forwards;">
+                    <div class="timeline-node" style="background: ${qHex}; box-shadow: 0 0 8px ${qHex};"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${cHex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${cNameTitle}</span>
+                        <span style="color:#888; font-size:11px;">${dateStr}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: ${qHex};">
+                        <img src="${event.item_icon}" alt="icon">
+                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" target="_blank" onclick="event.stopPropagation();" style="color: ${qHex}; font-weight:bold; text-decoration: none;">${event.item_name}</a>
+                    </div>
+                </div>`;
+            }
         });
+
+        feedContainer.insertAdjacentHTML('beforeend', html);
         
+        // Re-bind tooltips to newly injected DOM elements
+        setupTooltips();
+
+        // Check if there are more items to load
+        if (loadMoreBtn) {
+            if (endIndex < filteredTimelineData.length) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+
         let noResultsMsg = document.getElementById('tl-no-results');
-        if (visibleCount === 0) {
+        if (filteredTimelineData.length === 0) {
             feedContainer.style.display = 'none';
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('div');
@@ -1131,7 +1161,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 noResultsMsg.style.padding = '20px';
                 noResultsMsg.style.fontStyle = 'italic';
                 noResultsMsg.innerText = 'No high-end loot found for these filters yet... keep raiding!';
-                timeline.appendChild(noResultsMsg);
+                document.getElementById('timeline').appendChild(noResultsMsg);
             } else {
                 noResultsMsg.style.display = 'block';
             }
@@ -1140,6 +1170,67 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (noResultsMsg) noResultsMsg.style.display = 'none';
         }
     }
+
+    function applyTimelineFilters() {
+        if (!document.getElementById('timeline')) return;
+
+        const now = Date.now();
+
+        // First, filter the raw JSON array based on current UI states
+        filteredTimelineData = timelineDataRaw.filter(event => {
+            const charName = event.character_name ? event.character_name.toLowerCase() : '';
+            const eventType = event.type || 'item';
+            const itemQuality = event.item_quality || 'COMMON';
+            const timestampStr = event.timestamp || '';
+
+            // 1. Check if we are viewing a specific class/character
+            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
+
+            // 2. Check Item Rarity / Event Type filters
+            if (tlTypeFilter === 'rare_plus') {
+                if (eventType !== 'item' && eventType !== 'level_up') return false;
+                if (eventType === 'item' && (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON')) return false;
+            } else if (tlTypeFilter === 'epic') {
+                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
+            } else if (tlTypeFilter === 'legendary') {
+                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
+            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
+                return false;
+            }
+
+            // 3. Check Date Filters (Specific heat map click)
+            if (tlSpecificDate && timestampStr) {
+                if (!timestampStr.startsWith(tlSpecificDate)) return false;
+            } 
+            // 4. Check Dropdown Date Filters
+            else if (tlDateFilter !== 'all' && timestampStr) {
+                let cleanTs = timestampStr.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                if (!isNaN(eventDate)) {
+                    const daysMs = parseInt(tlDateFilter) * 24 * 60 * 60 * 1000;
+                    if ((now - eventDate) > daysMs) return false;
+                }
+            }
+
+            return true;
+        });
+
+        // Reset to page 1 and execute the initial render
+        currentTimelinePage = 1;
+        renderTimelineChunk(false);
+    }
+
+    // Attach the listener to the Load More button
+    document.addEventListener('DOMContentLoaded', () => {
+        const loadMoreBtn = document.getElementById('load-more-timeline');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', () => {
+                currentTimelinePage++;
+                renderTimelineChunk(true);
+            });
+        }
+    });
 
     document.querySelectorAll('.tl-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
