@@ -92,12 +92,16 @@ async def main_async():
     print("📂 Synchronizing Local SQLite Database...")
     db_conn = get_db_connection()
     
-    # NEW: Pull the latest data from Turso before doing any work
     if hasattr(db_conn, 'sync'):
         print("🔄 Pulling latest data from Turso cloud...")
-        db_conn.sync()
+        try:
+            db_conn.sync()
+            print("✅ Pull complete!")
+        except Exception as e:
+            print(f"❌ Initial sync failed: {e}")
 
-    setup_database(db_conn) 
+    setup_database(db_conn) # We now pass the active connection directly
+    
     db_c = DictCursor(db_conn.cursor())
 
     # Load known gear state into memory format required by update_character_state
@@ -126,7 +130,8 @@ async def main_async():
     roster_data = []
 
     print("🚀 Opening Async HTTP Session...\n")
-    async with aiohttp.ClientSession() as session:
+    timeout = aiohttp.ClientTimeout(total=30)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         class_map, race_map = await fetch_static_maps(session, token)
         
         realm_data = await fetch_realm_data(session, token, REALM)
@@ -195,7 +200,7 @@ async def main_async():
         tasks = [fetch_with_semaphore(sem, session, token, char, history_data) for char in roster_names]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        # --- TREND LOGIC: Load Persistent Trends & Daily Snapshots ---
+        # TREND LOGIC: Load Persistent Trends & Daily Snapshots
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
         print("📊 Pre-fetching historical character trends...")
@@ -236,7 +241,7 @@ async def main_async():
                     # Skip this character and continue the loop without crashing the whole script
                     continue
 
-        # --- PERSISTENT TREND CALCULATIONS: Global Guild Stats ---
+        # PERSISTENT TREND CALCULATIONS: Global Guild Stats
         realm_data = process_global_trends(db_c, roster_data, raw_guild_roster, realm_data)
 
     print("\n===========================================")
@@ -304,15 +309,15 @@ async def main_async():
     """, timeline_item_updates)
 
     db_conn.commit()
-    
+
     if hasattr(db_conn, 'sync'):
-        print("🔄 Pulling latest data from Turso cloud...")
+        print("🔄 Pushing updates to Turso cloud...")
         try:
             db_conn.sync()
-            print("✅ Pull complete!")
+            print("✅ Push complete!")
         except Exception as e:
-            print(f"❌ Sync failed: {e}")
-        
+            print(f"❌ Final sync failed: {e}")
+
     db_conn.close()
 
     print("🌐 Generating final HTML Dashboard...")
