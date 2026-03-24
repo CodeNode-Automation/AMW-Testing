@@ -1,20 +1,41 @@
 from datetime import datetime, timezone
 
-def process_character_trends(result, char_ranks, past_history_map, batch_char_history):
-    """Calculates trends in memory. No database calls here."""
+def process_character_trends(db_c, result, char_ranks):
+    """Calculates and persists item level and HK trends for an individual character."""
     char_name_lower = result['char'].lower()
     
     if isinstance(result.get('profile'), dict):
         result['profile']['guild_rank'] = char_ranks.get(char_name_lower, "Member")
+        
         cur_ilvl = result['profile'].get('equipped_item_level', 0)
         cur_hks = result['profile'].get('honorable_kills', 0)
+        
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # Add to the list we will insert later
-        batch_char_history.append((char_name_lower, today_str, cur_ilvl, cur_hks))
+        # 1. Create a historical tracking table to accurately track going up or down over time
+        db_c.execute("""
+            CREATE TABLE IF NOT EXISTS char_history (
+                char_name TEXT,
+                record_date TEXT,
+                ilvl INTEGER,
+                hks INTEGER,
+                PRIMARY KEY (char_name, record_date)
+            )
+        """)
         
-        # Use the map we fetched at the start of main.py
-        past_record = past_history_map.get(char_name_lower)
+        # 2. Store today's stats
+        db_c.execute("""
+            INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
+            VALUES (?, ?, ?, ?)
+        """, (char_name_lower, today_str, cur_ilvl, cur_hks))
+        
+        # 3. Query the most recent past snapshot to calculate accurate trends
+        past_record = db_c.execute("""
+            SELECT ilvl, hks FROM char_history 
+            WHERE char_name = ? AND record_date < ? 
+            ORDER BY record_date DESC LIMIT 1
+        """, (char_name_lower, today_str)).fetchone()
+        
         if past_record:
             trend_ilvl = cur_ilvl - past_record['ilvl']
             trend_hks = cur_hks - past_record['hks']
@@ -23,6 +44,7 @@ def process_character_trends(result, char_ranks, past_history_map, batch_char_hi
             
         result['profile']['trend_pve'] = trend_ilvl
         result['profile']['trend_pvp'] = trend_hks
+
     return result
 
 def process_global_trends(db_c, roster_data, raw_guild_roster, realm_data):

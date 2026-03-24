@@ -1,29 +1,20 @@
+import sqlite3
 import os
-import libsql_experimental as sqlite3
+
+# Dynamically find the project root directory (one folder up from /render)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Safely construct the absolute path to asset/guild.db
+DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
 
 def get_db_connection():
-    """Establishes a connection to a synced Turso replica or local fallback."""
-    turso_url = os.getenv("TURSO_DATABASE_URL")
-    turso_token = os.getenv("TURSO_AUTH_TOKEN")
-
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
+    """Establishes a connection to the persistent SQLite database."""
     os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
+    return sqlite3.connect(DB_FILE)
 
-    if turso_url and turso_token:
-        # Use Embedded Replica: reads/writes happen locally and sync to Turso
-        return sqlite3.connect(DB_FILE, sync_url=turso_url, auth_token=turso_token)
-    else:
-        # Fallback to local SQLite for local testing
-        return sqlite3.connect(DB_FILE)
-
-def setup_database(conn=None):
+def setup_database():
     """Ensures database schema exists. Migration handles initial data population."""
-    is_own_conn = False
-    if conn is None:
-        conn = get_db_connection()
-        is_own_conn = True
-        
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Store character summary data, stats, and metadata like faction/class
@@ -112,5 +103,4 @@ def setup_database(conn=None):
     """)
 
     conn.commit()
-    if is_own_conn:
-        conn.close()
+    conn.close()

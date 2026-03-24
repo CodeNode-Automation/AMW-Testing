@@ -178,7 +178,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
 
     timeline_html = ""
     if timeline_data:
-        timeline_html = f"""
+        timeline_html += f"""
         <div id="timeline" class="timeline-container">
             <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
             <div class="timeline-filters">
@@ -197,13 +197,51 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
                     </select>
                 </div>
             </div>
-            <div class="timeline-feed" id="timeline-feed-container"></div>
+            <div class="timeline-feed">
+"""
+        for event in timeline_data:
+            c_name = event.get("character_name", "Unknown").title()
+            c_cls = event.get("class", "Unknown")
+            c_hex = CLASS_COLORS.get(c_cls, "#ffd100")
+            ts = event.get("timestamp", "")
             
-            <div style="text-align: center; margin-top: 15px;">
-                <button id="load-more-timeline" class="nav-btn" style="width: 100%; padding: 10px; cursor: pointer; display: none; background: #222; border: 1px solid #444; color: #ffd100; font-family: 'Cinzel'; border-radius: 4px;">Load Older Events ▼</button>
+            try:
+                dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                date_str = dt.strftime("%b %d")
+            except Exception: date_str = ts[:10]
+            
+            if event.get("type") == "level_up":
+                timeline_html += f"""
+                <div onclick="selectCharacter('{c_name.lower()}')" class="concise-item tt-char" data-char="{c_name.lower()}" data-event-type="level_up" data-timestamp="{ts}" style="border-left-color: {c_hex}; cursor: pointer;">
+                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: {c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">{c_name}</span>
+                        <span style="color:#888; font-size:11px;">{date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: #ffd100;">
+                        <span style="font-size: 14px;">⭐</span>
+                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level {event.get('level')}</span>
+                    </div>
+                </div>"""
+            else:
+                q = event.get('item_quality', 'COMMON')
+                q_hex = QUALITY_COLORS.get(q, "#ffffff")
+                timeline_html += f"""
+                <div onclick="selectCharacter('{c_name.lower()}')" class="concise-item tt-char" data-char="{c_name.lower()}" data-event-type="item" data-quality="{q}" data-timestamp="{ts}" style="border-left-color: {q_hex}; cursor: pointer;">
+                    <div class="timeline-node" style="background: {q_hex}; box-shadow: 0 0 8px {q_hex};"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: {c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">{c_name}</span>
+                        <span style="color:#888; font-size:11px;">{date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: {q_hex};">
+                        <img src="{event.get('item_icon')}" alt="icon">
+                        <a href="https://www.wowhead.com/wotlk/item={event.get('item_id')}" target="_blank" onclick="event.stopPropagation();" style="color: {q_hex}; font-weight:bold; text-decoration: none;">{event.get('item_name')}</a>
+                    </div>
+                </div>"""
+        timeline_html += """
             </div>
         </div>
-        """
+"""
 
     base_dir = os.path.dirname(__file__)
     try:
@@ -221,8 +259,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
         json.dump(sorted_stats_roster, f)
     with open("asset/raw_roster.json", "w", encoding="utf-8") as f:
         json.dump(raw_guild_roster, f)
-    with open("asset/timeline.json", "w", encoding="utf-8") as f:
-        json.dump(timeline_data, f)
         
     dashboard_config = {
         "last_updated": last_updated_iso,
