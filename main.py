@@ -193,6 +193,23 @@ async def main_async():
         # --- TREND LOGIC: Load Persistent Trends & Daily Snapshots ---
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
+        print("📊 Pre-fetching historical character trends...")
+        past_records_raw = db_c.execute("""
+            SELECT char_name, ilvl, hks, record_date 
+            FROM char_history 
+            WHERE record_date < ? 
+            ORDER BY record_date DESC
+        """, (today_str,)).fetchall()
+        
+        past_history_map = {}
+        for row in past_records_raw:
+            c_name = row['char_name']
+            # Only store the most recent previous record per character
+            if c_name not in past_history_map:
+                past_history_map[c_name] = {'ilvl': row['ilvl'], 'hks': row['hks']}
+
+        batch_char_history = []
+        
         # Load Global Snapshots
         snapshots = {}
         for row in db_c.execute("SELECT * FROM daily_snapshot").fetchall():
@@ -201,8 +218,8 @@ async def main_async():
         for result in results:
             if isinstance(result, dict) and result:
                 try:
-                    # 1. Process math and save trends to SQLite
-                    result = process_character_trends(db_c, result, char_ranks)
+                    # 1. Process math using in-memory data
+                    result = process_character_trends(result, char_ranks, past_history_map, batch_char_history)
                     
                     # 2. Check gear state and append any new drops to timeline_data_new
                     history_data, timeline_data_new = update_character_state(result, history_data, timeline_data_new)
@@ -218,43 +235,68 @@ async def main_async():
         realm_data = process_global_trends(db_c, roster_data, raw_guild_roster, realm_data)
 
     print("\n===========================================")
-    print("💾 Commit today's updates to SQLite database...")
+    print("💾 Commit today's updates to SQLite database in Batch Mode...")
     
-    # Save character level updates and gear state back to SQLite
+    char_updates = []
+    gear_updates = []
+    
     for char_name, data in history_data.items():
         level = data.get('level', 0)
-        db_c.execute("INSERT OR REPLACE INTO characters (name, level) VALUES (?, ?)", (char_name, level))
+        char_updates.append((char_name, level))
         for slot, item in data.items():
             if isinstance(item, dict) and 'item_id' in item:
-                db_c.execute("""
-                    INSERT OR REPLACE INTO gear 
-                    (character_name, slot, item_id, name, quality, icon_data, tooltip_params)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon'), item.get('params')))
+                gear_updates.append((
+                    char_name, slot, item.get('item_id'), item.get('name'), 
+                    item.get('quality'), item.get('icon'), item.get('params')
+                ))
 
-    # Commit dynamic timeline events (level ups/loot drops)
+    # Execute all character and gear updates at once
+    db_c.executemany("INSERT OR REPLACE INTO characters (name, level) VALUES (?, ?)", char_updates)
+    db_c.executemany("""
+        INSERT OR REPLACE INTO gear 
+        (character_name, slot, item_id, name, quality, icon_data, tooltip_params)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, gear_updates)
+
+    # Execute all trend history at once
+    db_c.executemany("""
+        INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
+        VALUES (?, ?, ?, ?)
+    """, batch_char_history)
+
+    # Pre-fetch timeline validation to avoid duplicates without network loops
+    existing_levels = set(row['char_lvl'] for row in db_c.execute("SELECT character_name || '_' || level AS char_lvl FROM timeline WHERE type = 'level_up'").fetchall())
+    existing_items = set(row['char_item'] for row in db_c.execute("SELECT character_name || '_' || item_id AS char_item FROM timeline WHERE type = 'item'").fetchall())
+    
+    timeline_level_updates = []
+    timeline_item_updates = []
+    
     for ev in timeline_data_new:
         char_name = ev.get('character')
-        
         if ev.get('type') == 'level_up':
             level = ev.get('level')
-            # Check if this exact level up was already recorded to prevent duplicates
-            if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'level_up' AND level = ?", (char_name, level)).fetchone():
-                db_c.execute("""
-                    INSERT INTO timeline 
-                    (timestamp, character_name, class, type, level)
-                    VALUES (?, ?, ?, 'level_up', ?)
-                """, (ev.get('timestamp'), char_name, ev.get('class'), level))
+            key = f"{char_name}_{level}"
+            if key not in existing_levels:
+                timeline_level_updates.append((ev.get('timestamp'), char_name, ev.get('class'), level))
+                existing_levels.add(key)
         else:
             it = ev.get('item', {})
             item_id = it.get('item_id')
-            # Check if this character has EVER received this item ID before
-            if not db_c.execute("SELECT 1 FROM timeline WHERE character_name = ? AND type = 'item' AND item_id = ?", (char_name, item_id)).fetchone():
-                db_c.execute("""
-                    INSERT INTO timeline 
-                    (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon)
-                    VALUES (?, ?, ?, 'item', ?, ?, ?, ?)
-                """, (ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
+            key = f"{char_name}_{item_id}"
+            if key not in existing_items:
+                timeline_item_updates.append((ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
+                existing_items.add(key)
+
+    # Execute all new timeline events at once
+    db_c.executemany("""
+        INSERT INTO timeline (timestamp, character_name, class, type, level)
+        VALUES (?, ?, ?, 'level_up', ?)
+    """, timeline_level_updates)
+    
+    db_c.executemany("""
+        INSERT INTO timeline (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon)
+        VALUES (?, ?, ?, 'item', ?, ?, ?, ?)
+    """, timeline_item_updates)
 
     db_conn.commit()
     db_conn.close()

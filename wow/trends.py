@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
-def process_character_trends(db_c, result, char_ranks):
-    """Calculates and persists item level and HK trends for an individual character."""
+def process_character_trends(result, char_ranks, past_history_map, batch_char_history):
+    """Calculates item level and HK trends purely in memory for batching."""
     char_name_lower = result['char'].lower()
     
     if isinstance(result.get('profile'), dict):
@@ -12,30 +12,11 @@ def process_character_trends(db_c, result, char_ranks):
         
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # 1. Create a historical tracking table to accurately track going up or down over time
-        db_c.execute("""
-            CREATE TABLE IF NOT EXISTS char_history (
-                char_name TEXT,
-                record_date TEXT,
-                ilvl INTEGER,
-                hks INTEGER,
-                PRIMARY KEY (char_name, record_date)
-            )
-        """)
+        # Prepare the row for the mass database insertion later
+        batch_char_history.append((char_name_lower, today_str, cur_ilvl, cur_hks))
         
-        # 2. Store today's stats
-        db_c.execute("""
-            INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) 
-            VALUES (?, ?, ?, ?)
-        """, (char_name_lower, today_str, cur_ilvl, cur_hks))
-        
-        # 3. Query the most recent past snapshot to calculate accurate trends
-        past_record = db_c.execute("""
-            SELECT ilvl, hks FROM char_history 
-            WHERE char_name = ? AND record_date < ? 
-            ORDER BY record_date DESC LIMIT 1
-        """, (char_name_lower, today_str)).fetchone()
-        
+        # Calculate trends instantly using the pre-fetched memory map
+        past_record = past_history_map.get(char_name_lower)
         if past_record:
             trend_ilvl = cur_ilvl - past_record['ilvl']
             trend_hks = cur_hks - past_record['hks']
