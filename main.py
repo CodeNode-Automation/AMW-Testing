@@ -305,10 +305,13 @@ async def main_async():
 
     db_conn.commit()
     
-    # NEW: Push all the batched changes back up to Turso
     if hasattr(db_conn, 'sync'):
-        print("🔄 Pushing updates to Turso cloud...")
-        db_conn.sync()
+        print("🔄 Pulling latest data from Turso cloud...")
+        try:
+            db_conn.sync()
+            print("✅ Pull complete!")
+        except Exception as e:
+            print(f"❌ Sync failed: {e}")
         
     db_conn.close()
 
