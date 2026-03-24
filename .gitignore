@@ -41,7 +41,7 @@ desktop.ini
 # -----------------------------
 # Project Specific (WoW Roster)
 # -----------------------------
-#asset/guild.sql
+asset/guild.sql
 asset/guild.db
 create_sql.py
 restore_db.py

@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import libsql_experimental as libsql
 
 # Dynamically find the project root directory (one folder up from /render)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,9 +8,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
 
 def get_db_connection():
-    """Establishes a connection to the persistent SQLite database."""
+    """Establishes a connection using Turso's Embedded Replica for maximum speed."""
+    turso_url = os.environ.get("TURSO_DATABASE_URL")
+    turso_token = os.environ.get("TURSO_AUTH_TOKEN")
+    
     os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
-    return sqlite3.connect(DB_FILE)
+    
+    if turso_url and turso_token:
+        # Create a local database that syncs with the remote Turso database
+        conn = libsql.connect(DB_FILE, sync_url=turso_url, auth_token=turso_token)
+        # Pull the latest data from Turso before starting
+        conn.sync()
+        return conn
+    else:
+        # Local testing fallback
+        return libsql.connect(DB_FILE)
 
 def setup_database():
     """Ensures database schema exists. Migration handles initial data population."""
@@ -58,7 +70,7 @@ def setup_database():
         )
     """)
 
-    # Persistent trend tracker for characters (replaces daily reset for leaderboards)
+    # Persistent trend tracker for characters
     c.execute("""
         CREATE TABLE IF NOT EXISTS character_trends (
             char_name TEXT PRIMARY KEY,
@@ -91,7 +103,7 @@ def setup_database():
         )
     ''')
     
-    # Historical daily tracking for characters (replaces character_trends)
+    # Historical daily tracking for characters
     c.execute("""
         CREATE TABLE IF NOT EXISTS char_history (
             char_name TEXT,

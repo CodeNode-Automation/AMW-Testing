@@ -3,7 +3,6 @@ Main entry point for the WoW Classic API Dashboard pipeline.
 Database logic upgraded to SQLite to remove historical limits and improve concurrency performance.
 """
 
-import sqlite3
 import os
 import asyncio
 import aiohttp
@@ -18,6 +17,10 @@ from render.html_dashboard import generate_html_dashboard
 from render.database import setup_database, get_db_connection
 from wow.trends import process_character_trends, process_global_trends
 from config import REALM, GUILD_NAME
+
+def dict_factory(cursor, row):
+    """Replaces sqlite3.Row for maximum compatibility with Turso/libsql."""
+    return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
 
 # Map Blizzard's raw integer IDs to strings for the base roster view
 CLASS_MAP = {
@@ -68,7 +71,7 @@ async def main_async():
     print("📂 Synchronizing Local SQLite Database...")
     setup_database()
     db_conn = get_db_connection()
-    db_conn.row_factory = sqlite3.Row # Allows access by column name
+    db_conn.row_factory = dict_factory
     db_c = db_conn.cursor()
 
     # Load known gear state into memory format required by update_character_state
@@ -233,13 +236,19 @@ async def main_async():
                 """, (ev.get('timestamp'), char_name, ev.get('class'), item_id, it.get('name'), it.get('quality'), it.get('icon_data')))
 
     db_conn.commit()
+    
+    # Push all the fast local changes up to the remote Turso database
+    if hasattr(db_conn, 'sync'):
+        print("☁️ Syncing batch updates back to Turso...")
+        db_conn.sync()
+        
     db_conn.close()
 
     print("🌐 Generating final HTML Dashboard...")
     
     # Re-open database read-only to query history for the frontend
     render_conn = get_db_connection()
-    render_conn.row_factory = sqlite3.Row
+    render_conn.row_factory = dict_factory
     render_c = render_conn.cursor()
     
     # Query latest 3000 events for the HTML feed so the page doesn't bloat endlessly
