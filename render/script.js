@@ -1221,16 +1221,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         renderTimelineChunk(false);
     }
 
-    // Attach the listener to the Load More button
-    document.addEventListener('DOMContentLoaded', () => {
-        const loadMoreBtn = document.getElementById('load-more-timeline');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', () => {
-                currentTimelinePage++;
-                renderTimelineChunk(true);
-            });
-        }
-    });
+    // Attach the listener to the Load More button directly
+    const loadMoreBtn = document.getElementById('load-more-timeline');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            currentTimelinePage++;
+            renderTimelineChunk(true);
+        });
+    }
 
     document.querySelectorAll('.tl-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
