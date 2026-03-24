@@ -155,7 +155,7 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
                     <span style="font-size: 12px; color: #aaa;">▼</span>
                 </div>
                 <div class="custom-select-options" id="customCharOptions" role="listbox">
-                    <div class="custom-option" data-value="all" role="option">
+                    <div class="custom-option" data-value="total" role="option">
                         <span style="font-size:16px;">🌍</span> View Entire Guild
                     </div>
                     <div class="custom-option" data-value="active" role="option">

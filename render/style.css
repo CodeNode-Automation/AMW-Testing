@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body { cursor: url('https://wow.zamimg.com/images/wow/cursor/pass.png'), auto; background: radial-gradient(circle at top, #1f1f1f 0%, #0a0a0a 100%); color: #eee; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 0; margin: 0; min-height: 100vh; overflow-x: hidden; }
 a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cursor: url('https://wow.zamimg.com/images/wow/cursor/select.png'), pointer !important; }
@@ -124,8 +125,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 /* Clickable Class Stat Badges */
 .class-stat-container { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; max-width: 900px; margin: 0 auto 40px auto; position: relative; }
 .stat-badge { display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 6px 14px; border-radius: 6px; min-width: 100px; transition: 0.3s; user-select: none; border-left: 3px solid; cursor: pointer; }
-.stat-badge:hover { transform: scale(1.05); background: rgba(255,255,255,0.05); border-color: #ffd100; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-.stat-badge.active-filter { transform: scale(1.05); background: rgba(255,255,255,0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-color: #ffd100; }
+.stat-badge:hover { transform: translateY(-2px); background: rgba(255,255,255,0.08); border-color: #ffd100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.stat-badge.active-filter { transform: translateY(-2px); background: rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(255,209,0,0.15); border-color: #ffd100; }
 .stat-badge-cls { font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }
 .stat-badge-count { font-family: 'Cinzel'; font-size: 20px; color: white; font-weight: bold; text-shadow: 0 2px 4px #000; }
 .spec-btn:hover { background: rgba(255,255,255,0.1) !important; border-color: #fff !important; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: scale(1) !important; }
@@ -417,4 +418,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 }
 .nav-btn:focus-visible, .search-box input:focus-visible {
     outline-offset: 1px;
+}
+
+/* Smooth List Filtering Animation */
+@keyframes smoothFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-list-update {
+    animation: smoothFadeIn 0.3s ease-out forwards;
 }

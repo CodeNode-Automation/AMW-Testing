@@ -34,12 +34,24 @@ window.addEventListener('DOMContentLoaded', async () => {
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
     const heatmapData = JSON.parse(document.getElementById('heatmap-data').textContent);
     
-    // NEW: Download the heavy roster files silently in the background
-    const rosterRes = await fetch('asset/roster.json');
-    const rosterData = await rosterRes.json();
-    
-    const rawRes = await fetch('asset/raw_roster.json');
-    const rawGuildRoster = await rawRes.json();
+    // NEW: Download the heavy roster files silently in the background with error handling
+    let rosterData = [];
+    let rawGuildRoster = [];
+    try {
+        const rosterRes = await fetch('asset/roster.json');
+        rosterData = await rosterRes.json();
+        
+        const rawRes = await fetch('asset/raw_roster.json');
+        rawGuildRoster = await rawRes.json();
+    } catch (error) {
+        console.error("Failed to load armory data:", error);
+        const loaderText = document.querySelector('.loader-content div');
+        if (loaderText) {
+            loaderText.style.color = '#e74c3c';
+            loaderText.innerHTML = 'Failed to load data. Please refresh.';
+        }
+        return; // Stop executing to prevent cascading errors
+    }
 
     // Hide the loading overlay once data is ready
     const loader = document.getElementById('loading-overlay');
@@ -685,6 +697,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     b.style.transform = 'scale(1)';
                 });
                 
+                // Trigger smooth fade-in animation
+                const charList = document.getElementById('concise-char-list');
+                if (charList) {
+                    charList.classList.remove('animate-list-update');
+                    void charList.offsetWidth; // Force a browser reflow
+                    charList.classList.add('animate-list-update');
+                }
+
                 if (isActive) {
                     document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
                     document.querySelectorAll('.dynamic-badge').forEach(b => b.style.opacity = '1');
@@ -772,6 +792,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                         specBtn.addEventListener('click', function() {
                             const targetSpec = this.getAttribute('data-spec');
                             const subVisibleChars = []; 
+                            
+                            // Trigger smooth fade-in animation for spec clicks
+                            const charList = document.getElementById('concise-char-list');
+                            if (charList) {
+                                charList.classList.remove('animate-list-update');
+                                void charList.offsetWidth; // Force a browser reflow
+                                charList.classList.add('animate-list-update');
+                            }
                             
                             document.querySelectorAll('.concise-char-bar').forEach(el => {
                                 const charName = el.getAttribute('data-char');
