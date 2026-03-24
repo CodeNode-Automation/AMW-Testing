@@ -19,12 +19,29 @@ from render.database import setup_database, get_db_connection
 from wow.trends import process_character_trends, process_global_trends
 from config import REALM, GUILD_NAME
 
-def dict_factory(cursor, row):
-    """Safely converts database rows to dictionaries for libsql."""
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+class DictCursor:
+    """Wraps the libsql cursor to automatically convert fetched tuples into dictionaries."""
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def execute(self, *args, **kwargs):
+        self.cursor.execute(*args, **kwargs)
+        return self  # Return self so .fetchall() can be chained
+
+    def fetchall(self):
+        rows = self.cursor.fetchall()
+        if not rows: return []
+        cols = [col[0] for col in self.cursor.description]
+        return [dict(zip(cols, row)) for row in rows]
+
+    def fetchone(self):
+        row = self.cursor.fetchone()
+        if not row: return None
+        cols = [col[0] for col in self.cursor.description]
+        return dict(zip(cols, row))
+
+    def __getattr__(self, name):
+        return getattr(self.cursor, name)
 
 # Map Blizzard's raw integer IDs to strings for the base roster view
 CLASS_MAP = {
@@ -76,8 +93,7 @@ async def main_async():
     db_conn = get_db_connection()
     setup_database(db_conn) # We now pass the active connection directly
     
-    db_conn.row_factory = dict_factory # Replaced sqlite3.Row
-    db_c = db_conn.cursor()
+    db_c = DictCursor(db_conn.cursor())
 
     # Load known gear state into memory format required by update_character_state
     history_data = {}
@@ -246,9 +262,8 @@ async def main_async():
     print("🌐 Generating final HTML Dashboard...")
     
     # Re-open database read-only to query history for the frontend
-    render_conn = get_db_connection()
-    render_conn.row_factory = dict_factory 
-    render_c = render_conn.cursor()
+    render_conn = get_db_connection() 
+    render_c = DictCursor(render_conn.cursor())
     
     # Query latest 3000 events for the HTML feed so the page doesn't bloat endlessly
     dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000").fetchall()]
