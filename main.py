@@ -3,7 +3,7 @@ Main entry point for the WoW Classic API Dashboard pipeline.
 Database logic upgraded to SQLite to remove historical limits and improve concurrency performance.
 """
 
-import sqlite3
+import libsql_experimental as sqlite3
 import os
 import asyncio
 import aiohttp

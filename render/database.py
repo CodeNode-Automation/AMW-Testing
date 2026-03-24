@@ -1,16 +1,21 @@
-import sqlite3
 import os
-
-# Dynamically find the project root directory (one folder up from /render)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Safely construct the absolute path to asset/guild.db
-DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
+import libsql_experimental as sqlite3
 
 def get_db_connection():
-    """Establishes a connection to the persistent SQLite database."""
-    os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
-    return sqlite3.connect(DB_FILE)
+    """Establishes a connection to the Turso cloud database or local fallback."""
+    turso_url = os.getenv("TURSO_DATABASE_URL")
+    turso_token = os.getenv("TURSO_AUTH_TOKEN")
+
+    if turso_url and turso_token:
+        # Connect to Turso Cloud
+        conn_str = f"{turso_url}?authToken={turso_token}"
+        return sqlite3.connect(conn_str)
+    else:
+        # Fallback to local SQLite for local testing
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        DB_FILE = os.path.join(BASE_DIR, "asset", "guild.db")
+        os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
+        return sqlite3.connect(DB_FILE)
 
 def setup_database():
     """Ensures database schema exists. Migration handles initial data population."""
