@@ -22,6 +22,13 @@ def dict_factory(cursor, row):
     """Replaces sqlite3.Row for maximum compatibility with Turso/libsql."""
     return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
 
+def fetch_all_dicts(cursor):
+    """Helper to convert libSQL tuple results into dictionaries."""
+    if cursor.description is None:
+        return []
+    columns = [col[0] for col in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
 # Map Blizzard's raw integer IDs to strings for the base roster view
 CLASS_MAP = {
     1: "Warrior", 2: "Paladin", 3: "Hunter", 4: "Rogue", 5: "Priest", 
@@ -71,19 +78,29 @@ async def main_async():
     print("📂 Synchronizing Local SQLite Database...")
     setup_database()
     db_conn = get_db_connection()
-    db_conn.row_factory = dict_factory
+
     db_c = db_conn.cursor()
 
     # Load known gear state into memory format required by update_character_state
     history_data = {}
-    known_chars = db_c.execute("SELECT name, level FROM characters").fetchall()
+    # OLD: known_chars = db_c.execute("SELECT name, level FROM characters").fetchall()
+    
+    # NEW:
+    db_c.execute("SELECT name, level FROM characters")
+    known_chars = fetch_all_dicts(db_c)
+    
     for row in known_chars:
         history_data[row['name']] = {'level': row['level']}
         
-    known_gear = db_c.execute("""
+    # OLD: known_gear = db_c.execute(""" ... """).fetchall()
+    
+    # NEW:
+    db_c.execute("""
         SELECT character_name, slot, item_id, name, quality, icon_data, tooltip_params
         FROM gear
-    """).fetchall()
+    """)
+    known_gear = fetch_all_dicts(db_c)
+
     for row in known_gear:
         char_n = row['character_name']
         if char_n not in history_data:
@@ -172,10 +189,14 @@ async def main_async():
         # --- TREND LOGIC: Load Persistent Trends & Daily Snapshots ---
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         
-        # Load Global Snapshots
+        # OLD: for row in db_c.execute("SELECT * FROM daily_snapshot").fetchall():
+        #          snapshots[row['id']] = dict(row)
+        
+        # NEW:
         snapshots = {}
-        for row in db_c.execute("SELECT * FROM daily_snapshot").fetchall():
-            snapshots[row['id']] = dict(row)
+        db_c.execute("SELECT * FROM daily_snapshot")
+        for row in fetch_all_dicts(db_c):
+            snapshots[row['id']] = row
 
         for result in results:
             if isinstance(result, dict) and result:
@@ -248,14 +269,20 @@ async def main_async():
     
     # Re-open database read-only to query history for the frontend
     render_conn = get_db_connection()
-    render_conn.row_factory = dict_factory
+
     render_c = render_conn.cursor()
     
-    # Query latest 3000 events for the HTML feed so the page doesn't bloat endlessly
-    dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000").fetchall()]
-    # Query the last 7 days of population trends
-    roster_history = {row['date']: dict(row) for row in render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7").fetchall()}
+    # OLD: 
+    # dashboard_feed = [dict(row) for row in render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000").fetchall()]
+    # roster_history = {row['date']: dict(row) for row in render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7").fetchall()}
     
+    # NEW:
+    render_c.execute("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000")
+    dashboard_feed = fetch_all_dicts(render_c)
+    
+    render_c.execute("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7")
+    roster_history = {row['date']: row for row in fetch_all_dicts(render_c)}
+
     render_conn.close()
 
     # Pass historical data and the FULL raw roster into generator
