@@ -454,10 +454,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
 .arch-card img {
-    height: 60px;
-    object-fit: contain;
+    height: 75px; /* Slightly taller to account for the new padding */
+    max-width: 100%; /* Ensures wider logos don't overflow the card */
+    object-fit: contain; /* Forces the logo to scale proportionally */
     margin-bottom: 15px;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+    background-color: rgba(240, 240, 240, 0.95); /* Light backdrop to make black text visible */
+    padding: 10px 15px; /* Internal breathing room so the logo isn't touching the edges */
+    border-radius: 10px; /* Smooth, modern corners to match the dashboard */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Pops the image off the dark background */
 }
 .arch-card h3 {
     color: #fff;
@@ -823,10 +827,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T12:57:00.349336Z", "active_14_days": 387, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T13:14:13.147823Z", "active_14_days": 387, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 249, "loot": 195, "levels": 54, "total_roster": 624, "active_roster": 387}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 257, "loot": 201, "levels": 56, "total_roster": 624, "active_roster": 387}]
     </script>
 
     <script>
