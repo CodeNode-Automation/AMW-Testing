@@ -437,6 +437,42 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 .animate-list-update {
     animation: smoothFadeIn 0.3s ease-out forwards;
 }
+
+/* Architecture View Styles */
+.arch-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(0,0,0,0.6);
+    border-top: 3px solid #ffd100;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.arch-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
+}
+.arch-card img {
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+}
+.arch-card h3 {
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px #000;
+}
+.arch-card p {
+    color: #bbb;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+}
     </style>
 </head>
 <body>
@@ -447,7 +483,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         </div>
     </div>
     <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
-        <video id="intro-video" autoplay muted playsinline poster="asset/amw.webp">
+        <video id="intro-video" autoplay muted playsinline>
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -510,6 +546,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             <a href="#analytics" class="nav-btn nav-btn-home" title="View Guild Analytics" style="margin-left: 10px;">
               📊<span class="home-text"> Analytics</span>
             </a>
+            <a href="#architecture" class="nav-btn nav-btn-home" title="How the Website Works" style="margin-left: 10px;">
+              ⚙️<span class="home-text"> Architecture</span>
+            </a>
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
                 <div class="custom-select" id="customCharSelect" tabindex="0">
                     <span class="selected-value">Select View...</span>
@@ -562,7 +601,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
                             387
-                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 1</span>
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
@@ -685,6 +724,42 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                 </div>
             </div>
+            <div id="architecture-view" style="display: none; animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 30px; font-size: 32px;">System Architecture</h2>
+                <p style="text-align: center; color: #bbb; margin-bottom: 40px; font-size: 16px;">Azeroth's Most Wanted Armory is a fully automated, serverless dashboard. Here is a look under the hood at the technologies powering the guild's data.</p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+                    <div class="info-box arch-card">
+                        <img src="asset/software_logo/python.png" alt="Python">
+                        <h3>Data Extraction</h3>
+                        <p>Python scripts asynchronously fetch live roster and character data from the official Blizzard REST APIs, processing thousands of data points concurrently.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/turso.png" alt="Turso">
+                            <img src="asset/software_logo/sqlite.png" alt="SQLite">
+                        </div>
+                        <h3>Database Storage</h3>
+                        <p>Processed data is pushed in batched transactions to a Turso edge database (powered by libSQL/SQLite). This allows for infinite storage of historical trends and loot timelines.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/github.png" alt="GitHub">
+                            <img src="asset/software_logo/cron.png" alt="Cron">
+                        </div>
+                        <h3>Automation</h3>
+                        <p>GitHub Actions acts as our server. A Cron job triggers the pipeline on a tight schedule, running the Python scripts to update the database entirely without human intervention.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/jinga.png" alt="Jinja2">
+                            <img src="asset/software_logo/html5.png" alt="HTML5">
+                        </div>
+                        <h3>Static Generation</h3>
+                        <p>Jinja2 templates inject the latest database queries into raw HTML. The result is a lightning-fast static frontend powered by HTML5, modern JavaScript, and Chart.js.</p>
+                    </div>
+                </div>
+            </div>
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
@@ -748,10 +823,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T12:05:56.638378Z", "active_14_days": 387, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T12:57:00.349336Z", "active_14_days": 387, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 232, "loot": 181, "levels": 51, "total_roster": 624, "active_roster": 387}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 249, "loot": 195, "levels": 54, "total_roster": 624, "active_roster": 387}]
     </script>
 
     <script>
@@ -835,7 +910,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     let analyticsActivityChartInst = null;
     let analyticsClassChartInst = null;
     const analyticsView = document.getElementById('analytics-view');   
-    
+    const architectureView = document.getElementById('architecture-view');
+
     const navbar = document.querySelector('.navbar');
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
@@ -986,6 +1062,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             selectValueText.innerHTML = "⚔️ Raid Ready";
         } else if (hash === 'analytics') {
             selectValueText.innerHTML = "📊 Analytics";
+        } else if (hash === 'architecture') {
+            selectValueText.innerHTML = "⚙️ Architecture";
         } else if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
             selectValueText.innerHTML = "⚡ Filter Active";
         } else {
@@ -1927,6 +2005,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         conciseView.style.display = 'none';
         fullCardContainer.style.display = 'none';
         if (analyticsView) analyticsView.style.display = 'none';
+        if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2123,6 +2202,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         analyticsClassChartInst = createDonutChart('analyticsClassDonutChart', rawGuildRoster, true);
     }
 
+    function showArchitectureView() {
+        hideAllViews();
+        if (architectureView) architectureView.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        if (timeline) timeline.style.display = 'none'; 
+    }
+
     window.returnToHome = function() {
         window.location.hash = '';
         showHomeView();
@@ -2217,6 +2303,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             showHomeView();
         } else if (hash === 'analytics') {
             showAnalyticsView();
+            updateDropdownLabel('all');
+        } else if (hash === 'architecture') {
+            showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
