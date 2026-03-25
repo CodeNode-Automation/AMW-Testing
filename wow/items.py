@@ -17,12 +17,17 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
     name_data = item.get('name', 'Empty')
     item_name = name_data if isinstance(name_data, str) else name_data.get('en_US', 'Empty')
     
-    # --- LOCAL CACHE CHECK ---
+    # LOCAL CACHE CHECK (With Poison Protection)
     past_item = past_gear.get(slot_type, {})
-    if past_item and past_item.get('item_id') == item_id and past_item.get('icon'):
+    cached_icon = past_item.get('icon')
+    
+    # Check if the database accidentally stored the fallback icon
+    is_cached_fallback = (cached_icon == fallback_url) or ("amw" in str(cached_icon).lower())
+    
+    if past_item and past_item.get('item_id') == item_id and cached_icon and not is_cached_fallback:
         return slot_type, {
             "name": item_name,
-            "icon_data": past_item.get('icon'),
+            "icon_data": cached_icon,
             "quality": past_item.get('quality', 'COMMON'),
             "is_fallback": False,
             "item_id": item_id,
@@ -30,10 +35,13 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
             "tooltip_params": past_item.get('params', f"item={item_id}")
         }
         
-    # --- NETWORK FETCH (Run Quality and Icon lookups simultaneously) ---
+    # NETWORK FETCH SETUP
     item_href = item.get('item', {}).get('key', {}).get('href')
     media_href = item.get('media', {}).get('key', {}).get('href')
     
+    # Safely extract quality from payload to avoid unnecessary network calls
+    payload_quality = item.get('quality', {}).get('type')
+
     async def resolve_icon():
         icon_url = None
         if media_href:
@@ -44,8 +52,14 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
             icon_url = await fetch_wowhead_icon_url(session, item_id)
         return icon_url
 
+    async def resolve_quality():
+        if payload_quality:
+            return payload_quality
+        return await fetch_item_quality(session, token, item_href, item_id)
+
+    # Run Quality and Icon lookups simultaneously
     quality_type, icon_url = await asyncio.gather(
-        fetch_item_quality(session, token, item_href, item_id),
+        resolve_quality(),
         resolve_icon()
     )
     

@@ -98,6 +98,7 @@ async def fetch_with_semaphore(sem, session, token, char, history_data):
     for attempt in range(max_retries):
         try:
             async with sem:
+                await asyncio.sleep(0.1) # Micro-stagger to prevent millisecond spikes
                 # Tell Pylance to ignore the missing async signature from the external file
                 return await fetch_character_data(session, token, char, history_data) # type: ignore
         except Exception as e:
@@ -122,23 +123,11 @@ async def main_async():
         
         await setup_database(session)
 
-        print("📂 Fetching historical state into memory to eliminate network latency...")
-        history_data = {}
-        for row in await fetch_turso(session, "SELECT name, level FROM characters"):
-            history_data[row['name']] = {'level': row['level']}
-            
-        for row in await fetch_turso(session, "SELECT character_name, slot, item_id, name, quality, icon_data, tooltip_params FROM gear"):
-            char_n = row['character_name']
-            if char_n not in history_data: history_data[char_n] = {}
-            history_data[char_n][row['slot']] = {
-                'item_id': row['item_id'], 'name': row['name'], 'quality': row['quality'], 
-                'icon': row['icon_data'], 'params': row['tooltip_params']
-            }
-
+        print("📂 Fetching historical state into memory concurrently...")
+        
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         seven_days_ago_str = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
         
-        # Fetch the oldest record within the last 7 days to hold the trend arrows longer
         trend_query = f"""
             SELECT char_name, ilvl, hks 
             FROM (
@@ -148,13 +137,35 @@ async def main_async():
                 WHERE record_date >= '{seven_days_ago_str}' AND record_date < '{today_str}'
             ) WHERE rn = 1
         """
-        past_char_records = {row['char_name']: row for row in await fetch_turso(session, trend_query)}
 
-        gt_rows = await fetch_turso(session, "SELECT * FROM global_trends WHERE id='__GLOBAL__'")
+        # Fire all 5 Turso queries simultaneously
+        char_task = fetch_turso(session, "SELECT name, level FROM characters")
+        gear_task = fetch_turso(session, "SELECT character_name, slot, item_id, name, quality, icon_data, tooltip_params FROM gear")
+        trend_task = fetch_turso(session, trend_query)
+        gt_task = fetch_turso(session, "SELECT * FROM global_trends WHERE id='__GLOBAL__'")
+        timeline_task = fetch_turso(session, "SELECT character_name, type, level, item_id FROM timeline")
+
+        char_rows, gear_rows, trend_rows, gt_rows, timeline_rows = await asyncio.gather(
+            char_task, gear_task, trend_task, gt_task, timeline_task
+        )
+
+        history_data = {}
+        for row in char_rows:
+            history_data[row['name']] = {'level': row['level']}
+            
+        for row in gear_rows:
+            char_n = row['character_name']
+            if char_n not in history_data: history_data[char_n] = {}
+            history_data[char_n][row['slot']] = {
+                'item_id': row['item_id'], 'name': row['name'], 'quality': row['quality'], 
+                'icon': row['icon_data'], 'params': row['tooltip_params']
+            }
+
+        past_char_records = {row['char_name']: row for row in trend_rows}
         global_trend_record = gt_rows[0] if gt_rows else None
         
         known_timeline = set()
-        for row in await fetch_turso(session, "SELECT character_name, type, level, item_id FROM timeline"):
+        for row in timeline_rows:
             if row['type'] == 'level_up': known_timeline.add(f"{row['character_name']}_level_{row['level']}")
             else: known_timeline.add(f"{row['character_name']}_item_{row['item_id']}")
 
@@ -202,7 +213,7 @@ async def main_async():
 
         print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters.")
 
-        sem = asyncio.Semaphore(15)
+        sem = asyncio.Semaphore(5)
         tasks = [fetch_with_semaphore(sem, session, token, char, history_data) for char in roster_names]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
