@@ -1173,6 +1173,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // --- NEW: Reset Timeline Filters on Page Change ---
+        // This ensures the feed reliably appears when clicking a new character
+        tlTypeFilter = 'rare_plus';
+        tlDateFilter = 'all';
+        tlSpecificDate = null;
+
+        // Reset the Button UI to highlight "Rare+"
+        document.querySelectorAll('button.tl-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.getAttribute('data-type') === 'rare_plus') {
+                b.classList.add('active');
+            }
+        });
+
+        // Reset the Dropdown UI to "All Available"
+        const dateSelect = document.getElementById('tl-date-filter');
+        if (dateSelect) {
+            dateSelect.value = 'all';
+        }
+
+        // Clear any specific Heatmap day selections
+        document.querySelectorAll('.tt-heatmap').forEach(c => {
+            c.classList.remove('selected-date');
+        });
     }
 
     function showAnalyticsView() {
