@@ -429,21 +429,63 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     animation: smoothFadeIn 0.3s ease-out forwards;
 }
 
-/* Architecture View Styles */
+/* =========================================
+   ARCHITECTURE PIPELINE UPGRADES
+   ========================================= */
+
+.arch-pipeline {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 0;
+    padding: 20px 10px 40px 10px;
+    overflow-x: auto;
+    /* Custom scrollbar for desktop timeline */
+    scrollbar-width: thin;
+    scrollbar-color: #ffd100 rgba(0,0,0,0.3);
+}
+.arch-pipeline::-webkit-scrollbar { height: 8px; }
+.arch-pipeline::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
+.arch-pipeline::-webkit-scrollbar-thumb { background: #ffd100; border-radius: 4px; }
+
+/* The Cards */
 .arch-card {
+    flex: 0 0 280px; /* Fixed width to allow horizontal timeline flow */
+    margin: 0;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1 1 320px; /* Allows cards to wrap and fill space cleanly on mobile */
-    max-width: 500px;
-    background: rgba(0,0,0,0.6);
+    background: rgba(12, 12, 18, 0.85); /* Slightly deeper blue-black */
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
     border-top: 3px solid #ffd100;
     padding: 25px 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: pulseArchBorder 4s infinite alternate;
 }
 .arch-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
+    box-shadow: 0 15px 35px rgba(255, 209, 0, 0.15), inset 0 0 20px rgba(255,255,255,0.02);
+}
+
+@keyframes pulseArchBorder {
+    0% { border-top-color: #ffd100; box-shadow: 0 5px 15px rgba(255, 209, 0, 0.05); }
+    100% { border-top-color: #ff8000; box-shadow: 0 5px 25px rgba(255, 128, 0, 0.15); }
+}
+
+/* Phase Badges inside the cards */
+.arch-phase {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    border: 1px solid;
+    text-shadow: none;
 }
 
 /* Modern Frosted Glass Pill Container */
@@ -486,4 +528,46 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     line-height: 1.6;
     margin: 0;
     text-align: center;
+}
+
+/* Animated Data Arrows */
+.arch-connector {
+    flex: 0 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.data-stream {
+    stroke: #ffd100;
+    stroke-width: 2.5;
+    stroke-dasharray: 8, 8;
+    animation: dataFlow 1s linear infinite;
+}
+.stream-head {
+    fill: #ffd100;
+    filter: drop-shadow(0 0 3px #ffd100);
+}
+@keyframes dataFlow {
+    from { stroke-dashoffset: 16; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* Mobile Layout: Snaps to a vertical downward waterfall */
+@media (max-width: 1200px) {
+    .arch-pipeline {
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        padding: 10px;
+    }
+    .arch-card {
+        flex: auto;
+        width: 100%;
+        max-width: 500px;
+    }
+    .arch-connector {
+        flex: 0 0 60px;
+        width: 100%;
+        transform: rotate(90deg); /* Points arrows down */
+    }
 }
