@@ -220,10 +220,30 @@
             <div id="full-card-container" class="full-card-container"></div>
         </div> 
 
-        <div id="timeline-feed-container"></div>
+        <div id="timeline" style="max-width: 800px; margin: 40px auto; animation: fadeInUp 0.5s forwards;">
+            <h2 id="timeline-title" style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px;">📜 Guild Recent Activity</h2>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <button class="tl-btn active" data-type="rare_plus">💎 Rare+ Loot</button>
+                <button class="tl-btn" data-type="epic">💜 Epic+ Loot</button>
+                <button class="tl-btn" data-type="legendary">🟠 Legendaries</button>
+                <button class="tl-btn" data-type="level_up">⭐ Level Ups</button>
+                <button class="tl-btn" data-type="all">📋 All Activity</button>
+                
+                <select id="tl-date-filter" class="tl-btn" style="background: rgba(0,0,0,0.8); cursor: pointer;">
+                    <option value="12">Last 12 Hours</option>
+                    <option value="24">Last 24 Hours</option>
+                    <option value="48">Last 48 Hours</option>
+                    <option value="all" selected>All Time</option>
+                </select>
+            </div>
 
-        <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
-            <button id="load-more-btn" style="padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease;">Load More Activity</button>
+            <div class="timeline-feed" id="timeline-feed-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 800px; overflow-y: auto; padding-right: 10px; overflow-x: hidden;">
+                </div>
+
+            <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
+                <button id="load-more-btn" style="padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease;">Load More Activity</button>
+            </div>
         </div>
 
     </div> 

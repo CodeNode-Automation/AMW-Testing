@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (updateTimeEl) updateTimeEl.textContent = rawDate.toLocaleString(undefined, dateOptions);
     
     let tlTypeFilter = 'rare_plus';
-    let tlDateFilter = '7'; // Start with 7 days to match the heatmap
+    let tlDateFilter = 'all'; // Start with 7 days to match the heatmap
     let tlSpecificDate = null; 
     window.currentFilteredChars = null;
     window.activeClassExpanded = null;
@@ -1113,8 +1113,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const eventDate = new Date(cleanTs).getTime();
                 if (!isNaN(eventDate)) {
-                    const daysMs = parseInt(tlDateFilter) * 24 * 60 * 60 * 1000;
-                    if ((now - eventDate) > daysMs) show = false;
+                    // Calculate based on Hours instead of Days
+                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
+                    if ((now - eventDate) > hoursMs) show = false;
                 }
             }
 
@@ -1872,29 +1873,44 @@ window.addEventListener('DOMContentLoaded', async () => {
         for (let i = currentTimelineIndex; i < endIndex; i++) {
             const event = timelineData[i];
             
-            // Create the wrapper for the event (adjust class names to match your CSS)
+            // MUST use concise-item so the CSS and Filter logic hook into it
             const eventEl = document.createElement('div');
-            eventEl.className = 'timeline-event'; 
+            eventEl.className = 'concise-item'; 
+            
+            // Attach specific data attributes required by applyTimelineFilters()
+            eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
+            eventEl.setAttribute('data-class', event.class || 'Unknown');
+            eventEl.setAttribute('data-event-type', event.type);
+            eventEl.setAttribute('data-timestamp', event.timestamp);
+            if (event.item_quality) {
+                eventEl.setAttribute('data-quality', event.item_quality);
+            }
             
             const dateObj = new Date(event.timestamp + "Z");
             const timeString = dateObj.toLocaleString();
-            const safeClass = event.class ? event.class.replace(/\s+/g, '-').toLowerCase() : 'unknown';
+            const cHex = CLASS_COLORS[event.class] || '#fff';
+            
+            let timeHtml = `<div style="font-size: 11px; color: #888; width: 140px; text-align: right; margin-right: 15px;">${timeString}</div>`;
 
             if (event.type === 'level_up') {
                 eventEl.innerHTML = `
-                    <div class="event-time">${timeString}</div>
-                    <div class="event-details">
-                        <b class="class-${safeClass}">${event.character_name}</b> 
-                        reached Level ${event.level}!
+                    ${timeHtml}
+                    <div style="flex: 1; font-size: 14px;">
+                        <b style="color: ${cHex}; cursor: pointer;" onclick="selectCharacter('${event.character_name.toLowerCase()}')" class="tt-char" data-char="${event.character_name.toLowerCase()}">${event.character_name}</b> 
+                        <span style="color: #ffd100;">reached Level ${event.level}!</span>
                     </div>
                 `;
             } else {
+                const qClass = event.item_quality ? `q${event.item_quality}` : 'qCOMMON';
+                const qHex = QUALITY_COLORS[event.item_quality] || '#fff';
+                
                 eventEl.innerHTML = `
-                    <div class="event-time">${timeString}</div>
-                    <div class="event-details">
-                        <b class="class-${safeClass}">${event.character_name}</b> 
-                        looted <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" class="q${event.item_quality}" data-wowhead="item=${event.item_id}">[${event.item_name}]</a>
-                        <img src="${event.item_icon}" alt="icon" width="16" height="16" style="vertical-align: middle;">
+                    ${timeHtml}
+                    <div style="flex: 1; font-size: 14px; display: flex; align-items: center;">
+                        <b style="color: ${cHex}; cursor: pointer; margin-right: 5px;" onclick="selectCharacter('${event.character_name.toLowerCase()}')" class="tt-char" data-char="${event.character_name.toLowerCase()}">${event.character_name}</b> 
+                        <span style="color: #aaa; margin-right: 5px;">looted</span>
+                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" class="${qClass}" data-wowhead="item=${event.item_id}" target="_blank" style="text-decoration: none; color: ${qHex}; margin-right: 5px;">[${event.item_name}]</a>
+                        <img src="${event.item_icon}" style="width: 18px; height: 18px; border: 1px solid ${qHex}; border-radius: 3px; object-fit: cover;">
                     </div>
                 `;
             }
@@ -1903,23 +1919,28 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         currentTimelineIndex = endIndex;
         
-        // Hide the button if we run out of data
         if (currentTimelineIndex >= timelineData.length) {
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
         }
+        
+        // Re-bind hover tooltips for newly added batch elements
+        if (typeof setupTooltips === 'function') {
+            setupTooltips();
+        }
+        
+        // Enforce the current selected filter (e.g. "Epics Only") on the new items
+        applyTimelineFilters();
     }
 
-    // Initialize when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchTimeline();
-        
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', renderTimelineBatch);
-        }
-    }); 
+    // Call fetch directly without nesting a redundant DOMContentLoaded wrapper
+    fetchTimeline();
+    
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', renderTimelineBatch);
+    }
 
     // Initialize routing
     route();
