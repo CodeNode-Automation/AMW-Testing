@@ -22,7 +22,8 @@ async def fetch_character_data(session, token, char, history_data):
         profile_task, stats_task, equipment_task, media_task, pvp_task, specs_task
     )
     
-    equipped_dict = await process_equipment(session, token, equipment, char)
+    past_gear = history_data.get(char, {})
+    equipped_dict = await process_equipment(session, token, equipment, past_gear)
 
     # Extract Honorable Kills and inject directly into the profile dict
     hk_count = pvp.get("honorable_kills", 0) if isinstance(pvp, dict) else 0
@@ -82,13 +83,6 @@ async def fetch_character_data(session, token, char, history_data):
     # Only trigger a level-up event if we have historical data (past_level > 0) and the level has increased
     if past_level > 0 and current_level > past_level:
         level_up = current_level
-
-    # --- SIMPLIFIED CONSOLE LOGGING ---
-    spec_log_name = active_spec if active_spec else "Unspecced"
-    upg_str = f"{upgrade_count} Upgrades" if upgrade_count > 0 else "0 Upgrades"
-    lvl_str = f"Lvl {current_level} (Level Up!)" if level_up else f"Lvl {current_level}"
-    
-    print(f"[{char.title()}] {lvl_str} {spec_log_name}")
 
     # Return the normalized data payload for downstream HTML generation and state tracking
     return {

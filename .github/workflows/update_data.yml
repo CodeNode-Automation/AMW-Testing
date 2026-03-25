@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Install Dependencies
         run: |
@@ -34,15 +35,10 @@ jobs:
         run: python main.py
 
       - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Added asset/timeline.json to the tracking list
-          git add index.html asset/roster.json asset/raw_roster.json asset/timeline.json
-          
-          git commit -m "Auto-update WoW guild data" || echo "No changes to commit"
-          git push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update WoW guild data"
+          file_pattern: index.html asset/roster.json asset/raw_roster.json asset/timeline.json
 
   deploy:
     needs: auto-update-wow-data
@@ -59,10 +55,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
+      - name: Prepare Pages Directory
+        run: |
+          mkdir _site
+          cp index.html _site/
+          cp -r asset _site/
+          cp -r render _site/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
           
       - name: Deploy to GitHub Pages
         id: deployment

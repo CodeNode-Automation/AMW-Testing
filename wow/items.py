@@ -7,24 +7,21 @@ from wow.images import (
 from wow.quality import fetch_item_quality
 from config import FALLBACK_ICON
 
-async def process_equipment(session, token, equipment, char_name):
+async def process_equipment(session, token, equipment, past_gear=None):
     """
     Parses the character equipment payload and resolves metadata for each equipped item.
-    
-    This function iterates through the equipped items, safely extracting item names, 
-    identifiers, quality tiers, and icon assets. It utilizes a waterfall approach 
-    to fetch item icons and applies a fallback image if resolution fails.
+    Reuses historical database values if the item has not changed.
     
     Args:
         session (aiohttp.ClientSession): The active asynchronous HTTP session.
         token (str): The OAuth access token for Blizzard API authentication.
         equipment (dict): The raw equipment data payload from the Blizzard API.
-        char_name (str): The name of the character being processed.
+        past_gear (dict, optional): Historical gear data for caching.
         
     Returns:
-        dict: A mapping of equipment slot types to their respective parsed item data 
-              (name, base64 icon, quality, fallback status, item ID, and item level).
+        dict: A mapping of equipment slot types to their respective parsed item data.
     """
+    if past_gear is None: past_gear = {}
     equipped_dict = {}
     fallback_url = get_standardized_image_url(FALLBACK_ICON)
 
@@ -33,13 +30,25 @@ async def process_equipment(session, token, equipment, char_name):
         
         for item in items:
             slot_type = item.get('slot', {}).get('type', '')
+            item_id = item.get('item', {}).get('id')
+            item_level = item.get('level', {}).get('value', 0)
             
-            # Safely extract the item name, accounting for varying API localization formats
             name_data = item.get('name', 'Empty')
             item_name = name_data if isinstance(name_data, str) else name_data.get('en_US', 'Empty')
             
-            item_id = item.get('item', {}).get('id')
-            item_level = item.get('level', {}).get('value', 0)
+            # --- LOCAL CACHE CHECK ---
+            past_item = past_gear.get(slot_type, {})
+            if past_item and past_item.get('item_id') == item_id and past_item.get('icon'):
+                equipped_dict[slot_type] = {
+                    "name": item_name,
+                    "icon_data": past_item.get('icon'),
+                    "quality": past_item.get('quality', 'COMMON'),
+                    "is_fallback": False,
+                    "item_id": item_id,
+                    "item_level": item_level,
+                    "tooltip_params": past_item.get('params', f"item={item_id}")
+                }
+                continue # Skip all network calls below!
             
             item_href = item.get('item', {}).get('key', {}).get('href')
             quality_type = item.get('quality', {}).get('type')
@@ -57,7 +66,6 @@ async def process_equipment(session, token, equipment, char_name):
             if not icon_url and item_id:
                 icon_url = await fetch_wowhead_icon_url(session, item_id)
             
-            # --- CHANGED: Just get the standardized URL directly ---
             final_url = get_standardized_image_url(icon_url) if icon_url else None
             
             is_fallback = False 
@@ -75,7 +83,7 @@ async def process_equipment(session, token, equipment, char_name):
 
             equipped_dict[slot_type] = {
                 "name": item_name,
-                "icon_data": final_url, # We keep the key as 'icon_data' so the rest of your app/DB doesn't break
+                "icon_data": final_url, 
                 "quality": quality_type,
                 "is_fallback": is_fallback,
                 "item_id": item_id,
