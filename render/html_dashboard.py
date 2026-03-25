@@ -149,6 +149,9 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             <a href="#analytics" class="nav-btn nav-btn-home" title="View Guild Analytics" style="margin-left: 10px;">
               📊<span class="home-text"> Analytics</span>
             </a>
+            <a href="#architecture" class="nav-btn nav-btn-home" title="How the Website Works" style="margin-left: 10px;">
+              ⚙️<span class="home-text"> Architecture</span>
+            </a>
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
                 <div class="custom-select" id="customCharSelect" tabindex="0">
                     <span class="selected-value">Select View...</span>

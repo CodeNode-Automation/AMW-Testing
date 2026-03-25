@@ -18,7 +18,7 @@
         </div>
     </div>
     <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
-        <video id="intro-video" autoplay muted playsinline poster="asset/amw.webp">
+        <video id="intro-video" autoplay muted playsinline>
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -193,6 +193,42 @@
                         <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
                             <canvas id="raceDistChart"></canvas>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div id="architecture-view" style="display: none; animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 30px; font-size: 32px;">System Architecture</h2>
+                <p style="text-align: center; color: #bbb; margin-bottom: 40px; font-size: 16px;">Azeroth's Most Wanted Armory is a fully automated, serverless dashboard. Here is a look under the hood at the technologies powering the guild's data.</p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+                    <div class="info-box arch-card">
+                        <img src="asset/software_logo/python.png" alt="Python">
+                        <h3>Data Extraction</h3>
+                        <p>Python scripts asynchronously fetch live roster and character data from the official Blizzard REST APIs, processing thousands of data points concurrently.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/turso.png" alt="Turso">
+                            <img src="asset/software_logo/sqlite.png" alt="SQLite">
+                        </div>
+                        <h3>Database Storage</h3>
+                        <p>Processed data is pushed in batched transactions to a Turso edge database (powered by libSQL/SQLite). This allows for infinite storage of historical trends and loot timelines.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/github.png" alt="GitHub">
+                            <img src="asset/software_logo/cron.png" alt="Cron">
+                        </div>
+                        <h3>Automation</h3>
+                        <p>GitHub Actions acts as our server. A Cron job triggers the pipeline on a tight schedule, running the Python scripts to update the database entirely without human intervention.</p>
+                    </div>
+                    <div class="info-box arch-card">
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <img src="asset/software_logo/jinga.png" alt="Jinja2">
+                            <img src="asset/software_logo/html5.png" alt="HTML5">
+                        </div>
+                        <h3>Static Generation</h3>
+                        <p>Jinja2 templates inject the latest database queries into raw HTML. The result is a lightning-fast static frontend powered by HTML5, modern JavaScript, and Chart.js.</p>
                     </div>
                 </div>
             </div>

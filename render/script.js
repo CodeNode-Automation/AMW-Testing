@@ -78,7 +78,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     let analyticsActivityChartInst = null;
     let analyticsClassChartInst = null;
     const analyticsView = document.getElementById('analytics-view');   
-    
+    const architectureView = document.getElementById('architecture-view');
+
     const navbar = document.querySelector('.navbar');
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
@@ -229,6 +230,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             selectValueText.innerHTML = "⚔️ Raid Ready";
         } else if (hash === 'analytics') {
             selectValueText.innerHTML = "📊 Analytics";
+        } else if (hash === 'architecture') {
+            selectValueText.innerHTML = "⚙️ Architecture";
         } else if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
             selectValueText.innerHTML = "⚡ Filter Active";
         } else {
@@ -1170,6 +1173,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         conciseView.style.display = 'none';
         fullCardContainer.style.display = 'none';
         if (analyticsView) analyticsView.style.display = 'none';
+        if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1366,6 +1370,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         analyticsClassChartInst = createDonutChart('analyticsClassDonutChart', rawGuildRoster, true);
     }
 
+    function showArchitectureView() {
+        hideAllViews();
+        if (architectureView) architectureView.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        if (timeline) timeline.style.display = 'none'; 
+    }
+
     window.returnToHome = function() {
         window.location.hash = '';
         showHomeView();
@@ -1460,6 +1471,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             showHomeView();
         } else if (hash === 'analytics') {
             showAnalyticsView();
+            updateDropdownLabel('all');
+        } else if (hash === 'architecture') {
+            showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
