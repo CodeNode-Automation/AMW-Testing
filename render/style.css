@@ -445,10 +445,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
 .arch-card img {
-    height: 60px;
-    object-fit: contain;
+    height: 75px; /* Slightly taller to account for the new padding */
+    max-width: 100%; /* Ensures wider logos don't overflow the card */
+    object-fit: contain; /* Forces the logo to scale proportionally */
     margin-bottom: 15px;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+    background-color: rgba(240, 240, 240, 0.95); /* Light backdrop to make black text visible */
+    padding: 10px 15px; /* Internal breathing room so the logo isn't touching the edges */
+    border-radius: 10px; /* Smooth, modern corners to match the dashboard */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Pops the image off the dark background */
 }
 .arch-card h3 {
     color: #fff;
