@@ -138,9 +138,19 @@ def update_character_state(char_data, history_data, timeline_data):
         history_data[char_data["char"]]["equipped_item_level"] = profile.get("equipped_item_level")
         history_data[char_data["char"]]["portrait_url"] = char_data.get("render_url")
         
-        # Safely extract nested localization names from the API payload
-        history_data[char_data["char"]]["faction"] = profile.get("faction", {}).get("name", {}).get("en_US")
-        history_data[char_data["char"]]["class"] = profile.get("character_class", {}).get("name", {}).get("en_US")
-        history_data[char_data["char"]]["race"] = profile.get("race", {}).get("name", {}).get("en_US")
+        # BULLETPROOF EXTRACTION: Safely handle nulls and mixed types from Blizzard
+        def get_safe_name(key):
+            obj = profile.get(key)
+            if isinstance(obj, dict):
+                name_obj = obj.get("name")
+                if isinstance(name_obj, dict):
+                    return name_obj.get("en_US")
+                if isinstance(name_obj, str):
+                    return name_obj
+            return None
+
+        history_data[char_data["char"]]["faction"] = get_safe_name("faction")
+        history_data[char_data["char"]]["class"] = get_safe_name("character_class")
+        history_data[char_data["char"]]["race"] = get_safe_name("race")
 
     return history_data, timeline_data
