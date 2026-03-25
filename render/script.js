@@ -1849,6 +1849,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     let timelineData = [];
+    let filteredTimelineData = [];
     let currentTimelineIndex = 0;
     const timelineBatchSize = 50;
 
@@ -1856,9 +1857,83 @@ window.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await fetch('asset/timeline.json');
             timelineData = await response.json();
-            renderTimelineBatch();
+            // Run the filter immediately on load to populate the initial list
+            applyTimelineFilters(); 
         } catch (error) {
             console.error("Failed to load timeline data:", error);
+        }
+    }
+
+    function applyTimelineFilters() {
+        if (!timeline) return;
+
+        const now = Date.now();
+        
+        // 1. Filter the raw data array directly instead of the DOM elements
+        filteredTimelineData = timelineData.filter(event => {
+            const charName = (event.character_name || '').toLowerCase();
+            const eventType = event.type;
+            const timestampStr = event.timestamp || '';
+            const itemQuality = event.item_quality || 'COMMON';
+
+            // Filter by Character
+            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
+
+            // Filter by Rarity/Type
+            if (tlTypeFilter === 'rare_plus') {
+                if (eventType !== 'item') return false;
+                if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
+            } else if (tlTypeFilter === 'epic') {
+                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
+            } else if (tlTypeFilter === 'legendary') {
+                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
+            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
+                return false;
+            }
+
+            // Filter by Date (Hours)
+            if (tlSpecificDate && timestampStr) {
+                if (!timestampStr.startsWith(tlSpecificDate)) return false;
+            } else if (tlDateFilter !== 'all' && timestampStr) {
+                let cleanTs = timestampStr.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                if (!isNaN(eventDate)) {
+                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
+                    if ((now - eventDate) > hoursMs) return false;
+                }
+            }
+
+            return true;
+        });
+
+        // 2. Clear the old feed and reset the counter
+        const container = document.getElementById('timeline-feed-container');
+        if (container) container.innerHTML = '';
+        currentTimelineIndex = 0;
+
+        // 3. Handle empty states or render the first batch
+        let noResultsMsg = document.getElementById('tl-no-results');
+        if (filteredTimelineData.length === 0) {
+            if (container) container.style.display = 'none';
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('div');
+                noResultsMsg.id = 'tl-no-results';
+                noResultsMsg.style.color = '#888';
+                noResultsMsg.style.textAlign = 'center';
+                noResultsMsg.style.padding = '20px';
+                noResultsMsg.style.fontStyle = 'italic';
+                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
+                document.getElementById('timeline').appendChild(noResultsMsg);
+            } else {
+                noResultsMsg.style.display = 'block';
+            }
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            if (container) container.style.display = 'flex';
+            if (noResultsMsg) noResultsMsg.style.display = 'none';
+            renderTimelineBatch();
         }
     }
 
@@ -1868,12 +1943,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (!container) return;
 
-        const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, timelineData.length);
+        // Pull from the filtered array, not the raw array
+        const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, filteredTimelineData.length);
         
         for (let i = currentTimelineIndex; i < endIndex; i++) {
-            const event = timelineData[i];
+            const event = filteredTimelineData[i];
             
-            // Restored the proper class name from Prod
             const eventEl = document.createElement('div');
             eventEl.className = 'timeline-item'; 
             
@@ -1885,7 +1960,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.setAttribute('data-quality', event.item_quality);
             }
             
-            // Replicate the short Python time formatting (e.g. "Mar 24, 15:30")
             let timeDisp = event.timestamp;
             try {
                 const cleanTs = event.timestamp.replace('Z', '').replace(' ', 'T') + 'Z';
@@ -1903,7 +1977,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             const charName = event.character_name;
             const charLower = charName.toLowerCase();
             
-            // Restored the exact HTML structure from the prod html_dashboard.py
             let inner = `<span class="tl-time">${timeDisp}</span> `;
             inner += `<span class="tl-char tt-char" data-char="${charLower}" style="color: ${cHex}; cursor: pointer;" onclick="selectCharacter('${charLower}')">${charName}</span> `;
             
@@ -1930,7 +2003,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         currentTimelineIndex = endIndex;
         
-        if (currentTimelineIndex >= timelineData.length) {
+        if (currentTimelineIndex >= filteredTimelineData.length) {
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
@@ -1939,11 +2012,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (typeof setupTooltips === 'function') {
             setupTooltips();
         }
-        
-        applyTimelineFilters();
     }
 
-    // Call fetch directly without nesting a redundant DOMContentLoaded wrapper
     fetchTimeline();
     
     const loadMoreBtn = document.getElementById('load-more-btn');
@@ -1951,7 +2021,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         loadMoreBtn.addEventListener('click', renderTimelineBatch);
     }
 
-    // Initialize routing
     route();
     window.addEventListener('hashchange', route);
 });
