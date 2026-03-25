@@ -561,15 +561,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
-                            386
-                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
+                            387
+                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 1</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable" title="Click to view characters Level 70 with 110+ iLvl">
                         <span class="stat-value" style="color: #ff8000; display: flex; align-items: center; justify-content: center;">
                             18
-                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 1</span>
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Raid Ready</span>
                     </div>
@@ -748,10 +748,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T10:55:45.551583Z", "active_14_days": 386, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T12:05:56.638378Z", "active_14_days": 387, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 200, "loot": 159, "levels": 41, "total_roster": 624, "active_roster": 386}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 232, "loot": 181, "levels": 51, "total_roster": 624, "active_roster": 387}]
     </script>
 
     <script>
@@ -1930,6 +1930,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // --- NEW: Reset Timeline Filters on Page Change ---
+        // This ensures the feed reliably appears when clicking a new character
+        tlTypeFilter = 'rare_plus';
+        tlDateFilter = 'all';
+        tlSpecificDate = null;
+
+        // Reset the Button UI to highlight "Rare+"
+        document.querySelectorAll('button.tl-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.getAttribute('data-type') === 'rare_plus') {
+                b.classList.add('active');
+            }
+        });
+
+        // Reset the Dropdown UI to "All Available"
+        const dateSelect = document.getElementById('tl-date-filter');
+        if (dateSelect) {
+            dateSelect.value = 'all';
+        }
+
+        // Clear any specific Heatmap day selections
+        document.querySelectorAll('.tt-heatmap').forEach(c => {
+            c.classList.remove('selected-date');
+        });
     }
 
     function showAnalyticsView() {
