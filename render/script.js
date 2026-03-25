@@ -1075,7 +1075,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const now = Date.now();
         const feedContainer = document.querySelector('.timeline-feed');
 
-        document.querySelectorAll('#timeline .concise-item').forEach(el => {
+        document.querySelectorAll('#timeline .timeline-item').forEach(el => {
             const charName = el.getAttribute('data-char');
             const eventType = el.getAttribute('data-event-type');
             const timestampStr = el.getAttribute('data-timestamp');
@@ -1873,11 +1873,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         for (let i = currentTimelineIndex; i < endIndex; i++) {
             const event = timelineData[i];
             
-            // MUST use concise-item so the CSS and Filter logic hook into it
+            // Restored the proper class name from Prod
             const eventEl = document.createElement('div');
-            eventEl.className = 'concise-item'; 
+            eventEl.className = 'timeline-item'; 
             
-            // Attach specific data attributes required by applyTimelineFilters()
             eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
             eventEl.setAttribute('data-class', event.class || 'Unknown');
             eventEl.setAttribute('data-event-type', event.type);
@@ -1886,34 +1885,46 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.setAttribute('data-quality', event.item_quality);
             }
             
-            const dateObj = new Date(event.timestamp + "Z");
-            const timeString = dateObj.toLocaleString();
-            const cHex = CLASS_COLORS[event.class] || '#fff';
+            // Replicate the short Python time formatting (e.g. "Mar 24, 15:30")
+            let timeDisp = event.timestamp;
+            try {
+                const cleanTs = event.timestamp.replace('Z', '').replace(' ', 'T') + 'Z';
+                const dt = new Date(cleanTs);
+                if (!isNaN(dt.getTime())) {
+                    const month = dt.toLocaleString('en-US', { month: 'short' });
+                    const day = dt.getDate();
+                    const hrs = dt.getHours().toString().padStart(2, '0');
+                    const mins = dt.getMinutes().toString().padStart(2, '0');
+                    timeDisp = `${month} ${day}, ${hrs}:${mins}`;
+                }
+            } catch(e) {}
             
-            let timeHtml = `<div style="font-size: 11px; color: #888; width: 140px; text-align: right; margin-right: 15px;">${timeString}</div>`;
-
+            const cHex = CLASS_COLORS[event.class] || '#fff';
+            const charName = event.character_name;
+            const charLower = charName.toLowerCase();
+            
+            // Restored the exact HTML structure from the prod html_dashboard.py
+            let inner = `<span class="tl-time">${timeDisp}</span> `;
+            inner += `<span class="tl-char tt-char" data-char="${charLower}" style="color: ${cHex}; cursor: pointer;" onclick="selectCharacter('${charLower}')">${charName}</span> `;
+            
             if (event.type === 'level_up') {
-                eventEl.innerHTML = `
-                    ${timeHtml}
-                    <div style="flex: 1; font-size: 14px;">
-                        <b style="color: ${cHex}; cursor: pointer;" onclick="selectCharacter('${event.character_name.toLowerCase()}')" class="tt-char" data-char="${event.character_name.toLowerCase()}">${event.character_name}</b> 
-                        <span style="color: #ffd100;">reached Level ${event.level}!</span>
-                    </div>
-                `;
+                inner += `<span class="tl-action">reached Level <span class="tl-lvl">${event.level}</span>!</span>`;
             } else {
-                const qClass = event.item_quality ? `q${event.item_quality}` : 'qCOMMON';
-                const qHex = QUALITY_COLORS[event.item_quality] || '#fff';
+                const i_id = event.item_id;
+                const i_name = event.item_name;
+                const i_qual = event.item_quality || 'COMMON';
+                const i_icon = event.item_icon || '';
+                const q_cls = `q${i_qual}`;
+                const q_hex = QUALITY_COLORS[i_qual] || '#fff';
                 
-                eventEl.innerHTML = `
-                    ${timeHtml}
-                    <div style="flex: 1; font-size: 14px; display: flex; align-items: center;">
-                        <b style="color: ${cHex}; cursor: pointer; margin-right: 5px;" onclick="selectCharacter('${event.character_name.toLowerCase()}')" class="tt-char" data-char="${event.character_name.toLowerCase()}">${event.character_name}</b> 
-                        <span style="color: #aaa; margin-right: 5px;">looted</span>
-                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" class="${qClass}" data-wowhead="item=${event.item_id}" target="_blank" style="text-decoration: none; color: ${qHex}; margin-right: 5px;">[${event.item_name}]</a>
-                        <img src="${event.item_icon}" style="width: 18px; height: 18px; border: 1px solid ${qHex}; border-radius: 3px; object-fit: cover;">
-                    </div>
-                `;
+                inner += `<span class="tl-action">looted</span> `;
+                inner += `<a href="https://www.wowhead.com/wotlk/item=${i_id}" class="${q_cls} tl-item" data-wowhead="item=${i_id}" target="_blank" style="color: ${q_hex}; text-decoration: none;">[${i_name}]</a> `;
+                if (i_icon) {
+                    inner += `<img src="${i_icon}" class="tl-icon" style="border-color: ${q_hex};">`;
+                }
             }
+            
+            eventEl.innerHTML = inner;
             container.appendChild(eventEl);
         }
         
@@ -1925,12 +1936,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
         }
         
-        // Re-bind hover tooltips for newly added batch elements
         if (typeof setupTooltips === 'function') {
             setupTooltips();
         }
         
-        // Enforce the current selected filter (e.g. "Epics Only") on the new items
         applyTimelineFilters();
     }
 
