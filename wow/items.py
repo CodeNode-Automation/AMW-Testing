@@ -19,13 +19,19 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
     
     # LOCAL CACHE CHECK
     past_item = past_gear.get(slot_type, {})
-    # FIXED: Use 'icon_data' to match the database and dictionary structure
     cached_icon = past_item.get('icon_data')
+    cached_tooltip = past_item.get('tooltip_params')
     
-    # Check if the database accidentally stored the fallback icon
-    is_cached_fallback = (cached_icon == fallback_url) or ("amw" in str(cached_icon).lower())
+    # Reject the cache if it wiped to None, or if it saved the fallback logo
+    is_invalid_cache = (
+        not cached_icon or 
+        not cached_tooltip or 
+        (cached_icon == fallback_url) or 
+        ("amw" in str(cached_icon).lower()) or
+        ("undefined" in str(cached_tooltip).lower())
+    )
     
-    if past_item and past_item.get('item_id') == item_id and cached_icon and not is_cached_fallback:
+    if past_item and past_item.get('item_id') == item_id and not is_invalid_cache:
         return slot_type, {
             "name": item_name,
             "icon_data": cached_icon,
@@ -33,13 +39,12 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
             "is_fallback": False,
             "item_id": item_id,
             "item_level": item_level,
-            "tooltip_params": past_item.get('tooltip_params', f"item={item_id}")
+            "tooltip_params": cached_tooltip
         }
         
     # NETWORK FETCH SETUP
     item_href = item.get('item', {}).get('key', {}).get('href')
     media_href = item.get('media', {}).get('key', {}).get('href')
-    
     payload_quality = item.get('quality', {}).get('type')
 
     async def resolve_icon():
@@ -57,7 +62,6 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
             return payload_quality
         return await fetch_item_quality(session, token, item_href, item_id)
 
-    # Run Quality and Icon lookups simultaneously
     quality_type, icon_url = await asyncio.gather(
         resolve_quality(),
         resolve_icon()
@@ -98,7 +102,7 @@ async def process_equipment(session, token, equipment, past_gear=None):
     if equipment and 'equipped_items' in equipment:
         items = equipment['equipped_items']
         
-        # FIXED: Process sequentially to avoid massive 429s on the media servers
+        # Sequentially iterate to safely heal the database without overloading Blizzard
         for item in items:
             try:
                 slot_type, item_data = await process_single_item(session, token, item, past_gear, fallback_url)
