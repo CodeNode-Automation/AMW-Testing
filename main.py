@@ -116,7 +116,9 @@ async def main_async():
     print("✅ Authentication successful!\n")
 
     print("🚀 Opening Async HTTP Session...\n")
-    async with aiohttp.ClientSession() as session:
+    # Increase TCP connection pool to prevent local queuing bottlenecks
+    connector = aiohttp.TCPConnector(limit=200)
+    async with aiohttp.ClientSession(connector=connector) as session:
         
         await setup_database(session)
 
@@ -200,7 +202,7 @@ async def main_async():
 
         print(f"👥 Guild: {len(raw_guild_roster)} Total Members. Processing {len(roster_names)} valid characters.")
 
-        sem = asyncio.Semaphore(30)
+        sem = asyncio.Semaphore(15)
         tasks = [fetch_with_semaphore(sem, session, token, char, history_data) for char in roster_names]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         

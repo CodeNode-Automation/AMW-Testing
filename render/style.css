@@ -446,25 +446,30 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
 
-/* Modern Pill Container for the Logos */
+/* Modern Frosted Glass Pill Container */
 .arch-logo-pill {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
-    background: #bbb; /* Changed from white to soft grey */
+    background: rgba(235, 235, 235, 0.85); /* Lightened for clarity, but slightly transparent */
+    backdrop-filter: blur(8px); /* Gives it a premium frosted glass look */
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     padding: 12px 24px;
     border-radius: 50px; 
     margin-bottom: 20px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.9); /* Deepened inner shadow */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft highlighted rim */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.5); /* Outer depth + inner glow */
     min-height: 65px;
 }
+
 .arch-logo-pill img {
-    height: 38px; /* Uniform height for all logos */
+    height: 38px; 
     width: auto;
     object-fit: contain;
     margin: 0; 
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); /* Tiny shadow for depth inside the pill */
+    /* A tiny, sharp dark shadow to pop the logo off the light glass */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); 
 }
 
 .arch-card h3 {
