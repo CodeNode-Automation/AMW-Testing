@@ -1075,7 +1075,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const now = Date.now();
         const feedContainer = document.querySelector('.timeline-feed');
 
-        document.querySelectorAll('#timeline .timeline-item').forEach(el => {
+        document.querySelectorAll('#timeline .concise-item').forEach(el => {
             const charName = el.getAttribute('data-char');
             const eventType = el.getAttribute('data-event-type');
             const timestampStr = el.getAttribute('data-timestamp');
@@ -1943,14 +1943,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (!container) return;
 
-        // Pull from the filtered array, not the raw array
         const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, filteredTimelineData.length);
         
         for (let i = currentTimelineIndex; i < endIndex; i++) {
             const event = filteredTimelineData[i];
             
+            // Restored the proper concise-item class from your production site!
             const eventEl = document.createElement('div');
-            eventEl.className = 'timeline-item'; 
+            eventEl.className = 'concise-item tt-char'; 
+            eventEl.style.cursor = 'pointer';
+            eventEl.onclick = () => selectCharacter((event.character_name || '').toLowerCase());
             
             eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
             eventEl.setAttribute('data-class', event.class || 'Unknown');
@@ -1960,44 +1962,50 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.setAttribute('data-quality', event.item_quality);
             }
             
-            let timeDisp = event.timestamp;
+            // Format the date to match production (e.g., "Mar 24")
+            let date_str = event.timestamp.substring(0, 10);
             try {
-                const cleanTs = event.timestamp.replace('Z', '').replace(' ', 'T') + 'Z';
+                const cleanTs = event.timestamp.replace('Z', '+00:00');
                 const dt = new Date(cleanTs);
                 if (!isNaN(dt.getTime())) {
-                    const month = dt.toLocaleString('en-US', { month: 'short' });
-                    const day = dt.getDate();
-                    const hrs = dt.getHours().toString().padStart(2, '0');
-                    const mins = dt.getMinutes().toString().padStart(2, '0');
-                    timeDisp = `${month} ${day}, ${hrs}:${mins}`;
+                    date_str = dt.toLocaleString('en-US', { month: 'short', day: 'numeric' });
                 }
             } catch(e) {}
             
-            const cHex = CLASS_COLORS[event.class] || '#fff';
-            const charName = event.character_name;
-            const charLower = charName.toLowerCase();
-            
-            let inner = `<span class="tl-time">${timeDisp}</span> `;
-            inner += `<span class="tl-char tt-char" data-char="${charLower}" style="color: ${cHex}; cursor: pointer;" onclick="selectCharacter('${charLower}')">${charName}</span> `;
+            const c_hex = CLASS_COLORS[event.class] || '#ffd100';
+            const c_name = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
             
             if (event.type === 'level_up') {
-                inner += `<span class="tl-action">reached Level <span class="tl-lvl">${event.level}</span>!</span>`;
+                eventEl.style.borderLeftColor = c_hex;
+                eventEl.innerHTML = `
+                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: #ffd100;">
+                        <span style="font-size: 14px;">⭐</span>
+                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level ${event.level}</span>
+                    </div>
+                `;
             } else {
-                const i_id = event.item_id;
-                const i_name = event.item_name;
-                const i_qual = event.item_quality || 'COMMON';
-                const i_icon = event.item_icon || '';
-                const q_cls = `q${i_qual}`;
-                const q_hex = QUALITY_COLORS[i_qual] || '#fff';
+                const q = event.item_quality || 'COMMON';
+                const q_hex = QUALITY_COLORS[q] || '#ffffff';
+                eventEl.style.borderLeftColor = q_hex;
                 
-                inner += `<span class="tl-action">looted</span> `;
-                inner += `<a href="https://www.wowhead.com/wotlk/item=${i_id}" class="${q_cls} tl-item" data-wowhead="item=${i_id}" target="_blank" style="color: ${q_hex}; text-decoration: none;">[${i_name}]</a> `;
-                if (i_icon) {
-                    inner += `<img src="${i_icon}" class="tl-icon" style="border-color: ${q_hex};">`;
-                }
+                eventEl.innerHTML = `
+                    <div class="timeline-node" style="background: ${q_hex}; box-shadow: 0 0 8px ${q_hex};"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: ${q_hex};">
+                        <img src="${event.item_icon}" alt="icon">
+                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" target="_blank" onclick="event.stopPropagation();" style="color: ${q_hex}; font-weight:bold; text-decoration: none;">${event.item_name}</a>
+                    </div>
+                `;
             }
             
-            eventEl.innerHTML = inner;
             container.appendChild(eventEl);
         }
         
