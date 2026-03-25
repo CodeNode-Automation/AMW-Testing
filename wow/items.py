@@ -17,9 +17,10 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
     name_data = item.get('name', 'Empty')
     item_name = name_data if isinstance(name_data, str) else name_data.get('en_US', 'Empty')
     
-    # LOCAL CACHE CHECK (With Poison Protection)
+    # LOCAL CACHE CHECK
     past_item = past_gear.get(slot_type, {})
-    cached_icon = past_item.get('icon')
+    # FIXED: Use 'icon_data' to match the database and dictionary structure
+    cached_icon = past_item.get('icon_data')
     
     # Check if the database accidentally stored the fallback icon
     is_cached_fallback = (cached_icon == fallback_url) or ("amw" in str(cached_icon).lower())
@@ -32,14 +33,13 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
             "is_fallback": False,
             "item_id": item_id,
             "item_level": item_level,
-            "tooltip_params": past_item.get('params', f"item={item_id}")
+            "tooltip_params": past_item.get('tooltip_params', f"item={item_id}")
         }
         
     # NETWORK FETCH SETUP
     item_href = item.get('item', {}).get('key', {}).get('href')
     media_href = item.get('media', {}).get('key', {}).get('href')
     
-    # Safely extract quality from payload to avoid unnecessary network calls
     payload_quality = item.get('quality', {}).get('type')
 
     async def resolve_icon():
@@ -90,7 +90,7 @@ async def process_single_item(session, token, item, past_gear, fallback_url):
     }
 
 async def process_equipment(session, token, equipment, past_gear=None):
-    """Parses the character equipment payload natively concurrent."""
+    """Parses the character equipment payload sequentially to prevent media rate limits."""
     if past_gear is None: past_gear = {}
     equipped_dict = {}
     fallback_url = get_standardized_image_url(FALLBACK_ICON)
@@ -98,11 +98,12 @@ async def process_equipment(session, token, equipment, past_gear=None):
     if equipment and 'equipped_items' in equipment:
         items = equipment['equipped_items']
         
-        # Fire off all 16 item slots at the exact same time
-        tasks = [process_single_item(session, token, item, past_gear, fallback_url) for item in items]
-        results = await asyncio.gather(*tasks)
-        
-        for slot_type, item_data in results:
-            equipped_dict[slot_type] = item_data
+        # FIXED: Process sequentially to avoid massive 429s on the media servers
+        for item in items:
+            try:
+                slot_type, item_data = await process_single_item(session, token, item, past_gear, fallback_url)
+                equipped_dict[slot_type] = item_data
+            except Exception as e:
+                print(f"⚠️ Minor item fetch warning: {e}")
 
     return equipped_dict

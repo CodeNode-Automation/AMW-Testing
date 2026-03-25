@@ -158,7 +158,7 @@ async def main_async():
             if char_n not in history_data: history_data[char_n] = {}
             history_data[char_n][row['slot']] = {
                 'item_id': row['item_id'], 'name': row['name'], 'quality': row['quality'], 
-                'icon': row['icon_data'], 'params': row['tooltip_params']
+                'icon_data': row['icon_data'], 'tooltip_params': row['tooltip_params']
             }
 
         past_char_records = {row['char_name']: row for row in trend_rows}
@@ -245,9 +245,9 @@ async def main_async():
                 if isinstance(item, dict) and 'item_id' in item:
                     batch_stmts.append({
                         "q": "INSERT OR REPLACE INTO gear (character_name, slot, item_id, name, quality, icon_data, tooltip_params) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        "params": [char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon'), item.get('params')]
+                        "params": [char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon_data'), item.get('tooltip_params')]
                     })
-
+                    
         for ev in timeline_data_new:
             char_name = ev.get('character')
             if ev.get('type') == 'level_up':
