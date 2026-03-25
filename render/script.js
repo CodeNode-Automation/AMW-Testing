@@ -77,6 +77,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     let raceChartInstance = null;
     let analyticsActivityChartInst = null;
     let analyticsClassChartInst = null;
+    window.roleChartInstance = null;
     const analyticsView = document.getElementById('analytics-view');   
     const architectureView = document.getElementById('architecture-view');
 
@@ -1220,8 +1221,72 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (analyticsView) analyticsView.style.display = 'block';
         if (navbar) navbar.style.background = '#111';
         if (timeline) timeline.style.display = 'none'; 
+
+        // --- NEW: CALCULATE KPIs ---
+        let totalIlvl = 0, lvl70Count = 0;
+        let totalHks = 0;
         
-        // 1. Level Distribution Data & Chart
+        rosterData.forEach(c => {
+            const p = c.profile;
+            if (p) {
+                if (p.level === 70 && p.equipped_item_level) {
+                    totalIlvl += p.equipped_item_level;
+                    lvl70Count++;
+                }
+                if (p.honorable_kills) totalHks += p.honorable_kills;
+            }
+        });
+        
+        let epicLootCount = 0;
+        timelineData.forEach(e => {
+            if (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) {
+                epicLootCount++;
+            }
+        });
+
+        const kpiIlvl = document.getElementById('kpi-avg-ilvl');
+        if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
+        
+        const kpiEpic = document.getElementById('kpi-epic-loot');
+        if (kpiEpic) kpiEpic.innerText = epicLootCount;
+        
+        const kpiHks = document.getElementById('kpi-total-hks');
+        if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+
+        // --- NEW: ROLE DISTRIBUTION CHART ---
+        const roleCounts = { "Tank": 0, "Healer": 0, "Melee DPS": 0, "Ranged DPS": 0 };
+        rosterData.forEach(c => {
+            if (!c.profile || !c.profile.active_spec) return;
+            const spec = c.profile.active_spec;
+            const cClass = getCharClass(c);
+            
+            if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) roleCounts["Tank"]++;
+            else if (["Holy", "Discipline", "Restoration"].includes(spec)) roleCounts["Healer"]++;
+            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || spec === "Balance" || spec === "Elemental") roleCounts["Ranged DPS"]++;
+            else roleCounts["Melee DPS"]++;
+        });
+
+        const roleCtx = document.getElementById('roleDonutChart');
+        if (roleCtx) {
+            if(window.roleChartInstance) window.roleChartInstance.destroy();
+            window.roleChartInstance = new Chart(roleCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(roleCounts),
+                    datasets: [{ 
+                        data: Object.values(roleCounts), 
+                        backgroundColor: ['#e74c3c', '#2ecc71', '#e67e22', '#3498db'], 
+                        borderColor: '#111', borderWidth: 2 
+                    }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, cutout: '60%',
+                    plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } }
+                }
+            });
+        }
+
+        // --- UPGRADED: LEVEL DISTRIBUTION (WITH GRADIENTS) ---
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
         const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
         rawGuildRoster.forEach(c => {
@@ -1236,29 +1301,40 @@ window.addEventListener('DOMContentLoaded', async () => {
             else levelData[0]++;
         });
 
-        if(levelChartInstance) levelChartInstance.destroy();
-        levelChartInstance = new Chart(document.getElementById('levelDistChart'), {
-            type: 'bar',
-            data: {
-                labels: levelLabels,
-                datasets: [{ label: 'Characters', data: levelData, backgroundColor: '#ffd100', borderColor: '#b39200', borderWidth: 1 }]
-            },
-            options: { 
-                responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
-                scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}},
-                onClick: (event, elements, chart) => {
-                    if (elements.length > 0) {
-                        const clickedLabel = chart.data.labels[elements[0].index];
-                        window.location.hash = 'filter-level-' + clickedLabel;
-                    }
-                },
-                onHover: (event, elements) => {
-                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                }
-            }
-        });
+        const lvlCanvas = document.getElementById('levelDistChart');
+        if (lvlCanvas) {
+            const lvlCtx = lvlCanvas.getContext('2d');
+            const lvlGradient = lvlCtx.createLinearGradient(0, 0, 0, 400);
+            lvlGradient.addColorStop(0, 'rgba(255, 209, 0, 0.8)'); // Gold Top
+            lvlGradient.addColorStop(1, 'rgba(255, 209, 0, 0.1)'); // Faded Bottom
 
-        // 2. Max Level iLvl Spread Data & Chart
+            if(levelChartInstance) levelChartInstance.destroy();
+            levelChartInstance = new Chart(lvlCtx, {
+                type: 'bar',
+                data: {
+                    labels: levelLabels,
+                    datasets: [{ label: 'Characters', data: levelData, backgroundColor: lvlGradient, borderColor: '#ffd100', borderWidth: 1, borderRadius: 4 }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
+                    scales: { 
+                        y: {beginAtZero: true, grid: {color: 'rgba(255,255,255,0.05)'}, ticks: {color: '#888'}}, 
+                        x: {grid: {display: false}, ticks: {color: '#888', font: {family: 'Cinzel'}}}
+                    },
+                    onClick: (event, elements, chart) => {
+                        if (elements.length > 0) {
+                            const clickedLabel = chart.data.labels[elements[0].index];
+                            window.location.hash = 'filter-level-' + clickedLabel;
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    }
+                }
+            });
+        }
+
+        // --- UPGRADED: MAX LEVEL ILVL SPREAD (WITH GRADIENTS) ---
         const ilvlLabels = ["<100", "100-109", "110-119", "120-129", "130+"];
         const ilvlData = [0, 0, 0, 0, 0];
         rosterData.forEach(c => {
@@ -1273,29 +1349,40 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        if(ilvlChartInstance) ilvlChartInstance.destroy();
-        ilvlChartInstance = new Chart(document.getElementById('ilvlDistChart'), {
-            type: 'bar',
-            data: {
-                labels: ilvlLabels,
-                datasets: [{ label: 'Level 70 Characters', data: ilvlData, backgroundColor: '#ff8000', borderColor: '#cc6600', borderWidth: 1 }]
-            },
-            options: { 
-                responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
-                scales: { y: {beginAtZero: true, ticks: {color: '#888'}}, x: {ticks: {color: '#888', font: {family: 'Cinzel'}}}},
-                onClick: (event, elements, chart) => {
-                    if (elements.length > 0) {
-                        const clickedLabel = chart.data.labels[elements[0].index];
-                        window.location.hash = 'filter-ilvl-' + clickedLabel;
-                    }
-                },
-                onHover: (event, elements) => {
-                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                }
-            }
-        });
+        const ilvlCanvas = document.getElementById('ilvlDistChart');
+        if (ilvlCanvas) {
+            const ilvlCtx = ilvlCanvas.getContext('2d');
+            const ilvlGradient = ilvlCtx.createLinearGradient(0, 0, 0, 400);
+            ilvlGradient.addColorStop(0, 'rgba(255, 128, 0, 0.8)'); // Legendary Orange Top
+            ilvlGradient.addColorStop(1, 'rgba(255, 128, 0, 0.1)'); 
 
-        // 3. Race Distribution Data & Chart
+            if(ilvlChartInstance) ilvlChartInstance.destroy();
+            ilvlChartInstance = new Chart(ilvlCtx, {
+                type: 'bar',
+                data: {
+                    labels: ilvlLabels,
+                    datasets: [{ label: 'Level 70 Characters', data: ilvlData, backgroundColor: ilvlGradient, borderColor: '#ff8000', borderWidth: 1, borderRadius: 4 }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
+                    scales: { 
+                        y: {beginAtZero: true, grid: {color: 'rgba(255,255,255,0.05)'}, ticks: {color: '#888'}}, 
+                        x: {grid: {display: false}, ticks: {color: '#888', font: {family: 'Cinzel'}}}
+                    },
+                    onClick: (event, elements, chart) => {
+                        if (elements.length > 0) {
+                            const clickedLabel = chart.data.labels[elements[0].index];
+                            window.location.hash = 'filter-ilvl-' + clickedLabel;
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    }
+                }
+            });
+        }
+
+        // --- EXISTING: RACE DISTRIBUTION (UNCHANGED) ---
         const raceCounts = {};
         rosterData.forEach(c => {
             const p = c.profile;
@@ -1332,7 +1419,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Duplicate Activity Chart from Main Page
+        // --- EXISTING: DUPLICATE ACTIVITY CHART (UNCHANGED) ---
         const actCtx = document.getElementById('analyticsActivityChart');
         if (actCtx && heatmapData && heatmapData.length > 0) {
             if(analyticsActivityChartInst) analyticsActivityChartInst.destroy();
@@ -1409,10 +1496,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-
-        // 5. Duplicate Class Donut Chart from Main Page
-        if(analyticsClassChartInst) analyticsClassChartInst.destroy();
-        analyticsClassChartInst = createDonutChart('analyticsClassDonutChart', rawGuildRoster, true);
     }
 
     function showArchitectureView() {
