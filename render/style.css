@@ -435,23 +435,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 
 .arch-pipeline {
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
+    flex-wrap: wrap; /* THE FIX: Allows wrapping instead of horizontal scrolling! */
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    gap: 0;
+    gap: 15px;
     padding: 20px 10px 40px 10px;
-    overflow-x: auto;
-    /* Custom scrollbar for desktop timeline */
-    scrollbar-width: thin;
-    scrollbar-color: #ffd100 rgba(0,0,0,0.3);
 }
-.arch-pipeline::-webkit-scrollbar { height: 8px; }
-.arch-pipeline::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
-.arch-pipeline::-webkit-scrollbar-thumb { background: #ffd100; border-radius: 4px; }
 
 /* The Cards */
 .arch-card {
-    flex: 0 0 280px; /* Fixed width to allow horizontal timeline flow */
+    flex: 1 1 260px; /* Allows cards to stretch and wrap beautifully */
+    max-width: 340px; /* Prevents them from getting absurdly wide */
     margin: 0;
     position: relative;
     display: flex;
@@ -486,6 +481,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     margin-bottom: 15px;
     border: 1px solid;
     text-shadow: none;
+    text-align: center;
 }
 
 /* Modern Frosted Glass Pill Container */
@@ -493,24 +489,26 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    background: rgba(235, 235, 235, 0.85); /* Lightened for clarity, but slightly transparent */
-    backdrop-filter: blur(8px); /* Gives it a premium frosted glass look */
-    -webkit-backdrop-filter: blur(8px); /* Safari support */
-    padding: 12px 24px;
-    border-radius: 50px; 
+    flex-wrap: wrap; /* THE FIX: Allows multiple logos to stack instead of bleeding! */
+    gap: 12px; /* Reduced gap to fit better on mobile */
+    background: rgba(235, 235, 235, 0.85); 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px); 
+    padding: 10px 18px; /* Reduced padding */
+    border-radius: 30px; /* Slightly less aggressive pill shape to accommodate stacked items */
     margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft highlighted rim */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.5); /* Outer depth + inner glow */
-    min-height: 65px;
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.5); 
+    min-height: 60px;
+    max-width: 100%; /* Ensures it never breaks outside the card */
 }
 
 .arch-logo-pill img {
-    height: 38px; 
+    height: 32px; /* Shrunk slightly to fit perfectly */
+    max-width: 100%;
     width: auto;
     object-fit: contain;
     margin: 0; 
-    /* A tiny, sharp dark shadow to pop the logo off the light glass */
     filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); 
 }
 
@@ -532,7 +530,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 
 /* Animated Data Arrows */
 .arch-connector {
-    flex: 0 0 50px;
+    flex: 0 0 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -553,11 +551,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 }
 
 /* Mobile Layout: Snaps to a vertical downward waterfall */
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
     .arch-pipeline {
         flex-direction: column;
         align-items: center;
-        overflow-x: hidden;
         padding: 10px;
     }
     .arch-card {
@@ -566,7 +563,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         max-width: 500px;
     }
     .arch-connector {
-        flex: 0 0 60px;
+        flex: 0 0 50px;
         width: 100%;
         transform: rotate(90deg); /* Points arrows down */
     }
