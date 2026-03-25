@@ -1281,7 +1281,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 },
                 options: { 
                     responsive: true, maintainAspectRatio: false, cutout: '60%',
-                    plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } },
+                    onClick: (event, elements, chart) => {
+                        if (elements.length > 0) {
+                            const clickedLabel = chart.data.labels[elements[0].index];
+                            // Converts "Melee DPS" to "melee-dps" for the URL hash
+                            window.location.hash = 'filter-role-' + clickedLabel.toLowerCase().replace(/\s+/g, '-');
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    }
                 }
             });
         }
@@ -1699,6 +1709,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             // Capitalize for the nice title string
             const displayRace = targetRace.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             showConciseView(`${displayRace} Characters (${filteredRoster.length})`, filteredRoster, false, true);
+            updateDropdownLabel('all');
+        } else if (hash.startsWith('filter-role-')) {
+            const targetRoleHash = hash.replace('filter-role-', '');
+            
+            let targetRoleName = "Unknown";
+            if (targetRoleHash === "tank") targetRoleName = "Tank";
+            else if (targetRoleHash === "healer") targetRoleName = "Healer";
+            else if (targetRoleHash === "melee-dps") targetRoleName = "Melee DPS";
+            else if (targetRoleHash === "ranged-dps") targetRoleName = "Ranged DPS";
+
+            const filteredRoster = rosterData.filter(c => {
+                if (!c.profile || !c.profile.active_spec) return false;
+                const spec = c.profile.active_spec;
+                const cClass = getCharClass(c);
+                let role = "Melee DPS"; 
+
+                if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) role = "Tank";
+                else if (["Holy", "Discipline", "Restoration"].includes(spec)) role = "Healer";
+                else if (["Mage", "Warlock", "Hunter"].includes(cClass) || spec === "Balance" || spec === "Elemental") role = "Ranged DPS";
+
+                return role === targetRoleName;
+            });
+
+            showConciseView(`Raid Role: ${targetRoleName}s (${filteredRoster.length})`, filteredRoster, false, true);
             updateDropdownLabel('all');
         } else {
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
