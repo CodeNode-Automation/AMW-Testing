@@ -293,8 +293,8 @@ async def main_async():
         
     roster_history = {row['date']: row for row in fetch_turso("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7")}
 
-    # Pass an empty list for the dashboard_feed since HTML no longer renders it directly
-    generate_html_dashboard(roster_data, realm_data, [], raw_guild_roster, roster_history)
+    # Pass the full dashboard_feed back in so the heatmap math can run!
+    generate_html_dashboard(roster_data, realm_data, dashboard_feed, raw_guild_roster, roster_history)
     print("🎉 ALL DONE! The pipeline ran successfully.")
 
 def main():
