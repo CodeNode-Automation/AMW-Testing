@@ -624,14 +624,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
                             388
-                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 388</span>
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable" title="Click to view characters Level 70 with 110+ iLvl">
                         <span class="stat-value" style="color: #ff8000; display: flex; align-items: center; justify-content: center;">
                             17
-                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 17</span>
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Raid Ready</span>
                     </div>
@@ -869,10 +869,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T17:10:56.877473Z", "active_14_days": 388, "raid_ready_count": 17}
+        {"last_updated": "2026-03-25T17:18:59.352386Z", "active_14_days": 388, "raid_ready_count": 17}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 407, "loot": 320, "levels": 87, "total_roster": 624, "active_roster": 388}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 411, "loot": 323, "levels": 88, "total_roster": 624, "active_roster": 388}]
     </script>
 
     <script>
@@ -2060,6 +2060,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
+        
+        // BUG FIX: Ensure the timeline is unhidden by default when switching views!
+        // (Analytics and Architecture will immediately hide it again if needed)
+        if (timeline) timeline.style.display = 'block';
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // --- NEW: Reset Timeline Filters on Page Change ---
