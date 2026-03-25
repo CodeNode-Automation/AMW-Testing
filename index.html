@@ -454,14 +454,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
 .arch-card img {
-    height: 75px; /* Slightly taller to account for the new padding */
-    max-width: 100%; /* Ensures wider logos don't overflow the card */
-    object-fit: contain; /* Forces the logo to scale proportionally */
+    height: 65px; /* Restored to a sensible height without the padding */
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
     margin-bottom: 15px;
-    background-color: rgba(240, 240, 240, 0.95); /* Light backdrop to make black text visible */
-    padding: 10px 15px; /* Internal breathing room so the logo isn't touching the edges */
-    border-radius: 10px; /* Smooth, modern corners to match the dashboard */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Pops the image off the dark background */
+    background: transparent; /* Removes the ugly white box */
+    padding: 0; /* Removes the spacing that made them too wide */
+    box-shadow: none; /* Removes the square shadow */
+    
+    /* Traces the logo shape with a soft white glow for readability, plus a dark shadow for depth */
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
 }
 .arch-card h3 {
     color: #fff;
@@ -604,8 +607,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
-                            387
-                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
+                            384
+                            <span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ 3</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
@@ -728,42 +731,60 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                 </div>
             </div>
-            <div id="architecture-view" style="display: none; animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 30px; font-size: 32px;">System Architecture</h2>
-                <p style="text-align: center; color: #bbb; margin-bottom: 40px; font-size: 16px;">Azeroth's Most Wanted Armory is a fully automated, serverless dashboard. Here is a look under the hood at the technologies powering the guild's data.</p>
+
+            <div id="architecture-view" style="display: none; animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 10px; font-size: 32px;">System Architecture</h2>
+                
+                <p style="text-align: center; color: #2ecc71; font-family: 'Cinzel', serif; font-weight: bold; font-size: 18px; margin-bottom: 15px; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                    ⚡ 100% FREE & SERVERLESS ⚡
+                </p>
+                
+                <p style="text-align: center; color: #bbb; max-width: 800px; margin: 0 auto 40px auto; font-size: 16px; line-height: 1.6;">
+                    Azeroth's Most Wanted Armory operates on a fully automated, zero-cost tech stack. By combining edge databases, static site generation, and GitHub Actions, the dashboard processes thousands of data points a day without a traditional backend or any recurring hosting fees.
+                </p>
                 
                 <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
                     <div class="info-box arch-card">
                         <img src="asset/software_logo/python.png" alt="Python">
-                        <h3>Data Extraction</h3>
-                        <p>Python scripts asynchronously fetch live roster and character data from the official Blizzard REST APIs, processing thousands of data points concurrently.</p>
+                        <h3>Asynchronous Extraction</h3>
+                        <p>Python utilizes <strong>AsyncIO</strong> and <strong>Aiohttp</strong> to concurrently fetch live character profiles from the Blizzard REST API, processing vast amounts of data in seconds while bypassing standard rate-limit bottlenecks.</p>
                     </div>
+                    
                     <div class="info-box arch-card">
                         <div style="display: flex; justify-content: center; gap: 15px;">
                             <img src="asset/software_logo/turso.png" alt="Turso">
                             <img src="asset/software_logo/sqlite.png" alt="SQLite">
                         </div>
-                        <h3>Database Storage</h3>
-                        <p>Processed data is pushed in batched transactions to a Turso edge database (powered by libSQL/SQLite). This allows for infinite storage of historical trends and loot timelines.</p>
+                        <h3>Edge Database</h3>
+                        <p>Processed data is pushed in bulk transactions to a Turso edge database (libSQL/SQLite). This allows for infinite, free storage of historical guild trends and loot timelines.</p>
                     </div>
+                    
                     <div class="info-box arch-card">
                         <div style="display: flex; justify-content: center; gap: 15px;">
                             <img src="asset/software_logo/github.png" alt="GitHub">
                             <img src="asset/software_logo/cron.png" alt="Cron">
                         </div>
-                        <h3>Automation</h3>
-                        <p>GitHub Actions acts as our server. A Cron job triggers the pipeline on a tight schedule, running the Python scripts to update the database entirely without human intervention.</p>
+                        <h3>CI/CD Automation</h3>
+                        <p>GitHub Actions acts as our server. A strict <strong>Cron</strong> schedule triggers the pipeline to update the database and rebuild the website, operating entirely without human intervention.</p>
                     </div>
+                    
                     <div class="info-box arch-card">
                         <div style="display: flex; justify-content: center; gap: 15px;">
                             <img src="asset/software_logo/jinga.png" alt="Jinja2">
                             <img src="asset/software_logo/html5.png" alt="HTML5">
                         </div>
                         <h3>Static Generation</h3>
-                        <p>Jinja2 templates inject the latest database queries into raw HTML. The result is a lightning-fast static frontend powered by HTML5, modern JavaScript, and Chart.js.</p>
+                        <p><strong>Jinja2</strong> templates inject the latest database queries into raw HTML. The result is a lightning-fast, ultra-secure static frontend powered by HTML5 and modern CSS.</p>
+                    </div>
+                    
+                    <div class="info-box arch-card">
+                        <img src="asset/json.png" alt="JSON">
+                        <h3>JSON & Data Visualization</h3>
+                        <p>Heavy payloads are pre-compiled into static <strong>JSON</strong> files. The frontend consumes this data natively, using <strong>Chart.js</strong> to render interactive heatmaps and analytics with zero database latency.</p>
                     </div>
                 </div>
             </div>
+
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
@@ -827,10 +848,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T13:14:13.147823Z", "active_14_days": 387, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T13:40:54.704032Z", "active_14_days": 384, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 257, "loot": 201, "levels": 56, "total_roster": 624, "active_roster": 387}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 260, "loot": 203, "levels": 57, "total_roster": 624, "active_roster": 384}]
     </script>
 
     <script>
