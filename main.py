@@ -288,8 +288,23 @@ async def main_async():
         await push_turso_batch(session, batch_stmts)
         print("✅ Final push to Turso complete!")
 
+        print("🩹 Healing corrupted timeline icons...")
+        heal_stmt = {
+            "q": """
+                UPDATE timeline 
+                SET item_icon = (
+                    SELECT icon_data 
+                    FROM gear 
+                    WHERE gear.item_id = timeline.item_id AND gear.character_name = timeline.character_name 
+                    LIMIT 1
+                ) 
+                WHERE type = 'item' AND (item_icon IS NULL OR item_icon LIKE '%amw%')
+            """
+        }
+        await push_turso_batch(session, [heal_stmt])
+
         print("🌐 Generating final HTML Dashboard...")
-        dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000")
+        dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
         
         # Dump the heavy timeline payload to an external JSON file
         with open("asset/timeline.json", "w", encoding="utf-8") as f:
