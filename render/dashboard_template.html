@@ -208,15 +208,18 @@
                     Azeroth's Most Wanted Armory operates on a fully automated, zero-cost tech stack. By combining edge databases, static site generation, and GitHub Actions, the dashboard processes thousands of data points a day without a traditional backend or any recurring hosting fees.
                 </p>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; width: 100%;">
+                    
                     <div class="info-box arch-card">
-                        <img src="asset/software_logo/python.png" alt="Python">
+                        <div class="arch-logo-pill">
+                            <img src="asset/software_logo/python.png" alt="Python">
+                        </div>
                         <h3>Asynchronous Extraction</h3>
                         <p>Python utilizes <strong>AsyncIO</strong> and <strong>Aiohttp</strong> to concurrently fetch live character profiles from the Blizzard REST API, processing vast amounts of data in seconds while bypassing standard rate-limit bottlenecks.</p>
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/turso.png" alt="Turso">
                             <img src="asset/software_logo/sqlite.png" alt="SQLite">
                         </div>
@@ -225,7 +228,7 @@
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/github.png" alt="GitHub">
                             <img src="asset/software_logo/cron.png" alt="Cron">
                         </div>
@@ -234,7 +237,7 @@
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/jinga.png" alt="Jinja2">
                             <img src="asset/software_logo/html5.png" alt="HTML5">
                         </div>
@@ -243,7 +246,9 @@
                     </div>
                     
                     <div class="info-box arch-card">
-                        <img src="asset/json.png" alt="JSON">
+                        <div class="arch-logo-pill">
+                            <img src="asset/software_logo/json.png" alt="JSON">
+                        </div>
                         <h3>JSON & Data Visualization</h3>
                         <p>Heavy payloads are pre-compiled into static <strong>JSON</strong> files. The frontend consumes this data natively, using <strong>Chart.js</strong> to render interactive heatmaps and analytics with zero database latency.</p>
                     </div>
