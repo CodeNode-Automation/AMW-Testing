@@ -709,11 +709,34 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             <div id="full-card-container" class="full-card-container"></div>
         </div> 
 
-        <div id="timeline-feed-container"></div>
+        
+        <div id="timeline" class="timeline-container">
+            <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
+            <div class="timeline-filters">
+                <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
+                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
+                    <button class="tl-btn" data-type="level_up">Levels</button>
+                </div>
+                <div class="filter-group">
+                    <select id="tl-date-filter" class="tl-select">
+                        <option value="12">Last 12 Hours</option>
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="all" selected>All Available</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="timeline-feed" id="timeline-feed-container">
+                </div>
 
-        <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
-            <button id="load-more-btn" style="padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease;">Load More Activity</button>
+            <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
+                <button id="load-more-btn" style="padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease;">Load More Activity</button>
+            </div>
         </div>
+        
 
     </div> 
     
@@ -725,10 +748,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T08:35:53.713379Z", "active_14_days": 386, "raid_ready_count": 17}
+        {"last_updated": "2026-03-25T09:49:39.355425Z", "active_14_days": 386, "raid_ready_count": 17}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 0, "loot": 0, "levels": 0, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 0, "loot": 0, "levels": 0, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 0, "loot": 0, "levels": 0, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 0, "loot": 0, "levels": 0, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 0, "loot": 0, "levels": 0, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 0, "loot": 0, "levels": 0, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 0, "loot": 0, "levels": 0, "total_roster": 624, "active_roster": 386}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 167, "loot": 133, "levels": 34, "total_roster": 624, "active_roster": 386}]
     </script>
 
     <script>
@@ -800,7 +823,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (updateTimeEl) updateTimeEl.textContent = rawDate.toLocaleString(undefined, dateOptions);
     
     let tlTypeFilter = 'rare_plus';
-    let tlDateFilter = '7'; // Start with 7 days to match the heatmap
+    let tlDateFilter = 'all'; // Start with 7 days to match the heatmap
     let tlSpecificDate = null; 
     window.currentFilteredChars = null;
     window.activeClassExpanded = null;
@@ -1847,8 +1870,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const eventDate = new Date(cleanTs).getTime();
                 if (!isNaN(eventDate)) {
-                    const daysMs = parseInt(tlDateFilter) * 24 * 60 * 60 * 1000;
-                    if ((now - eventDate) > daysMs) show = false;
+                    // Calculate based on Hours instead of Days
+                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
+                    if ((now - eventDate) > hoursMs) show = false;
                 }
             }
 
@@ -2582,6 +2606,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     let timelineData = [];
+    let filteredTimelineData = [];
     let currentTimelineIndex = 0;
     const timelineBatchSize = 50;
 
@@ -2589,9 +2614,83 @@ window.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await fetch('asset/timeline.json');
             timelineData = await response.json();
-            renderTimelineBatch();
+            // Run the filter immediately on load to populate the initial list
+            applyTimelineFilters(); 
         } catch (error) {
             console.error("Failed to load timeline data:", error);
+        }
+    }
+
+    function applyTimelineFilters() {
+        if (!timeline) return;
+
+        const now = Date.now();
+        
+        // 1. Filter the raw data array directly instead of the DOM elements
+        filteredTimelineData = timelineData.filter(event => {
+            const charName = (event.character_name || '').toLowerCase();
+            const eventType = event.type;
+            const timestampStr = event.timestamp || '';
+            const itemQuality = event.item_quality || 'COMMON';
+
+            // Filter by Character
+            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
+
+            // Filter by Rarity/Type
+            if (tlTypeFilter === 'rare_plus') {
+                if (eventType !== 'item') return false;
+                if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
+            } else if (tlTypeFilter === 'epic') {
+                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
+            } else if (tlTypeFilter === 'legendary') {
+                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
+            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
+                return false;
+            }
+
+            // Filter by Date (Hours)
+            if (tlSpecificDate && timestampStr) {
+                if (!timestampStr.startsWith(tlSpecificDate)) return false;
+            } else if (tlDateFilter !== 'all' && timestampStr) {
+                let cleanTs = timestampStr.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                if (!isNaN(eventDate)) {
+                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
+                    if ((now - eventDate) > hoursMs) return false;
+                }
+            }
+
+            return true;
+        });
+
+        // 2. Clear the old feed and reset the counter
+        const container = document.getElementById('timeline-feed-container');
+        if (container) container.innerHTML = '';
+        currentTimelineIndex = 0;
+
+        // 3. Handle empty states or render the first batch
+        let noResultsMsg = document.getElementById('tl-no-results');
+        if (filteredTimelineData.length === 0) {
+            if (container) container.style.display = 'none';
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('div');
+                noResultsMsg.id = 'tl-no-results';
+                noResultsMsg.style.color = '#888';
+                noResultsMsg.style.textAlign = 'center';
+                noResultsMsg.style.padding = '20px';
+                noResultsMsg.style.fontStyle = 'italic';
+                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
+                document.getElementById('timeline').appendChild(noResultsMsg);
+            } else {
+                noResultsMsg.style.display = 'block';
+            }
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            if (container) container.style.display = 'flex';
+            if (noResultsMsg) noResultsMsg.style.display = 'none';
+            renderTimelineBatch();
         }
     }
 
@@ -2601,61 +2700,92 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (!container) return;
 
-        const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, timelineData.length);
+        const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, filteredTimelineData.length);
         
         for (let i = currentTimelineIndex; i < endIndex; i++) {
-            const event = timelineData[i];
+            const event = filteredTimelineData[i];
             
-            // Create the wrapper for the event (adjust class names to match your CSS)
+            // Restored the proper concise-item class from your production site!
             const eventEl = document.createElement('div');
-            eventEl.className = 'timeline-event'; 
+            eventEl.className = 'concise-item tt-char'; 
+            eventEl.style.cursor = 'pointer';
+            eventEl.onclick = () => selectCharacter((event.character_name || '').toLowerCase());
             
-            const dateObj = new Date(event.timestamp + "Z");
-            const timeString = dateObj.toLocaleString();
-            const safeClass = event.class ? event.class.replace(/\s+/g, '-').toLowerCase() : 'unknown';
-
+            eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
+            eventEl.setAttribute('data-class', event.class || 'Unknown');
+            eventEl.setAttribute('data-event-type', event.type);
+            eventEl.setAttribute('data-timestamp', event.timestamp);
+            if (event.item_quality) {
+                eventEl.setAttribute('data-quality', event.item_quality);
+            }
+            
+            // Format the date to match production (e.g., "Mar 24")
+            let date_str = event.timestamp.substring(0, 10);
+            try {
+                const cleanTs = event.timestamp.replace('Z', '+00:00');
+                const dt = new Date(cleanTs);
+                if (!isNaN(dt.getTime())) {
+                    date_str = dt.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+                }
+            } catch(e) {}
+            
+            const c_hex = CLASS_COLORS[event.class] || '#ffd100';
+            const c_name = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
+            
             if (event.type === 'level_up') {
+                eventEl.style.borderLeftColor = c_hex;
                 eventEl.innerHTML = `
-                    <div class="event-time">${timeString}</div>
-                    <div class="event-details">
-                        <b class="class-${safeClass}">${event.character_name}</b> 
-                        reached Level ${event.level}!
+                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: #ffd100;">
+                        <span style="font-size: 14px;">⭐</span>
+                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level ${event.level}</span>
                     </div>
                 `;
             } else {
+                const q = event.item_quality || 'COMMON';
+                const q_hex = QUALITY_COLORS[q] || '#ffffff';
+                eventEl.style.borderLeftColor = q_hex;
+                
                 eventEl.innerHTML = `
-                    <div class="event-time">${timeString}</div>
-                    <div class="event-details">
-                        <b class="class-${safeClass}">${event.character_name}</b> 
-                        looted <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" class="q${event.item_quality}" data-wowhead="item=${event.item_id}">[${event.item_name}]</a>
-                        <img src="${event.item_icon}" alt="icon" width="16" height="16" style="vertical-align: middle;">
+                    <div class="timeline-node" style="background: ${q_hex}; box-shadow: 0 0 8px ${q_hex};"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: ${q_hex};">
+                        <img src="${event.item_icon}" alt="icon">
+                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" target="_blank" onclick="event.stopPropagation();" style="color: ${q_hex}; font-weight:bold; text-decoration: none;">${event.item_name}</a>
                     </div>
                 `;
             }
+            
             container.appendChild(eventEl);
         }
         
         currentTimelineIndex = endIndex;
         
-        // Hide the button if we run out of data
-        if (currentTimelineIndex >= timelineData.length) {
+        if (currentTimelineIndex >= filteredTimelineData.length) {
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
         }
+        
+        if (typeof setupTooltips === 'function') {
+            setupTooltips();
+        }
     }
 
-    // Initialize when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchTimeline();
-        
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', renderTimelineBatch);
-        }
-    }); 
+    fetchTimeline();
+    
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', renderTimelineBatch);
+    }
 
-    // Initialize routing
     route();
     window.addEventListener('hashchange', route);
 });
