@@ -455,25 +455,30 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
 
-/* Modern Pill Container for the Logos */
+/* Modern Frosted Glass Pill Container */
 .arch-logo-pill {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
-    background: #f4f4f4; /* Clean light grey */
+    background: rgba(235, 235, 235, 0.85); /* Lightened for clarity, but slightly transparent */
+    backdrop-filter: blur(8px); /* Gives it a premium frosted glass look */
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     padding: 12px 24px;
-    border-radius: 50px; /* Gives it the pill shape */
+    border-radius: 50px; 
     margin-bottom: 20px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft highlighted rim */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.5); /* Outer depth + inner glow */
     min-height: 65px;
 }
+
 .arch-logo-pill img {
-    height: 38px; /* Uniform height for all logos */
+    height: 38px; 
     width: auto;
     object-fit: contain;
     margin: 0; 
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); /* Tiny shadow for depth inside the pill */
+    /* A tiny, sharp dark shadow to pop the logo off the light glass */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); 
 }
 
 .arch-card h3 {
@@ -618,15 +623,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
-                            360
-                            <span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ 24</span>
+                            388
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable" title="Click to view characters Level 70 with 110+ iLvl">
                         <span class="stat-value" style="color: #ff8000; display: flex; align-items: center; justify-content: center;">
-                            18
-                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
+                            17
+                            <span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ 1</span>
                         </span>
                         <span class="stat-label">Raid Ready</span>
                     </div>
@@ -864,10 +869,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T14:09:54.426944Z", "active_14_days": 360, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T16:04:30.826022Z", "active_14_days": 388, "raid_ready_count": 17}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 282, "loot": 220, "levels": 62, "total_roster": 624, "active_roster": 360}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 357, "loot": 281, "levels": 76, "total_roster": 624, "active_roster": 388}]
     </script>
 
     <script>
@@ -1158,9 +1163,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                         {
                             label: 'Total Roster',
                             data: heatmapData.map(d => d.total_roster || 0),
-                            borderColor: '#3498db', // Blue
+                            borderColor: 'rgba(52, 152, 219, 0.3)',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
                             pointBackgroundColor: '#3498db',
                             pointBorderColor: '#fff',
                             tension: 0.3,
@@ -1170,13 +1178,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                         {
                             label: 'Active Roster',
                             data: heatmapData.map(d => d.active_roster || 0),
-                            borderColor: '#2ecc71', // Green
-                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(46, 204, 113, 0.6)',
+                            backgroundColor: 'rgba(46, 204, 113, 0.05)',
                             borderWidth: 2,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
                             pointBackgroundColor: '#2ecc71',
                             pointBorderColor: '#fff',
                             tension: 0.3,
-                            fill: false,
+                            fill: true,
                             yAxisID: 'y-roster'
                         }
                     ]
@@ -2204,24 +2215,58 @@ window.addEventListener('DOMContentLoaded', async () => {
                     labels: heatmapData.map(d => d.day_name),
                     datasets: [
                         {
-                            label: 'Loot Drops', data: heatmapData.map(d => d.loot || 0),
-                            borderColor: '#a335ee', backgroundColor: 'rgba(163, 53, 238, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
+                            label: 'Loot Drops',
+                            data: heatmapData.map(d => d.loot || 0),
+                            borderColor: '#a335ee', // Epic Purple
+                            backgroundColor: 'rgba(163, 53, 238, 0.1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#a335ee',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
                         },
                         {
-                            label: 'Level Ups', data: heatmapData.map(d => d.levels || 0),
-                            borderColor: '#ffd100', backgroundColor: 'rgba(255, 209, 0, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
+                            label: 'Level Ups',
+                            data: heatmapData.map(d => d.levels || 0),
+                            borderColor: '#ffd100', // Gold
+                            backgroundColor: 'rgba(255, 209, 0, 0.1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#ffd100',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
                         },
                         {
-                            label: 'Total Roster', data: heatmapData.map(d => d.total_roster || 0),
-                            borderColor: '#3498db', backgroundColor: 'transparent',
-                            borderWidth: 2, pointBackgroundColor: '#3498db', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
+                            label: 'Total Roster',
+                            data: heatmapData.map(d => d.total_roster || 0),
+                            borderColor: 'rgba(52, 152, 219, 0.3)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            pointBackgroundColor: '#3498db',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y-roster'
                         },
                         {
-                            label: 'Active Roster', data: heatmapData.map(d => d.active_roster || 0),
-                            borderColor: '#2ecc71', backgroundColor: 'transparent',
-                            borderWidth: 2, pointBackgroundColor: '#2ecc71', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
+                            label: 'Active Roster',
+                            data: heatmapData.map(d => d.active_roster || 0),
+                            borderColor: 'rgba(46, 204, 113, 0.6)',
+                            backgroundColor: 'rgba(46, 204, 113, 0.05)',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            pointBackgroundColor: '#2ecc71',
+                            pointBorderColor: '#fff',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y-roster'
                         }
                     ]
                 },
