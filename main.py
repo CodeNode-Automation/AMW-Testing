@@ -10,7 +10,7 @@ import sys
 import json
 import urllib.request
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from wow.auth import get_access_token
 from wow.api import fetch_realm_data, fetch_guild_metadata, fetch_static_maps
@@ -108,7 +108,8 @@ async def fetch_with_semaphore(sem, session, token, char, history_data):
         try:
             async with sem:
                 await asyncio.sleep(0.3)
-                return await fetch_character_data(session, token, char, history_data)
+                # Tell Pylance to ignore the missing async signature from the external file
+                return await fetch_character_data(session, token, char, history_data) # type: ignore
         except Exception as e:
             print(f"⚠️ Failed to fetch {char} (Attempt {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
@@ -140,8 +141,20 @@ async def main_async():
         }
 
     today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    past_char_records = {row['char_name']: row for row in fetch_turso(f"SELECT char_name, ilvl, hks, max(record_date) FROM char_history WHERE record_date < '{today_str}' GROUP BY char_name")}
+    seven_days_ago_str = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
     
+    # Fetch the oldest record within the last 7 days to hold the trend arrows longer
+    trend_query = f"""
+        SELECT char_name, ilvl, hks 
+        FROM (
+            SELECT char_name, ilvl, hks, 
+                   ROW_NUMBER() OVER(PARTITION BY char_name ORDER BY record_date ASC) as rn
+            FROM char_history
+            WHERE record_date >= '{seven_days_ago_str}' AND record_date < '{today_str}'
+        ) WHERE rn = 1
+    """
+    past_char_records = {row['char_name']: row for row in fetch_turso(trend_query)}
+
     gt_rows = fetch_turso("SELECT * FROM global_trends WHERE id='__GLOBAL__'")
     global_trend_record = gt_rows[0] if gt_rows else None
     
@@ -273,9 +286,15 @@ async def main_async():
 
     print("🌐 Generating final HTML Dashboard...")
     dashboard_feed = fetch_turso("SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 3000")
+    
+    # Dump the heavy timeline payload to an external JSON file
+    with open("asset/timeline.json", "w", encoding="utf-8") as f:
+        json.dump(dashboard_feed, f, ensure_ascii=False)
+        
     roster_history = {row['date']: row for row in fetch_turso("SELECT * FROM daily_roster_stats ORDER BY date DESC LIMIT 7")}
 
-    generate_html_dashboard(roster_data, realm_data, dashboard_feed, raw_guild_roster, roster_history)
+    # Pass an empty list for the dashboard_feed since HTML no longer renders it directly
+    generate_html_dashboard(roster_data, realm_data, [], raw_guild_roster, roster_history)
     print("🎉 ALL DONE! The pipeline ran successfully.")
 
 def main():

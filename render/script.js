@@ -1847,6 +1847,80 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    let timelineData = [];
+    let currentTimelineIndex = 0;
+    const timelineBatchSize = 50;
+
+    async function fetchTimeline() {
+        try {
+            const response = await fetch('asset/timeline.json');
+            timelineData = await response.json();
+            renderTimelineBatch();
+        } catch (error) {
+            console.error("Failed to load timeline data:", error);
+        }
+    }
+
+    function renderTimelineBatch() {
+        const container = document.getElementById('timeline-feed-container');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        
+        if (!container) return;
+
+        const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, timelineData.length);
+        
+        for (let i = currentTimelineIndex; i < endIndex; i++) {
+            const event = timelineData[i];
+            
+            // Create the wrapper for the event (adjust class names to match your CSS)
+            const eventEl = document.createElement('div');
+            eventEl.className = 'timeline-event'; 
+            
+            const dateObj = new Date(event.timestamp + "Z");
+            const timeString = dateObj.toLocaleString();
+            const safeClass = event.class ? event.class.replace(/\s+/g, '-').toLowerCase() : 'unknown';
+
+            if (event.type === 'level_up') {
+                eventEl.innerHTML = `
+                    <div class="event-time">${timeString}</div>
+                    <div class="event-details">
+                        <b class="class-${safeClass}">${event.character_name}</b> 
+                        reached Level ${event.level}!
+                    </div>
+                `;
+            } else {
+                eventEl.innerHTML = `
+                    <div class="event-time">${timeString}</div>
+                    <div class="event-details">
+                        <b class="class-${safeClass}">${event.character_name}</b> 
+                        looted <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" class="q${event.item_quality}" data-wowhead="item=${event.item_id}">[${event.item_name}]</a>
+                        <img src="${event.item_icon}" alt="icon" width="16" height="16" style="vertical-align: middle;">
+                    </div>
+                `;
+            }
+            container.appendChild(eventEl);
+        }
+        
+        currentTimelineIndex = endIndex;
+        
+        // Hide the button if we run out of data
+        if (currentTimelineIndex >= timelineData.length) {
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+        }
+    }
+
+    // Initialize when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchTimeline();
+        
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', renderTimelineBatch);
+        }
+    }); 
+
     // Initialize routing
     route();
     window.addEventListener('hashchange', route);
