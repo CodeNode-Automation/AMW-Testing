@@ -60,13 +60,22 @@ def fetch_turso(query):
         return []
 
 def push_turso_batch(statements):
-    """Pushes an array of dicts {'q': sql, 'params': args} to Turso in chunks of 500."""
+    """Pushes an array of dicts {'q': sql, 'params': args} to Turso in chunked transactions."""
     url = os.environ.get("TURSO_DATABASE_URL", "").replace("libsql://", "https://")
     token = os.environ.get("TURSO_AUTH_TOKEN", "")
     
-    for i in range(0, len(statements), 500):
-        chunk = statements[i:i+500]
-        req = urllib.request.Request(url, data=json.dumps({"statements": chunk}).encode('utf-8'), headers={
+    # We can safely increase the chunk size now that disk I/O is batched
+    chunk_size = 1500
+
+    for i in range(0, len(statements), chunk_size):
+        chunk = statements[i:i+chunk_size]
+        
+        # EXPLICIT TRANSACTION WRAPPER: The magic speed boost!
+        # Sandwiching the chunk between BEGIN and COMMIT forces Turso to execute 
+        # exactly 1 disk write per chunk instead of 1500 separate disk writes.
+        payload = [{"q": "BEGIN"}] + chunk + [{"q": "COMMIT"}]
+        
+        req = urllib.request.Request(url, data=json.dumps({"statements": payload}).encode('utf-8'), headers={
             "Authorization": f"Bearer {token}", "Content-Type": "application/json"
         })
         try:
