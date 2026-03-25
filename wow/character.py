@@ -131,4 +131,16 @@ def update_character_state(char_data, history_data, timeline_data):
     history_data[char_data["char"]] = char_data["equipped"]
     history_data[char_data["char"]]["level"] = char_data.get("current_level", 0)
 
+    # NEW: Extract the missing profile data needed for the characters table
+    profile = char_data.get("profile", {})
+    if isinstance(profile, dict):
+        history_data[char_data["char"]]["last_login_ms"] = profile.get("last_login_timestamp")
+        history_data[char_data["char"]]["equipped_item_level"] = profile.get("equipped_item_level")
+        history_data[char_data["char"]]["portrait_url"] = char_data.get("render_url")
+        
+        # Safely extract nested localization names from the API payload
+        history_data[char_data["char"]]["faction"] = profile.get("faction", {}).get("name", {}).get("en_US")
+        history_data[char_data["char"]]["class"] = profile.get("character_class", {}).get("name", {}).get("en_US")
+        history_data[char_data["char"]]["race"] = profile.get("race", {}).get("name", {}).get("en_US")
+
     return history_data, timeline_data
