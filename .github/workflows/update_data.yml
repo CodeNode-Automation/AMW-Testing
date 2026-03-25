@@ -38,8 +38,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # We no longer add asset/guild.sql to tracking
-          git add index.html asset/roster.json asset/raw_roster.json
+          # Added asset/timeline.json to the tracking list
+          git add index.html asset/roster.json asset/raw_roster.json asset/timeline.json
           
           git commit -m "Auto-update WoW guild data" || echo "No changes to commit"
           git push
