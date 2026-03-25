@@ -443,40 +443,51 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: 420px;
+    flex: 1 1 320px; /* Allows cards to wrap and fill space cleanly on mobile */
+    max-width: 500px;
     background: rgba(0,0,0,0.6);
     border-top: 3px solid #ffd100;
+    padding: 25px 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .arch-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(255, 209, 0, 0.15);
 }
-.arch-card img {
-    height: 65px; /* Restored to a sensible height without the padding */
-    width: auto;
-    max-width: 100%;
-    object-fit: contain;
-    margin-bottom: 15px;
-    background: transparent; /* Removes the ugly white box */
-    padding: 0; /* Removes the spacing that made them too wide */
-    box-shadow: none; /* Removes the square shadow */
-    
-    /* Traces the logo shape with a soft white glow for readability, plus a dark shadow for depth */
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+
+/* Modern Pill Container for the Logos */
+.arch-logo-pill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    background: #f4f4f4; /* Clean light grey */
+    padding: 12px 24px;
+    border-radius: 50px; /* Gives it the pill shape */
+    margin-bottom: 20px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.9);
+    min-height: 65px;
 }
+.arch-logo-pill img {
+    height: 38px; /* Uniform height for all logos */
+    width: auto;
+    object-fit: contain;
+    margin: 0; 
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); /* Tiny shadow for depth inside the pill */
+}
+
 .arch-card h3 {
     color: #fff;
     font-family: 'Cinzel', serif;
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     text-shadow: 1px 1px 2px #000;
+    text-align: center;
 }
 .arch-card p {
     color: #bbb;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
     text-align: center;
 }
@@ -607,8 +618,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
-                            384
-                            <span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ 3</span>
+                            360
+                            <span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ 24</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
@@ -743,15 +754,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     Azeroth's Most Wanted Armory operates on a fully automated, zero-cost tech stack. By combining edge databases, static site generation, and GitHub Actions, the dashboard processes thousands of data points a day without a traditional backend or any recurring hosting fees.
                 </p>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; width: 100%;">
+                    
                     <div class="info-box arch-card">
-                        <img src="asset/software_logo/python.png" alt="Python">
+                        <div class="arch-logo-pill">
+                            <img src="asset/software_logo/python.png" alt="Python">
+                        </div>
                         <h3>Asynchronous Extraction</h3>
                         <p>Python utilizes <strong>AsyncIO</strong> and <strong>Aiohttp</strong> to concurrently fetch live character profiles from the Blizzard REST API, processing vast amounts of data in seconds while bypassing standard rate-limit bottlenecks.</p>
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/turso.png" alt="Turso">
                             <img src="asset/software_logo/sqlite.png" alt="SQLite">
                         </div>
@@ -760,7 +774,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/github.png" alt="GitHub">
                             <img src="asset/software_logo/cron.png" alt="Cron">
                         </div>
@@ -769,7 +783,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     
                     <div class="info-box arch-card">
-                        <div style="display: flex; justify-content: center; gap: 15px;">
+                        <div class="arch-logo-pill">
                             <img src="asset/software_logo/jinga.png" alt="Jinja2">
                             <img src="asset/software_logo/html5.png" alt="HTML5">
                         </div>
@@ -778,7 +792,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     
                     <div class="info-box arch-card">
-                        <img src="asset/json.png" alt="JSON">
+                        <div class="arch-logo-pill">
+                            <img src="asset/software_logo/json.png" alt="JSON">
+                        </div>
                         <h3>JSON & Data Visualization</h3>
                         <p>Heavy payloads are pre-compiled into static <strong>JSON</strong> files. The frontend consumes this data natively, using <strong>Chart.js</strong> to render interactive heatmaps and analytics with zero database latency.</p>
                     </div>
@@ -848,10 +864,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-25T13:40:54.704032Z", "active_14_days": 384, "raid_ready_count": 18}
+        {"last_updated": "2026-03-25T14:09:54.426944Z", "active_14_days": 360, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 260, "loot": 203, "levels": 57, "total_roster": 624, "active_roster": 384}]
+        [{"date": "2026-03-19", "day_name": "Thu", "count": 186, "loot": 161, "levels": 25, "total_roster": null, "active_roster": null}, {"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 282, "loot": 220, "levels": 62, "total_roster": 624, "active_roster": 360}]
     </script>
 
     <script>
