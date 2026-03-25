@@ -1262,7 +1262,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) roleCounts["Tank"]++;
             else if (["Holy", "Discipline", "Restoration"].includes(spec)) roleCounts["Healer"]++;
-            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || spec === "Balance" || spec === "Elemental") roleCounts["Ranged DPS"]++;
+            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(spec)) roleCounts["Ranged DPS"]++;
             else roleCounts["Melee DPS"]++;
         });
 
@@ -1727,7 +1727,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) role = "Tank";
                 else if (["Holy", "Discipline", "Restoration"].includes(spec)) role = "Healer";
-                else if (["Mage", "Warlock", "Hunter"].includes(cClass) || spec === "Balance" || spec === "Elemental") role = "Ranged DPS";
+                else if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(spec)) role = "Ranged DPS";
 
                 return role === targetRoleName;
             });
