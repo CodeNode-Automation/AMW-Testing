@@ -639,7 +639,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 .view-all-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 
 /* =========================================
-   MOBILE OVERRIDE: Prevent Hero Search from Collapsing
+   MOBILE OVERRIDE: Prevent Hero Search from Collapsing & Jumping
    ========================================= */
 @media (max-width: 800px) {
     .hero-search-box {
@@ -655,6 +655,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         padding: 0 15px !important;
         position: relative !important;
         pointer-events: auto !important;
+        font-size: 16px !important; /* 🛑 STOPS iOS AUTO-ZOOM JUMP */
+        box-sizing: border-box !important;
     }
     .hero-search-box .search-icon {
         position: relative !important;
