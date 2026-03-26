@@ -957,10 +957,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         `;
 
         // Generate the HTML for the list
-        let listHTML = sortedCharacters.map(char => {
+        let listHTML = sortedCharacters.map((char, index) => {
             let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
             
-            // 1. Identify if we have a deep profile (scanned data) or just raw roster data
+            // 1. Identify if we have a deep profile
             let deepChar = isRawMode ? rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === char.name.toLowerCase()) : char;
             
             // 2. Setup Variables
@@ -972,7 +972,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let statValue = '???';
             let statColor = 'color:#666;';
 
-            // 3. Populate Variables based on data availability
+            // 3. Populate Variables
             if (deepChar && deepChar.profile) {
                 const p = deepChar.profile;
                 isClickable = true;
@@ -992,7 +992,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
                 statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
             } else {
-                // Fallback for characters lacking a deep scan (e.g., levels 1-9)
                 displayName = char.name || 'Unknown';
                 cClass = char.class || 'Unknown';
                 raceName = char.race || 'Unknown';
@@ -1002,10 +1001,24 @@ window.addEventListener('DOMContentLoaded', async () => {
                 displaySpecClass = cClass;
             }
 
-            // 4. Render the unified HTML
+            // NEW: Inject Podium Classes & Rank Number if we are on a Ladder View
+            const hash = window.location.hash.substring(1);
+            const isLadderView = hash === 'ladder-pve' || hash === 'ladder-pvp';
+            let podiumClass = '';
+            let rankHtml = '';
+            
+            if (isLadderView) {
+                podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
+                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+                const rankSize = index < 3 ? '18px' : '15px';
+                rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
+            }
+
+            // 4. Render the HTML
             if (!isClickable) {
                 return `
-                <div class="concise-char-bar" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default;">
+                <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default;">
+                    ${rankHtml}
                     <div class="c-main-info">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
@@ -1019,7 +1032,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             return `
-            <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex};">
+            <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex};">
+                ${rankHtml}
                 <div class="c-main-info">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
@@ -1722,10 +1736,27 @@ window.addEventListener('DOMContentLoaded', async () => {
                 donutContainer.style.alignItems = 'center';
                 donutContainer.style.gap = '20px';
                 
-                let kpiHtml = '';
-                if (hash === 'raidready' || hash === 'ladder-pve') {
+               let kpiHtml = '';
+                if (hash === 'raidready') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
                     kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                } else if (hash === 'ladder-pve') {
+                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
+                    
+                    const lvl70s = characters.filter(c => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return p && p.level === 70;
+                    });
+                    const avgLvl70Ilvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length) : 0;
+                    
+                    kpiHtml = `
+                        <div style="display:flex; gap:15px; margin-bottom: 5px; flex-wrap: wrap; justify-content:center;">
+                            <div class="stat-box" style="border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg iLvl</span></div>
+                            <div class="stat-box" style="border-color: #a335ee;"><span class="stat-value" style="color:#a335ee;">${avgLvl70Ilvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
+                        </div>`;
                 } else if (hash === 'ladder-pvp') {
                     const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
                     const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
