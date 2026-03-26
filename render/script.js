@@ -1216,38 +1216,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // --- NEW: AESTHETIC CHART DRAWING PLUGINS ---
-    const ROLE_ICONS = {
-        "Tank": "https://wow.zamimg.com/images/wow/icons/large/inv_shield_06.jpg",
-        "Healer": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg",
-        "Melee DPS": "https://wow.zamimg.com/images/wow/icons/large/inv_sword_48.jpg",
-        "Ranged DPS": "https://wow.zamimg.com/images/wow/icons/large/inv_weapon_bow_07.jpg"
-    };
-    const RACE_ICONS = {
-        "Human": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_human_male.jpg",
-        "Dwarf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_dwarf_male.jpg",
-        "Night Elf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_nightelf_male.jpg",
-        "Gnome": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_gnome_male.jpg",
-        "Draenei": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_draenei_male.jpg",
-        "Orc": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_orc_male.jpg",
-        "Undead": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_undead_male.jpg",
-        "Tauren": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_tauren_male.jpg",
-        "Troll": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_troll_male.jpg",
-        "Blood Elf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_bloodelf_male.jpg"
-    };
-
-    const preloadedChartImages = {};
-    function getChartImage(url, chart) {
-        if (!url) return null;
-        if (preloadedChartImages[url]) return preloadedChartImages[url];
-        const img = new Image();
-        img.src = url;
-        img.onload = () => chart.update();
-        preloadedChartImages[url] = img;
-        return img;
-    }
-
-    function createPieOverlayPlugin(iconMap) {
+    // --- AESTHETIC CHART DRAWING PLUGINS ---
+    // (Icons removed for cleaner slices, using custom badges instead)
+    function createPieOverlayPlugin() {
         return {
             id: 'pieOverlays',
             afterDatasetDraw(chart) {
@@ -1263,40 +1234,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const x = arc.x + Math.cos(centerAngle) * radius;
                     const y = arc.y + Math.sin(centerAngle) * radius;
 
-                    const imgUrl = iconMap[label];
-                    const img = getChartImage(imgUrl, chart);
-
                     ctx.save();
                     ctx.fillStyle = 'rgba(0,0,0,0.8)';
                     ctx.beginPath();
-                    ctx.roundRect(x - 16, y + 8, 32, 20, 4);
+                    ctx.roundRect(x - 14, y - 10, 28, 20, 4);
                     ctx.fill();
                     ctx.strokeStyle = '#ffd100';
                     ctx.lineWidth = 1;
                     ctx.stroke();
 
                     ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 13px Cinzel';
+                    ctx.font = 'bold 12px Cinzel';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(dataVal, x, y + 18);
-
-                    if (img && img.complete) {
-                        const size = 28; 
-                        ctx.beginPath();
-                        ctx.arc(x, y - 8, size/2, 0, Math.PI * 2);
-                        ctx.closePath();
-                        ctx.clip(); 
-                        ctx.drawImage(img, x - size/2, y - 8 - size/2, size, size);
-                        
-                        ctx.restore();
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.arc(x, y - 8, size/2, 0, Math.PI * 2);
-                        ctx.lineWidth = 2;
-                        ctx.strokeStyle = '#111';
-                        ctx.stroke();
-                    }
+                    ctx.fillText(dataVal, x, y);
                     ctx.restore();
                 });
             }
@@ -1328,16 +1279,99 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
+    // --- REUSABLE ROLE CHART GENERATOR ---
+    function drawRoleChart(ctxId, characters, isRawMode) {
+        const roleCounts = { "Tank": 0, "Healer": 0, "Melee DPS": 0, "Ranged DPS": 0 };
+        characters.forEach(c => {
+            const p = isRawMode ? rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+            if (!p || !p.active_spec) return;
+            const spec = p.active_spec;
+            const cClass = isRawMode ? (c.class || 'Unknown') : getCharClass(c);
+            
+            if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) roleCounts["Tank"]++;
+            else if (["Holy", "Discipline", "Restoration"].includes(spec)) roleCounts["Healer"]++;
+            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(spec)) roleCounts["Ranged DPS"]++;
+            else roleCounts["Melee DPS"]++;
+        });
+
+        const ctx = document.getElementById(ctxId);
+        if (!ctx) return null;
+
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(roleCounts),
+                datasets: [{ 
+                    data: Object.values(roleCounts), 
+                    backgroundColor: ['#e74c3c', '#2ecc71', '#e67e22', '#3498db'], 
+                    borderColor: '#111', borderWidth: 2 
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, cutout: '60%', layout: { padding: { top: 20, bottom: 20 } },
+                plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } },
+                onClick: (event, elements, chart) => {
+                    if (elements.length > 0) {
+                        const clickedLabel = chart.data.labels[elements[0].index];
+                        window.location.hash = 'filter-role-' + clickedLabel.toLowerCase().replace(/\s+/g, '-');
+                    }
+                },
+                onHover: (event, elements) => {
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                }
+            },
+            plugins: [createPieOverlayPlugin()]
+        });
+    }
+
+    function createDonutChart(ctxId, rosterToCount, isRawMode) {
+        const counts = {};
+        rosterToCount.forEach(char => {
+            let cClass = isRawMode ? (char.class || 'Unknown') : getCharClass(char);
+            if (cClass !== 'Unknown') counts[cClass] = (counts[cClass] || 0) + 1;
+        });
+
+        const sortedClasses = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        const donutLabels = sortedClasses;
+        const donutData = sortedClasses.map(cls => counts[cls]);
+        const donutColors = sortedClasses.map(cls => CLASS_COLORS[cls] || '#888');
+
+        const ctx = document.getElementById(ctxId);
+        if (!ctx) return null;
+
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: donutLabels, datasets: [{ data: donutData, backgroundColor: donutColors, borderColor: '#111', borderWidth: 2, hoverOffset: 6 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '65%', layout: { padding: { top: 20, bottom: 20, right: 20, left: 20 } },
+                onClick: (event, elements, chart) => {
+                    if (elements.length > 0) {
+                        const clickedClass = chart.data.labels[elements[0].index];
+                        const dynamicBadge = document.querySelector(`.dynamic-badge[data-class="${clickedClass}"]`);
+                        if (dynamicBadge && document.getElementById('concise-view').style.display !== 'none') {
+                            dynamicBadge.click(); 
+                        } else {
+                            window.location.hash = 'class-' + clickedClass.toLowerCase();
+                        }
+                    }
+                },
+                onHover: (event, elements) => {
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                },
+                plugins: { legend: { display: false } }
+            },
+            plugins: [createPieOverlayPlugin()]
+        });
+    }
+
     function showAnalyticsView() {
         hideAllViews();
         if (analyticsView) analyticsView.style.display = 'block';
         if (navbar) navbar.style.background = '#111';
         if (timeline) timeline.style.display = 'none'; 
 
-        // --- NEW: CALCULATE KPIs ---
-        let totalIlvl = 0, lvl70Count = 0;
-        let totalHks = 0;
-        
+        // --- CALCULATE KPIs ---
+        let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
         rosterData.forEach(c => {
             const p = c.profile;
             if (p) {
@@ -1351,64 +1385,23 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         let epicLootCount = 0;
         timelineData.forEach(e => {
-            if (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) {
-                epicLootCount++;
-            }
+            if (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) epicLootCount++;
         });
 
         const kpiIlvl = document.getElementById('kpi-avg-ilvl');
         if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
-        
         const kpiEpic = document.getElementById('kpi-epic-loot');
         if (kpiEpic) kpiEpic.innerText = epicLootCount;
-        
         const kpiHks = document.getElementById('kpi-total-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
-        // --- UPGRADED: ROLE DISTRIBUTION CHART (WITH ICONS) ---
-        const roleCounts = { "Tank": 0, "Healer": 0, "Melee DPS": 0, "Ranged DPS": 0 };
-        rosterData.forEach(c => {
-            if (!c.profile || !c.profile.active_spec) return;
-            const spec = c.profile.active_spec;
-            const cClass = getCharClass(c);
-            
-            if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) roleCounts["Tank"]++;
-            else if (["Holy", "Discipline", "Restoration"].includes(spec)) roleCounts["Healer"]++;
-            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(spec)) roleCounts["Ranged DPS"]++;
-            else roleCounts["Melee DPS"]++;
-        });
+        if(window.roleChartInstance) window.roleChartInstance.destroy();
+        window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
 
-        const roleCtx = document.getElementById('roleDonutChart');
-        if (roleCtx) {
-            if(window.roleChartInstance) window.roleChartInstance.destroy();
-            window.roleChartInstance = new Chart(roleCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(roleCounts),
-                    datasets: [{ 
-                        data: Object.values(roleCounts), 
-                        backgroundColor: ['#e74c3c', '#2ecc71', '#e67e22', '#3498db'], 
-                        borderColor: '#111', borderWidth: 2 
-                    }]
-                },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '60%', layout: { padding: { top: 20, bottom: 20 } },
-                    plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } },
-                    onClick: (event, elements, chart) => {
-                        if (elements.length > 0) {
-                            const clickedLabel = chart.data.labels[elements[0].index];
-                            window.location.hash = 'filter-role-' + clickedLabel.toLowerCase().replace(/\s+/g, '-');
-                        }
-                    },
-                    onHover: (event, elements) => {
-                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                    }
-                },
-                plugins: [createPieOverlayPlugin(ROLE_ICONS)]
-            });
-        }
+        if (mainDonutChartInstance) mainDonutChartInstance.destroy();
+        mainDonutChartInstance = createDonutChart('classDonutChart', rawGuildRoster, true);
 
-        // --- UPGRADED: LEVEL DISTRIBUTION (WITH GRADIENTS) ---
+        // --- LEVEL DISTRIBUTION ---
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
         const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
         rawGuildRoster.forEach(c => {
@@ -1427,8 +1420,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (lvlCanvas) {
             const lvlCtx = lvlCanvas.getContext('2d');
             const lvlGradient = lvlCtx.createLinearGradient(0, 0, 0, 400);
-            lvlGradient.addColorStop(0, 'rgba(255, 209, 0, 0.8)'); // Gold Top
-            lvlGradient.addColorStop(1, 'rgba(255, 209, 0, 0.1)'); // Faded Bottom
+            lvlGradient.addColorStop(0, 'rgba(255, 209, 0, 0.8)');
+            lvlGradient.addColorStop(1, 'rgba(255, 209, 0, 0.1)');
 
             if(levelChartInstance) levelChartInstance.destroy();
             levelChartInstance = new Chart(lvlCtx, {
@@ -1445,19 +1438,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                     },
                     onClick: (event, elements, chart) => {
                         if (elements.length > 0) {
-                            const clickedLabel = chart.data.labels[elements[0].index];
-                            window.location.hash = 'filter-level-' + clickedLabel;
+                            window.location.hash = 'filter-level-' + chart.data.labels[elements[0].index];
                         }
                     },
-                    onHover: (event, elements) => {
-                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                    }
+                    onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
                 },
                 plugins: [barLabelPlugin]
             });
         }
 
-        // --- UPGRADED: MAX LEVEL ILVL SPREAD (WITH GRADIENTS) ---
+        // --- ILVL DISTRIBUTION ---
         const ilvlLabels = ["<100", "100-109", "110-119", "120-129", "130+"];
         const ilvlData = [0, 0, 0, 0, 0];
         rosterData.forEach(c => {
@@ -1476,7 +1466,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (ilvlCanvas) {
             const ilvlCtx = ilvlCanvas.getContext('2d');
             const ilvlGradient = ilvlCtx.createLinearGradient(0, 0, 0, 400);
-            ilvlGradient.addColorStop(0, 'rgba(255, 128, 0, 0.8)'); // Legendary Orange Top
+            ilvlGradient.addColorStop(0, 'rgba(255, 128, 0, 0.8)'); 
             ilvlGradient.addColorStop(1, 'rgba(255, 128, 0, 0.1)'); 
 
             if(ilvlChartInstance) ilvlChartInstance.destroy();
@@ -1493,20 +1483,15 @@ window.addEventListener('DOMContentLoaded', async () => {
                         x: {grid: {display: false}, ticks: {color: '#888', font: {family: 'Cinzel'}}}
                     },
                     onClick: (event, elements, chart) => {
-                        if (elements.length > 0) {
-                            const clickedLabel = chart.data.labels[elements[0].index];
-                            window.location.hash = 'filter-ilvl-' + clickedLabel;
-                        }
+                        if (elements.length > 0) window.location.hash = 'filter-ilvl-' + chart.data.labels[elements[0].index];
                     },
-                    onHover: (event, elements) => {
-                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                    }
+                    onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
                 },
                 plugins: [barLabelPlugin]
             });
         }
 
-        // --- UPGRADED: RACE DISTRIBUTION (WITH ICONS) ---
+        // --- RACE DISTRIBUTION ---
         const raceCounts = {};
         rosterData.forEach(c => {
             const p = c.profile;
@@ -1533,19 +1518,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                 responsive: true, maintainAspectRatio: false, cutout: '55%', layout: { padding: { top: 20, bottom: 20, right: 20, left: 20 } },
                 plugins: { legend: {position: 'right', labels:{color:'#bbb', font:{family:'Cinzel'}}} },
                 onClick: (event, elements, chart) => {
-                    if (elements.length > 0) {
-                        const clickedLabel = chart.data.labels[elements[0].index];
-                        window.location.hash = 'filter-race-' + clickedLabel.toLowerCase();
-                    }
+                    if (elements.length > 0) window.location.hash = 'filter-race-' + chart.data.labels[elements[0].index].toLowerCase();
                 },
-                onHover: (event, elements) => {
-                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-                }
+                onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
             },
-            plugins: [createPieOverlayPlugin(RACE_ICONS)]
+            plugins: [createPieOverlayPlugin()]
         });
 
-        // --- EXISTING: ACTIVITY CHART (UNCHANGED) ---
+        // --- ACTIVITY CHART ---
         const actCtx = document.getElementById('analyticsActivityChart');
         if (actCtx && heatmapData && heatmapData.length > 0) {
             if(analyticsActivityChartInst) analyticsActivityChartInst.destroy();
@@ -1554,34 +1534,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 data: {
                     labels: heatmapData.map(d => d.day_name),
                     datasets: [
-                        {
-                            label: 'Loot Drops',
-                            data: heatmapData.map(d => d.loot || 0),
-                            borderColor: '#a335ee', // Epic Purple
-                            backgroundColor: 'rgba(163, 53, 238, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
-                        },
-                        {
-                            label: 'Level Ups',
-                            data: heatmapData.map(d => d.levels || 0),
-                            borderColor: '#ffd100', // Gold
-                            backgroundColor: 'rgba(255, 209, 0, 0.1)',
-                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
-                        },
-                        {
-                            label: 'Total Roster',
-                            data: heatmapData.map(d => d.total_roster || 0),
-                            borderColor: 'rgba(52, 152, 219, 0.3)',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#3498db', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
-                        },
-                        {
-                            label: 'Active Roster',
-                            data: heatmapData.map(d => d.active_roster || 0),
-                            borderColor: 'rgba(46, 204, 113, 0.6)',
-                            backgroundColor: 'rgba(46, 204, 113, 0.05)',
-                            borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#2ecc71', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y-roster'
-                        }
+                        { label: 'Loot Drops', data: heatmapData.map(d => d.loot || 0), borderColor: '#a335ee', backgroundColor: 'rgba(163, 53, 238, 0.1)', borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y' },
+                        { label: 'Level Ups', data: heatmapData.map(d => d.levels || 0), borderColor: '#ffd100', backgroundColor: 'rgba(255, 209, 0, 0.1)', borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y' },
+                        { label: 'Total Roster', data: heatmapData.map(d => d.total_roster || 0), borderColor: 'rgba(52, 152, 219, 0.3)', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#3498db', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster' },
+                        { label: 'Active Roster', data: heatmapData.map(d => d.active_roster || 0), borderColor: 'rgba(46, 204, 113, 0.6)', backgroundColor: 'rgba(46, 204, 113, 0.05)', borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#2ecc71', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y-roster' }
                     ]
                 },
                 options: {
@@ -1640,9 +1596,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         conciseView.style.display = 'flex';
         if (navbar) navbar.style.background = '#111';
         
-        // Force the filter to always reset to Character Level
         currentSortMethod = 'level';
-        
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
@@ -1650,22 +1604,55 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        if (showBadges) {
-            renderDynamicBadges(characters, isRawRoster);
-        } else {
+        if (showBadges) renderDynamicBadges(characters, isRawRoster);
+        else {
             document.getElementById('concise-class-badges').style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
         }
 
-        // Draw the secondary Pie Chart
         const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
+        
         if (hash === 'total' || hash === 'active' || hash === 'raidready') {
             if (donutContainer) {
                 donutContainer.style.display = 'flex';
-                if (conciseDonutChartInstance) conciseDonutChartInstance.destroy();
-                conciseDonutChartInstance = createDonutChart('conciseDonutChart', characters, isRawRoster);
+                donutContainer.style.flexDirection = 'column';
+                donutContainer.style.alignItems = 'center';
+                donutContainer.style.gap = '20px';
+                
+                let kpiHtml = '';
+                if (hash === 'raidready') {
+                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
+                    kpiHtml = `<div class="stat-box" style="margin-bottom: 10px;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                } else if (hash === 'active' || hash === 'total') {
+                    const avgLvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.level) || c.level || 0), 0) / characters.length) || 0;
+                    const lvl70s = characters.filter(c => c.profile && c.profile.level === 70);
+                    const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / lvl70s.length) : 0;
+                    
+                    kpiHtml = `
+                        <div style="display:flex; gap:15px; margin-bottom: 10px; flex-wrap: wrap; justify-content:center;">
+                            <div class="stat-box"><span class="stat-value" style="color:#ffd100;">${avgLvl}</span><span class="stat-label">Avg Level</span></div>
+                            <div class="stat-box"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
+                        </div>`;
+                }
+
+                let chartsHtml = kpiHtml + `<div style="display:flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%;">`;
+                if (hash === 'raidready') {
+                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
+                } else {
+                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
+                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
+                }
+                chartsHtml += `</div>`;
+                
+                donutContainer.innerHTML = chartsHtml;
+
+                if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
+                if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
+
+                window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
+                if (hash !== 'raidready') window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
             }
         } else {
             if (donutContainer) donutContainer.style.display = 'none';
