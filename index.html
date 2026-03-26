@@ -1172,10 +1172,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T17:40:26.983320Z", "active_14_days": 385, "raid_ready_count": 16}
+        {"last_updated": "2026-03-26T17:54:21.938120Z", "active_14_days": 385, "raid_ready_count": 16, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 552, "loot": 431, "levels": 121, "total_roster": 620, "active_roster": 385}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 555, "loot": 433, "levels": 122, "total_roster": 620, "active_roster": 385}]
     </script>
 
     <script>
@@ -3762,19 +3762,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (!mvpContainer || !mvpPveList || !mvpPvpList) return;
 
-        // Sort for PvE (Biggest positive trend_pve / trend_ilvl)
         const topTrendPve = [...rosterData]
             .filter(c => c.profile && (c.profile.trend_pve || c.profile.trend_ilvl || 0) > 0)
             .sort((a, b) => (b.profile.trend_pve || b.profile.trend_ilvl || 0) - (a.profile.trend_pve || a.profile.trend_ilvl || 0))
             .slice(0, 3);
 
-        // Sort for PvP (Biggest positive trend_pvp / trend_hks)
         const topTrendPvp = [...rosterData]
             .filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0)
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        // Always display the banner, even on reset day
         mvpContainer.style.display = 'block';
 
         function generateMvpHtml(chars, isPvp) {
@@ -3797,7 +3794,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const trend = isPvp ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
                 const label = isPvp ? 'HKs' : 'iLvl';
                 
-                // Re-use our awesome Podium CSS classes!
                 const podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : 'podium-3';
                 const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : '#cd7f32';
                 
@@ -3815,8 +3811,38 @@ window.addEventListener('DOMContentLoaded', async () => {
             }).join('');
         }
 
-        mvpPveList.innerHTML = generateMvpHtml(topTrendPve, false);
-        mvpPvpList.innerHTML = generateMvpHtml(topTrendPvp, true);
+        function generateGloatingHtml(mvpData, isPvp) {
+            if (!mvpData || !mvpData.name) return '';
+            const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === mvpData.name.toLowerCase());
+            if (!char) return '';
+            
+            const p = char.profile;
+            const cClass = getCharClass(char);
+            const cHex = CLASS_COLORS[cClass] || '#fff';
+            const portraitURL = char.render_url || getClassIcon(cClass);
+            const label = isPvp ? 'HKs' : 'iLvl';
+            
+            return `
+            <div style="background: rgba(255, 209, 0, 0.05); border: 1px solid rgba(255, 209, 0, 0.5); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 0 10px rgba(255, 209, 0, 0.1);">
+                <div style="margin-right: 12px; font-size: 22px; filter: drop-shadow(0 0 5px #ffd100);">👑</div>
+                <img src="${portraitURL}" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ffd100; object-fit: cover; margin-right: 12px; cursor: pointer;" onclick="selectCharacter('${p.name.toLowerCase()}')">
+                <div style="flex: 1; display: flex; flex-direction: column;">
+                    <span style="color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Reigning Champion</span>
+                    <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer;" onclick="selectCharacter('${p.name.toLowerCase()}')">${p.name}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                    <span style="color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">+${mvpData.score.toLocaleString()}</span>
+                    <span style="font-size: 10px; color: #aaa;">Last Week's ${label}</span>
+                </div>
+            </div>`;
+        }
+
+        const prevMvps = config.prev_mvps || {};
+        const pveGloat = generateGloatingHtml(prevMvps.pve, false);
+        const pvpGloat = generateGloatingHtml(prevMvps.pvp, true);
+
+        mvpPveList.innerHTML = pveGloat + generateMvpHtml(topTrendPve, false);
+        mvpPvpList.innerHTML = pvpGloat + generateMvpHtml(topTrendPvp, true);
     };
 
     route();
