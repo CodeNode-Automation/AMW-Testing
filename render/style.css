@@ -166,39 +166,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; } .c-val-ilvl { color: #ff8000; font-size: 15px; text-shadow: 0 1px 2px #000; }
-.desktop-split {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    width: 100%;
-    align-items: flex-start;
-    margin-bottom: 30px;
-}
-.split-left {
-    flex: 0 0 350px; /* Locks left column to exactly 350px */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.split-middle {
-    flex: 1; /* Takes remaining space for the character list */
-    min-width: 0; /* Prevents wide elements from breaking the flex row */
-    display: flex;
-    flex-direction: column;
-}
-
-/* Graceful fallback to stacked layout on mobile/tablets */
-@media (max-width: 950px) {
-    .desktop-split {
-        flex-direction: column;
-        align-items: center;
-    }
-    .split-left {
-        flex: auto;
-        width: 100%;
-        max-width: 600px;
-    }
-}
 
 /* Holographic Full Cards */
 .full-card-container { display: none; width: 100%; max-width: 900px; }

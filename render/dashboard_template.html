@@ -311,24 +311,21 @@
             </div>
 
             <div id="concise-view">
-                <h2 id="concise-view-title">Guild Overview</h2>
-                
-                <div class="desktop-split">
-                    
-                                        <div id="concise-top-stats" class="split-left">
-                        <div id="concise-donut-container" class="heatmap-wrapper" style="width: 100%; margin: 0; display: none; flex-direction: column; box-sizing: border-box;"></div>
+                <h2 id="concise-view-title">Guild Overview</h2>
+                
+                <div id="concise-top-stats" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
+                    
+                    <div id="concise-donut-container" class="heatmap-wrapper" style="flex: 1.2; min-width: 300px; max-width: 100%; margin: 0; display: none; flex-direction: column;">
+                        </div>
 
-                        <div id="concise-badges-wrapper" style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <div id="concise-class-badges" class="class-stat-container" style="display:none; margin-bottom: 0; width: 100%; justify-content: center;"></div>
-                        </div>
-                    </div>
+                    <div id="concise-badges-wrapper" style="flex: 2; min-width: 320px; max-width: 650px; display: flex; flex-direction: column; justify-content: center;">
+                        <div id="concise-class-badges" class="class-stat-container" style="display:none; margin-bottom: 20px; width: 100%; justify-content: center;"></div>
+                    </div>
+                    
+                </div>
 
-                                        <div class="split-middle">
-                        <div id="concise-char-list"></div>
-                    </div>
-                    
-                </div>
-            </div>
+                <div id="concise-char-list"></div>
+            </div>
 
             <div id="full-card-container" class="full-card-container"></div>
         </div> 
