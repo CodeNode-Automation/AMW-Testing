@@ -133,6 +133,38 @@ window.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
+    const heroSearchInput = document.getElementById('heroCharSearch');
+    const heroSearchAutoComplete = document.getElementById('hero-search-autocomplete');
+    
+    if (heroSearchInput) {
+        heroSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
+            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
+            if (results.length > 0) {
+                heroSearchAutoComplete.innerHTML = results.map(c => {
+                    const cClass = getCharClass(c);
+                    const cHex = CLASS_COLORS[cClass] || '#fff';
+                    return `
+                        <div class="autocomplete-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left: 3px solid ${cHex}; padding: 12px;">
+                            <img src="${c.render_url || getClassIcon(cClass)}" class="ac-icon" style="border-color: ${cHex};">
+                            <div class="ac-info"><span class="ac-name" style="color: ${cHex}; font-size: 16px;">${c.profile.name}</span><span class="ac-meta">Level ${c.profile.level} ${cClass}</span></div>
+                        </div>`;
+                }).join('');
+                heroSearchAutoComplete.classList.add('show');
+            } else {
+                heroSearchAutoComplete.classList.remove('show');
+            }
+        });
+        heroSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.toLowerCase().trim();
+                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
+            }
+        });
+    }
+
     // NEW: Force mobile keyboards to open when tapping the collapsed search icon
     const searchBox = document.querySelector('.search-box');
     if (searchBox && searchInput) {
@@ -140,7 +172,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             searchInput.focus();
         });
     }
-
+    
     const customSelect = document.getElementById('customCharSelect');
     const customOptions = document.getElementById('customCharOptions');
     const selectValueText = customSelect ? customSelect.querySelector('.selected-value') : null;
@@ -427,7 +459,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPve = rosterData
         .filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
         .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
-        .slice(0, 50);
+        .slice(0, 25); // Changed to Top 10
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
@@ -436,33 +468,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             const p = char.profile;
             const cClass = getCharClass(char);
             const cHex = CLASS_COLORS[cClass] || '#fff';
-            const activeSpec = p.active_spec ? p.active_spec : '';
-            const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
-            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
+            const specIconUrl = getSpecIcon(cClass, p.active_spec || '');
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width:12px; height:12px; border-radius:50%; margin-right:3px; border:1px solid #222;">` : '';
+            
+            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
             const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-            const rankSize = index < 3 ? '18px' : '15px';
-            const ilvl = p.equipped_item_level || 0;
-            const portraitURL = char.render_url || getClassIcon(cClass);
-
-            // --- NEW: Trend Arrow Logic for PvE ---
-            const trend = p.trend_pve || 0; 
-            let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
             pveHTML += `
-            <div class="pvp-row tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
-                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
+            <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
+                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: 18px; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
+                <img src="${char.render_url || getClassIcon(cClass)}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
                 <div style="flex: 1; display: flex; flex-direction: column;">
                     <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${displaySpecClass}</span>
+                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${p.active_spec ? p.active_spec + ' ' : ''}${cClass}</span>
                 </div>
                 <div style="display: flex; align-items: center; color: #ff8000; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                    ${ilvl} <span style="font-size:10px; color:#888; margin-left: 3px;">iLvl</span>
-                    ${trendHTML}
+                    ${p.equipped_item_level || 0} <span style="font-size:10px; color:#888; margin-left: 3px;">iLvl</span>
                 </div>
             </div>`;
         });
@@ -475,7 +496,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPvp = rosterData
         .filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
         .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0))
-        .slice(0, 50);
+        .slice(0, 25); // Changed to Top 25
 
     if (topPvp.length > 0 && pvpContainer) {
         pvpWrapper.style.display = 'block';
@@ -489,19 +510,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
+            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
             const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
             const rankSize = index < 3 ? '18px' : '15px';
             const hkCount = (p.honorable_kills || 0).toLocaleString();
             const portraitURL = char.render_url || getClassIcon(cClass);
 
-            // --- NEW: Trend Arrow Logic for PvP ---
+            // --- Trend Arrow Logic for PvP ---
             const trend = p.trend_pvp || 0; 
             let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
             if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
             pvpHTML += `
-            <div class="pvp-row tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
+            <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
                 <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
                 <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
                 <div style="flex: 1; display: flex; flex-direction: column;">
@@ -1578,21 +1600,83 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
-        if (timeline) {
-            timeline.style.display = 'block';
-            timelineTitle.innerHTML = "📜 Guild Recent Activity";
-            window.currentFilteredChars = null; 
-            applyTimelineFilters();
-        }
+        if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
         
         const specContainer = document.getElementById('home-spec-container');
         if (specContainer) specContainer.style.display = 'none';
         document.querySelectorAll('.clickable-class').forEach(b => b.classList.remove('active-filter'));
         window.activeClassExpanded = null;
-        
-        tlSpecificDate = null;
-        document.querySelectorAll('.tt-heatmap').forEach(c => c.classList.remove('selected-date'));
         updateDropdownLabel('all');
+
+        // Populate New KPIs
+        let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
+        rosterData.forEach(c => {
+            if (c.profile) {
+                if (c.profile.level === 70 && c.profile.equipped_item_level) { totalIlvl += c.profile.equipped_item_level; lvl70Count++; }
+                if (c.profile.honorable_kills) totalHks += c.profile.honorable_kills;
+            }
+        });
+        const kpiIlvl = document.getElementById('home-kpi-ilvl');
+        if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
+        const kpiHks = document.getElementById('home-kpi-hks');
+        if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+
+        document.getElementById('stat-avgilvl').onclick = () => { window.location.hash = 'ladder-pve'; };
+        document.getElementById('stat-hks').onclick = () => { window.location.hash = 'ladder-pvp'; };
+
+        // "Yesterday" Sparklines & Math
+        if (heatmapData && heatmapData.length >= 2) {
+            const today = heatmapData[heatmapData.length - 1];
+            const yesterday = heatmapData[heatmapData.length - 2];
+            
+            function applyTrend(elementId, todayVal, yestVal) {
+                const el = document.getElementById(elementId);
+                if (!el || yestVal == null) return;
+                const diff = todayVal - yestVal;
+                if (diff > 0) el.innerHTML = `<span style="color:#2ecc71;">▲ ${diff}</span>`;
+                else if (diff < 0) el.innerHTML = `<span style="color:#e74c3c;">▼ ${Math.abs(diff)}</span>`;
+                else el.innerHTML = `<span style="color:#555;">-</span>`;
+            }
+
+            applyTrend('trend-total', today.total_roster, yesterday.total_roster);
+            applyTrend('trend-active', today.active_roster, yesterday.active_roster);
+            // Raid Ready math isn't stored historically in heatmapData, so we leave it static or estimate it
+
+            // Draw Sparklines
+            function drawSpark(canvasId, dataKey, colorStr) {
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) return;
+                const dataPoints = heatmapData.map(d => d[dataKey] || 0);
+                new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: heatmapData.map(d => d.day_name), datasets: [{ data: dataPoints, borderColor: colorStr, borderWidth: 2, tension: 0.4, pointRadius: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false, min: Math.min(...dataPoints) * 0.95 } } }
+                });
+            }
+            drawSpark('spark-total', 'total_roster', 'rgba(255, 209, 0, 0.5)');
+            drawSpark('spark-active', 'active_roster', 'rgba(46, 204, 113, 0.5)');
+        }
+
+        // Recent Milestones logic
+        if (timelineData && timelineData.length > 0) {
+            const milestoneCont = document.getElementById('recent-milestones-container');
+            const milestoneText = document.getElementById('milestone-text');
+            // Find the most recent Epic/Legendary loot OR Level 70
+            const recent = timelineData.find(e => 
+                (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) || 
+                (e.type === 'level_up' && e.level === 70)
+            );
+            if (recent) {
+                milestoneCont.style.display = 'block';
+                const charName = `<span class="milestone-highlight">${recent.character_name}</span>`;
+                if (recent.type === 'level_up') {
+                    milestoneText.innerHTML = `Congratulations to ${charName} for reaching <span class="milestone-highlight">Level 70!</span> 🎉`;
+                } else {
+                    const qClass = recent.item_quality === 'LEGENDARY' ? 'color:#ff8000;' : 'color:#a335ee;';
+                    milestoneText.innerHTML = `${charName} just looted <a href="https://www.wowhead.com/wotlk/item=${recent.item_id}" target="_blank" style="${qClass} font-weight:bold; text-decoration:none;">[${recent.item_name}]</a>!`;
+                }
+            }
+        }
     }
 
     window.selectCharacter = function(charName) {
@@ -1836,8 +1920,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
             if (char) {
                 showFullCardView(hash);
-                updateDropdownLabel(hash);
-            } else {
+                updateDropdownLabel('all');
+
+        } else if (hash === 'ladder-pve') {
+            const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
+                .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
+            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, false);
+            updateDropdownLabel('all');
+            currentSortMethod = 'ilvl'; // Force sort
+        } else if (hash === 'ladder-pvp') {
+            const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
+                .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
+            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, false);
+            updateDropdownLabel('all');
+            currentSortMethod = 'hks'; // Force sort
+
+        } else {
                 showHomeView(); 
             }
         }
