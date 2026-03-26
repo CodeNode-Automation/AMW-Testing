@@ -1216,6 +1216,118 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // --- NEW: AESTHETIC CHART DRAWING PLUGINS ---
+    const ROLE_ICONS = {
+        "Tank": "https://wow.zamimg.com/images/wow/icons/large/inv_shield_06.jpg",
+        "Healer": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg",
+        "Melee DPS": "https://wow.zamimg.com/images/wow/icons/large/inv_sword_48.jpg",
+        "Ranged DPS": "https://wow.zamimg.com/images/wow/icons/large/inv_weapon_bow_07.jpg"
+    };
+    const RACE_ICONS = {
+        "Human": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_human_male.jpg",
+        "Dwarf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_dwarf_male.jpg",
+        "Night Elf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_nightelf_male.jpg",
+        "Gnome": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_gnome_male.jpg",
+        "Draenei": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_draenei_male.jpg",
+        "Orc": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_orc_male.jpg",
+        "Undead": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_undead_male.jpg",
+        "Tauren": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_tauren_male.jpg",
+        "Troll": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_troll_male.jpg",
+        "Blood Elf": "https://wow.zamimg.com/images/wow/icons/large/achievement_character_bloodelf_male.jpg"
+    };
+
+    const preloadedChartImages = {};
+    function getChartImage(url, chart) {
+        if (!url) return null;
+        if (preloadedChartImages[url]) return preloadedChartImages[url];
+        const img = new Image();
+        img.src = url;
+        img.onload = () => chart.update();
+        preloadedChartImages[url] = img;
+        return img;
+    }
+
+    function createPieOverlayPlugin(iconMap) {
+        return {
+            id: 'pieOverlays',
+            afterDatasetDraw(chart) {
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+                chart.data.labels.forEach((label, i) => {
+                    const arc = meta.data[i];
+                    const dataVal = chart.data.datasets[0].data[i];
+                    if (dataVal === 0 || arc.hidden) return;
+
+                    const centerAngle = arc.startAngle + (arc.endAngle - arc.startAngle) / 2;
+                    const radius = arc.innerRadius + (arc.outerRadius - arc.innerRadius) * 0.55; 
+                    const x = arc.x + Math.cos(centerAngle) * radius;
+                    const y = arc.y + Math.sin(centerAngle) * radius;
+
+                    const imgUrl = iconMap[label];
+                    const img = getChartImage(imgUrl, chart);
+
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    ctx.beginPath();
+                    ctx.roundRect(x - 16, y + 8, 32, 20, 4);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffd100';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 13px Cinzel';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(dataVal, x, y + 18);
+
+                    if (img && img.complete) {
+                        const size = 28; 
+                        ctx.beginPath();
+                        ctx.arc(x, y - 8, size/2, 0, Math.PI * 2);
+                        ctx.closePath();
+                        ctx.clip(); 
+                        ctx.drawImage(img, x - size/2, y - 8 - size/2, size, size);
+                        
+                        ctx.restore();
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(x, y - 8, size/2, 0, Math.PI * 2);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#111';
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                });
+            }
+        };
+    }
+
+    const barLabelPlugin = {
+        id: 'barLabels',
+        afterDatasetsDraw(chart) {
+            const ctx = chart.ctx;
+            chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((bar, index) => {
+                    const data = dataset.data[index];
+                    if (data > 0) {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 14px Cinzel';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                        ctx.shadowBlur = 4;
+                        ctx.shadowOffsetX = 1;
+                        ctx.shadowOffsetY = 1;
+                        ctx.fillText(data, bar.x, bar.y - 6);
+                        ctx.shadowBlur = 0; 
+                    }
+                });
+            });
+        }
+    };
+
     function showAnalyticsView() {
         hideAllViews();
         if (analyticsView) analyticsView.style.display = 'block';
@@ -1253,7 +1365,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const kpiHks = document.getElementById('kpi-total-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
-        // --- NEW: ROLE DISTRIBUTION CHART ---
+        // --- UPGRADED: ROLE DISTRIBUTION CHART (WITH ICONS) ---
         const roleCounts = { "Tank": 0, "Healer": 0, "Melee DPS": 0, "Ranged DPS": 0 };
         rosterData.forEach(c => {
             if (!c.profile || !c.profile.active_spec) return;
@@ -1280,19 +1392,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }]
                 },
                 options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '60%',
+                    responsive: true, maintainAspectRatio: false, cutout: '60%', layout: { padding: { top: 20, bottom: 20 } },
                     plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } },
                     onClick: (event, elements, chart) => {
                         if (elements.length > 0) {
                             const clickedLabel = chart.data.labels[elements[0].index];
-                            // Converts "Melee DPS" to "melee-dps" for the URL hash
                             window.location.hash = 'filter-role-' + clickedLabel.toLowerCase().replace(/\s+/g, '-');
                         }
                     },
                     onHover: (event, elements) => {
                         event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                     }
-                }
+                },
+                plugins: [createPieOverlayPlugin(ROLE_ICONS)]
             });
         }
 
@@ -1326,7 +1438,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     datasets: [{ label: 'Characters', data: levelData, backgroundColor: lvlGradient, borderColor: '#ffd100', borderWidth: 1, borderRadius: 4 }]
                 },
                 options: { 
-                    responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
+                    responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, plugins: { legend: {display: false}}, 
                     scales: { 
                         y: {beginAtZero: true, grid: {color: 'rgba(255,255,255,0.05)'}, ticks: {color: '#888'}}, 
                         x: {grid: {display: false}, ticks: {color: '#888', font: {family: 'Cinzel'}}}
@@ -1340,7 +1452,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                     onHover: (event, elements) => {
                         event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                     }
-                }
+                },
+                plugins: [barLabelPlugin]
             });
         }
 
@@ -1374,7 +1487,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     datasets: [{ label: 'Level 70 Characters', data: ilvlData, backgroundColor: ilvlGradient, borderColor: '#ff8000', borderWidth: 1, borderRadius: 4 }]
                 },
                 options: { 
-                    responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}}, 
+                    responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, plugins: { legend: {display: false}}, 
                     scales: { 
                         y: {beginAtZero: true, grid: {color: 'rgba(255,255,255,0.05)'}, ticks: {color: '#888'}}, 
                         x: {grid: {display: false}, ticks: {color: '#888', font: {family: 'Cinzel'}}}
@@ -1388,11 +1501,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     onHover: (event, elements) => {
                         event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                     }
-                }
+                },
+                plugins: [barLabelPlugin]
             });
         }
 
-        // --- EXISTING: RACE DISTRIBUTION (UNCHANGED) ---
+        // --- UPGRADED: RACE DISTRIBUTION (WITH ICONS) ---
         const raceCounts = {};
         rosterData.forEach(c => {
             const p = c.profile;
@@ -1416,7 +1530,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 datasets: [{ data: Object.values(raceCounts), backgroundColor: Object.keys(raceCounts).map(r => RACE_COLORS[r] || '#555'), borderColor: '#111', borderWidth: 2 }]
             },
             options: { 
-                responsive: true, maintainAspectRatio: false, plugins: { legend: {position: 'right', labels:{color:'#bbb', font:{family:'Cinzel'}}} },
+                responsive: true, maintainAspectRatio: false, cutout: '55%', layout: { padding: { top: 20, bottom: 20, right: 20, left: 20 } },
+                plugins: { legend: {position: 'right', labels:{color:'#bbb', font:{family:'Cinzel'}}} },
                 onClick: (event, elements, chart) => {
                     if (elements.length > 0) {
                         const clickedLabel = chart.data.labels[elements[0].index];
@@ -1426,10 +1541,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 onHover: (event, elements) => {
                     event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                 }
-            }
+            },
+            plugins: [createPieOverlayPlugin(RACE_ICONS)]
         });
 
-        // --- EXISTING: DUPLICATE ACTIVITY CHART (UNCHANGED) ---
+        // --- EXISTING: ACTIVITY CHART (UNCHANGED) ---
         const actCtx = document.getElementById('analyticsActivityChart');
         if (actCtx && heatmapData && heatmapData.length > 0) {
             if(analyticsActivityChartInst) analyticsActivityChartInst.destroy();
@@ -1443,54 +1559,28 @@ window.addEventListener('DOMContentLoaded', async () => {
                             data: heatmapData.map(d => d.loot || 0),
                             borderColor: '#a335ee', // Epic Purple
                             backgroundColor: 'rgba(163, 53, 238, 0.1)',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#a335ee',
-                            pointBorderColor: '#fff',
-                            tension: 0.3,
-                            fill: true,
-                            yAxisID: 'y'
+                            borderWidth: 2, pointBackgroundColor: '#a335ee', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
                         },
                         {
                             label: 'Level Ups',
                             data: heatmapData.map(d => d.levels || 0),
                             borderColor: '#ffd100', // Gold
                             backgroundColor: 'rgba(255, 209, 0, 0.1)',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#ffd100',
-                            pointBorderColor: '#fff',
-                            tension: 0.3,
-                            fill: true,
-                            yAxisID: 'y'
+                            borderWidth: 2, pointBackgroundColor: '#ffd100', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y'
                         },
                         {
                             label: 'Total Roster',
                             data: heatmapData.map(d => d.total_roster || 0),
                             borderColor: 'rgba(52, 152, 219, 0.3)',
                             backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [4, 4],
-                            pointRadius: 0,
-                            pointHoverRadius: 4,
-                            pointBackgroundColor: '#3498db',
-                            pointBorderColor: '#fff',
-                            tension: 0.3,
-                            fill: false,
-                            yAxisID: 'y-roster'
+                            borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#3498db', pointBorderColor: '#fff', tension: 0.3, fill: false, yAxisID: 'y-roster'
                         },
                         {
                             label: 'Active Roster',
                             data: heatmapData.map(d => d.active_roster || 0),
                             borderColor: 'rgba(46, 204, 113, 0.6)',
                             backgroundColor: 'rgba(46, 204, 113, 0.05)',
-                            borderWidth: 2,
-                            borderDash: [4, 4],
-                            pointRadius: 0,
-                            pointHoverRadius: 4,
-                            pointBackgroundColor: '#2ecc71',
-                            pointBorderColor: '#fff',
-                            tension: 0.3,
-                            fill: true,
-                            yAxisID: 'y-roster'
+                            borderWidth: 2, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: '#2ecc71', pointBorderColor: '#fff', tension: 0.3, fill: true, yAxisID: 'y-roster'
                         }
                     ]
                 },
