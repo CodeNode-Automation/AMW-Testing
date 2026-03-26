@@ -61,9 +61,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const raidReadyCount = config.raid_ready_count;
 
     const rawDate = new Date(config.last_updated);
-    const dateOptions = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const dateOptions = { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
     const updateTimeEl = document.getElementById("update-time");
-    if (updateTimeEl) updateTimeEl.textContent = rawDate.toLocaleString(undefined, dateOptions);
+    if (updateTimeEl) updateTimeEl.textContent = rawDate.toLocaleString('de-DE', dateOptions) + ' Uhr (CET/CEST)';
     
     let tlTypeFilter = 'rare_plus';
     let tlDateFilter = 'all'; // Start with 7 days to match the heatmap
