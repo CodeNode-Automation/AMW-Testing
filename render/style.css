@@ -665,3 +665,30 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         pointer-events: none !important;
     }
 }
+
+/* =========================================
+   DESKTOP OVERRIDE: Fix the "Giant Tablet" Navbar (Keep Hamburger)
+   ========================================= */
+@media (min-width: 801px) {
+    .controls-wrapper {
+        border-radius: 0 !important; /* Kills the pill shape */
+        width: 100% !important;
+        max-width: 100% !important; /* Forces it to span the full screen */
+        padding: 12px 40px !important; /* Adds nice breathing room */
+        background: rgba(15, 15, 15, 0.95) !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        justify-content: flex-start !important; 
+    }
+
+    /* Add a little space between the hamburger and the "Select View" dropdown */
+    .custom-select-wrapper {
+        margin-left: 25px !important; 
+    }
+
+    /* Push the search bar all the way to the right side of the screen */
+    .controls-wrapper .search-container {
+        margin-left: auto !important;
+        margin-bottom: 0 !important;
+    }
+}
