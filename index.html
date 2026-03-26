@@ -646,6 +646,32 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 
 .view-all-btn { display: block; width: 100%; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid; border-radius: 6px; font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s; text-align: center; }
 .view-all-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+
+/* =========================================
+   MOBILE OVERRIDE: Prevent Hero Search from Collapsing
+   ========================================= */
+@media (max-width: 800px) {
+    .hero-search-box {
+        width: 100% !important;
+        border-radius: 25px !important;
+        cursor: text !important;
+        justify-content: flex-start !important;
+    }
+    .hero-search-box input {
+        display: block !important;
+        width: 100% !important;
+        opacity: 1 !important;
+        padding: 0 15px !important;
+        position: relative !important;
+        pointer-events: auto !important;
+    }
+    .hero-search-box .search-icon {
+        position: relative !important;
+        left: 0 !important;
+        transform: none !important;
+        pointer-events: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1103,7 +1129,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T14:43:05.023320Z", "active_14_days": 386, "raid_ready_count": 18}
+        {"last_updated": "2026-03-26T14:48:44.156157Z", "active_14_days": 386, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 455, "loot": 356, "levels": 99, "total_roster": 622, "active_roster": 386}]
