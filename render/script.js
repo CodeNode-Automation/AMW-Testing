@@ -478,8 +478,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const rankSize = index < 3 ? '18px' : '15px';
             const portraitURL = char.render_url || getClassIcon(cClass);
 
-            // --- Trend Arrow Logic for PvE ---
-            const trend = p.trend_ilvl || 0; 
+            // --- NEW: Trend Arrow Logic for PvE ---
+            const trend = p.trend_pve || p.trend_ilvl || 0; 
             let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
             if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
@@ -1002,7 +1002,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 // NEW: Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
-                    const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_ilvl || 0);
+                    const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
                     if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▲ ${trend}</span>`;
                     else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▼ ${Math.abs(trend)}</span>`;
                     else trendHTML = `<span style="color: #555; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">-</span>`;
