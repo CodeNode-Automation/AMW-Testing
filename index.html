@@ -175,6 +175,39 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; } .c-val-ilvl { color: #ff8000; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.desktop-split {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    width: 100%;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+.split-left {
+    flex: 0 0 350px; /* Locks left column to exactly 350px */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.split-middle {
+    flex: 1; /* Takes remaining space for the character list */
+    min-width: 0; /* Prevents wide elements from breaking the flex row */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Graceful fallback to stacked layout on mobile/tablets */
+@media (max-width: 950px) {
+    .desktop-split {
+        flex-direction: column;
+        align-items: center;
+    }
+    .split-left {
+        flex: auto;
+        width: 100%;
+        max-width: 600px;
+    }
+}
 
 /* Holographic Full Cards */
 .full-card-container { display: none; width: 100%; max-width: 900px; }
@@ -749,7 +782,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     <div id="stat-active" class="stat-box clickable" title="Click to view characters active within 14 days">
                         <span class="stat-value" style="color: #2ecc71; display: flex; align-items: center; justify-content: center;">
                             387
-                            <span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ 1</span>
+                            <span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>
                         </span>
                         <span class="stat-label">Active (14 Days)</span>
                     </div>
@@ -989,17 +1022,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 30px; width: 100%; align-items: flex-start; justify-content: center; margin-bottom: 30px;">
+                <div class="desktop-split">
                     
-                                        <div id="concise-top-stats" style="flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 20px;">
-                        <div id="concise-donut-container" class="heatmap-wrapper" style="width: 100%; margin: 0; display: none; flex-direction: column;"></div>
+                                        <div id="concise-top-stats" class="split-left">
+                        <div id="concise-donut-container" class="heatmap-wrapper" style="width: 100%; margin: 0; display: none; flex-direction: column; box-sizing: border-box;"></div>
 
                         <div id="concise-badges-wrapper" style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
                             <div id="concise-class-badges" class="class-stat-container" style="display:none; margin-bottom: 0; width: 100%; justify-content: center;"></div>
                         </div>
                     </div>
 
-                                        <div style="flex: 2; min-width: 320px; max-width: 800px; display: flex; flex-direction: column;">
+                                        <div class="split-middle">
                         <div id="concise-char-list"></div>
                     </div>
                     
@@ -1054,10 +1087,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T12:56:46.970382Z", "active_14_days": 387, "raid_ready_count": 19}
+        {"last_updated": "2026-03-26T13:04:50.871554Z", "active_14_days": 387, "raid_ready_count": 19}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 395, "loot": 314, "levels": 81, "total_roster": 622, "active_roster": 387}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 399, "loot": 318, "levels": 81, "total_roster": 622, "active_roster": 387}]
     </script>
 
     <script>
