@@ -241,6 +241,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     .heatmap-wrapper, 
     #pve-leaderboard-container, 
     #pvp-leaderboard-container,
+    #concise-left-col,
     #concise-badges-wrapper,
     #concise-donut-container {
         min-width: 100% !important; 
