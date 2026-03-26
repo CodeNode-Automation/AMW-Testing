@@ -674,6 +674,33 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         pointer-events: none !important;
     }
 }
+
+/* =========================================
+   DESKTOP OVERRIDE: Fix the "Giant Tablet" Navbar (Keep Hamburger)
+   ========================================= */
+@media (min-width: 801px) {
+    .controls-wrapper {
+        border-radius: 0 !important; /* Kills the pill shape */
+        width: 100% !important;
+        max-width: 100% !important; /* Forces it to span the full screen */
+        padding: 12px 40px !important; /* Adds nice breathing room */
+        background: rgba(15, 15, 15, 0.95) !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        justify-content: flex-start !important; 
+    }
+
+    /* Add a little space between the hamburger and the "Select View" dropdown */
+    .custom-select-wrapper {
+        margin-left: 25px !important; 
+    }
+
+    /* Push the search bar all the way to the right side of the screen */
+    .controls-wrapper .search-container {
+        margin-left: auto !important;
+        margin-bottom: 0 !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1131,10 +1158,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T14:56:04.827108Z", "active_14_days": 386, "raid_ready_count": 18}
+        {"last_updated": "2026-03-26T15:06:47.108272Z", "active_14_days": 386, "raid_ready_count": 18}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 468, "loot": 367, "levels": 101, "total_roster": 622, "active_roster": 386}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 471, "loot": 370, "levels": 101, "total_roster": 622, "active_roster": 386}]
     </script>
 
     <script>
