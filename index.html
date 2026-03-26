@@ -867,12 +867,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 
                 <div id="leaderboards-wrapper" style="display:flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; justify-content: center;">
                     <div id="pve-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 10 Item Level 🛡️</h3>
+                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         <button onclick="window.location.hash='ladder-pve'" class="view-all-btn" style="border-color: #ff8000; color: #ff8000;">View Full PvE Ladder ➔</button>
                     </div>
                     <div id="pvp-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 10 Honorable Kills ⚔️</h3>
+                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn" style="border-color: #ff4400; color: #ff4400;">View Full PvP Ladder ➔</button>
                     </div>
@@ -882,15 +882,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 20px; font-size: 32px;">Guild Analytics</h2>
                 
                 <div class="stat-box-container" style="max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <div class="stat-box" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);">
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pve'" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);" title="View Full PvE Ladder">
                         <span id="kpi-avg-ilvl" class="stat-value" style="color: #ff8000;">0</span>
                         <span class="stat-label">Avg Level 70 iLvl</span>
                     </div>
-                    <div class="stat-box" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);">
+                    <div class="stat-box clickable" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);" title="Scroll to Activity Chart">
                         <span id="kpi-epic-loot" class="stat-value" style="color: #a335ee;">0</span>
                         <span class="stat-label">Epics Looted (7d)</span>
                     </div>
-                    <div class="stat-box" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);">
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pvp'" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);" title="View Full PvP Ladder">
                         <span id="kpi-total-hks" class="stat-value" style="color: #ff4400;">0</span>
                         <span class="stat-label">Total Guild HKs</span>
                     </div>
@@ -1103,10 +1103,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T13:50:42.308732Z", "active_14_days": 387, "raid_ready_count": 19}
+        {"last_updated": "2026-03-26T14:06:31.453561Z", "active_14_days": 387, "raid_ready_count": 19}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 418, "loot": 330, "levels": 88, "total_roster": 622, "active_roster": 387}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 425, "loot": 335, "levels": 90, "total_roster": 622, "active_roster": 387}]
     </script>
 
     <script>
@@ -1571,7 +1571,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPve = rosterData
         .filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
         .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
-        .slice(0, 25); // Changed to Top 10
+        .slice(0, 25);
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
@@ -1580,19 +1580,23 @@ window.addEventListener('DOMContentLoaded', async () => {
             const p = char.profile;
             const cClass = getCharClass(char);
             const cHex = CLASS_COLORS[cClass] || '#fff';
-            const specIconUrl = getSpecIcon(cClass, p.active_spec || '');
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width:12px; height:12px; border-radius:50%; margin-right:3px; border:1px solid #222;">` : '';
-            
+            const activeSpec = p.active_spec ? p.active_spec : '';
+            const specIconUrl = getSpecIcon(cClass, activeSpec);
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+
             let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
             const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+            const rankSize = index < 3 ? '18px' : '15px';
+            const portraitURL = char.render_url || getClassIcon(cClass);
 
             pveHTML += `
             <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
-                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: 18px; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                <img src="${char.render_url || getClassIcon(cClass)}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
+                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
+                <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
                 <div style="flex: 1; display: flex; flex-direction: column;">
                     <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${p.active_spec ? p.active_spec + ' ' : ''}${cClass}</span>
+                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${displaySpecClass}</span>
                 </div>
                 <div style="display: flex; align-items: center; color: #ff8000; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
                     ${p.equipped_item_level || 0} <span style="font-size:10px; color:#888; margin-left: 3px;">iLvl</span>
@@ -2795,12 +2799,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.location.hash = charName;
     }
 
-    function showConciseView(title, characters, isRawRoster = false, showBadges = true) {
+    // Added defaultSort parameter to override the standard "level" start
+    function showConciseView(title, characters, isRawRoster = false, showBadges = true, defaultSort = 'level') {
         hideAllViews();
         conciseView.style.display = 'flex';
         if (navbar) navbar.style.background = '#111';
         
-        currentSortMethod = 'level';
+        currentSortMethod = defaultSort; // Apply the requested sort method immediately
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
@@ -2819,7 +2824,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
         
-        if (hash === 'total' || hash === 'active' || hash === 'raidready') {
+        // Expanded array of views that get charts
+        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
+
+        if (chartViews.includes(hash)) {
             if (donutContainer) {
                 donutContainer.style.display = 'flex';
                 donutContainer.style.flexDirection = 'column';
@@ -2827,9 +2835,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 donutContainer.style.gap = '20px';
                 
                 let kpiHtml = '';
-                if (hash === 'raidready') {
+                if (hash === 'raidready' || hash === 'ladder-pve') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
                     kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                } else if (hash === 'ladder-pvp') {
+                    const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
+                    const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff4400;"><span class="stat-value" style="color:#ff4400;">${displayHks}</span><span class="stat-label">Total HKs</span></div>`;
                 } else if (hash === 'active' || hash === 'total') {
                     // Match raw roster names to deep profile roster to get accurate levels and iLvls
                     const avgLvl = Math.round(characters.reduce((sum, c) => {
@@ -2855,21 +2867,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 let chartsHtml = kpiHtml + `<div style="display:flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%;">`;
-                if (hash === 'raidready') {
-                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
-                } else {
-                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
-                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
-                }
-                chartsHtml += `</div>`;
                 
+                // Show Roles on everything.
+                chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
+                
+                // Show Class Distribution
+                chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
+
+                chartsHtml += `</div>`;
                 donutContainer.innerHTML = chartsHtml;
 
                 if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
                 if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
 
                 window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
-                if (hash !== 'raidready') window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
+                window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
             }
         } else {
             if (donutContainer) donutContainer.style.display = 'none';
@@ -3028,26 +3040,28 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             showConciseView(`Raid Role: ${targetRoleName}s (${filteredRoster.length})`, filteredRoster, false, true);
             updateDropdownLabel('all');
-        } else {
-            const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
-            if (char) {
-                showFullCardView(hash);
-                updateDropdownLabel('all');
 
         } else if (hash === 'ladder-pve') {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
-            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, false);
+            // Passed 'true' for Badges, and 'ilvl' for the default sort!
+            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
-            currentSortMethod = 'ilvl'; // Force sort
+            
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
-            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, false);
+            // Passed 'true' for Badges, and 'hks' for the default sort!
+            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
-            currentSortMethod = 'hks'; // Force sort
-
+            
         } else {
+            // Final fallback: Look for a specific character
+            const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
+            if (char) {
+                showFullCardView(hash);
+                updateDropdownLabel(hash);
+            } else {
                 showHomeView(); 
             }
         }
