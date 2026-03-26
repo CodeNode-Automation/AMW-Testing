@@ -1048,13 +1048,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.<br>
             Azeroth's Most Wanted Armory is a community project and is not affiliated with, endorsed, or sponsored by Blizzard Entertainment.
         </div>
-        <div class="footer-counter" style="margin-top: 25px; opacity: 0.7; transition: opacity 0.3s ease; display: flex; justify-content: center;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-            <div id="dynamic-hit-counter"></div>
-        </div>
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T10:57:34.281527Z", "active_14_days": 386, "raid_ready_count": 19}
+        {"last_updated": "2026-03-26T11:02:18.863771Z", "active_14_days": 386, "raid_ready_count": 19}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 343, "loot": 271, "levels": 72, "total_roster": 622, "active_roster": 386}]
@@ -3470,29 +3467,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 navLinksContainer.classList.remove('open');
             }
         });
-    }
-
-    // --- DYNAMIC HIT COUNTER (TICKER) ---
-    const hitContainer = document.getElementById('dynamic-hit-counter');
-    if (hitContainer) {
-        // Use .origin instead of .hostname to ensure 'https://' is included!
-        let hostPath = window.location.origin + window.location.pathname;
-        
-        // Fallback for local testing
-        if (!window.location.hostname || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            hostPath = 'https://codenode-automation.github.io/AMW-Testing'; 
-        }
-        
-        // Strip trailing slash for consistency
-        hostPath = hostPath.replace(/\/$/, "");
-        const siteUrl = encodeURIComponent(hostPath);
-        
-        // Safely encode the title to prevent API syntax errors with parentheses/slashes
-        const badgeTitle = encodeURIComponent("VISITS (TODAY / TOTAL)");
-        
-        const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=${badgeTitle}&edge_flat=true`;
-        
-        hitContainer.innerHTML = `<a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Hits Tracker" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);"/></a>`;
     }
 
     route();
