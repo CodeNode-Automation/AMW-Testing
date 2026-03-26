@@ -2230,6 +2230,34 @@ window.addEventListener('DOMContentLoaded', async () => {
         loadMoreBtn.addEventListener('click', renderTimelineBatch);
     }
 
+    // --- NEW: Hamburger Menu Logic ---
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinksContainer = document.querySelector('.nav-links-container');
+    
+    if (menuToggle && navLinksContainer) {
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuToggle.classList.toggle('open');
+            navLinksContainer.classList.toggle('open');
+        });
+        
+        // Close menu when a navigation button is clicked
+        document.querySelectorAll('.nav-links-container .nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                menuToggle.classList.remove('open');
+                navLinksContainer.classList.remove('open');
+            });
+        });
+        
+        // Close menu when tapping outside of it
+        document.addEventListener('click', (e) => {
+            if (navLinksContainer.classList.contains('open') && !menuToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
+                menuToggle.classList.remove('open');
+                navLinksContainer.classList.remove('open');
+            }
+        });
+    }
+
     route();
     window.addEventListener('hashchange', route);
 });
