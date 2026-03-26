@@ -1037,14 +1037,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 
     </div> 
     
-    <div class="dashboard-footer">
-        <div class="footer-tech-stack">
+    <div class="dashboard-footer" style="text-align: center; padding: 40px 20px; color: #666; font-size: 13px; width: 100%; border-top: 1px solid #222; margin-top: 40px; clear: both; background: rgba(10, 10, 10, 0.8);">
+        <div class="footer-tech-stack" style="font-family: 'Cinzel', serif; color: #aaa; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px;">
             <span style="color: #ffd100;">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
         </div>
-        <div class="footer-update-info">
+        <div class="footer-update-info" style="margin-bottom: 25px; font-size: 13px; color: #888;">
             Database Last Synced: <span id="update-time" style="color: #ffd100; font-weight: bold; margin-left: 5px;"></span>
         </div>
-        <div class="footer-disclaimer">
+        <div class="footer-disclaimer" style="max-width: 800px; margin: 0 auto; font-size: 11px; line-height: 1.6; color: #444; font-style: italic;">
             World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.<br>
             Azeroth's Most Wanted Armory is a community project and is not affiliated with, endorsed, or sponsored by Blizzard Entertainment.
         </div>
@@ -1054,10 +1054,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T10:33:14.383683Z", "active_14_days": 386, "raid_ready_count": 19}
+        {"last_updated": "2026-03-26T10:50:59.162837Z", "active_14_days": 386, "raid_ready_count": 19}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 332, "loot": 262, "levels": 70, "total_roster": 622, "active_roster": 386}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 343, "loot": 271, "levels": 72, "total_roster": 622, "active_roster": 386}]
     </script>
 
     <script>
@@ -3475,8 +3475,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     // --- DYNAMIC HIT COUNTER (TICKER) ---
     const hitContainer = document.getElementById('dynamic-hit-counter');
     if (hitContainer) {
-        const siteUrl = encodeURIComponent(window.location.hostname + window.location.pathname);
+        // Build the base path based on where the code is currently running
+        let hostPath = window.location.hostname + window.location.pathname;
+        
+        // FIX: When testing locally (file:// or localhost), hostname is empty. 
+        // This fallback prevents SeeYouFarm from returning a broken image!
+        if (!window.location.hostname || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            hostPath = 'codenode-automation.github.io/AMW-Testing'; 
+        }
+        
+        // Strip trailing slash so 'domain.com/path' and 'domain.com/path/' share the exact same hit count
+        hostPath = hostPath.replace(/\/$/, "");
+
+        const siteUrl = encodeURIComponent(hostPath);
         const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITS+(TODAY+/+TOTAL)&edge_flat=true`;
+        
         hitContainer.innerHTML = `<a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Hits Tracker" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);"/></a>`;
     }
 
