@@ -2412,8 +2412,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     // --- DYNAMIC HIT COUNTER (TICKER) ---
     const hitContainer = document.getElementById('dynamic-hit-counter');
     if (hitContainer) {
-        const siteUrl = encodeURIComponent(window.location.hostname + window.location.pathname);
+        // Build the base path based on where the code is currently running
+        let hostPath = window.location.hostname + window.location.pathname;
+        
+        // FIX: When testing locally (file:// or localhost), hostname is empty. 
+        // This fallback prevents SeeYouFarm from returning a broken image!
+        if (!window.location.hostname || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            hostPath = 'codenode-automation.github.io/AMW-Testing'; 
+        }
+        
+        // Strip trailing slash so 'domain.com/path' and 'domain.com/path/' share the exact same hit count
+        hostPath = hostPath.replace(/\/$/, "");
+
+        const siteUrl = encodeURIComponent(hostPath);
         const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITS+(TODAY+/+TOTAL)&edge_flat=true`;
+        
         hitContainer.innerHTML = `<a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Hits Tracker" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);"/></a>`;
     }
 
