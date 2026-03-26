@@ -842,12 +842,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable sparkline-box" title="Click to view characters active within 14 days" style="border-bottom-color: #2ecc71;">
                         <canvas id="spark-active" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">384 <span id="trend-active" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">385 <span id="trend-active" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
                         <canvas id="spark-ready" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">17 <span id="trend-ready" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">16 <span id="trend-ready" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Raid Ready</span>
                     </div>
                     <div id="stat-avgilvl" class="stat-box clickable" title="Click to sort Level 70s by Item Level" style="border-bottom-color: #a335ee;">
@@ -1172,10 +1172,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-26T15:47:30.922695Z", "active_14_days": 384, "raid_ready_count": 17}
+        {"last_updated": "2026-03-26T17:40:26.983320Z", "active_14_days": 385, "raid_ready_count": 16}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 492, "loot": 387, "levels": 105, "total_roster": 620, "active_roster": 384}]
+        [{"date": "2026-03-20", "day_name": "Fri", "count": 121, "loot": 92, "levels": 29, "total_roster": null, "active_roster": null}, {"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 552, "loot": 431, "levels": 121, "total_roster": 620, "active_roster": 385}]
     </script>
 
     <script>
@@ -3774,16 +3774,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        // If no one made any progress this week, hide the banner
-        if (topTrendPve.length === 0 && topTrendPvp.length === 0) {
-            mvpContainer.style.display = 'none';
-            return;
-        }
-        
+        // Always display the banner, even on reset day
         mvpContainer.style.display = 'block';
 
         function generateMvpHtml(chars, isPvp) {
-            if (chars.length === 0) return `<div style="text-align:center; color:#888; font-style:italic; font-size: 13px; padding: 10px;">No positive trends this week.</div>`;
+            if (chars.length === 0) {
+                const icon = isPvp ? '⚔️' : '🛡️';
+                const action = isPvp ? 'get some HKs' : 'equip some upgrades';
+                return `
+                <div style="text-align:center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px;">
+                    <div style="font-size: 28px; margin-bottom: 12px; filter: grayscale(50%);">${icon}</div>
+                    <div style="color:#ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000;">The Week Just Started!</div>
+                    <div style="color:#aaa; font-style:italic; font-size: 13px;">Log in and ${action} to claim the #1 spot.</div>
+                </div>`;
+            }
             
             return chars.map((char, index) => {
                 const p = char.profile;
