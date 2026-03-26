@@ -158,12 +158,12 @@
 
                 <div id="leaderboards-wrapper" style="display:flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; justify-content: center;">
                     <div id="pve-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 10 Item Level 🛡️</h3>
+                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         <button onclick="window.location.hash='ladder-pve'" class="view-all-btn" style="border-color: #ff8000; color: #ff8000;">View Full PvE Ladder ➔</button>
                     </div>
                     <div id="pvp-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 10 Honorable Kills ⚔️</h3>
+                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn" style="border-color: #ff4400; color: #ff4400;">View Full PvP Ladder ➔</button>
                     </div>
@@ -173,15 +173,15 @@
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 20px; font-size: 32px;">Guild Analytics</h2>
                 
                 <div class="stat-box-container" style="max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <div class="stat-box" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);">
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pve'" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);" title="View Full PvE Ladder">
                         <span id="kpi-avg-ilvl" class="stat-value" style="color: #ff8000;">0</span>
                         <span class="stat-label">Avg Level 70 iLvl</span>
                     </div>
-                    <div class="stat-box" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);">
+                    <div class="stat-box clickable" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);" title="Scroll to Activity Chart">
                         <span id="kpi-epic-loot" class="stat-value" style="color: #a335ee;">0</span>
                         <span class="stat-label">Epics Looted (7d)</span>
                     </div>
-                    <div class="stat-box" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);">
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pvp'" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);" title="View Full PvP Ladder">
                         <span id="kpi-total-hks" class="stat-value" style="color: #ff4400;">0</span>
                         <span class="stat-label">Total Guild HKs</span>
                     </div>
