@@ -357,17 +357,20 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
 /* 4. Swipeable Class Badges on Mobile */
 @media (max-width: 600px) {
     .class-stat-container {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        justify-content: flex-start;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important; /* Prevents center-locking the scroll */
         padding-bottom: 15px;
-        /* Hide scrollbar for a clean UI */
+        padding-left: 20px;
+        padding-right: 20px;
         -ms-overflow-style: none;
         scrollbar-width: none;
         scroll-snap-type: x mandatory;
     }
-    .class-stat-container::-webkit-scrollbar {
-        display: none;
+    .class-stat-container::-webkit-scrollbar { display: none; }
+    .stat-badge {
+        flex: 0 0 auto !important;
+        scroll-snap-align: center;
     }
     .stat-badge {
         flex: 0 0 auto; /* Prevent badges from shrinking */

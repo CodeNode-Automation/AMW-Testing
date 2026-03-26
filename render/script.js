@@ -1217,7 +1217,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- AESTHETIC CHART DRAWING PLUGINS ---
-    // (Icons removed for cleaner slices, using custom badges instead)
     function createPieOverlayPlugin() {
         return {
             id: 'pieOverlays',
@@ -1229,25 +1228,30 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const dataVal = chart.data.datasets[0].data[i];
                     if (dataVal === 0 || arc.hidden) return;
 
+                    // Calculate center of slice, pushed slightly outward
                     const centerAngle = arc.startAngle + (arc.endAngle - arc.startAngle) / 2;
-                    const radius = arc.innerRadius + (arc.outerRadius - arc.innerRadius) * 0.55; 
+                    const radius = arc.innerRadius + (arc.outerRadius - arc.innerRadius) * 0.65; 
                     const x = arc.x + Math.cos(centerAngle) * radius;
                     const y = arc.y + Math.sin(centerAngle) * radius;
 
                     ctx.save();
-                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    
+                    // Draw sleek pill-shaped badge
                     ctx.beginPath();
-                    ctx.roundRect(x - 14, y - 10, 28, 20, 4);
+                    ctx.roundRect(x - 18, y - 12, 36, 24, 6);
+                    ctx.fillStyle = 'rgba(15, 15, 15, 0.9)';
                     ctx.fill();
-                    ctx.strokeStyle = '#ffd100';
-                    ctx.lineWidth = 1;
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeStyle = arc.options.backgroundColor || '#ffd100';
                     ctx.stroke();
 
+                    // Draw text
                     ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 12px Cinzel';
+                    ctx.font = 'bold 13px Inter, sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(dataVal, x, y);
+                    ctx.fillText(dataVal, x, y + 1); // +1 tweak for optical alignment
+                    
                     ctx.restore();
                 });
             }
@@ -1624,26 +1628,37 @@ window.addEventListener('DOMContentLoaded', async () => {
                 donutContainer.style.display = 'flex';
                 donutContainer.style.flexDirection = 'column';
                 donutContainer.style.alignItems = 'center';
-                donutContainer.style.gap = '15px';
+                donutContainer.style.gap = '20px';
                 
                 let kpiHtml = '';
                 if (hash === 'raidready') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
                 } else if (hash === 'active' || hash === 'total') {
-                    const avgLvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.level) || c.level || 0), 0) / characters.length) || 0;
-                    const lvl70s = characters.filter(c => c.profile && c.profile.level === 70);
-                    const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / lvl70s.length) : 0;
+                    // Match raw roster names to deep profile roster to get accurate levels and iLvls
+                    const avgLvl = Math.round(characters.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.level) || c.level || 0);
+                    }, 0) / characters.length) || 0;
+                    
+                    const lvl70s = characters.filter(c => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return p && p.level === 70;
+                    });
+                    
+                    const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length) : 0;
                     
                     kpiHtml = `
                         <div style="display:flex; gap:15px; margin-bottom: 5px; flex-wrap: wrap; justify-content:center;">
-                            <div class="stat-box"><span class="stat-value" style="color:#ffd100;">${avgLvl}</span><span class="stat-label">Avg Level</span></div>
-                            <div class="stat-box"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
+                            <div class="stat-box" style="border-color: #ffd100;"><span class="stat-value" style="color:#ffd100;">${avgLvl}</span><span class="stat-label">Avg Level</span></div>
+                            <div class="stat-box" style="border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
                         </div>`;
                 }
 
                 let chartsHtml = kpiHtml + `<div style="display:flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%;">`;
-                
                 if (hash === 'raidready') {
                     chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
                 } else {
@@ -2186,7 +2201,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await fetch('asset/timeline.json');
             timelineData = await response.json();
-            // Run the filter immediately on load to populate the initial list
+            
+            // --- FIX: Update Epic Loot KPI dynamically after fetch ---
+            const kpiEpic = document.getElementById('kpi-epic-loot');
+            if (kpiEpic) {
+                let epicCount = 0;
+                timelineData.forEach(e => {
+                    if (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) epicCount++;
+                });
+                kpiEpic.innerText = epicCount;
+            }
+            
             applyTimelineFilters(); 
         } catch (error) {
             console.error("Failed to load timeline data:", error);
@@ -2369,7 +2394,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             navLinksContainer.classList.toggle('open');
         });
         
-        // Close menu when a navigation button is clicked
         document.querySelectorAll('.nav-links-container .nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 menuToggle.classList.remove('open');
@@ -2377,13 +2401,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         });
         
-        // Close menu when tapping outside of it
         document.addEventListener('click', (e) => {
             if (navLinksContainer.classList.contains('open') && !menuToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
                 menuToggle.classList.remove('open');
                 navLinksContainer.classList.remove('open');
             }
         });
+    }
+
+    // --- DYNAMIC HIT COUNTER (TICKER) ---
+    const hitContainer = document.getElementById('dynamic-hit-counter');
+    if (hitContainer) {
+        const siteUrl = encodeURIComponent(window.location.hostname + window.location.pathname);
+        const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITS+(TODAY+/+TOTAL)&edge_flat=true`;
+        hitContainer.innerHTML = `<a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Hits Tracker" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);"/></a>`;
     }
 
     route();
