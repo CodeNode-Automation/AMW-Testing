@@ -2593,16 +2593,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        // If no one made any progress this week, hide the banner
-        if (topTrendPve.length === 0 && topTrendPvp.length === 0) {
-            mvpContainer.style.display = 'none';
-            return;
-        }
-        
+        // Always display the banner, even on reset day
         mvpContainer.style.display = 'block';
 
         function generateMvpHtml(chars, isPvp) {
-            if (chars.length === 0) return `<div style="text-align:center; color:#888; font-style:italic; font-size: 13px; padding: 10px;">No positive trends this week.</div>`;
+            if (chars.length === 0) {
+                const icon = isPvp ? '⚔️' : '🛡️';
+                const action = isPvp ? 'get some HKs' : 'equip some upgrades';
+                return `
+                <div style="text-align:center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px;">
+                    <div style="font-size: 28px; margin-bottom: 12px; filter: grayscale(50%);">${icon}</div>
+                    <div style="color:#ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000;">The Week Just Started!</div>
+                    <div style="color:#aaa; font-style:italic; font-size: 13px;">Log in and ${action} to claim the #1 spot.</div>
+                </div>`;
+            }
             
             return chars.map((char, index) => {
                 const p = char.profile;

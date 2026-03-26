@@ -132,8 +132,13 @@ async def main_async():
 
         print("📂 Fetching historical state into memory concurrently...")
         
-        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        seven_days_ago_str = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+        today = datetime.now(timezone.utc)
+        today_str = today.strftime("%Y-%m-%d")
+        
+        # Calculate the baseline: the Monday immediately preceding the most recent Tuesday
+        days_since_tuesday = (today.weekday() - 1) % 7
+        last_tuesday = today - timedelta(days=days_since_tuesday)
+        anchor_monday_str = (last_tuesday - timedelta(days=1)).strftime("%Y-%m-%d")
         
         trend_query = f"""
             SELECT char_name, ilvl, hks 
@@ -141,7 +146,7 @@ async def main_async():
                 SELECT char_name, ilvl, hks, 
                        ROW_NUMBER() OVER(PARTITION BY char_name ORDER BY record_date ASC) as rn
                 FROM char_history
-                WHERE record_date >= '{seven_days_ago_str}' AND record_date < '{today_str}'
+                WHERE record_date >= '{anchor_monday_str}' AND record_date < '{today_str}'
             ) WHERE rn = 1
         """
 
