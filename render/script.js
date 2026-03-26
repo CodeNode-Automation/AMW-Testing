@@ -1525,6 +1525,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             plugins: [createPieOverlayPlugin()]
         });
 
+        // --- NEW: CLASS DISTRIBUTION FOR ANALYTICS ---
+        if(analyticsClassChartInst) analyticsClassChartInst.destroy();
+        analyticsClassChartInst = createDonutChart('analyticsClassChart', rosterData, false);
+
         // --- ACTIVITY CHART ---
         const actCtx = document.getElementById('analyticsActivityChart');
         if (actCtx && heatmapData && heatmapData.length > 0) {
@@ -1611,6 +1615,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (specContainer) specContainer.style.display = 'none';
         }
 
+       // Draw the dynamic charts & KPIs
         const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
         
@@ -1619,30 +1624,31 @@ window.addEventListener('DOMContentLoaded', async () => {
                 donutContainer.style.display = 'flex';
                 donutContainer.style.flexDirection = 'column';
                 donutContainer.style.alignItems = 'center';
-                donutContainer.style.gap = '20px';
+                donutContainer.style.gap = '15px';
                 
                 let kpiHtml = '';
                 if (hash === 'raidready') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    kpiHtml = `<div class="stat-box" style="margin-bottom: 10px;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
                 } else if (hash === 'active' || hash === 'total') {
                     const avgLvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.level) || c.level || 0), 0) / characters.length) || 0;
                     const lvl70s = characters.filter(c => c.profile && c.profile.level === 70);
                     const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / lvl70s.length) : 0;
                     
                     kpiHtml = `
-                        <div style="display:flex; gap:15px; margin-bottom: 10px; flex-wrap: wrap; justify-content:center;">
+                        <div style="display:flex; gap:15px; margin-bottom: 5px; flex-wrap: wrap; justify-content:center;">
                             <div class="stat-box"><span class="stat-value" style="color:#ffd100;">${avgLvl}</span><span class="stat-label">Avg Level</span></div>
                             <div class="stat-box"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
                         </div>`;
                 }
 
                 let chartsHtml = kpiHtml + `<div style="display:flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%;">`;
+                
                 if (hash === 'raidready') {
-                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
+                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
                 } else {
-                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
-                    chartsHtml += `<div style="width: 100%; max-width: 320px; height: 320px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
+                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
+                    chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
                 }
                 chartsHtml += `</div>`;
                 
@@ -2015,6 +2021,51 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     initAtmosphere();
+
+    // --- REUSABLE ROLE CHART GENERATOR ---
+    function drawRoleChart(ctxId, characters, isRawMode) {
+        const roleCounts = { "Tank": 0, "Healer": 0, "Melee DPS": 0, "Ranged DPS": 0 };
+        characters.forEach(c => {
+            const p = isRawMode ? rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+            if (!p || !p.active_spec) return;
+            const spec = p.active_spec;
+            const cClass = isRawMode ? (c.class || 'Unknown') : getCharClass(c);
+            
+            if (["Protection", "Blood"].includes(spec) || (cClass === "Druid" && spec === "Feral Combat")) roleCounts["Tank"]++;
+            else if (["Holy", "Discipline", "Restoration"].includes(spec)) roleCounts["Healer"]++;
+            else if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(spec)) roleCounts["Ranged DPS"]++;
+            else roleCounts["Melee DPS"]++;
+        });
+
+        const ctx = document.getElementById(ctxId);
+        if (!ctx) return null;
+
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(roleCounts),
+                datasets: [{ 
+                    data: Object.values(roleCounts), 
+                    backgroundColor: ['#e74c3c', '#2ecc71', '#e67e22', '#3498db'], 
+                    borderColor: '#111', borderWidth: 2 
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, cutout: '60%', layout: { padding: { top: 20, bottom: 20 } },
+                plugins: { legend: { position: 'bottom', labels: { color: '#bbb', font: { family: 'Cinzel' } } } },
+                onClick: (event, elements, chart) => {
+                    if (elements.length > 0) {
+                        const clickedLabel = chart.data.labels[elements[0].index];
+                        window.location.hash = 'filter-role-' + clickedLabel.toLowerCase().replace(/\s+/g, '-');
+                    }
+                },
+                onHover: (event, elements) => {
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                }
+            },
+            plugins: [createPieOverlayPlugin()]
+        });
+    }
 
     function createDonutChart(ctxId, rosterToCount, isRawMode) {
         const counts = {};
