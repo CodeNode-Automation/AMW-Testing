@@ -2412,20 +2412,22 @@ window.addEventListener('DOMContentLoaded', async () => {
     // --- DYNAMIC HIT COUNTER (TICKER) ---
     const hitContainer = document.getElementById('dynamic-hit-counter');
     if (hitContainer) {
-        // Build the base path based on where the code is currently running
-        let hostPath = window.location.hostname + window.location.pathname;
+        // Use .origin instead of .hostname to ensure 'https://' is included!
+        let hostPath = window.location.origin + window.location.pathname;
         
-        // FIX: When testing locally (file:// or localhost), hostname is empty. 
-        // This fallback prevents SeeYouFarm from returning a broken image!
+        // Fallback for local testing
         if (!window.location.hostname || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            hostPath = 'codenode-automation.github.io/AMW-Testing'; 
+            hostPath = 'https://codenode-automation.github.io/AMW-Testing'; 
         }
         
-        // Strip trailing slash so 'domain.com/path' and 'domain.com/path/' share the exact same hit count
+        // Strip trailing slash for consistency
         hostPath = hostPath.replace(/\/$/, "");
-
         const siteUrl = encodeURIComponent(hostPath);
-        const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITS+(TODAY+/+TOTAL)&edge_flat=true`;
+        
+        // Safely encode the title to prevent API syntax errors with parentheses/slashes
+        const badgeTitle = encodeURIComponent("VISITS (TODAY / TOTAL)");
+        
+        const badgeUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${siteUrl}&count_bg=%23FFD100&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=${badgeTitle}&edge_flat=true`;
         
         hitContainer.innerHTML = `<a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer"><img src="${badgeUrl}" alt="Hits Tracker" style="border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);"/></a>`;
     }
