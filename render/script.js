@@ -930,11 +930,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             const nameA = (profA.name || '').toLowerCase();
             const nameB = (profB.name || '').toLowerCase();
 
-            // Override sorting for War Effort XP
+            // Override sorting for War Effort XP & Zenith
             if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
                 valA = window.warEffortContext[nameA] || 0;
                 valB = window.warEffortContext[nameB] || 0;
                 return valB - valA; // High to Low Contributions
+            } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
+                valA = window.warEffortContextRaw[nameA] || 0;
+                valB = window.warEffortContextRaw[nameB] || 0;
+                return valB - valA; // Newest first (highest timestamp)
             }
 
             if (currentSortMethod === 'ilvl') {
@@ -986,7 +990,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let displaySpecClass = '';
             let statValue = '???';
             let statColor = 'color:#666;';
-            let trendHTML = ''; // <-- NEW: Trend Variable
+            let trendHTML = '';
 
             // 3. Populate Variables
             if (deepChar && deepChar.profile) {
@@ -1008,7 +1012,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
                 statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
 
-                // NEW: Calculate Trend based on the current ladder view
+                // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
                     if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▲ ${trend}</span>`;
@@ -1026,8 +1030,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Inject Podium Classes & Rank Number if we are on a Ladder View
-            const hash = window.location.hash.substring(1);
-            const isLadderView = hash === 'ladder-pve' || hash === 'ladder-pvp';
+            const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
             let podiumClass = '';
             let rankHtml = '';
             
@@ -1044,10 +1047,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
+            let cStatsStyleOverride = 'flex:1; justify-content:flex-end;';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars, allow vertical expansion for mass loot
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: flex-start; padding: 12px 15px;';
+                // Stretch the character bars, allow vertical expansion
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: center; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -1057,11 +1061,15 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (hashUrl === 'war-effort-xp') {
                             statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000; align-self: center;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
-                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
+                            // Turn the container into a column so loot drops neatly underneath the character header
+                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; flex-direction: column; align-items: flex-start; padding: 12px 15px; gap: 8px;';
+                            cStatsStyleOverride = 'width: 100%; justify-content: flex-start;';
+
+                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; text-align:right; width: 100%;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase; border-bottom: 1px dashed #333; padding-bottom: 4px;">Epic Loot Acquired</span>
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2; margin-top: 4px;">
+                                <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; margin-top: 4px;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase; display:block; margin-bottom: 8px;">Epic Loot Acquired:</span>
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
                                         ${itemBadges}
                                     </div>
                                 </div>
@@ -1083,12 +1091,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     ${rankHtml}
-                    <div class="c-main-info" style="align-self: center;">
+                    <div class="c-main-info" style="align-self: flex-start;">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
                     </div>
-                    <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                    <div class="c-stats-info" style="${cStatsStyleOverride}">
                         ${statsHtml}
                     </div>
                 </div>`;
@@ -1097,12 +1105,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 ${rankHtml}
-                <div class="c-main-info" style="align-self: center;">
+                <div class="c-main-info" style="align-self: flex-start;">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                <div class="c-stats-info" style="${cStatsStyleOverride}">
                     ${statsHtml}
                 </div>
             </a>`;
@@ -2066,6 +2074,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let filteredRoster = [];
             let title = "";
             window.warEffortContext = {}; // Initialize custom display context
+            window.warEffortContextRaw = {}; // Initialize raw values for sorting
 
             if (type === 'hk') {
                 filteredRoster = rosterData.filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0);
@@ -2101,6 +2110,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const HH = String(dateObj.getHours()).padStart(2, '0');
                                 const MM = String(dateObj.getMinutes()).padStart(2, '0');
                                 window.warEffortContext[cName] = `${dd}.${mm}.${yyyy} ${HH}:${MM}`;
+                                window.warEffortContextRaw[cName] = dateObj.getTime(); // Store the raw timestamp for perfect sorting!
                             }
                         }
                     });
