@@ -1454,9 +1454,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         if(window.roleChartInstance) window.roleChartInstance.destroy();
         window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
 
-        if (mainDonutChartInstance) mainDonutChartInstance.destroy();
-        mainDonutChartInstance = createDonutChart('classDonutChart', rawGuildRoster, true);
-
         // --- LEVEL DISTRIBUTION ---
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
         const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
