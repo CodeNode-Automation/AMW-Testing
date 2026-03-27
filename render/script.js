@@ -1047,11 +1047,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
+            let innerWrapperStyle = 'display: flex; align-items: center; width: 100%;';
             let cStatsStyleOverride = 'display:flex; align-items:center; justify-content:flex-end; flex:1;';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars and allow them to wrap content
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; flex-wrap: wrap; align-items: center; padding: 12px 15px;';
+                // By default, stretch the bars
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -1061,16 +1062,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (hashUrl === 'war-effort-xp') {
                             statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
-                            // Force the stats container to a new line taking 100% width
-                            cStatsStyleOverride = 'display:flex; align-items:center; width: 100%; flex-basis: 100%; justify-content: flex-start; margin-top: 12px;';
-                            
-                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
+                            // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
+                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 15px; flex-direction: column; align-items: flex-start; height: auto;';
+                            innerWrapperStyle = 'display: flex; align-items: center; width: 100%; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;';
+                            cStatsStyleOverride = 'display:flex; width: 100%; flex-direction: column; align-items: flex-start;';
+
+                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase; display:block; margin-bottom: 8px;">Epic Loot Acquired:</span>
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
-                                        ${itemBadges}
-                                    </div>
+                                <span style="color:#888; font-size:11px; text-transform:uppercase; margin-bottom: 8px;">Epic Loot Acquired:</span>
+                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
+                                    ${itemBadges}
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
@@ -1089,33 +1090,35 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!isClickable) {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
-                    <div style="display: flex; align-items: center;">
-                        ${rankHtml}
-                        <div class="c-main-info">
-                            <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                            <span class="c-name" style="color:${cHex};">${displayName}</span>
-                            <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                    <div style="${innerWrapperStyle}">
+                        <div style="display: flex; align-items: center;">
+                            ${rankHtml}
+                            <div class="c-main-info">
+                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                                <span class="c-name" style="color:${cHex};">${displayName}</span>
+                                <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                            </div>
                         </div>
+                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
                     </div>
-                    <div class="c-stats-info" style="${cStatsStyleOverride}">
-                        ${statsHtml}
-                    </div>
+                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
                 </div>`;
             }
 
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
-                <div style="display: flex; align-items: center;">
-                    ${rankHtml}
-                    <div class="c-main-info">
-                        <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                        <span class="c-name" style="color:${cHex};">${displayName}</span>
-                        <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                <div style="${innerWrapperStyle}">
+                    <div style="display: flex; align-items: center;">
+                        ${rankHtml}
+                        <div class="c-main-info">
+                            <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                            <span class="c-name" style="color:${cHex};">${displayName}</span>
+                            <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                        </div>
                     </div>
+                    ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
                 </div>
-                <div class="c-stats-info" style="${cStatsStyleOverride}">
-                    ${statsHtml}
-                </div>
+                ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
             </a>`;
         }).join('');
         
