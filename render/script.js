@@ -672,7 +672,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
     <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
-        <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
+        <h2 class="cc-name" style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
         <div style="display:flex; justify-content:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ffd100; padding:5px 14px; border-radius:20px; font-size:14px; color:#ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:14px; color:#ddd;">Level ${p.level || 0}</span>
@@ -691,9 +691,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
     
-    <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
-        <div style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
-            <div style="text-align:center;">
+    <div class="cc-body" style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+        <div class="cc-sidebar" style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
+            <div class="cc-portrait" style="text-align:center;">
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
