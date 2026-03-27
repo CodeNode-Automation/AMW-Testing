@@ -295,42 +295,28 @@ async def main_async():
         print("💾 Compiling Batch Payload for Turso...")
         batch_stmts = []
         
-        # Create a lookup for original character rows to prevent redundant writes
-        orig_chars = {r['name']: r for r in char_rows}
-
         for char_name, data in history_data.items():
-            orig = orig_chars.get(char_name, {})
-            
-            # Only write to characters table if stats actually changed or it is a new character
-            if (orig.get('equipped_item_level') != data.get('equipped_item_level') or 
-                orig.get('last_login_ms') != data.get('last_login_ms') or 
-                orig.get('honorable_kills') != data.get('honorable_kills') or
-                orig.get('active_spec') != data.get('active_spec') or
-                not orig):
-                
-                batch_stmts.append({
-                    "q": """
-                        INSERT OR REPLACE INTO characters 
-                        (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    "params": [
-                        char_name, 
-                        data.get('level', 0),
-                        data.get('class'),
-                        data.get('race'),
-                        data.get('faction'),
-                        data.get('equipped_item_level'),
-                        data.get('last_login_ms'),
-                        data.get('portrait_url'),
-                        data.get('active_spec'),
-                        data.get('honorable_kills')
-                    ]
-                })
-                
-            # Only write gear if it is explicitly marked as new or changed
+            batch_stmts.append({
+                "q": """
+                    INSERT OR REPLACE INTO characters 
+                    (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                "params": [
+                    char_name, 
+                    data.get('level', 0),
+                    data.get('class'),
+                    data.get('race'),
+                    data.get('faction'),
+                    data.get('equipped_item_level'),
+                    data.get('last_login_ms'),
+                    data.get('portrait_url'),
+                    data.get('active_spec'),
+                    data.get('honorable_kills')
+                ]
+            })
             for slot, item in data.items():
-                if isinstance(item, dict) and 'item_id' in item and item.get('is_new'):
+                if isinstance(item, dict) and 'item_id' in item:
                     batch_stmts.append({
                         "q": "INSERT OR REPLACE INTO gear (character_name, slot, item_id, name, quality, icon_data, tooltip_params) VALUES (?, ?, ?, ?, ?, ?, ?)",
                         "params": [char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon_data'), item.get('tooltip_params')]
@@ -358,13 +344,7 @@ async def main_async():
 
         for row in char_history_inserts:
             batch_stmts.append({
-                "q": """
-                    INSERT INTO char_history (char_name, record_date, ilvl, hks) 
-                    VALUES (?, ?, ?, ?) 
-                    ON CONFLICT(char_name, record_date) 
-                    DO UPDATE SET ilvl=excluded.ilvl, hks=excluded.hks 
-                    WHERE char_history.ilvl != excluded.ilvl OR char_history.hks != excluded.hks
-                """,
+                "q": "INSERT OR REPLACE INTO char_history (char_name, record_date, ilvl, hks) VALUES (?, ?, ?, ?)",
                 "params": list(row)
             })
             
