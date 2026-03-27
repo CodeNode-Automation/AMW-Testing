@@ -930,15 +930,25 @@ window.addEventListener('DOMContentLoaded', async () => {
             const nameA = (profA.name || '').toLowerCase();
             const nameB = (profB.name || '').toLowerCase();
 
-            // Override sorting for War Effort XP & Zenith
-            if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
-                valA = window.warEffortContext[nameA] || 0;
-                valB = window.warEffortContext[nameB] || 0;
-                return valB - valA; // High to Low Contributions
-            } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
-                valA = window.warEffortContextRaw[nameA] || 0;
-                valB = window.warEffortContextRaw[nameB] || 0;
-                return valB - valA; // Newest first (highest timestamp)
+            // Override sorting for ALL War Effort challenges
+            if (hashUrl.startsWith('war-effort-')) {
+                if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] || 0;
+                    valB = window.warEffortContext[nameB] || 0;
+                    return valB - valA; // High to Low Contributions
+                } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
+                    valA = window.warEffortContextRaw[nameA] || 0;
+                    valB = window.warEffortContextRaw[nameB] || 0;
+                    return valB - valA; // Newest first (highest timestamp)
+                } else if (hashUrl === 'war-effort-loot' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] ? window.warEffortContext[nameA].length : 0;
+                    valB = window.warEffortContext[nameB] ? window.warEffortContext[nameB].length : 0;
+                    return valB - valA; // High to Low Contributions (Array length)
+                } else if (hashUrl === 'war-effort-hk') {
+                    valA = profA.trend_pvp || profA.trend_hks || 0;
+                    valB = profB.trend_pvp || profB.trend_hks || 0;
+                    return valB - valA; // High to Low Contributions
+                }
             }
 
             if (currentSortMethod === 'ilvl') {
@@ -959,9 +969,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             return 0;
         });
 
-        // Add Sorting Dropdown UI to the top of the list (Hide for specific War Effort pages)
+        // Add Sorting Dropdown UI to the top of the list (Hide for ALL specific War Effort pages)
         let sortUI = '';
-        if (hashUrl !== 'war-effort-xp' && hashUrl !== 'war-effort-loot' && hashUrl !== 'war-effort-zenith') {
+        if (!hashUrl.startsWith('war-effort-')) {
             sortUI = `
                 <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
                     <span style="color: #888; font-size: 14px;">Sort By:</span>
@@ -1054,7 +1064,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // By default, stretch the bars
                 barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px;';
                 
-                if (window.warEffortContext) {
+                if (hashUrl === 'war-effort-hk') {
+                    const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+                    statsHtml = `<span style="color:#ff4400; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                } else if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
                     const contextData = window.warEffortContext[charKey];
                     
@@ -2521,6 +2534,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyTimelineFilters(); 
             if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar(); 
             
+            route();
+            
         } catch (error) {
             console.error("Failed to load timeline data:", error);
         }
@@ -3119,6 +3134,5 @@ window.addEventListener('DOMContentLoaded', async () => {
         bindTooltip('guild-zenith-tooltip-trigger', zenithContributors, "The Zenith Cohort", "Max Levels");
     };
 
-    route();
     window.addEventListener('hashchange', route);
 });
