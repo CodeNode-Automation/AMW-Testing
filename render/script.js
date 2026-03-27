@@ -1046,8 +1046,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             let barStyleOverride = '';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars to fill the screen
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px;';
+                // Stretch the character bars, allow vertical expansion for mass loot
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: flex-start; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -1055,21 +1055,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:16px;">+${contextData} Levels Contributed</span>`;
+                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000; align-self: center;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
+                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Epic Loot Acquired:</span>
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:13px; line-height:1.4;">
-                                        ${contextData.join(', ')}
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; text-align:right; width: 100%;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase; border-bottom: 1px dashed #333; padding-bottom: 4px;">Epic Loot Acquired</span>
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2; margin-top: 4px;">
+                                        ${itemBadges}
                                     </div>
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center; height: 100%;">
                                     <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
-                                    <span style="color:#3FC7EB; font-weight:bold; font-size:15px;">${contextData}</span>
+                                    <span style="color:#3FC7EB; font-weight:bold; font-size:16px; text-shadow: 1px 1px 2px #000; margin-top: 4px;">${contextData}</span>
                                 </div>
                             `;
                         }
@@ -1082,7 +1083,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     ${rankHtml}
-                    <div class="c-main-info">
+                    <div class="c-main-info" style="align-self: center;">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
@@ -1096,7 +1097,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 ${rankHtml}
-                <div class="c-main-info">
+                <div class="c-main-info" style="align-self: center;">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
@@ -1782,19 +1783,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        if (showBadges) renderDynamicBadges(characters, isRawRoster);
-        else {
+        const hash = window.location.hash.substring(1);
+        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
+
+        if (showBadges) {
+            renderDynamicBadges(characters, isRawRoster);
+            document.getElementById('concise-left-col').style.display = 'flex';
+        } else {
             document.getElementById('concise-class-badges').style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
+            
+            // Fix: Completely collapse the left column if no charts and no badges are needed
+            if (!chartViews.includes(hash)) {
+                document.getElementById('concise-left-col').style.display = 'none';
+            } else {
+                document.getElementById('concise-left-col').style.display = 'flex';
+            }
         }
 
        // Draw the dynamic charts & KPIs
-        const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
-        
-        // Expanded array of views that get charts
-        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
 
         if (chartViews.includes(hash)) {
             if (donutContainer) {
