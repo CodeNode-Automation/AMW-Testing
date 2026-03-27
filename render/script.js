@@ -2737,13 +2737,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     // ==========================================
-    // WEEKLY GUILD XP BAR LOGIC
+    // WEEKLY GUILD WAR EFFORT LOGIC
     // ==========================================
     window.renderGuildXPBar = function() {
         const xpContainer = document.getElementById('guild-xp-container');
         if (!xpContainer || !timelineData || timelineData.length === 0) return;
 
-        // 1. Calculate exactly when the last Tuesday reset occurred in Berlin time
+        // 1. Calculate the Berlin Time Reset Anchor
         const realNow = new Date();
         const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
         const berlinNow = new Date(berlinString);
@@ -2755,10 +2755,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         lastReset.setDate(lastReset.getDate() - diff);
         const lastResetMs = lastReset.getTime();
 
+        // 2. Tally Leveling Effort (From Timeline)
         let totalLevels = 0;
-        const contributors = {};
-
-        // 2. Tally up all 'level_up' events since the reset
+        const levelContributors = {};
         timelineData.forEach(event => {
             if (event.type === 'level_up') {
                 let cleanTs = event.timestamp.replace('Z', '+00:00');
@@ -2768,80 +2767,102 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (eventDate >= lastResetMs) {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
-                    contributors[charName] = (contributors[charName] || 0) + 1;
+                    levelContributors[charName] = (levelContributors[charName] || 0) + 1;
                 }
             }
         });
 
-        // 3. Update the visual bar
-        const maxLevels = 1000;
-        const pct = Math.min((totalLevels / maxLevels) * 100, 100);
-        
-        // Inject dynamic CSS animations for the pulse effects
-        if (!document.getElementById('xp-pulse-styles')) {
+        // 3. Tally PvP Effort (From 7-Day Roster Trends)
+        let totalHks = 0;
+        const hkContributors = {};
+        rosterData.forEach(c => {
+            if (c.profile) {
+                const trend = c.profile.trend_pvp || c.profile.trend_hks || 0;
+                if (trend > 0) {
+                    totalHks += trend;
+                    const charName = c.profile.name || 'Unknown';
+                    hkContributors[charName] = trend;
+                }
+            }
+        });
+
+        // 4. Inject Dynamic Animations for BOTH Bars
+        if (!document.getElementById('war-effort-styles')) {
             const style = document.createElement('style');
-            style.id = 'xp-pulse-styles';
+            style.id = 'war-effort-styles';
             style.innerHTML = `
-                @keyframes pulseSlow { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFast { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMax { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #ff8000; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ffd100; } }
+                @keyframes pulseSlowXP { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFastXP { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMaxXP { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #ff8000; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ffd100; } }
+                
+                @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
             `;
             document.head.appendChild(style);
         }
 
-        const fillEl = document.getElementById('guild-xp-fill');
-        if (fillEl) {
-            setTimeout(() => { 
-                fillEl.style.width = pct + '%'; 
-                
-                // Enhance the glow radius mathematically based on percentage
-                const dynamicGlow = 10 + (pct * 0.25);
-                
-                // Shift colors and pulse speed based on progress
+        // 5. Render the Bars
+        function renderBar(fillId, textId, currentVal, maxVal, type) {
+            const pct = Math.min((currentVal / maxVal) * 100, 100);
+            const fillEl = document.getElementById(fillId);
+            const textEl = document.getElementById(textId);
+            const dynamicGlow = 10 + (pct * 0.25);
+            
+            const isXP = (type === 'XP');
+            const colorBase = isXP ? '#8B6508' : '#8B0000';
+            const colorMid = isXP ? '#ffd100' : '#e74c3c';
+            const colorMax = isXP ? '#ff8000' : '#ff4400';
+            const labelName = isXP ? 'Levels' : 'HKs';
+
+            if (fillEl) {
+                setTimeout(() => { 
+                    fillEl.style.width = pct + '%'; 
+                    if (pct >= 100) {
+                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${isXP ? '#ffd100' : '#ff0000'})`;
+                        fillEl.style.boxShadow = `0 0 40px ${colorMax}`;
+                        fillEl.style.animation = `pulseMax${type} 0.5s infinite alternate`;
+                    } else if (pct >= 75) {
+                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMax})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMax}`;
+                        fillEl.style.animation = `pulseFast${type} 0.8s infinite alternate`;
+                    } else if (pct >= 30) {
+                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMid})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMid}`;
+                        fillEl.style.animation = `pulseSlow${type} 1.5s infinite alternate`;
+                    } else {
+                        fillEl.style.background = `linear-gradient(90deg, #333, ${colorBase})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 255, 255, 0.2)`;
+                        fillEl.style.animation = 'none';
+                    }
+                }, 100);
+            }
+            
+            if (textEl) {
                 if (pct >= 100) {
-                    fillEl.style.background = 'linear-gradient(90deg, #ff4400, #ff8000, #ffd100)';
-                    fillEl.style.boxShadow = `0 0 40px rgba(255, 128, 0, 1)`;
-                    fillEl.style.animation = 'pulseMax 0.5s infinite alternate';
-                } else if (pct >= 75) {
-                    fillEl.style.background = 'linear-gradient(90deg, #8B6508, #ff8000)';
-                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 128, 0, 0.8)`;
-                    fillEl.style.animation = 'pulseFast 0.8s infinite alternate';
-                } else if (pct >= 30) {
-                    fillEl.style.background = 'linear-gradient(90deg, #8B6508, #ffd100)';
-                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 209, 0, 0.6)`;
-                    fillEl.style.animation = 'pulseSlow 1.5s infinite alternate';
+                    textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
+                    textEl.style.color = isXP ? '#ffd100' : '#ff4400';
+                    textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
                 } else {
-                    fillEl.style.background = 'linear-gradient(90deg, #554400, #8B6508)';
-                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 209, 0, 0.4)`;
-                    fillEl.style.animation = 'none';
+                    textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
                 }
-            }, 100);
-        }
-        
-        const textEl = document.getElementById('guild-xp-text');
-        if (textEl) {
-            if (pct >= 100) {
-                textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} ➔ WAR EFFORT COMPLETE!`;
-                textEl.style.color = '#ffd100';
-                textEl.style.textShadow = '0 0 10px #ff8000, 1px 1px 2px #000';
-            } else {
-                textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} Levels Gained`;
-                textEl.style.color = '#fff';
-                textEl.style.textShadow = '1px 1px 2px #000, -1px -1px 2px #000';
             }
         }
 
-        // 4. Construct the Tooltip
-        const tooltipTrigger = document.getElementById('guild-xp-tooltip-trigger');
-        if (tooltipTrigger) {
-            const sortedContributors = Object.entries(contributors).sort((a, b) => b[1] - a[1]);
+        renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
+        renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
+
+        // 6. Tooltip Generator Helper
+        function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
+            const tooltipTrigger = document.getElementById(triggerId);
+            if (!tooltipTrigger) return;
             
-            let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">This Week's Heroes</div>`;
+            const sortedContributors = Object.entries(contributorsDict).sort((a, b) => b[1] - a[1]);
+            let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">${titleText}</div>`;
             
             if (sortedContributors.length === 0) {
                 tooltipHtml += `<div style="color:#aaa; font-style:italic;">The war effort just began!</div>`;
             } else {
-                // Show top 15 contributors
                 const topList = sortedContributors.slice(0, 15);
                 topList.forEach(([name, count], index) => {
                     const charData = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === name.toLowerCase());
@@ -2850,63 +2871,50 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
                     
                     tooltipHtml += `
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size:13px; gap: 25px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size:13px; gap: 35px;">
                         <span style="color:${cHex};">${index + 1}. ${formattedName}</span>
-                        <span style="color:#fff; font-weight:bold;">+${count}</span>
+                        <span style="color:#fff; font-weight:bold;">+${count.toLocaleString()}</span>
                     </div>`;
                 });
                 
-                // Summarize the rest
                 if (sortedContributors.length > 15) {
                     const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
-                    tooltipHtml += `<div style="color:#888; font-style:italic; font-size:11px; text-align:right; margin-top:6px; border-top:1px dashed #444; padding-top:4px;">...and +${remaining} more levels from the guild!</div>`;
+                    tooltipHtml += `<div style="color:#888; font-style:italic; font-size:11px; text-align:right; margin-top:6px; border-top:1px dashed #444; padding-top:4px;">...and +${remaining.toLocaleString()} more ${labelText}!</div>`;
                 }
             }
 
-            // Strip old listeners safely before binding new ones
             const newTrigger = tooltipTrigger.cloneNode(true);
             tooltipTrigger.parentNode.replaceChild(newTrigger, tooltipTrigger);
             
             function displayTooltip(clientX, clientY) {
                 tooltip.innerHTML = tooltipHtml;
                 tooltip.style.borderLeftColor = '#ffd100';
-                
                 let x = clientX + 15;
                 let y = clientY + 15;
-                // Extra padding safety for smaller mobile screens
                 if (x + 250 > window.innerWidth) x = window.innerWidth - 260; 
-                
                 tooltip.style.left = `${x}px`; 
                 tooltip.style.top = `${y}px`;
                 tooltip.classList.add('visible');
             }
 
-            // 1. Desktop Hover Support
-            newTrigger.addEventListener('mousemove', e => {
-                displayTooltip(e.clientX, e.clientY);
-            });
-            newTrigger.addEventListener('mouseleave', () => {
-                tooltip.classList.remove('visible');
-            });
-
-            // 2. Mobile Tap Support
+            newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
+            newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
             newTrigger.addEventListener('click', e => {
-                e.stopPropagation(); // Prevent the document click from instantly closing it
-                if (tooltip.classList.contains('visible')) {
-                    tooltip.classList.remove('visible');
-                } else {
-                    // Shift the tooltip slightly up on mobile so their finger doesn't block it
-                    displayTooltip(e.clientX, e.clientY - 40); 
-                }
-            });
-
-            // 3. Mobile Close-on-Tap-Away Support
-            document.addEventListener('click', e => {
-                if (tooltip.classList.contains('visible') && !newTrigger.contains(e.target)) {
-                    tooltip.classList.remove('visible');
-                }
+                e.stopPropagation();
+                if (tooltip.classList.contains('visible')) tooltip.classList.remove('visible');
+                else displayTooltip(e.clientX, e.clientY - 40);
             });
         }
+
+        bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
+        bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
+
+        // 7. Global click listener to close tooltips on mobile
+        document.addEventListener('click', e => {
+            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger')) {
+                tooltip.classList.remove('visible');
+            }
+        });
     };
 
     route();
