@@ -1989,7 +1989,53 @@ window.addEventListener('DOMContentLoaded', async () => {
             showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
+        } else if (hash.startsWith('war-effort-')) {
+            const type = hash.replace('war-effort-', '');
+            
+            const realNow = new Date();
+            const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
+            const berlinNow = new Date(berlinString);
+            const lastReset = new Date(berlinNow);
+            lastReset.setHours(0, 0, 0, 0);
+            let day = lastReset.getDay();
+            let diff = (day >= 2) ? (day - 2) : (day + 5); 
+            lastReset.setDate(lastReset.getDate() - diff);
+            const lastResetMs = lastReset.getTime();
+
+            let filteredRoster = [];
+            let title = "";
+
+            if (type === 'hk') {
+                filteredRoster = rosterData.filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0);
+                title = `🩸 Blood of the Enemy Contributors (${filteredRoster.length})`;
+                showConciseView(title, filteredRoster, false, true, 'hks');
+            } else {
+                const contributors = new Set();
+                if (typeof timelineData !== 'undefined') {
+                    timelineData.forEach(e => {
+                        let cleanTs = (e.timestamp || '').replace('Z', '+00:00');
+                        if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                        const eventDate = new Date(cleanTs).getTime();
+                        if (eventDate >= lastResetMs) {
+                            if (type === 'xp' && e.type === 'level_up') contributors.add((e.character_name || '').toLowerCase());
+                            if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) contributors.add((e.character_name || '').toLowerCase());
+                            if (type === 'zenith' && e.type === 'level_up' && e.level === 70) contributors.add((e.character_name || '').toLowerCase());
+                        }
+                    });
+                }
+                filteredRoster = rosterData.filter(c => c.profile && c.profile.name && contributors.has(c.profile.name.toLowerCase()));
+                
+                if (type === 'xp') title = `🛡️ Hero's Journey Contributors (${filteredRoster.length})`;
+                if (type === 'loot') title = `🐉 Dragon's Hoard Contributors (${filteredRoster.length})`;
+                if (type === 'zenith') title = `⚡ The Zenith Cohort (${filteredRoster.length})`;
+                
+                let sortPref = type === 'loot' ? 'ilvl' : 'level';
+                showConciseView(title, filteredRoster, false, true, sortPref);
+            }
+            updateDropdownLabel('all');
+            
         } else {
+            // Final fallback: Look for a specific character
             // Final fallback: Look for a specific character
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
             if (char) {
@@ -2750,9 +2796,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         lastReset.setDate(lastReset.getDate() - diff);
         const lastResetMs = lastReset.getTime();
 
-        // 2. Tally Leveling Effort (From Timeline)
+        // 2. Tally Leveling Effort & Zenith (From Timeline)
         let totalLevels = 0;
+        let totalZenith = 0;
         const levelContributors = {};
+        const zenithContributors = {};
+        
         timelineData.forEach(event => {
             if (event.type === 'level_up') {
                 let cleanTs = event.timestamp.replace('Z', '+00:00');
@@ -2763,6 +2812,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
                     levelContributors[charName] = (levelContributors[charName] || 0) + 1;
+                    
+                    if (event.level === 70) {
+                        totalZenith++;
+                        zenithContributors[charName] = (zenithContributors[charName] || 0) + 1;
+                    }
                 }
             }
         });
@@ -2832,6 +2886,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 @keyframes pulseSlowLOOT { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastLOOT { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxLOOT { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #a335ee; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff8000; } }
+
+                @keyframes pulseSlowZENITH { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFastZENITH { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMaxZENITH { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #3FC7EB; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #00e5ff; } }
             `;
             document.head.appendChild(style);
         }
@@ -2848,8 +2906,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels'; glowColor = '#ffd100';
             } else if (type === 'HK') {
                 colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs'; glowColor = '#ff0000';
-            } else { // LOOT
+            } else if (type === 'LOOT') {
                 colorBase = '#4b0082'; colorMid = '#a335ee'; colorMax = '#ff8000'; labelName = 'Epics'; glowColor = '#ff8000';
+            } else { // ZENITH
+                colorBase = '#006064'; colorMid = '#3FC7EB'; colorMax = '#00e5ff'; labelName = 'Max Levels'; glowColor = '#00e5ff';
             }
 
             if (fillEl) {
@@ -2889,6 +2949,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
+        renderBar('guild-zenith-fill', 'guild-zenith-text', totalZenith, 10, 'ZENITH');
 
         // 6. Tooltip Generator Helper (Updated to Route on Click)
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
@@ -2943,23 +3004,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 e.stopPropagation();
                 tooltip.classList.remove('visible');
                 
-                if (triggerId === 'guild-xp-tooltip-trigger') {
-                    const btn = document.querySelector('.tl-btn[data-type="level_up"]');
-                    if (btn) btn.click();
-                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
-                } else if (triggerId === 'guild-hk-tooltip-trigger') {
-                    window.location.hash = 'ladder-pvp';
-                } else if (triggerId === 'guild-loot-tooltip-trigger') {
-                    const btn = document.querySelector('.tl-btn[data-type="epic"]');
-                    if (btn) btn.click();
-                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
-                }
+                if (triggerId === 'guild-xp-tooltip-trigger') window.location.hash = 'war-effort-xp';
+                else if (triggerId === 'guild-hk-tooltip-trigger') window.location.hash = 'war-effort-hk';
+                else if (triggerId === 'guild-loot-tooltip-trigger') window.location.hash = 'war-effort-loot';
+                else if (triggerId === 'guild-zenith-tooltip-trigger') window.location.hash = 'war-effort-zenith';
             });
         }
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
         bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Treasure Hunters", "Epics");
+        bindTooltip('guild-zenith-tooltip-trigger', zenithContributors, "The Zenith Cohort", "Max Levels");
     };
 
     route();
