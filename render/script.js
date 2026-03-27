@@ -2165,10 +2165,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Setup clickable stat boxes
-    document.getElementById('stat-total').addEventListener('click', () => { window.location.hash = 'total'; });
-    document.getElementById('stat-active').addEventListener('click', () => { window.location.hash = 'active'; });
-    document.getElementById('stat-raidready').addEventListener('click', () => { window.location.hash = 'raidready'; });
+    // Setup clickable stat boxes safely
+    const statTotal = document.getElementById('stat-total');
+    if (statTotal) statTotal.addEventListener('click', () => { window.location.hash = 'total'; });
+
+    const statActive = document.getElementById('stat-active');
+    if (statActive) statActive.addEventListener('click', () => { window.location.hash = 'active'; });
+
+    const statRaidReady = document.getElementById('stat-raidready');
+    if (statRaidReady) statRaidReady.addEventListener('click', () => { window.location.hash = 'raidready'; });
 
     // 🔥 RESTORED: Dynamic Home Page Class Pop-outs
     document.querySelectorAll('.clickable-class').forEach(badge => {
