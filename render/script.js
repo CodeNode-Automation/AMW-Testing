@@ -1256,6 +1256,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+        const xpCont = document.getElementById('guild-xp-container');
+        if (xpCont) xpCont.style.display = 'none';
+
         // Reset the Dropdown UI to "All Available"
         const dateSelect = document.getElementById('tl-date-filter');
         if (dateSelect) {
@@ -1630,6 +1633,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
         
         updateDropdownLabel('all');
+
+        const xpCont = document.getElementById('guild-xp-container');
+        if (xpCont) xpCont.style.display = 'block';
+        if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
 
         // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -2364,6 +2371,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             
             applyTimelineFilters(); 
+            if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar(); 
+            
         } catch (error) {
             console.error("Failed to load timeline data:", error);
         }
@@ -2727,6 +2736,111 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
+    // ==========================================
+    // WEEKLY GUILD XP BAR LOGIC
+    // ==========================================
+    window.renderGuildXPBar = function() {
+        const xpContainer = document.getElementById('guild-xp-container');
+        if (!xpContainer || !timelineData || timelineData.length === 0) return;
+
+        // 1. Calculate exactly when the last Tuesday reset occurred in Berlin time
+        const realNow = new Date();
+        const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
+        const berlinNow = new Date(berlinString);
+        
+        const lastReset = new Date(berlinNow);
+        lastReset.setHours(0, 0, 0, 0);
+        let day = lastReset.getDay();
+        let diff = (day >= 2) ? (day - 2) : (day + 5); 
+        lastReset.setDate(lastReset.getDate() - diff);
+        const lastResetMs = lastReset.getTime();
+
+        let totalLevels = 0;
+        const contributors = {};
+
+        // 2. Tally up all 'level_up' events since the reset
+        timelineData.forEach(event => {
+            if (event.type === 'level_up') {
+                let cleanTs = event.timestamp.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                
+                if (eventDate >= lastResetMs) {
+                    totalLevels++;
+                    const charName = event.character_name || 'Unknown';
+                    contributors[charName] = (contributors[charName] || 0) + 1;
+                }
+            }
+        });
+
+        // 3. Update the visual bar
+        const maxLevels = 1000;
+        const pct = Math.min((totalLevels / maxLevels) * 100, 100);
+        
+        const fillEl = document.getElementById('guild-xp-fill');
+        if (fillEl) {
+            setTimeout(() => { fillEl.style.width = pct + '%'; }, 100); // Trigger animation
+        }
+        
+        const textEl = document.getElementById('guild-xp-text');
+        if (textEl) {
+            textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} Levels Gained`;
+        }
+
+        // 4. Construct the Tooltip
+        const tooltipTrigger = document.getElementById('guild-xp-tooltip-trigger');
+        if (tooltipTrigger) {
+            const sortedContributors = Object.entries(contributors).sort((a, b) => b[1] - a[1]);
+            
+            let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">This Week's Heroes</div>`;
+            
+            if (sortedContributors.length === 0) {
+                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The war effort just began!</div>`;
+            } else {
+                // Show top 15 contributors
+                const topList = sortedContributors.slice(0, 15);
+                topList.forEach(([name, count], index) => {
+                    const charData = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === name.toLowerCase());
+                    const cClass = charData ? getCharClass(charData) : 'Unknown';
+                    const cHex = CLASS_COLORS[cClass] || '#fff';
+                    const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                    
+                    tooltipHtml += `
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size:13px; gap: 25px;">
+                        <span style="color:${cHex};">${index + 1}. ${formattedName}</span>
+                        <span style="color:#fff; font-weight:bold;">+${count}</span>
+                    </div>`;
+                });
+                
+                // Summarize the rest
+                if (sortedContributors.length > 15) {
+                    const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
+                    tooltipHtml += `<div style="color:#888; font-style:italic; font-size:11px; text-align:right; margin-top:6px; border-top:1px dashed #444; padding-top:4px;">...and +${remaining} more levels from the guild!</div>`;
+                }
+            }
+
+            // Strip old listeners safely before binding new ones
+            const newTrigger = tooltipTrigger.cloneNode(true);
+            tooltipTrigger.parentNode.replaceChild(newTrigger, tooltipTrigger);
+            
+            newTrigger.addEventListener('mousemove', e => {
+                tooltip.innerHTML = tooltipHtml;
+                tooltip.style.borderLeftColor = '#ffd100';
+                
+                let x = e.clientX + 15;
+                let y = e.clientY + 15;
+                if (x + 200 > window.innerWidth) x = window.innerWidth - 210;
+                
+                tooltip.style.left = `${x}px`; 
+                tooltip.style.top = `${y}px`;
+                tooltip.classList.add('visible');
+            });
+            newTrigger.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+        }
+    };
+    
     route();
     window.addEventListener('hashchange', route);
 });
