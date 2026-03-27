@@ -1630,13 +1630,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
-        if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
+        if (timeline) { 
+            timeline.style.display = 'block'; 
+            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
+            window.currentFilteredChars = null; 
+            applyTimelineFilters(); 
+        }
         
         updateDropdownLabel('all');
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.style.display = 'block';
-        if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
 
         // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
