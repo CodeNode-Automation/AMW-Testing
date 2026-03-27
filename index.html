@@ -842,7 +842,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable sparkline-box" title="Click to view characters active within 14 days" style="border-bottom-color: #2ecc71;">
                         <canvas id="spark-active" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">393 <span id="trend-active" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">394 <span id="trend-active" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
@@ -1203,10 +1203,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T11:14:09.579313Z", "active_14_days": 393, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T11:25:14.917285Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 406, "loot": 318, "levels": 88, "total_roster": 629, "active_roster": 393}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 414, "loot": 323, "levels": 91, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -2142,15 +2142,25 @@ window.addEventListener('DOMContentLoaded', async () => {
             const nameA = (profA.name || '').toLowerCase();
             const nameB = (profB.name || '').toLowerCase();
 
-            // Override sorting for War Effort XP & Zenith
-            if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
-                valA = window.warEffortContext[nameA] || 0;
-                valB = window.warEffortContext[nameB] || 0;
-                return valB - valA; // High to Low Contributions
-            } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
-                valA = window.warEffortContextRaw[nameA] || 0;
-                valB = window.warEffortContextRaw[nameB] || 0;
-                return valB - valA; // Newest first (highest timestamp)
+            // Override sorting for ALL War Effort challenges
+            if (hashUrl.startsWith('war-effort-')) {
+                if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] || 0;
+                    valB = window.warEffortContext[nameB] || 0;
+                    return valB - valA; // High to Low Contributions
+                } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
+                    valA = window.warEffortContextRaw[nameA] || 0;
+                    valB = window.warEffortContextRaw[nameB] || 0;
+                    return valB - valA; // Newest first (highest timestamp)
+                } else if (hashUrl === 'war-effort-loot' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] ? window.warEffortContext[nameA].length : 0;
+                    valB = window.warEffortContext[nameB] ? window.warEffortContext[nameB].length : 0;
+                    return valB - valA; // High to Low Contributions (Array length)
+                } else if (hashUrl === 'war-effort-hk') {
+                    valA = profA.trend_pvp || profA.trend_hks || 0;
+                    valB = profB.trend_pvp || profB.trend_hks || 0;
+                    return valB - valA; // High to Low Contributions
+                }
             }
 
             if (currentSortMethod === 'ilvl') {
@@ -2171,9 +2181,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             return 0;
         });
 
-        // Add Sorting Dropdown UI to the top of the list (Hide for specific War Effort pages)
+        // Add Sorting Dropdown UI to the top of the list (Hide for ALL specific War Effort pages)
         let sortUI = '';
-        if (hashUrl !== 'war-effort-xp' && hashUrl !== 'war-effort-loot' && hashUrl !== 'war-effort-zenith') {
+        if (!hashUrl.startsWith('war-effort-')) {
             sortUI = `
                 <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
                     <span style="color: #888; font-size: 14px;">Sort By:</span>
@@ -2266,7 +2276,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // By default, stretch the bars
                 barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px;';
                 
-                if (window.warEffortContext) {
+                if (hashUrl === 'war-effort-hk') {
+                    const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+                    statsHtml = `<span style="color:#ff4400; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                } else if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
                     const contextData = window.warEffortContext[charKey];
                     
@@ -3733,6 +3746,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyTimelineFilters(); 
             if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar(); 
             
+            route();
+            
         } catch (error) {
             console.error("Failed to load timeline data:", error);
         }
@@ -4331,7 +4346,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         bindTooltip('guild-zenith-tooltip-trigger', zenithContributors, "The Zenith Cohort", "Max Levels");
     };
 
-    route();
     window.addEventListener('hashchange', route);
 });
     </script>
