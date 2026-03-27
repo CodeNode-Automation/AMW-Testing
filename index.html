@@ -1203,10 +1203,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T10:30:29.556811Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T10:42:55.922896Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 395, "loot": 309, "levels": 86, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 397, "loot": 311, "levels": 86, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -2258,8 +2258,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             let barStyleOverride = '';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars to fill the screen
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px;';
+                // Stretch the character bars, allow vertical expansion for mass loot
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: flex-start; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -2267,21 +2267,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:16px;">+${contextData} Levels Contributed</span>`;
+                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000; align-self: center;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
+                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Epic Loot Acquired:</span>
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:13px; line-height:1.4;">
-                                        ${contextData.join(', ')}
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; text-align:right; width: 100%;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase; border-bottom: 1px dashed #333; padding-bottom: 4px;">Epic Loot Acquired</span>
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2; margin-top: 4px;">
+                                        ${itemBadges}
                                     </div>
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center; height: 100%;">
                                     <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
-                                    <span style="color:#3FC7EB; font-weight:bold; font-size:15px;">${contextData}</span>
+                                    <span style="color:#3FC7EB; font-weight:bold; font-size:16px; text-shadow: 1px 1px 2px #000; margin-top: 4px;">${contextData}</span>
                                 </div>
                             `;
                         }
@@ -2294,7 +2295,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     ${rankHtml}
-                    <div class="c-main-info">
+                    <div class="c-main-info" style="align-self: center;">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
@@ -2308,7 +2309,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 ${rankHtml}
-                <div class="c-main-info">
+                <div class="c-main-info" style="align-self: center;">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
@@ -2994,19 +2995,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        if (showBadges) renderDynamicBadges(characters, isRawRoster);
-        else {
+        const hash = window.location.hash.substring(1);
+        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
+
+        if (showBadges) {
+            renderDynamicBadges(characters, isRawRoster);
+            document.getElementById('concise-left-col').style.display = 'flex';
+        } else {
             document.getElementById('concise-class-badges').style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
+            
+            // Fix: Completely collapse the left column if no charts and no badges are needed
+            if (!chartViews.includes(hash)) {
+                document.getElementById('concise-left-col').style.display = 'none';
+            } else {
+                document.getElementById('concise-left-col').style.display = 'flex';
+            }
         }
 
        // Draw the dynamic charts & KPIs
-        const hash = window.location.hash.substring(1);
         const donutContainer = document.getElementById('concise-donut-container');
-        
-        // Expanded array of views that get charts
-        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
 
         if (chartViews.includes(hash)) {
             if (donutContainer) {
