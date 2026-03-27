@@ -1026,6 +1026,43 @@ window.addEventListener('DOMContentLoaded', async () => {
                 rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
             }
 
+            // --- NEW: Custom War Effort Stats Overrides ---
+            let statsHtml = `
+                <span>Level <span class="c-val-lvl">${level}</span></span>
+                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+            `;
+
+            const hashUrl = window.location.hash.substring(1);
+            if (hashUrl.startsWith('war-effort-') && window.warEffortContext) {
+                const charKey = displayName.toLowerCase();
+                const contextData = window.warEffortContext[charKey];
+                
+                if (contextData) {
+                    if (hashUrl === 'war-effort-xp') {
+                        statsHtml = `
+                            <span>Level <span class="c-val-lvl">${level}</span></span>
+                            <span style="color:#ffd100; font-weight:bold; font-size:14px;">+${contextData} Levels Contributed</span>
+                        `;
+                    } else if (hashUrl === 'war-effort-loot') {
+                        statsHtml = `
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; max-width:70%; gap:4px;">
+                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Epic Loot Acquired:</span>
+                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2;">
+                                    ${contextData.join(', ')}
+                                </div>
+                            </div>
+                        `;
+                    } else if (hashUrl === 'war-effort-zenith') {
+                        statsHtml = `
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Reached Level 70 on:</span>
+                                <span style="color:#3FC7EB; font-weight:bold; font-size:13px;">${contextData}</span>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
             // 4. Render the HTML
             if (!isClickable) {
                 return `
@@ -1036,9 +1073,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
                     </div>
-                    <div class="c-stats-info">
-                        <span>Level <span class="c-val-lvl">${level}</span></span>
-                        <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                    <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                        ${statsHtml}
                     </div>
                 </div>`;
             }
@@ -1051,9 +1087,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div class="c-stats-info">
-                    <span>Level <span class="c-val-lvl">${level}</span></span>
-                    <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                    ${statsHtml}
                 </div>
             </a>`;
         }).join('');
@@ -2004,11 +2039,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             let filteredRoster = [];
             let title = "";
+            window.warEffortContext = {}; // Initialize custom display context
 
             if (type === 'hk') {
                 filteredRoster = rosterData.filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0);
                 title = `🩸 Blood of the Enemy Contributors (${filteredRoster.length})`;
-                showConciseView(title, filteredRoster, false, true, 'hks');
+                // Note: The 'false' flag here hides the Class Badges
+                showConciseView(title, filteredRoster, false, false, 'hks'); 
             } else {
                 const contributors = new Set();
                 if (typeof timelineData !== 'undefined') {
@@ -2017,9 +2054,23 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                         const eventDate = new Date(cleanTs).getTime();
                         if (eventDate >= lastResetMs) {
-                            if (type === 'xp' && e.type === 'level_up') contributors.add((e.character_name || '').toLowerCase());
-                            if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) contributors.add((e.character_name || '').toLowerCase());
-                            if (type === 'zenith' && e.type === 'level_up' && e.level === 70) contributors.add((e.character_name || '').toLowerCase());
+                            const cName = (e.character_name || '').toLowerCase();
+                            
+                            if (type === 'xp' && e.type === 'level_up') {
+                                contributors.add(cName);
+                                window.warEffortContext[cName] = (window.warEffortContext[cName] || 0) + 1;
+                            }
+                            if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) {
+                                contributors.add(cName);
+                                window.warEffortContext[cName] = window.warEffortContext[cName] || [];
+                                const qColor = QUALITY_COLORS[e.item_quality] || '#a335ee';
+                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" style="color:${qColor}; text-decoration:none;" onclick="event.stopPropagation();">[${e.item_name}]</a>`);
+                            }
+                            if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
+                                contributors.add(cName);
+                                const dateObj = new Date(cleanTs);
+                                window.warEffortContext[cName] = dateObj.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                            }
                         }
                     });
                 }
@@ -2030,12 +2081,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (type === 'zenith') title = `⚡ The Zenith Cohort (${filteredRoster.length})`;
                 
                 let sortPref = type === 'loot' ? 'ilvl' : 'level';
-                showConciseView(title, filteredRoster, false, true, sortPref);
+                // Note: The 'false' flag here hides the Class Badges
+                showConciseView(title, filteredRoster, false, false, sortPref); 
             }
+            
+            // Explicitly hide timeline entirely for these pages
+            if (timeline) timeline.style.display = 'none';
+            
             updateDropdownLabel('all');
             
         } else {
-            // Final fallback: Look for a specific character
             // Final fallback: Look for a specific character
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
             if (char) {
