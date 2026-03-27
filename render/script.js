@@ -2769,7 +2769,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const lootContributors = {};
 
         timelineData.forEach(event => {
-            let cleanTs = event.timestamp.replace('Z', '+00:00');
+            // Safely skip any database rows missing a timestamp
+            const ts = event.timestamp || '';
+            if (!ts) return; 
+            
+            let cleanTs = ts.replace('Z', '+00:00');
             if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
             const eventDate = new Date(cleanTs).getTime();
             
@@ -2778,7 +2782,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
                     levelContributors[charName] = (levelContributors[charName] || 0) + 1;
-                } else if (event.quality === 'EPIC' || event.quality === 'LEGENDARY') {
+                } else if (event.type === 'item' && (event.item_quality === 'EPIC' || event.item_quality === 'LEGENDARY')) {
                     totalLoot++;
                     const charName = event.character_name || 'Unknown';
                     lootContributors[charName] = (lootContributors[charName] || 0) + 1;
