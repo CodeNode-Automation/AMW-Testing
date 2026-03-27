@@ -92,8 +92,6 @@ async def setup_database(session):
         "CREATE TABLE IF NOT EXISTS gear (character_name TEXT, slot TEXT, item_id INTEGER, name TEXT, quality TEXT, icon_data TEXT, tooltip_params TEXT, last_detected TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (character_name, slot, item_id))",
         "CREATE TABLE IF NOT EXISTS timeline (timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, character_name TEXT, class TEXT, type TEXT, item_id INTEGER, item_name TEXT, item_quality TEXT, item_icon TEXT, level INTEGER)",
         "CREATE INDEX IF NOT EXISTS idx_timeline_timestamp ON timeline (timestamp DESC)",
-        "CREATE TABLE IF NOT EXISTS daily_snapshot (id TEXT PRIMARY KEY, snapshot_date TEXT, val1 INTEGER, val2 INTEGER, val3 INTEGER)",
-        "CREATE TABLE IF NOT EXISTS character_trends (char_name TEXT PRIMARY KEY, last_ilvl INTEGER, trend_ilvl INTEGER, last_hks INTEGER, trend_hks INTEGER)",
         "CREATE TABLE IF NOT EXISTS global_trends (id TEXT PRIMARY KEY, last_total INTEGER, trend_total INTEGER, last_active INTEGER, trend_active INTEGER, last_ready INTEGER, trend_ready INTEGER)",
         "CREATE TABLE IF NOT EXISTS daily_roster_stats (date TEXT PRIMARY KEY, total_roster INTEGER DEFAULT 0, active_roster INTEGER DEFAULT 0, avg_ilvl_70 INTEGER DEFAULT 0, total_hks INTEGER DEFAULT 0)",
         "CREATE TABLE IF NOT EXISTS char_history (char_name TEXT, record_date TEXT, ilvl INTEGER, hks INTEGER, PRIMARY KEY (char_name, record_date))"
@@ -379,24 +377,21 @@ async def main_async():
             "params": list(new_daily_stats_row)
         })
 
+        # Automatically delete characters and gear for players who left the guild
+        if roster_names:
+            placeholders = ",".join(["?"] * len(roster_names))
+            batch_stmts.append({
+                "q": f"DELETE FROM characters WHERE name NOT IN ({placeholders})",
+                "params": roster_names
+            })
+            batch_stmts.append({
+                "q": f"DELETE FROM gear WHERE character_name NOT IN ({placeholders})",
+                "params": roster_names
+            })
+
         print(f"☁️ Pushing {len(batch_stmts)} statements to Turso via HTTP API...")
         await push_turso_batch(session, batch_stmts)
         print("✅ Final push to Turso complete!")
-
-        print("🩹 Healing corrupted timeline icons...")
-        heal_stmt = {
-            "q": """
-                UPDATE timeline 
-                SET item_icon = (
-                    SELECT icon_data 
-                    FROM gear 
-                    WHERE gear.item_id = timeline.item_id AND gear.character_name = timeline.character_name 
-                    LIMIT 1
-                ) 
-                WHERE type = 'item' AND (item_icon IS NULL OR item_icon LIKE '%amw%')
-            """
-        }
-        await push_turso_batch(session, [heal_stmt])
 
         print("🌐 Generating final HTML Dashboard...")
         dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
