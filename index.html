@@ -842,7 +842,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-active" class="stat-box clickable sparkline-box" title="Click to view characters active within 14 days" style="border-bottom-color: #2ecc71;">
                         <canvas id="spark-active" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">394 <span id="trend-active" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">393 <span id="trend-active" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
@@ -1203,10 +1203,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T10:42:55.922896Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T10:52:46.033155Z", "active_14_days": 393, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 397, "loot": 311, "levels": 86, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 404, "loot": 316, "levels": 88, "total_roster": 629, "active_roster": 393}]
     </script>
 
     <script>
@@ -2142,11 +2142,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             const nameA = (profA.name || '').toLowerCase();
             const nameB = (profB.name || '').toLowerCase();
 
-            // Override sorting for War Effort XP
+            // Override sorting for War Effort XP & Zenith
             if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
                 valA = window.warEffortContext[nameA] || 0;
                 valB = window.warEffortContext[nameB] || 0;
                 return valB - valA; // High to Low Contributions
+            } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
+                valA = window.warEffortContextRaw[nameA] || 0;
+                valB = window.warEffortContextRaw[nameB] || 0;
+                return valB - valA; // Newest first (highest timestamp)
             }
 
             if (currentSortMethod === 'ilvl') {
@@ -2198,7 +2202,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let displaySpecClass = '';
             let statValue = '???';
             let statColor = 'color:#666;';
-            let trendHTML = ''; // <-- NEW: Trend Variable
+            let trendHTML = '';
 
             // 3. Populate Variables
             if (deepChar && deepChar.profile) {
@@ -2220,7 +2224,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
                 statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
 
-                // NEW: Calculate Trend based on the current ladder view
+                // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
                     if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▲ ${trend}</span>`;
@@ -2238,8 +2242,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Inject Podium Classes & Rank Number if we are on a Ladder View
-            const hash = window.location.hash.substring(1);
-            const isLadderView = hash === 'ladder-pve' || hash === 'ladder-pvp';
+            const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
             let podiumClass = '';
             let rankHtml = '';
             
@@ -2256,10 +2259,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
+            let cStatsStyleOverride = 'flex:1; justify-content:flex-end;';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars, allow vertical expansion for mass loot
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: flex-start; padding: 12px 15px;';
+                // Stretch the character bars, allow vertical expansion
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: center; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -2269,11 +2273,15 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (hashUrl === 'war-effort-xp') {
                             statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000; align-self: center;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
-                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
+                            // Turn the container into a column so loot drops neatly underneath the character header
+                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; flex-direction: column; align-items: flex-start; padding: 12px 15px; gap: 8px;';
+                            cStatsStyleOverride = 'width: 100%; justify-content: flex-start;';
+
+                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; text-align:right; width: 100%;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase; border-bottom: 1px dashed #333; padding-bottom: 4px;">Epic Loot Acquired</span>
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2; margin-top: 4px;">
+                                <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; margin-top: 4px;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase; display:block; margin-bottom: 8px;">Epic Loot Acquired:</span>
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
                                         ${itemBadges}
                                     </div>
                                 </div>
@@ -2295,12 +2303,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     ${rankHtml}
-                    <div class="c-main-info" style="align-self: center;">
+                    <div class="c-main-info" style="align-self: flex-start;">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
                     </div>
-                    <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                    <div class="c-stats-info" style="${cStatsStyleOverride}">
                         ${statsHtml}
                     </div>
                 </div>`;
@@ -2309,12 +2317,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 ${rankHtml}
-                <div class="c-main-info" style="align-self: center;">
+                <div class="c-main-info" style="align-self: flex-start;">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                <div class="c-stats-info" style="${cStatsStyleOverride}">
                     ${statsHtml}
                 </div>
             </a>`;
@@ -3278,6 +3286,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let filteredRoster = [];
             let title = "";
             window.warEffortContext = {}; // Initialize custom display context
+            window.warEffortContextRaw = {}; // Initialize raw values for sorting
 
             if (type === 'hk') {
                 filteredRoster = rosterData.filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0);
@@ -3313,6 +3322,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const HH = String(dateObj.getHours()).padStart(2, '0');
                                 const MM = String(dateObj.getMinutes()).padStart(2, '0');
                                 window.warEffortContext[cName] = `${dd}.${mm}.${yyyy} ${HH}:${MM}`;
+                                window.warEffortContextRaw[cName] = dateObj.getTime(); // Store the raw timestamp for perfect sorting!
                             }
                         }
                     });
