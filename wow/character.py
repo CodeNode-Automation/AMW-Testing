@@ -68,10 +68,12 @@ async def fetch_character_data(session, token, char, history_data):
         # Using .get() safely handles items and prevents KeyError on missing slots
         past_item_id = past_gear.get(slot, {}).get("item_id") if isinstance(past_gear.get(slot), dict) else None
         
-        if past_gear and past_item_id != data.get("item_id"):
+        if past_item_id != data.get("item_id"):
             data["is_new"] = True
-            upgrade_count += 1
-            upgrades.append(data)  # Append the full item dictionary for the timeline
+            # Only broadcast to timeline if it is an existing character getting an upgrade
+            if past_gear: 
+                upgrade_count += 1
+                upgrades.append(data)  
         else:
             data["is_new"] = False
 
