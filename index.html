@@ -884,7 +884,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #ffd100; text-shadow: 1px 1px 2px #000;">
                                 <span>🛡️ Hero's Journey (XP Gained)</span>
-                                <span id="guild-xp-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Levelers</span>
+                                <span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: pointer; text-shadow: none; transition: color 0.3s;">View Top Levelers ➔</span>
                             </div>
                             <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
                                 <div id="guild-xp-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
@@ -893,14 +893,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                                 <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.4);"></div>
                                 <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
                                 
-                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 1,000 Levels Gained</div>
+                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 750 Levels Gained</div>
                             </div>
                         </div>
 
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #ff4400; text-shadow: 1px 1px 2px #000;">
                                 <span>🩸 Blood of the Enemy (HKs)</span>
-                                <span id="guild-hk-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Slayers</span>
+                                <span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: pointer; text-shadow: none; transition: color 0.3s;">View Top Slayers ➔</span>
                             </div>
                             <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
                                 <div id="guild-hk-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
@@ -916,7 +916,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #a335ee; text-shadow: 1px 1px 2px #000;">
                                 <span>🐉 Dragon's Hoard (Epic Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Looters</span>
+                                <span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: pointer; text-shadow: none; transition: color 0.3s;">View Top Looters ➔</span>
                             </div>
                             <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
                                 <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
@@ -1187,10 +1187,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T09:33:49.197629Z", "active_14_days": 394, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T09:40:55.239976Z", "active_14_days": 394, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 383, "loot": 301, "levels": 82, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 386, "loot": 303, "levels": 83, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -3999,6 +3999,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
             style.innerHTML = `
+                .war-effort-link:hover { color: #fff !important; }
+                
                 .progress-bar-glow::after {
                     content: '';
                     position: absolute;
@@ -4080,11 +4082,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
+        renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
 
-        // 6. Tooltip Generator Helper
+        // 6. Tooltip Generator Helper (Updated to Route on Click)
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
             const tooltipTrigger = document.getElementById(triggerId);
             if (!tooltipTrigger) return;
@@ -4093,7 +4095,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">${titleText}</div>`;
             
             if (sortedContributors.length === 0) {
-                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The war effort just began!</div>`;
+                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The challenges just began!</div>`;
             } else {
                 const topList = sortedContributors.slice(0, 15);
                 topList.forEach(([name, count], index) => {
@@ -4131,23 +4133,29 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
             newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+            
+            // --- NEW: Interactive Navigation ---
             newTrigger.addEventListener('click', e => {
                 e.stopPropagation();
-                if (tooltip.classList.contains('visible')) tooltip.classList.remove('visible');
-                else displayTooltip(e.clientX, e.clientY - 40);
+                tooltip.classList.remove('visible');
+                
+                if (triggerId === 'guild-xp-tooltip-trigger') {
+                    const btn = document.querySelector('.tl-btn[data-type="level_up"]');
+                    if (btn) btn.click();
+                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
+                } else if (triggerId === 'guild-hk-tooltip-trigger') {
+                    window.location.hash = 'ladder-pvp';
+                } else if (triggerId === 'guild-loot-tooltip-trigger') {
+                    const btn = document.querySelector('.tl-btn[data-type="epic"]');
+                    if (btn) btn.click();
+                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
+                }
             });
         }
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
         bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Treasure Hunters", "Epics");
-
-        // 7. Global click listener to close tooltips on mobile
-        document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger') && !e.target.closest('#guild-loot-tooltip-trigger')) {
-                tooltip.classList.remove('visible');
-            }
-        });
     };
 
     route();
