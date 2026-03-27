@@ -329,9 +329,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 }
 
 @media (max-width: 800px) {
-    .card-content { flex-direction: column; }
-    .sidebar { flex: auto; width: 100%; }
-    .character-portrait img { max-width: 140px; }
+    .char-card { padding: 15px !important; }
+    .cc-name { font-size: 28px !important; }
+    .cc-body { flex-direction: column !important; align-items: center !important; }
+    .cc-sidebar { flex: auto !important; width: 100% !important; max-width: 400px !important; }
+    .cc-portrait img { max-width: 140px !important; }
+    .gear-grid-container { width: 100% !important; }
+    
     .hero-search-box { width: 100% !important; border-radius: 25px !important; cursor: text !important; justify-content: flex-start !important; }
     .hero-search-box input { display: block !important; width: 100% !important; opacity: 1 !important; padding: 0 15px !important; position: relative !important; pointer-events: auto !important; font-size: 16px !important; box-sizing: border-box !important; }
     .hero-search-box .search-icon { position: relative !important; left: 0 !important; transform: none !important; pointer-events: none !important; }
@@ -343,7 +347,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     .c-main-info { width: 100%; }
     .c-stats-info { width: 100%; justify-content: flex-start !important; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; }
     .stat-badge { min-width: 80px; padding: 6px 10px; }
-    .gear-grid-container { grid-template-columns: 1fr; }
+    
+    /* Character Card Mobile Enhancements */
+    .gear-grid-container { grid-template-columns: 1fr !important; }
+    .cc-name { font-size: 24px !important; }
+    .item-slot { padding: 8px 10px !important; }
+    .item-slot img { width: 34px !important; height: 34px !important; margin-right: 10px !important; }
+    
     .heatmap-wrapper, #pve-leaderboard-container, #pvp-leaderboard-container, #concise-left-col, #concise-badges-wrapper, #concise-donut-container { min-width: 100% !important; max-width: 100% !important; width: 100% !important; flex: 1 1 100% !important; box-sizing: border-box; }
     .stat-box { min-width: 45% !important; flex: 1 1 45% !important; }
     .class-stat-container { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; padding-bottom: 15px; padding-left: 20px; padding-right: 20px; -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
@@ -842,10 +852,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T20:32:09.280110Z", "active_14_days": 401, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T20:47:49.580162Z", "active_14_days": 401, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 701, "loot": 528, "levels": 173, "total_roster": 634, "active_roster": 401}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 717, "loot": 541, "levels": 176, "total_roster": 634, "active_roster": 401}]
     </script>
 
     <script>
@@ -1523,7 +1533,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
     <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
-        <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
+        <h2 class="cc-name" style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
         <div style="display:flex; justify-content:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ffd100; padding:5px 14px; border-radius:20px; font-size:14px; color:#ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:14px; color:#ddd;">Level ${p.level || 0}</span>
@@ -1542,9 +1552,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
     
-    <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
-        <div style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
-            <div style="text-align:center;">
+    <div class="cc-body" style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+        <div class="cc-sidebar" style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
+            <div class="cc-portrait" style="text-align:center;">
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
