@@ -1630,17 +1630,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
-        if (timeline) { 
-            timeline.style.display = 'block'; 
-            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
-            window.currentFilteredChars = null; 
-            applyTimelineFilters(); 
-        }
+        if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
         
         updateDropdownLabel('all');
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.style.display = 'block';
+        if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
 
         // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -2691,16 +2687,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             countdownEl.id = 'mvp-countdown';
             countdownEl.style.textAlign = 'center';
             countdownEl.style.marginBottom = '25px';
-            countdownEl.style.width = '100%';
             
-            // MOVE ALIGNMENT: Insert it directly above the Guild XP (War Effort) Container
-            const xpContainer = document.getElementById('guild-xp-container');
-            if (xpContainer && xpContainer.parentNode) {
-                xpContainer.parentNode.insertBefore(countdownEl, xpContainer);
-            } else {
-                // Fallback just in case
-                mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
-            }
+            // Insert it between the H3 title and the flex container lists
+            mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
 
             function updateCountdown() {
                 const realNow = new Date();
@@ -2734,7 +2723,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (el) {
                     el.innerHTML = `
                         <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Time Until Weekly Reset: </span>
+                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Crowning Ceremony: </span>
                             <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
                             ${d}d ${h}h ${m}m ${s}s</span>
                         </div>`;
@@ -2766,30 +2755,19 @@ window.addEventListener('DOMContentLoaded', async () => {
         lastReset.setDate(lastReset.getDate() - diff);
         const lastResetMs = lastReset.getTime();
 
-        // 2. Tally Leveling & Loot Effort (From Timeline)
+        // 2. Tally Leveling Effort (From Timeline)
         let totalLevels = 0;
         const levelContributors = {};
-        let totalLoot = 0;
-        const lootContributors = {};
-
         timelineData.forEach(event => {
-            // Safely skip any database rows missing a timestamp
-            const ts = event.timestamp || '';
-            if (!ts) return; 
-            
-            let cleanTs = ts.replace('Z', '+00:00');
-            if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-            const eventDate = new Date(cleanTs).getTime();
-            
-            if (eventDate >= lastResetMs) {
-                if (event.type === 'level_up') {
+            if (event.type === 'level_up') {
+                let cleanTs = event.timestamp.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                
+                if (eventDate >= lastResetMs) {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
                     levelContributors[charName] = (levelContributors[charName] || 0) + 1;
-                } else if (event.type === 'item' && (event.item_quality === 'EPIC' || event.item_quality === 'LEGENDARY')) {
-                    totalLoot++;
-                    const charName = event.character_name || 'Unknown';
-                    lootContributors[charName] = (lootContributors[charName] || 0) + 1;
                 }
             }
         });
@@ -2808,7 +2786,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Inject Dynamic Animations for ALL Bars
+        // 4. Inject Dynamic Animations for BOTH Bars
         if (!document.getElementById('war-effort-styles')) {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
@@ -2820,10 +2798,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
-
-                @keyframes pulseSlowLoot { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastLoot { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxLoot { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #8a2be2; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #a335ee; } }
             `;
             document.head.appendChild(style);
         }
@@ -2835,20 +2809,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             const textEl = document.getElementById(textId);
             const dynamicGlow = 10 + (pct * 0.25);
             
-            let colorBase, colorMid, colorMax, labelName;
-            if (type === 'XP') {
-                colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels';
-            } else if (type === 'Loot') {
-                colorBase = '#4b0082'; colorMid = '#8a2be2'; colorMax = '#a335ee'; labelName = 'Epics';
-            } else {
-                colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs';
-            }
+            const isXP = (type === 'XP');
+            const colorBase = isXP ? '#8B6508' : '#8B0000';
+            const colorMid = isXP ? '#ffd100' : '#e74c3c';
+            const colorMax = isXP ? '#ff8000' : '#ff4400';
+            const labelName = isXP ? 'Levels' : 'HKs';
 
             if (fillEl) {
                 setTimeout(() => { 
                     fillEl.style.width = pct + '%'; 
                     if (pct >= 100) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, #fff)`;
+                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${isXP ? '#ffd100' : '#ff0000'})`;
                         fillEl.style.boxShadow = `0 0 40px ${colorMax}`;
                         fillEl.style.animation = `pulseMax${type} 0.5s infinite alternate`;
                     } else if (pct >= 75) {
@@ -2870,7 +2841,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (textEl) {
                 if (pct >= 100) {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
-                    textEl.style.color = colorMid;
+                    textEl.style.color = isXP ? '#ffd100' : '#ff4400';
                     textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
                 } else {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
@@ -2880,7 +2851,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
-        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'Loot');
 
         // 6. Tooltip Generator Helper
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
@@ -2938,14 +2908,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
-        bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Loot Goblins", "Epics");
 
         // 7. Global click listener to close tooltips on mobile
         document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && 
-                !e.target.closest('#guild-xp-tooltip-trigger') && 
-                !e.target.closest('#guild-hk-tooltip-trigger') &&
-                !e.target.closest('#guild-loot-tooltip-trigger')) {
+            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger')) {
                 tooltip.classList.remove('visible');
             }
         });
