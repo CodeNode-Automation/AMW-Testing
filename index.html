@@ -695,9 +695,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
         margin-left: 25px !important; 
     }
 
-    /* Push the search bar all the way to the right side of the screen */
+    /* Place the search bar next to the dropdown */
     .controls-wrapper .search-container {
-        margin-left: auto !important;
+        margin-left: 20px !important; /* Small gap from the dropdown */
         margin-bottom: 0 !important;
     }
 }
@@ -773,15 +773,22 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             </button>
             
             <div class="nav-links-container">
-                <a href="javascript:void(0)" onclick="returnToHome()" class="nav-btn nav-btn-home" title="Return to guild stats page">
-                  🛡️<span class="home-text"> Armory Home</span>
-                </a>
-                <a href="#analytics" class="nav-btn nav-btn-home" title="View Guild Analytics">
-                  📊<span class="home-text"> Analytics</span>
-                </a>
-                <a href="#architecture" class="nav-btn nav-btn-home" title="How the Website Works">
-                  ⚙️<span class="home-text"> Architecture</span>
-                </a>
+                <a href="#" class="nav-btn nav-btn-home"><span class="home-text">🏰 Home Dashboard</span></a>
+                
+                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">WAR EFFORT</div>
+                <a href="#war-effort-xp" class="nav-btn">🛡️ Hero's Journey</a>
+                <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
+                <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
+                <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
+                
+                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
+                <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
+                <a href="#ladder-pvp" class="nav-btn">⚔️ PvP Leaderboard</a>
+                <a href="#analytics" class="nav-btn">📊 Advanced Analytics</a>
+                
+                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">COMMUNITY & INFO</div>
+                <a href="#architecture" class="nav-btn">⚙️ Architecture</a>
+                <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
 
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
@@ -980,21 +987,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             </div> 
             <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 20px; font-size: 32px;">Guild Analytics</h2>
-                
-                <div class="stat-box-container" style="max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pve'" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);" title="View Full PvE Ladder">
-                        <span id="kpi-avg-ilvl" class="stat-value" style="color: #ff8000;">0</span>
-                        <span class="stat-label">Avg Level 70 iLvl</span>
-                    </div>
-                    <div class="stat-box clickable" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);" title="Scroll to Activity Chart">
-                        <span id="kpi-epic-loot" class="stat-value" style="color: #a335ee;">0</span>
-                        <span class="stat-label">Epics Looted (7d)</span>
-                    </div>
-                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pvp'" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);" title="View Full PvP Ladder">
-                        <span id="kpi-total-hks" class="stat-value" style="color: #ff4400;">0</span>
-                        <span class="stat-label">Total Guild HKs</span>
-                    </div>
-                </div>
                 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
                     <div class="heatmap-wrapper" style="flex: 1; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column;">
@@ -1203,10 +1195,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T11:25:14.917285Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T11:39:41.378276Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 414, "loot": 323, "levels": 91, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 416, "loot": 324, "levels": 92, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
