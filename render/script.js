@@ -2977,48 +2977,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Inject Dynamic Animations for Bars
-        if (!document.getElementById('war-effort-styles')) {
-            const style = document.createElement('style');
-            style.id = 'war-effort-styles';
-            style.innerHTML = `
-                .war-effort-link:hover { color: #fff !important; }
-                
-                .progress-bar-glow::after {
-                    content: '';
-                    position: absolute;
-                    top: 0; left: 0; bottom: 0; right: 0;
-                    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-                    background-size: 200% 100%;
-                    animation: shimmerWave 2.5s infinite linear;
-                    z-index: 1;
-                    pointer-events: none;
-                }
-                
-                @keyframes shimmerWave {
-                    0% { background-position: 200% 0; }
-                    100% { background-position: -200% 0; }
-                }
-
-                @keyframes pulseSlowXP { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastXP { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxXP { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #ff8000; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ffd100; } }
-                
-                @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
-
-                @keyframes pulseSlowLOOT { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastLOOT { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxLOOT { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #a335ee; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff8000; } }
-
-                @keyframes pulseSlowZENITH { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastZENITH { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxZENITH { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #3FC7EB; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #00e5ff; } }
-            `;
-            document.head.appendChild(style);
-        }
-
         // 5. Render the Bars
         function renderBar(fillId, textId, currentVal, maxVal, type) {
             const pct = Math.min((currentVal / maxVal) * 100, 100);

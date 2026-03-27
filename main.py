@@ -379,6 +379,14 @@ async def main_async():
 
         # Automatically delete characters and gear for players who left the guild
         if roster_names:
+            # Calculate who is in our database but no longer in the Blizzard roster
+            departed_chars = [char for char in history_data.keys() if char not in roster_names]
+            
+            if departed_chars:
+                # Title-case the names just to make the terminal printout look nice
+                formatted_names = [name.title() for name in departed_chars]
+                print(f"🧹 Removing {len(departed_chars)} departed guild member(s): {', '.join(formatted_names)}")
+
             placeholders = ",".join(["?"] * len(roster_names))
             batch_stmts.append({
                 "q": f"DELETE FROM characters WHERE name NOT IN ({placeholders})",

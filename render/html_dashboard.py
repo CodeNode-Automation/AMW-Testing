@@ -145,92 +145,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
             class_badges_html += f'  <span class="stat-badge-cls" style="color: {color};">{cls}</span>\n'
             class_badges_html += f'  <span class="stat-badge-count">{count}</span>\n'
             class_badges_html += '</div>'
-
-    nav_controls = f"""
-        <div class="controls-wrapper">
-            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
-                <span></span><span></span><span></span>
-            </button>
-            
-            <div class="nav-links-container">
-                <a href="#" class="nav-btn nav-btn-home"><span class="home-text">🏰 Home Dashboard</span></a>
-                
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">WAR EFFORT</div>
-                <a href="#war-effort-xp" class="nav-btn">🛡️ Hero's Journey</a>
-                <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
-                <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
-                <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
-                
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
-                <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
-                <a href="#ladder-pvp" class="nav-btn">⚔️ PvP Leaderboard</a>
-                <a href="#analytics" class="nav-btn">📊 Advanced Analytics</a>
-                
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">COMMUNITY & INFO</div>
-                <a href="#architecture" class="nav-btn">⚙️ Architecture</a>
-                <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
-            </div>
-
-            <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
-                <div class="custom-select" id="customCharSelect" tabindex="0">
-                    <span class="selected-value">Select View...</span>
-                    <span style="font-size: 12px; color: #aaa;">▼</span>
-                </div>
-                <div class="custom-select-options" id="customCharOptions" role="listbox">
-                    <div class="custom-option" data-value="total" role="option">
-                        <span style="font-size:16px;">🌍</span> View Entire Guild
-                    </div>
-                    <div class="custom-option" data-value="active" role="option">
-                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
-                    </div>
-                    <div class="custom-option" data-value="raidready" role="option">
-                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
-                    </div>
-                </div>
-            </div>
-            
-            <div class="search-container">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
-                </div>
-                <div id="search-autocomplete" class="search-autocomplete"></div>
-            </div>
-        </div>
-    """
-
-    timeline_html = ""
-    if timeline_data:
-        # We only generate the shell and the filters here.
-        # The actual events are loaded from timeline.json via JavaScript to keep index.html tiny.
-        timeline_html += f"""
-        <div id="timeline" class="timeline-container">
-            <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
-            <div class="timeline-filters">
-                <div class="filter-group">
-                    <button class="tl-btn" data-type="all">All</button>
-                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
-                    <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
-                    <button class="tl-btn" data-type="level_up">Levels</button>
-                </div>
-                <div class="filter-group">
-                    <select id="tl-date-filter" class="tl-select">
-                        <option value="12">Last 12 Hours</option>
-                        <option value="24">Last 24 Hours</option>
-                        <option value="48">Last 48 Hours</option>
-                        <option value="all" selected>All Available</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="timeline-feed" id="timeline-feed-container">
-                </div>
-
-            <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
-                <button id="load-more-btn" style="padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease;">Load More Activity</button>
-            </div>
-        </div>
-        """
         
     # [The rest of your script continues here with base_dir = os.path.dirname...]
 
@@ -265,7 +179,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     
     html = template.render(
         css_content=css_content,
-        nav_controls=nav_controls,
         display_total_members=display_total_members,
         trend_total_html=trend_total_html,
         active_14_days=active_14_days,
@@ -274,7 +187,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
         trend_ready_html=trend_ready_html,
         avg_level=avg_level,
         class_badges_html=class_badges_html,
-        timeline_html=timeline_html,
         safe_config=safe_config,
         safe_heatmap_data=safe_heatmap_data,
         js_content=js_content
