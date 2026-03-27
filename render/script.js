@@ -2777,14 +2777,58 @@ window.addEventListener('DOMContentLoaded', async () => {
         const maxLevels = 1000;
         const pct = Math.min((totalLevels / maxLevels) * 100, 100);
         
+        // Inject dynamic CSS animations for the pulse effects
+        if (!document.getElementById('xp-pulse-styles')) {
+            const style = document.createElement('style');
+            style.id = 'xp-pulse-styles';
+            style.innerHTML = `
+                @keyframes pulseSlow { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFast { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMax { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #ff8000; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ffd100; } }
+            `;
+            document.head.appendChild(style);
+        }
+
         const fillEl = document.getElementById('guild-xp-fill');
         if (fillEl) {
-            setTimeout(() => { fillEl.style.width = pct + '%'; }, 100); // Trigger animation
+            setTimeout(() => { 
+                fillEl.style.width = pct + '%'; 
+                
+                // Enhance the glow radius mathematically based on percentage
+                const dynamicGlow = 10 + (pct * 0.25);
+                
+                // Shift colors and pulse speed based on progress
+                if (pct >= 100) {
+                    fillEl.style.background = 'linear-gradient(90deg, #ff4400, #ff8000, #ffd100)';
+                    fillEl.style.boxShadow = `0 0 40px rgba(255, 128, 0, 1)`;
+                    fillEl.style.animation = 'pulseMax 0.5s infinite alternate';
+                } else if (pct >= 75) {
+                    fillEl.style.background = 'linear-gradient(90deg, #8B6508, #ff8000)';
+                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 128, 0, 0.8)`;
+                    fillEl.style.animation = 'pulseFast 0.8s infinite alternate';
+                } else if (pct >= 30) {
+                    fillEl.style.background = 'linear-gradient(90deg, #8B6508, #ffd100)';
+                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 209, 0, 0.6)`;
+                    fillEl.style.animation = 'pulseSlow 1.5s infinite alternate';
+                } else {
+                    fillEl.style.background = 'linear-gradient(90deg, #554400, #8B6508)';
+                    fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 209, 0, 0.4)`;
+                    fillEl.style.animation = 'none';
+                }
+            }, 100);
         }
         
         const textEl = document.getElementById('guild-xp-text');
         if (textEl) {
-            textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} Levels Gained`;
+            if (pct >= 100) {
+                textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} ➔ WAR EFFORT COMPLETE!`;
+                textEl.style.color = '#ffd100';
+                textEl.style.textShadow = '0 0 10px #ff8000, 1px 1px 2px #000';
+            } else {
+                textEl.innerText = `${totalLevels.toLocaleString()} / ${maxLevels.toLocaleString()} Levels Gained`;
+                textEl.style.color = '#fff';
+                textEl.style.textShadow = '1px 1px 2px #000, -1px -1px 2px #000';
+            }
         }
 
         // 4. Construct the Tooltip
@@ -2823,24 +2867,48 @@ window.addEventListener('DOMContentLoaded', async () => {
             const newTrigger = tooltipTrigger.cloneNode(true);
             tooltipTrigger.parentNode.replaceChild(newTrigger, tooltipTrigger);
             
-            newTrigger.addEventListener('mousemove', e => {
+            function displayTooltip(clientX, clientY) {
                 tooltip.innerHTML = tooltipHtml;
                 tooltip.style.borderLeftColor = '#ffd100';
                 
-                let x = e.clientX + 15;
-                let y = e.clientY + 15;
-                if (x + 200 > window.innerWidth) x = window.innerWidth - 210;
+                let x = clientX + 15;
+                let y = clientY + 15;
+                // Extra padding safety for smaller mobile screens
+                if (x + 250 > window.innerWidth) x = window.innerWidth - 260; 
                 
                 tooltip.style.left = `${x}px`; 
                 tooltip.style.top = `${y}px`;
                 tooltip.classList.add('visible');
+            }
+
+            // 1. Desktop Hover Support
+            newTrigger.addEventListener('mousemove', e => {
+                displayTooltip(e.clientX, e.clientY);
             });
             newTrigger.addEventListener('mouseleave', () => {
                 tooltip.classList.remove('visible');
             });
+
+            // 2. Mobile Tap Support
+            newTrigger.addEventListener('click', e => {
+                e.stopPropagation(); // Prevent the document click from instantly closing it
+                if (tooltip.classList.contains('visible')) {
+                    tooltip.classList.remove('visible');
+                } else {
+                    // Shift the tooltip slightly up on mobile so their finger doesn't block it
+                    displayTooltip(e.clientX, e.clientY - 40); 
+                }
+            });
+
+            // 3. Mobile Close-on-Tap-Away Support
+            document.addEventListener('click', e => {
+                if (tooltip.classList.contains('visible') && !newTrigger.contains(e.target)) {
+                    tooltip.classList.remove('visible');
+                }
+            });
         }
     };
-    
+
     route();
     window.addEventListener('hashchange', route);
 });
