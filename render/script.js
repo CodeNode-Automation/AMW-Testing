@@ -647,12 +647,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 gearHtml += `
                 <div class="item-slot border-${q}" style="border-left-color:${qHex}; background:rgba(20,20,20,0.9); ${warningStyle}">
-                    <div style="position:relative; flex-shrink: 0;">
+                    <div style="position:relative;">
                         <img src="${data.icon_data}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
                         ${enchantBadge}
                     </div>
-                    <div style="display:flex; flex-direction:column; justify-content:center; flex: 1; min-width: 0; overflow: hidden; padding-right: 5px;">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">${data.name}</a>
+                    <div style="display:flex; flex-direction:column; justify-content:center;">
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none;">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -672,7 +672,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
     <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
-        <h2 class="cc-name" style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
+        <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
         <div style="display:flex; justify-content:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ffd100; padding:5px 14px; border-radius:20px; font-size:14px; color:#ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:14px; color:#ddd;">Level ${p.level || 0}</span>
@@ -691,9 +691,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
     
-    <div class="cc-body" style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap; width: 100%; box-sizing: border-box; min-width: 0;">
-        <div class="cc-sidebar" style="flex: 0 0 260px; max-width: 100%; display:flex; flex-direction:column; gap:20px; box-sizing: border-box; min-width: 0;">
-            <div class="cc-portrait" style="text-align:center;">
+    <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
+            <div style="text-align:center;">
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
@@ -709,7 +709,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 ${advancedStatsHtml}
             </div>
         </div>
-        <div class="gear-grid-container cc-gear" style="flex: 1; min-width: 0; width: 100%; box-sizing: border-box;">
+        <div class="gear-grid-container">
             ${gearHtml}
         </div>
     </div>
