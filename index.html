@@ -877,7 +877,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div id="guild-xp-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; background: rgba(0,0,0,0.5); border: 1px solid #ffd100; border-radius: 8px; padding: 20px; box-shadow: inset 0 0 15px rgba(255,209,0,0.1); animation: fadeInUp 0.5s forwards;">
+                    <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 25px; text-shadow: 0 2px 4px #000; letter-spacing: 1px;">⚔️ Weekly Guild War Effort ⚔️</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 25px;">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 1px 1px 2px #000;">
                                 <span>🛡️ Leveling Effort</span>
@@ -909,24 +912,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                                 <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 500 HKs Gained</div>
                             </div>
                         </div>
-
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 1px 1px 2px #000;">
-                                <span>🐉 The Dragon's Hoard (Epic+ Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" style="color: #aaa; font-family: sans-serif; font-size: 11px; font-weight: normal; border-bottom: 1px dotted #aaa; cursor: help; text-shadow: none;">View Top Loot Goblins</span>
-                            </div>
-                            <div style="position: relative; width: 100%; height: 28px; background: #111; border-radius: 14px; border: 1px solid #444; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);">
-                                <div id="guild-loot-fill" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s ease-out;"></div>
-                                
-                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
-                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.3);"></div>
-                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
-                                
-                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 100 Epics Looted</div>
-                            </div>
-                        </div>
                     </div>
-                </div> </div> <div id="weekly-mvps-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards;">
+                </div>
+
+                <div id="weekly-mvps-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards;">
                     <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-bottom: 20px; text-shadow: 0 2px 4px #000; letter-spacing: 1px;">🏆 7-Day Guild MVPs 🏆</h3>
                     <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
                         <div style="flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); border: 1px solid #ff8000; border-radius: 8px; padding: 15px; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);">
@@ -1178,10 +1167,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T01:28:20.540316Z", "active_14_days": 393, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T01:37:56.525180Z", "active_14_days": 393, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 338, "loot": 269, "levels": 69, "total_roster": 628, "active_roster": 393}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 342, "loot": 271, "levels": 71, "total_roster": 628, "active_roster": 393}]
     </script>
 
     <script>
@@ -2817,17 +2806,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
-        if (timeline) { 
-            timeline.style.display = 'block'; 
-            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
-            window.currentFilteredChars = null; 
-            applyTimelineFilters(); 
-        }
+        if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
         
         updateDropdownLabel('all');
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.style.display = 'block';
+        if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
 
         // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -3878,16 +3863,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             countdownEl.id = 'mvp-countdown';
             countdownEl.style.textAlign = 'center';
             countdownEl.style.marginBottom = '25px';
-            countdownEl.style.width = '100%';
             
-            // MOVE ALIGNMENT: Insert it directly above the Guild XP (War Effort) Container
-            const xpContainer = document.getElementById('guild-xp-container');
-            if (xpContainer && xpContainer.parentNode) {
-                xpContainer.parentNode.insertBefore(countdownEl, xpContainer);
-            } else {
-                // Fallback just in case
-                mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
-            }
+            // Insert it between the H3 title and the flex container lists
+            mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
 
             function updateCountdown() {
                 const realNow = new Date();
@@ -3921,7 +3899,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (el) {
                     el.innerHTML = `
                         <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Time Until Weekly Reset: </span>
+                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Crowning Ceremony: </span>
                             <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
                             ${d}d ${h}h ${m}m ${s}s</span>
                         </div>`;
@@ -3953,30 +3931,19 @@ window.addEventListener('DOMContentLoaded', async () => {
         lastReset.setDate(lastReset.getDate() - diff);
         const lastResetMs = lastReset.getTime();
 
-        // 2. Tally Leveling & Loot Effort (From Timeline)
+        // 2. Tally Leveling Effort (From Timeline)
         let totalLevels = 0;
         const levelContributors = {};
-        let totalLoot = 0;
-        const lootContributors = {};
-
         timelineData.forEach(event => {
-            // Safely skip any database rows missing a timestamp
-            const ts = event.timestamp || '';
-            if (!ts) return; 
-            
-            let cleanTs = ts.replace('Z', '+00:00');
-            if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-            const eventDate = new Date(cleanTs).getTime();
-            
-            if (eventDate >= lastResetMs) {
-                if (event.type === 'level_up') {
+            if (event.type === 'level_up') {
+                let cleanTs = event.timestamp.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                
+                if (eventDate >= lastResetMs) {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
                     levelContributors[charName] = (levelContributors[charName] || 0) + 1;
-                } else if (event.type === 'item' && (event.item_quality === 'EPIC' || event.item_quality === 'LEGENDARY')) {
-                    totalLoot++;
-                    const charName = event.character_name || 'Unknown';
-                    lootContributors[charName] = (lootContributors[charName] || 0) + 1;
                 }
             }
         });
@@ -3995,7 +3962,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Inject Dynamic Animations for ALL Bars
+        // 4. Inject Dynamic Animations for BOTH Bars
         if (!document.getElementById('war-effort-styles')) {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
@@ -4007,10 +3974,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
-
-                @keyframes pulseSlowLoot { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
-                @keyframes pulseFastLoot { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
-                @keyframes pulseMaxLoot { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #8a2be2; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #a335ee; } }
             `;
             document.head.appendChild(style);
         }
@@ -4022,20 +3985,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             const textEl = document.getElementById(textId);
             const dynamicGlow = 10 + (pct * 0.25);
             
-            let colorBase, colorMid, colorMax, labelName;
-            if (type === 'XP') {
-                colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels';
-            } else if (type === 'Loot') {
-                colorBase = '#4b0082'; colorMid = '#8a2be2'; colorMax = '#a335ee'; labelName = 'Epics';
-            } else {
-                colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs';
-            }
+            const isXP = (type === 'XP');
+            const colorBase = isXP ? '#8B6508' : '#8B0000';
+            const colorMid = isXP ? '#ffd100' : '#e74c3c';
+            const colorMax = isXP ? '#ff8000' : '#ff4400';
+            const labelName = isXP ? 'Levels' : 'HKs';
 
             if (fillEl) {
                 setTimeout(() => { 
                     fillEl.style.width = pct + '%'; 
                     if (pct >= 100) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, #fff)`;
+                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${isXP ? '#ffd100' : '#ff0000'})`;
                         fillEl.style.boxShadow = `0 0 40px ${colorMax}`;
                         fillEl.style.animation = `pulseMax${type} 0.5s infinite alternate`;
                     } else if (pct >= 75) {
@@ -4057,7 +4017,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (textEl) {
                 if (pct >= 100) {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
-                    textEl.style.color = colorMid;
+                    textEl.style.color = isXP ? '#ffd100' : '#ff4400';
                     textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
                 } else {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
@@ -4067,7 +4027,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
-        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'Loot');
 
         // 6. Tooltip Generator Helper
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
@@ -4125,14 +4084,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
-        bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Loot Goblins", "Epics");
 
         // 7. Global click listener to close tooltips on mobile
         document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && 
-                !e.target.closest('#guild-xp-tooltip-trigger') && 
-                !e.target.closest('#guild-hk-tooltip-trigger') &&
-                !e.target.closest('#guild-loot-tooltip-trigger')) {
+            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger')) {
                 tooltip.classList.remove('visible');
             }
         });
