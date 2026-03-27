@@ -15,8 +15,8 @@
 /* ========================================= */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { cursor: url('https://wow.zamimg.com/images/wow/cursor/pass.png'), auto; background: radial-gradient(circle at top, #1f1f1f 0%, #0a0a0a 100%); color: #eee; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 0; margin: 0; min-height: 100vh; overflow-x: hidden; }
-a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #backToTopBtn { cursor: url('https://wow.zamimg.com/images/wow/cursor/select.png'), pointer !important; }
+body { cursor: url('../asset/pass.png'), auto; background: radial-gradient(circle at top, #1f1f1f 0%, #0a0a0a 100%); color: #eee; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 0; margin: 0; min-height: 100vh; overflow-x: hidden; }
+a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #backToTopBtn { cursor: pointer !important; }
 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: #0a0a0a; }
@@ -52,13 +52,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .nav-btn-home:hover { border-color: #ffd100; box-shadow: 0 0 10px rgba(255,209,0,0.3); transform: translateY(-1px); }
 .home-text { display: inline; }
 
-.mobile-menu-toggle { display: flex; flex-direction: column; justify-content: space-around; width: 28px; height: 22px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 120; position: relative; }
+.mobile-menu-toggle { display: flex; flex-direction: column; justify-content: space-around; width: 28px; height: 22px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 10006; position: relative; }
 .mobile-menu-toggle span { width: 28px; height: 3px; background: #ffd100; border-radius: 10px; transition: all 0.3s linear; position: relative; transform-origin: 1px; }
 .mobile-menu-toggle.open span:nth-child(1) { transform: rotate(45deg); }
 .mobile-menu-toggle.open span:nth-child(2) { opacity: 0; }
 .mobile-menu-toggle.open span:nth-child(3) { transform: rotate(-45deg); }
 
-.nav-links-container { position: fixed; top: 0; left: -100%; height: 100vh; width: 250px; flex-direction: column; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(10px); border-right: 1px solid #333; padding-top: 80px; padding-left: 20px; padding-bottom: 20px; align-items: flex-start; transition: left 0.3s ease-in-out; z-index: 110; box-shadow: 5px 0 15px rgba(0,0,0,0.8); display: flex; gap: 10px; overflow-y: auto; }
+.nav-links-container { position: fixed; top: 0; left: -100%; height: 100vh; width: 250px; flex-direction: column; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(10px); border-right: 1px solid rgba(255, 255, 255, 0.05); padding-top: 80px; padding-left: 20px; padding-bottom: 20px; align-items: flex-start; transition: left 0.3s ease-in-out; z-index: 10005; box-shadow: 5px 0 25px rgba(0,0,0,0.9); display: flex; gap: 10px; overflow-y: auto; }
 .nav-links-container.open { left: 0; }
 
 .custom-select-wrapper { position: relative; user-select: none; font-family: 'Cinzel'; z-index: 105; }
@@ -71,8 +71,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .opt-icon { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
 
 .search-container { position: relative; z-index: 104; }
-.search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.6); border: 1px solid #444; border-radius: 20px; transition: 0.3s; padding: 0 12px; height: 38px; }
-.search-box:focus-within { border-color: #ffd100; box-shadow: 0 0 8px rgba(255, 209, 0, 0.4); background: rgba(0,0,0,0.8); }
+.search-box { display: flex; align-items: center; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.1); border-top: 1px solid rgba(0, 0, 0, 0.5); border-radius: 20px; transition: all 0.3s ease; padding: 0 12px; height: 38px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6); }
+.search-box:focus-within { border-color: rgba(255, 209, 0, 0.5); box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 209, 0, 0.2); background: rgba(15, 15, 20, 0.8); transform: translateY(-1px); }
 .search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; font-size: 15px; padding: 0 8px; outline: none; width: 180px; transition: 0.3s; }
 .search-box input::placeholder { color: #bbb; }
 .search-autocomplete { position: absolute; top: calc(100% + 5px); right: 0; width: 260px; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid #ffd100; border-radius: 8px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.9); overflow: hidden; }
@@ -84,8 +84,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .ac-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .ac-meta { font-size: 11px; color: #aaa; font-style: italic; }
 
-.hero-search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.7); border: 1px solid #444; border-radius: 25px; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5); overflow: hidden; }
-.hero-search-box:focus-within { border-color: #ffd100; box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(255, 209, 0, 0.3); background: rgba(10,10,10,0.9); }
+.hero-search-box { display: flex; align-items: center; background: rgba(15, 15, 22, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(0, 0, 0, 0.8); border-radius: 30px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.8), 0 8px 25px rgba(0, 0, 0, 0.5); overflow: hidden; }
+.hero-search-box:focus-within { border-color: rgba(255, 209, 0, 0.6); box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.9), 0 8px 30px rgba(255, 209, 0, 0.2); background: rgba(20, 20, 25, 0.85); transform: translateY(-2px); }
 .hero-search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; outline: none; transition: 0.3s; }
 .hero-search-box input::placeholder { color: #888; }
 
@@ -97,8 +97,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 #empty-state { text-align: center; width: 100%; display: block; }
 
 .stat-box-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin: 30px 0; }
-.stat-box { background: rgba(0,0,0,0.6); border: 1px solid #333; border-radius: 8px; padding: 15px 25px; text-align: center; border-bottom: 3px solid #ffd100; min-width: 140px; transition: transform 0.3s; }
-.stat-box.clickable:hover { transform: translateY(-3px); border-color: #fff; cursor: pointer !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.stat-box { background: linear-gradient(180deg, rgba(30, 25, 40, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px 25px; text-align: center; border-bottom: 3px solid #ffd100; min-width: 140px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+.stat-box.clickable:hover { transform: translateY(-6px) scale(1.02); border-top-color: rgba(255, 209, 0, 0.4); border-bottom-color: #fff; cursor: pointer !important; box-shadow: 0 15px 35px rgba(255, 209, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.6); }
 .stat-value { display: block; font-family: 'Cinzel'; font-size: 32px; color: #fff; font-weight: bold; text-shadow: 0 2px 4px #000; }
 .stat-label { display: block; font-size: 11px; color: #bbb; text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
 
@@ -159,11 +159,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 #concise-view { display: none; width: 100%; max-width: 1100px; flex-direction: column; gap: 8px; }
 #concise-view-title { font-family: 'Cinzel'; font-size: 24px; color: #ffd100; text-align: center; margin-bottom: 20px; text-shadow: 0 2px 4px #000; }
 #concise-char-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-.concise-char-bar { display: flex; align-items: center; background: rgba(10, 10, 10, 0.7); border: 1px solid #333; border-radius: 6px; padding: 6px 12px; transition: 0.2s; color: white; justify-content: space-between; text-decoration: none; border-left: 3px solid; }
-.concise-char-bar:hover { transform: translateX(4px); background: rgba(255,255,255,0.08); border-color: #ffd100; }
+.concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+.concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
 .c-main-info { display: flex; align-items: center; gap: 12px; }
 .c-portrait { width: 36px; height: 36px; border-radius: 50%; border: 2px solid; background: #000; object-fit: cover; object-position: center; flex-shrink: 0; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
-.c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 1px 1px 2px #000; letter-spacing: 0.5px; }
+.c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; }
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; }
@@ -818,10 +818,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T19:09:13.910346Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T19:43:06.203957Z", "active_14_days": 401, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 659, "loot": 498, "levels": 161, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 671, "loot": 506, "levels": 165, "total_roster": 634, "active_roster": 401}]
     </script>
 
     <script>
