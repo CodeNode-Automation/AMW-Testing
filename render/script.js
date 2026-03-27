@@ -2687,9 +2687,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             countdownEl.id = 'mvp-countdown';
             countdownEl.style.textAlign = 'center';
             countdownEl.style.marginBottom = '25px';
+            countdownEl.style.width = '100%';
             
-            // Insert it between the H3 title and the flex container lists
-            mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
+            // MOVE ALIGNMENT: Insert it directly above the Guild XP (War Effort) Container
+            const xpContainer = document.getElementById('guild-xp-container');
+            if (xpContainer && xpContainer.parentNode) {
+                xpContainer.parentNode.insertBefore(countdownEl, xpContainer);
+            } else {
+                // Fallback just in case
+                mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
+            }
 
             function updateCountdown() {
                 const realNow = new Date();
@@ -2723,7 +2730,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (el) {
                     el.innerHTML = `
                         <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Crowning Ceremony: </span>
+                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Time Until Weekly Reset: </span>
                             <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
                             ${d}d ${h}h ${m}m ${s}s</span>
                         </div>`;
@@ -2935,7 +2942,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
     };
-    
+
     route();
     window.addEventListener('hashchange', route);
 });
