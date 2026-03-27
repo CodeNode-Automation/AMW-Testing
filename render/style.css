@@ -354,3 +354,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 @media (hover: none) and (pointer: coarse), (max-width: 800px) {
     .custom-tooltip { display: none !important; }
 }
+
+/* CRITICAL MOBILE OVERRIDES FOR CHARACTER CARD */
+@media (max-width: 800px) {
+    .char-card { padding: 15px !important; box-sizing: border-box; width: 100% !important; overflow: hidden; }
+    .cc-body { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
+    .cc-sidebar { flex: 1 1 100% !important; min-width: 100% !important; max-width: 100% !important; }
+    .cc-gear { flex: 1 1 100% !important; min-width: 100% !important; max-width: 100% !important; }
+    
+    /* Forces the gear grid to go into 1 single column on phones */
+    .gear-grid-container { grid-template-columns: 1fr !important; display: grid; gap: 10px; width: 100% !important; box-sizing: border-box; }
+    
+    .item-slot { width: 100% !important; box-sizing: border-box; }
+    .cc-name { font-size: 26px !important; word-break: break-word; }
+    .char-card .badge { font-size: 12px !important; padding: 6px 12px !important; margin-bottom: 5px; }
+}

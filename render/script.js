@@ -651,8 +651,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <img src="${data.icon_data}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
                         ${enchantBadge}
                     </div>
-                    <div style="display:flex; flex-direction:column; justify-content:center;">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none;">${data.name}</a>
+                    <div style="display:flex; flex-direction:column; justify-content:center; min-width: 0; overflow: hidden; padding-right: 5px;">
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%;">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -691,8 +691,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
     
-    <div class="cc-body" style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
-        <div class="cc-sidebar" style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
+    <div class="cc-body" style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap; width: 100%; box-sizing: border-box;">
+        <div class="cc-sidebar" style="flex: 1 1 260px; min-width: 240px; max-width: 100%; display:flex; flex-direction:column; gap:20px; box-sizing: border-box;">
             <div class="cc-portrait" style="text-align:center;">
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
@@ -709,7 +709,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 ${advancedStatsHtml}
             </div>
         </div>
-        <div class="gear-grid-container">
+        <div class="gear-grid-container cc-gear" style="flex: 2 1 300px; min-width: 0; width: 100%; box-sizing: border-box;">
             ${gearHtml}
         </div>
     </div>
