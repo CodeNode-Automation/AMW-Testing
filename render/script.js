@@ -1731,8 +1731,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const kpiHks = document.getElementById('home-kpi-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
-        document.getElementById('stat-avgilvl').onclick = () => { window.location.hash = 'ladder-pve'; };
-        document.getElementById('stat-hks').onclick = () => { window.location.hash = 'ladder-pvp'; };
+        const statAvgIlvl = document.getElementById('stat-avgilvl');
+        if (statAvgIlvl) statAvgIlvl.onclick = () => { window.location.hash = 'ladder-pve'; };
+        
+        const statHks = document.getElementById('stat-hks');
+        if (statHks) statHks.onclick = () => { window.location.hash = 'ladder-pvp'; };
 
         // "Yesterday" Sparklines & Math
         if (heatmapData && heatmapData.length >= 2) {
