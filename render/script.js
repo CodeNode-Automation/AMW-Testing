@@ -1047,11 +1047,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
-            let cStatsStyleOverride = 'flex:1; justify-content:flex-end;';
+            let cStatsStyleOverride = 'display:flex; align-items:center; justify-content:flex-end; flex:1;';
 
             if (hashUrl.startsWith('war-effort-')) {
-                // Stretch the character bars, allow vertical expansion
-                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; align-items: center; padding: 12px 15px;';
+                // Stretch the character bars and allow them to wrap content
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; flex-wrap: wrap; align-items: center; padding: 12px 15px;';
                 
                 if (window.warEffortContext) {
                     const charKey = displayName.toLowerCase();
@@ -1059,15 +1059,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000; align-self: center;">+${contextData} Levels Contributed</span>`;
+                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
-                            // Turn the container into a column so loot drops neatly underneath the character header
-                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; height: auto; flex-direction: column; align-items: flex-start; padding: 12px 15px; gap: 8px;';
-                            cStatsStyleOverride = 'width: 100%; justify-content: flex-start;';
-
+                            // Force the stats container to a new line taking 100% width
+                            cStatsStyleOverride = 'display:flex; align-items:center; width: 100%; flex-basis: 100%; justify-content: flex-start; margin-top: 12px;';
+                            
                             const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; margin-top: 4px;">
+                                <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
                                     <span style="color:#888; font-size:11px; text-transform:uppercase; display:block; margin-bottom: 8px;">Epic Loot Acquired:</span>
                                     <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
                                         ${itemBadges}
@@ -1076,7 +1075,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center; height: 100%;">
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center;">
                                     <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
                                     <span style="color:#3FC7EB; font-weight:bold; font-size:16px; text-shadow: 1px 1px 2px #000; margin-top: 4px;">${contextData}</span>
                                 </div>
@@ -1090,11 +1089,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!isClickable) {
                 return `
                 <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
-                    ${rankHtml}
-                    <div class="c-main-info" style="align-self: flex-start;">
-                        <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                        <span class="c-name" style="color:${cHex};">${displayName}</span>
-                        <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                    <div style="display: flex; align-items: center;">
+                        ${rankHtml}
+                        <div class="c-main-info">
+                            <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                            <span class="c-name" style="color:${cHex};">${displayName}</span>
+                            <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                        </div>
                     </div>
                     <div class="c-stats-info" style="${cStatsStyleOverride}">
                         ${statsHtml}
@@ -1104,11 +1105,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             return `
             <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
-                ${rankHtml}
-                <div class="c-main-info" style="align-self: flex-start;">
-                    <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                    <span class="c-name" style="color:${cHex};">${displayName}</span>
-                    <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                <div style="display: flex; align-items: center;">
+                    ${rankHtml}
+                    <div class="c-main-info">
+                        <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                        <span class="c-name" style="color:${cHex};">${displayName}</span>
+                        <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                    </div>
                 </div>
                 <div class="c-stats-info" style="${cStatsStyleOverride}">
                     ${statsHtml}
