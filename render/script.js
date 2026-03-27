@@ -919,12 +919,23 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Apply Sorting before mapping HTML
         let sortedCharacters = [...characters];
+        const hashUrl = window.location.hash.substring(1);
+
         sortedCharacters.sort((a, b) => {
             let valA, valB;
             
             // Handle Raw vs Full data structures
             const profA = isRawMode ? (rosterData.find(c => c.profile && c.profile.name === a.name)?.profile || a) : (a.profile || a);
             const profB = isRawMode ? (rosterData.find(c => c.profile && c.profile.name === b.name)?.profile || b) : (b.profile || b);
+            const nameA = (profA.name || '').toLowerCase();
+            const nameB = (profB.name || '').toLowerCase();
+
+            // Override sorting for War Effort XP
+            if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
+                valA = window.warEffortContext[nameA] || 0;
+                valB = window.warEffortContext[nameB] || 0;
+                return valB - valA; // High to Low Contributions
+            }
 
             if (currentSortMethod === 'ilvl') {
                 valA = profA.equipped_item_level || 0;
@@ -939,25 +950,26 @@ window.addEventListener('DOMContentLoaded', async () => {
                 valB = profB.honorable_kills || 0;
                 return valB - valA; // High to Low
             } else if (currentSortMethod === 'name') {
-                valA = (profA.name || '').toLowerCase();
-                valB = (profB.name || '').toLowerCase();
-                return valA.localeCompare(valB); // A to Z
+                return nameA.localeCompare(nameB); // A to Z
             }
             return 0;
         });
 
-        // Add Sorting Dropdown UI to the top of the list
-        let sortUI = `
-            <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
-                <span style="color: #888; font-size: 14px;">Sort By:</span>
-                <select id="concise-sort-dropdown" class="sort-select">
-                    <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
-                    <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
-                    <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
-                    <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
-                </select>
-            </div>
-        `;
+        // Add Sorting Dropdown UI to the top of the list (Hide for specific War Effort pages)
+        let sortUI = '';
+        if (hashUrl !== 'war-effort-xp' && hashUrl !== 'war-effort-loot' && hashUrl !== 'war-effort-zenith') {
+            sortUI = `
+                <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
+                    <span style="color: #888; font-size: 14px;">Sort By:</span>
+                    <select id="concise-sort-dropdown" class="sort-select">
+                        <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
+                        <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
+                        <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
+                        <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
+                    </select>
+                </div>
+            `;
+        }
 
         // Generate the HTML for the list
         let listHTML = sortedCharacters.map((char, index) => {
@@ -1031,34 +1043,36 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <span>Level <span class="c-val-lvl">${level}</span></span>
                 <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
             `;
+            let barStyleOverride = '';
 
-            const hashUrl = window.location.hash.substring(1);
-            if (hashUrl.startsWith('war-effort-') && window.warEffortContext) {
-                const charKey = displayName.toLowerCase();
-                const contextData = window.warEffortContext[charKey];
+            if (hashUrl.startsWith('war-effort-')) {
+                // Stretch the character bars to fill the screen
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px;';
                 
-                if (contextData) {
-                    if (hashUrl === 'war-effort-xp') {
-                        statsHtml = `
-                            <span>Level <span class="c-val-lvl">${level}</span></span>
-                            <span style="color:#ffd100; font-weight:bold; font-size:14px;">+${contextData} Levels Contributed</span>
-                        `;
-                    } else if (hashUrl === 'war-effort-loot') {
-                        statsHtml = `
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; max-width:70%; gap:4px;">
-                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Epic Loot Acquired:</span>
-                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2;">
-                                    ${contextData.join(', ')}
+                if (window.warEffortContext) {
+                    const charKey = displayName.toLowerCase();
+                    const contextData = window.warEffortContext[charKey];
+                    
+                    if (contextData) {
+                        if (hashUrl === 'war-effort-xp') {
+                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:16px;">+${contextData} Levels Contributed</span>`;
+                        } else if (hashUrl === 'war-effort-loot') {
+                            statsHtml = `
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Epic Loot Acquired:</span>
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:13px; line-height:1.4;">
+                                        ${contextData.join(', ')}
+                                    </div>
                                 </div>
-                            </div>
-                        `;
-                    } else if (hashUrl === 'war-effort-zenith') {
-                        statsHtml = `
-                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Reached Level 70 on:</span>
-                                <span style="color:#3FC7EB; font-weight:bold; font-size:13px;">${contextData}</span>
-                            </div>
-                        `;
+                            `;
+                        } else if (hashUrl === 'war-effort-zenith') {
+                            statsHtml = `
+                                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
+                                    <span style="color:#3FC7EB; font-weight:bold; font-size:15px;">${contextData}</span>
+                                </div>
+                            `;
+                        }
                     }
                 }
             }
@@ -1066,7 +1080,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             // 4. Render the HTML
             if (!isClickable) {
                 return `
-                <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default;">
+                <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     ${rankHtml}
                     <div class="c-main-info">
                         <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
@@ -1080,7 +1094,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             return `
-            <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex};">
+            <a href="javascript:void(0)" onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 ${rankHtml}
                 <div class="c-main-info">
                     <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
@@ -1096,28 +1110,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Inject the sorting UI and the List HTML
         conciseList.innerHTML = sortUI + listHTML;
 
-        // Bind the event listener to the newly created dropdown
-        document.getElementById('concise-sort-dropdown').addEventListener('change', function(e) {
-            currentSortMethod = e.target.value;
-            // Re-render the list with the exact same parameters but new sort
-            renderConciseList(title, characters, isRawMode);
-            
-            // Re-apply any active spec filters to the newly rendered HTML
-            if (typeof applyTimelineFilters === 'function') {
-                 // Trigger a click on the active badge to re-filter the DOM elements
-                 const activeBadge = document.querySelector('.dynamic-badge.active-filter');
-                 if (activeBadge) {
-                     // Briefly remove the class so the click handler re-applies it correctly
-                     activeBadge.classList.remove('active-filter'); 
-                     activeBadge.click();
-                 }
-            }
-        });
+        // Bind the event listener to the newly created dropdown if it exists
+        const sortDropdown = document.getElementById('concise-sort-dropdown');
+        if (sortDropdown) {
+            sortDropdown.addEventListener('change', function(e) {
+                currentSortMethod = e.target.value;
+                // Re-render the list with the exact same parameters but new sort
+                renderConciseList(title, characters, isRawMode);
+                
+                // Re-apply any active spec filters to the newly rendered HTML
+                if (typeof applyTimelineFilters === 'function') {
+                     // Trigger a click on the active badge to re-filter the DOM elements
+                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
+                     if (activeBadge) {
+                         // Briefly remove the class so the click handler re-applies it correctly
+                         activeBadge.classList.remove('active-filter'); 
+                         activeBadge.click();
+                     }
+                }
+            });
+        } 
 
-        setupTooltips();
-    }
+        setupTooltips();
+    }
 
-    function setupTooltips() {
+    function setupTooltips() {
         const tt_chars = document.querySelectorAll('.tt-char:not(.tt-bound)');
         tt_chars.forEach(trigger => {
             trigger.classList.add('tt-bound');
@@ -2069,7 +2086,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                             if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
                                 contributors.add(cName);
                                 const dateObj = new Date(cleanTs);
-                                window.warEffortContext[cName] = dateObj.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                                const dd = String(dateObj.getDate()).padStart(2, '0');
+                                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                const yyyy = dateObj.getFullYear();
+                                const HH = String(dateObj.getHours()).padStart(2, '0');
+                                const MM = String(dateObj.getMinutes()).padStart(2, '0');
+                                window.warEffortContext[cName] = `${dd}.${mm}.${yyyy} ${HH}:${MM}`;
                             }
                         }
                     });
