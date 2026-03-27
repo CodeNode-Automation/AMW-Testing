@@ -1129,10 +1129,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T00:18:39.977723Z", "active_14_days": 393, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T00:33:03.463731Z", "active_14_days": 393, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 857, "loot": 672, "levels": 185, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 23, "loot": 19, "levels": 4, "total_roster": 628, "active_roster": 393}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 317, "loot": 252, "levels": 65, "total_roster": 628, "active_roster": 393}]
     </script>
 
     <script>
@@ -3821,22 +3821,28 @@ window.addEventListener('DOMContentLoaded', async () => {
             mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
 
             function updateCountdown() {
-                const now = new Date();
+                const realNow = new Date();
                 
-                // Calculate the upcoming Tuesday at 00:00 UTC
-                const nextReset = new Date();
-                nextReset.setUTCHours(0, 0, 0, 0);
-                let day = nextReset.getUTCDay();
+                // Get current Berlin time as a pseudo-local Date object
+                const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
+                const berlinNow = new Date(berlinString);
+                
+                // Calculate the upcoming Tuesday at 00:00 Berlin time
+                const nextResetBerlin = new Date(berlinNow);
+                nextResetBerlin.setHours(0, 0, 0, 0);
+                
+                let day = nextResetBerlin.getDay();
                 let diff = (2 - day + 7) % 7; 
                 
-                // If it is currently Tuesday but past 00:00 UTC, target NEXT Tuesday
-                if (diff === 0 && now > nextReset) {
+                // If it is currently Tuesday but past 00:00, target NEXT Tuesday
+                if (diff === 0 && berlinNow > nextResetBerlin) {
                     diff = 7;
                 }
-                nextReset.setUTCDate(nextReset.getUTCDate() + diff);
+                nextResetBerlin.setDate(nextResetBerlin.getDate() + diff);
 
-                // Math for days, hours, minutes, seconds
-                const timeLeft = nextReset - now;
+                // Calculate difference in milliseconds natively
+                const timeLeft = nextResetBerlin - berlinNow;
+                
                 const d = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
                 const h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
