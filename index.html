@@ -6,6 +6,7 @@
     <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false};</script>
     <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script data-goatcounter="https://nullbit5.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -840,32 +841,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="hero-search-autocomplete" class="search-autocomplete" style="width: 100%; top: calc(100% + 8px);"></div>
                 </div>
-                
-                <div class="stat-box-container" style="max-width: 1200px; margin: 0 auto 30px auto; z-index: 10;">
-                    <div id="stat-total" class="stat-box clickable sparkline-box" title="Click to view all members">
-                        <canvas id="spark-total" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="position: relative; z-index: 2;">629 <span id="trend-total" class="trend-indicator"></span></span>
-                        <span class="stat-label" style="position: relative; z-index: 2;">Total Roster</span>
-                    </div>
-                    <div id="stat-active" class="stat-box clickable sparkline-box" title="Click to view characters active within 14 days" style="border-bottom-color: #2ecc71;">
-                        <canvas id="spark-active" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">394 <span id="trend-active" class="trend-indicator"></span></span>
-                        <span class="stat-label" style="position: relative; z-index: 2;">Active (14 Days)</span>
-                    </div>
-                    <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
-                        <canvas id="spark-ready" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">20 <span id="trend-ready" class="trend-indicator"></span></span>
-                        <span class="stat-label" style="position: relative; z-index: 2;">Raid Ready</span>
-                    </div>
-                    <div id="stat-avgilvl" class="stat-box clickable" title="Click to sort Level 70s by Item Level" style="border-bottom-color: #a335ee;">
-                        <span id="home-kpi-ilvl" class="stat-value" style="color: #a335ee; position: relative; z-index: 2;">0</span>
-                        <span class="stat-label" style="position: relative; z-index: 2;">Avg Lvl 70 iLvl</span>
-                    </div>
-                    <div id="stat-hks" class="stat-box clickable" title="Click to view PvP Leaderboard" style="border-bottom-color: #ff4400;">
-                        <span id="home-kpi-hks" class="stat-value" style="color: #ff4400; position: relative; z-index: 2;">0</span>
-                        <span class="stat-label" style="position: relative; z-index: 2;">Total Guild HKs</span>
-                    </div>
-                </div>
 
                 <div id="recent-milestones-container" style="display:none; width: 100%; max-width: 1050px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards;">
                     <div class="milestone-banner">
@@ -878,7 +853,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     <div class="heatmap-wrapper" style="flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden;">
                         <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
                         <div style="position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px;">
-                            <canvas id="activityChart" style="width: 100% !important; height: 100% !important;"></canvas>
+                            <canvas id="activityChart" style="width: 100% !important; height: 100% !important"></canvas>
                         </div>
                         <div id="heatmap-grid" class="heatmap-grid" style="display: flex; width: 100%; max-width: 100%; justify-content: space-between;"></div>
                     </div>
@@ -987,6 +962,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
             </div> 
             <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; margin-bottom: 20px; font-size: 32px;">Guild Analytics</h2>
+                
+                <div class="stat-box-container" style="max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pve'" style="border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);" title="View Full PvE Ladder">
+                        <span id="kpi-avg-ilvl" class="stat-value" style="color: #ff8000;">0</span>
+                        <span class="stat-label">Avg Level 70 iLvl</span>
+                    </div>
+                    <div class="stat-box clickable" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});" style="border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1);" title="Scroll to Activity Chart">
+                        <span id="kpi-epic-loot" class="stat-value" style="color: #a335ee;">0</span>
+                        <span class="stat-label">Epics Looted (7d)</span>
+                    </div>
+                    <div class="stat-box clickable" onclick="window.location.hash='ladder-pvp'" style="border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);" title="View Full PvP Ladder">
+                        <span id="kpi-total-hks" class="stat-value" style="color: #ff4400;">0</span>
+                        <span class="stat-label">Total Guild HKs</span>
+                    </div>
+                </div>
                 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
                     <div class="heatmap-wrapper" style="flex: 1; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column;">
@@ -1195,10 +1185,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T12:02:43.677879Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T12:12:44.845173Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 425, "loot": 331, "levels": 94, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 429, "loot": 334, "levels": 95, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -2935,8 +2925,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const kpiHks = document.getElementById('home-kpi-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
-        document.getElementById('stat-avgilvl').onclick = () => { window.location.hash = 'ladder-pve'; };
-        document.getElementById('stat-hks').onclick = () => { window.location.hash = 'ladder-pvp'; };
+        const statAvgIlvl = document.getElementById('stat-avgilvl');
+        if (statAvgIlvl) statAvgIlvl.onclick = () => { window.location.hash = 'ladder-pve'; };
+        
+        const statHks = document.getElementById('stat-hks');
+        if (statHks) statHks.onclick = () => { window.location.hash = 'ladder-pvp'; };
 
         // "Yesterday" Sparklines & Math
         if (heatmapData && heatmapData.length >= 2) {
@@ -3366,10 +3359,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Setup clickable stat boxes
-    document.getElementById('stat-total').addEventListener('click', () => { window.location.hash = 'total'; });
-    document.getElementById('stat-active').addEventListener('click', () => { window.location.hash = 'active'; });
-    document.getElementById('stat-raidready').addEventListener('click', () => { window.location.hash = 'raidready'; });
+    // Setup clickable stat boxes safely
+    const statTotal = document.getElementById('stat-total');
+    if (statTotal) statTotal.addEventListener('click', () => { window.location.hash = 'total'; });
+
+    const statActive = document.getElementById('stat-active');
+    if (statActive) statActive.addEventListener('click', () => { window.location.hash = 'active'; });
+
+    const statRaidReady = document.getElementById('stat-raidready');
+    if (statRaidReady) statRaidReady.addEventListener('click', () => { window.location.hash = 'raidready'; });
 
     // 🔥 RESTORED: Dynamic Home Page Class Pop-outs
     document.querySelectorAll('.clickable-class').forEach(badge => {
