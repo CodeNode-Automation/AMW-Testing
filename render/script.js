@@ -2755,19 +2755,26 @@ window.addEventListener('DOMContentLoaded', async () => {
         lastReset.setDate(lastReset.getDate() - diff);
         const lastResetMs = lastReset.getTime();
 
-        // 2. Tally Leveling Effort (From Timeline)
+        // 2. Tally Leveling & Loot Effort (From Timeline)
         let totalLevels = 0;
         const levelContributors = {};
+        let totalLoot = 0;
+        const lootContributors = {};
+
         timelineData.forEach(event => {
-            if (event.type === 'level_up') {
-                let cleanTs = event.timestamp.replace('Z', '+00:00');
-                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                const eventDate = new Date(cleanTs).getTime();
-                
-                if (eventDate >= lastResetMs) {
+            let cleanTs = event.timestamp.replace('Z', '+00:00');
+            if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+            const eventDate = new Date(cleanTs).getTime();
+            
+            if (eventDate >= lastResetMs) {
+                if (event.type === 'level_up') {
                     totalLevels++;
                     const charName = event.character_name || 'Unknown';
                     levelContributors[charName] = (levelContributors[charName] || 0) + 1;
+                } else if (event.quality === 'EPIC' || event.quality === 'LEGENDARY') {
+                    totalLoot++;
+                    const charName = event.character_name || 'Unknown';
+                    lootContributors[charName] = (lootContributors[charName] || 0) + 1;
                 }
             }
         });
@@ -2786,7 +2793,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Inject Dynamic Animations for BOTH Bars
+        // 4. Inject Dynamic Animations for ALL Bars
         if (!document.getElementById('war-effort-styles')) {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
@@ -2798,6 +2805,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
+
+                @keyframes pulseSlowLoot { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFastLoot { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMaxLoot { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #8a2be2; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #a335ee; } }
             `;
             document.head.appendChild(style);
         }
@@ -2809,17 +2820,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             const textEl = document.getElementById(textId);
             const dynamicGlow = 10 + (pct * 0.25);
             
-            const isXP = (type === 'XP');
-            const colorBase = isXP ? '#8B6508' : '#8B0000';
-            const colorMid = isXP ? '#ffd100' : '#e74c3c';
-            const colorMax = isXP ? '#ff8000' : '#ff4400';
-            const labelName = isXP ? 'Levels' : 'HKs';
+            let colorBase, colorMid, colorMax, labelName;
+            if (type === 'XP') {
+                colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels';
+            } else if (type === 'Loot') {
+                colorBase = '#4b0082'; colorMid = '#8a2be2'; colorMax = '#a335ee'; labelName = 'Epics';
+            } else {
+                colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs';
+            }
 
             if (fillEl) {
                 setTimeout(() => { 
                     fillEl.style.width = pct + '%'; 
                     if (pct >= 100) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${isXP ? '#ffd100' : '#ff0000'})`;
+                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, #fff)`;
                         fillEl.style.boxShadow = `0 0 40px ${colorMax}`;
                         fillEl.style.animation = `pulseMax${type} 0.5s infinite alternate`;
                     } else if (pct >= 75) {
@@ -2841,7 +2855,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (textEl) {
                 if (pct >= 100) {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
-                    textEl.style.color = isXP ? '#ffd100' : '#ff4400';
+                    textEl.style.color = colorMid;
                     textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
                 } else {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
@@ -2851,6 +2865,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
+        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'Loot');
 
         // 6. Tooltip Generator Helper
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
@@ -2908,15 +2923,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
+        bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Loot Goblins", "Epics");
 
         // 7. Global click listener to close tooltips on mobile
         document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger')) {
+            if (tooltip.classList.contains('visible') && 
+                !e.target.closest('#guild-xp-tooltip-trigger') && 
+                !e.target.closest('#guild-hk-tooltip-trigger') &&
+                !e.target.closest('#guild-loot-tooltip-trigger')) {
                 tooltip.classList.remove('visible');
             }
         });
     };
-
+    
     route();
     window.addEventListener('hashchange', route);
 });
