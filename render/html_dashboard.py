@@ -70,18 +70,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     display_total_members = len(raw_guild_roster)
 
     global_trends = realm_data.get('global_trends', {}) if isinstance(realm_data, dict) else {}
-    
-    def get_trend_html(trend_val):
-        if trend_val > 0:
-            return f'<span style="color: #2ecc71; font-size: 16px; text-shadow: none; margin-left: 6px;">▲ {trend_val}</span>'
-        elif trend_val < 0:
-            return f'<span style="color: #e74c3c; font-size: 16px; text-shadow: none; margin-left: 6px;">▼ {abs(trend_val)}</span>'
-        else:
-            return f'<span style="color: #555; font-size: 16px; text-shadow: none; margin-left: 6px;">-</span>'
-
-    trend_total_html = get_trend_html(global_trends.get('trend_total', 0))
-    trend_active_html = get_trend_html(global_trends.get('trend_active', 0))
-    trend_ready_html = get_trend_html(global_trends.get('trend_ready', 0))
 
     berlin_tz = ZoneInfo("Europe/Berlin")
 
@@ -136,17 +124,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
         })
     
     safe_heatmap_data = json.dumps(heatmap_data)
-    
-    class_badges_html = ""
-    for cls, count in sorted(class_counts.items(), key=lambda item: item[1], reverse=True):
-        if count > 0:
-            color = CLASS_COLORS.get(cls, "#fff")
-            class_badges_html += f'<div id="stats-{cls.lower()}" class="stat-badge clickable-class" style="border-color: {color};" title="Click to view all {cls}s">\n'
-            class_badges_html += f'  <span class="stat-badge-cls" style="color: {color};">{cls}</span>\n'
-            class_badges_html += f'  <span class="stat-badge-count">{count}</span>\n'
-            class_badges_html += '</div>'
-        
-    # [The rest of your script continues here with base_dir = os.path.dirname...]
 
     base_dir = os.path.dirname(__file__)
     try:
@@ -180,13 +157,9 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     html = template.render(
         css_content=css_content,
         display_total_members=display_total_members,
-        trend_total_html=trend_total_html,
         active_14_days=active_14_days,
-        trend_active_html=trend_active_html,
         raid_ready_count=raid_ready_count,
-        trend_ready_html=trend_ready_html,
         avg_level=avg_level,
-        class_badges_html=class_badges_html,
         safe_config=safe_config,
         safe_heatmap_data=safe_heatmap_data,
         js_content=js_content
