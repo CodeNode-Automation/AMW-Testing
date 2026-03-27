@@ -868,12 +868,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin-bottom: 30px;">
-                    <div class="heatmap-wrapper" style="flex: 1; width: 100%; margin: 0;">
+                    <div class="heatmap-wrapper" style="flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden;">
                         <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
-                        <div style="position: relative; height: 180px; width: 100%; margin-bottom: 20px;">
-                            <canvas id="activityChart"></canvas>
+                        <div style="position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px;">
+                            <canvas id="activityChart" style="width: 100% !important; height: 100% !important;"></canvas>
                         </div>
-                        <div id="heatmap-grid" class="heatmap-grid"></div>
+                        <div id="heatmap-grid" class="heatmap-grid" style="display: flex; width: 100%; max-width: 100%; justify-content: space-between;"></div>
                     </div>
                 </div>
 
@@ -1129,10 +1129,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T00:08:17.864980Z", "active_14_days": 393, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T00:18:39.977723Z", "active_14_days": 393, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 857, "loot": 672, "levels": 185, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 6, "loot": 5, "levels": 1, "total_roster": 628, "active_roster": 393}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 560, "loot": 453, "levels": 107, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 664, "loot": 520, "levels": 144, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 566, "loot": 425, "levels": 141, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 502, "loot": 389, "levels": 113, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 857, "loot": 672, "levels": 185, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 23, "loot": 19, "levels": 4, "total_roster": 628, "active_roster": 393}]
     </script>
 
     <script>
@@ -1538,9 +1538,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             const dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
             
             heatmapHtml += `
-            <div class="heatmap-col">
+            <div class="heatmap-col" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                 <span class="heatmap-label">${day.day_name}</span>
-                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}"></div>
+                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}" style="width: 100%; max-width: 60px;"></div>
             </div>`;
         });
         heatmapGrid.innerHTML = heatmapHtml;
@@ -2591,9 +2591,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         if(window.roleChartInstance) window.roleChartInstance.destroy();
         window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
-
-        if (mainDonutChartInstance) mainDonutChartInstance.destroy();
-        mainDonutChartInstance = createDonutChart('classDonutChart', rawGuildRoster, true);
 
         // --- LEVEL DISTRIBUTION ---
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
