@@ -837,17 +837,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                 <div class="stat-box-container" style="max-width: 1200px; margin: 0 auto 30px auto; z-index: 10;">
                     <div id="stat-total" class="stat-box clickable sparkline-box" title="Click to view all members">
                         <canvas id="spark-total" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="position: relative; z-index: 2;">628 <span id="trend-total" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="position: relative; z-index: 2;">629 <span id="trend-total" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Total Roster</span>
                     </div>
                     <div id="stat-active" class="stat-box clickable sparkline-box" title="Click to view characters active within 14 days" style="border-bottom-color: #2ecc71;">
                         <canvas id="spark-active" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">393 <span id="trend-active" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #2ecc71; position: relative; z-index: 2;">394 <span id="trend-active" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Active (14 Days)</span>
                     </div>
                     <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
                         <canvas id="spark-ready" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">20 <span id="trend-ready" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">19 <span id="trend-ready" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Raid Ready</span>
                     </div>
                     <div id="stat-avgilvl" class="stat-box clickable" title="Click to sort Level 70s by Item Level" style="border-bottom-color: #a335ee;">
@@ -910,6 +910,22 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                                 <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
                                 
                                 <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 500 HKs Gained</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 1px 1px 2px #000;">
+                                <span>🐉 Dragon's Hoard (Epic Loot)</span>
+                                <span id="guild-loot-tooltip-trigger" style="color: #aaa; font-family: sans-serif; font-size: 11px; font-weight: normal; border-bottom: 1px dotted #aaa; cursor: help; text-shadow: none;">View Top Looters</span>
+                            </div>
+                            <div style="position: relative; width: 100%; height: 28px; background: #111; border-radius: 14px; border: 1px solid #444; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);">
+                                <div id="guild-loot-fill" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s ease-out;"></div>
+                                
+                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
+                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.3);"></div>
+                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
+                                
+                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 100 Epics Looted</div>
                             </div>
                         </div>
                     </div>
@@ -1167,10 +1183,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T01:37:56.525180Z", "active_14_days": 393, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T09:15:30.495129Z", "active_14_days": 394, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 342, "loot": 271, "levels": 71, "total_roster": 628, "active_roster": 393}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 377, "loot": 296, "levels": 81, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -3962,7 +3978,24 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 4. Inject Dynamic Animations for BOTH Bars
+        // 3b. Tally Dragon's Hoard (Epic Loot from Timeline)
+        let totalLoot = 0;
+        const lootContributors = {};
+        timelineData.forEach(event => {
+            if (event.type === 'item' && (event.item_quality === 'EPIC' || event.item_quality === 'LEGENDARY')) {
+                let cleanTs = event.timestamp.replace('Z', '+00:00');
+                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                const eventDate = new Date(cleanTs).getTime();
+                
+                if (eventDate >= lastResetMs) {
+                    totalLoot++;
+                    const charName = event.character_name || 'Unknown';
+                    lootContributors[charName] = (lootContributors[charName] || 0) + 1;
+                }
+            }
+        });
+
+        // 4. Inject Dynamic Animations for Bars
         if (!document.getElementById('war-effort-styles')) {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
@@ -3974,6 +4007,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 @keyframes pulseSlowHK { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastHK { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxHK { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #e74c3c; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff4400; } }
+
+                @keyframes pulseSlowLOOT { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
+                @keyframes pulseFastLOOT { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
+                @keyframes pulseMaxLOOT { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #a335ee; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ff8000; } }
             `;
             document.head.appendChild(style);
         }
@@ -3985,17 +4022,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             const textEl = document.getElementById(textId);
             const dynamicGlow = 10 + (pct * 0.25);
             
-            const isXP = (type === 'XP');
-            const colorBase = isXP ? '#8B6508' : '#8B0000';
-            const colorMid = isXP ? '#ffd100' : '#e74c3c';
-            const colorMax = isXP ? '#ff8000' : '#ff4400';
-            const labelName = isXP ? 'Levels' : 'HKs';
+            let colorBase, colorMid, colorMax, labelName, glowColor;
+            if (type === 'XP') {
+                colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels'; glowColor = '#ffd100';
+            } else if (type === 'HK') {
+                colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs'; glowColor = '#ff0000';
+            } else { // LOOT
+                colorBase = '#4b0082'; colorMid = '#a335ee'; colorMax = '#ff8000'; labelName = 'Epics'; glowColor = '#ff8000';
+            }
 
             if (fillEl) {
                 setTimeout(() => { 
                     fillEl.style.width = pct + '%'; 
                     if (pct >= 100) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${isXP ? '#ffd100' : '#ff0000'})`;
+                        fillEl.style.background = `linear-gradient(90deg, ${colorMid}, ${colorMax}, ${glowColor})`;
                         fillEl.style.boxShadow = `0 0 40px ${colorMax}`;
                         fillEl.style.animation = `pulseMax${type} 0.5s infinite alternate`;
                     } else if (pct >= 75) {
@@ -4017,7 +4057,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (textEl) {
                 if (pct >= 100) {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
-                    textEl.style.color = isXP ? '#ffd100' : '#ff4400';
+                    textEl.style.color = colorMid;
                     textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
                 } else {
                     textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
@@ -4027,6 +4067,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
+        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
 
         // 6. Tooltip Generator Helper
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
@@ -4084,10 +4125,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
+        bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Treasure Hunters", "Epics");
 
         // 7. Global click listener to close tooltips on mobile
         document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger')) {
+            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger') && !e.target.closest('#guild-loot-tooltip-trigger')) {
                 tooltip.classList.remove('visible');
             }
         });
