@@ -847,7 +847,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
                     </div>
                     <div id="stat-raidready" class="stat-box clickable sparkline-box" title="Click to view Level 70s" style="border-bottom-color: #ff8000;">
                         <canvas id="spark-ready" class="sparkline-canvas"></canvas>
-                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">19 <span id="trend-ready" class="trend-indicator"></span></span>
+                        <span class="stat-value" style="color: #ff8000; position: relative; z-index: 2;">20 <span id="trend-ready" class="trend-indicator"></span></span>
                         <span class="stat-label" style="position: relative; z-index: 2;">Raid Ready</span>
                     </div>
                     <div id="stat-avgilvl" class="stat-box clickable" title="Click to sort Level 70s by Item Level" style="border-bottom-color: #a335ee;">
@@ -1203,10 +1203,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn { cu
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-27T09:51:36.845712Z", "active_14_days": 394, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-27T10:15:02.698857Z", "active_14_days": 394, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 388, "loot": 304, "levels": 84, "total_roster": 629, "active_roster": 394}]
+        [{"date": "2026-03-21", "day_name": "Sat", "count": 494, "loot": 400, "levels": 94, "total_roster": null, "active_roster": null}, {"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 394, "loot": 308, "levels": 86, "total_roster": 629, "active_roster": 394}]
     </script>
 
     <script>
@@ -2238,6 +2238,43 @@ window.addEventListener('DOMContentLoaded', async () => {
                 rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
             }
 
+            // --- NEW: Custom War Effort Stats Overrides ---
+            let statsHtml = `
+                <span>Level <span class="c-val-lvl">${level}</span></span>
+                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+            `;
+
+            const hashUrl = window.location.hash.substring(1);
+            if (hashUrl.startsWith('war-effort-') && window.warEffortContext) {
+                const charKey = displayName.toLowerCase();
+                const contextData = window.warEffortContext[charKey];
+                
+                if (contextData) {
+                    if (hashUrl === 'war-effort-xp') {
+                        statsHtml = `
+                            <span>Level <span class="c-val-lvl">${level}</span></span>
+                            <span style="color:#ffd100; font-weight:bold; font-size:14px;">+${contextData} Levels Contributed</span>
+                        `;
+                    } else if (hashUrl === 'war-effort-loot') {
+                        statsHtml = `
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; max-width:70%; gap:4px;">
+                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Epic Loot Acquired:</span>
+                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; font-size:12px; line-height:1.2;">
+                                    ${contextData.join(', ')}
+                                </div>
+                            </div>
+                        `;
+                    } else if (hashUrl === 'war-effort-zenith') {
+                        statsHtml = `
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <span style="color:#888; font-size:10px; text-transform:uppercase;">Reached Level 70 on:</span>
+                                <span style="color:#3FC7EB; font-weight:bold; font-size:13px;">${contextData}</span>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
             // 4. Render the HTML
             if (!isClickable) {
                 return `
@@ -2248,9 +2285,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <span class="c-name" style="color:${cHex};">${displayName}</span>
                         <span class="c-meta">${raceName} ${displaySpecClass}</span>
                     </div>
-                    <div class="c-stats-info">
-                        <span>Level <span class="c-val-lvl">${level}</span></span>
-                        <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                    <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                        ${statsHtml}
                     </div>
                 </div>`;
             }
@@ -2263,9 +2299,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                     <span class="c-name" style="color:${cHex};">${displayName}</span>
                     <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div class="c-stats-info">
-                    <span>Level <span class="c-val-lvl">${level}</span></span>
-                    <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                <div class="c-stats-info" style="flex:1; justify-content:flex-end;">
+                    ${statsHtml}
                 </div>
             </a>`;
         }).join('');
@@ -3216,11 +3251,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             let filteredRoster = [];
             let title = "";
+            window.warEffortContext = {}; // Initialize custom display context
 
             if (type === 'hk') {
                 filteredRoster = rosterData.filter(c => c.profile && (c.profile.trend_pvp || c.profile.trend_hks || 0) > 0);
                 title = `🩸 Blood of the Enemy Contributors (${filteredRoster.length})`;
-                showConciseView(title, filteredRoster, false, true, 'hks');
+                // Note: The 'false' flag here hides the Class Badges
+                showConciseView(title, filteredRoster, false, false, 'hks'); 
             } else {
                 const contributors = new Set();
                 if (typeof timelineData !== 'undefined') {
@@ -3229,9 +3266,23 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                         const eventDate = new Date(cleanTs).getTime();
                         if (eventDate >= lastResetMs) {
-                            if (type === 'xp' && e.type === 'level_up') contributors.add((e.character_name || '').toLowerCase());
-                            if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) contributors.add((e.character_name || '').toLowerCase());
-                            if (type === 'zenith' && e.type === 'level_up' && e.level === 70) contributors.add((e.character_name || '').toLowerCase());
+                            const cName = (e.character_name || '').toLowerCase();
+                            
+                            if (type === 'xp' && e.type === 'level_up') {
+                                contributors.add(cName);
+                                window.warEffortContext[cName] = (window.warEffortContext[cName] || 0) + 1;
+                            }
+                            if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) {
+                                contributors.add(cName);
+                                window.warEffortContext[cName] = window.warEffortContext[cName] || [];
+                                const qColor = QUALITY_COLORS[e.item_quality] || '#a335ee';
+                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" style="color:${qColor}; text-decoration:none;" onclick="event.stopPropagation();">[${e.item_name}]</a>`);
+                            }
+                            if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
+                                contributors.add(cName);
+                                const dateObj = new Date(cleanTs);
+                                window.warEffortContext[cName] = dateObj.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                            }
                         }
                     });
                 }
@@ -3242,12 +3293,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (type === 'zenith') title = `⚡ The Zenith Cohort (${filteredRoster.length})`;
                 
                 let sortPref = type === 'loot' ? 'ilvl' : 'level';
-                showConciseView(title, filteredRoster, false, true, sortPref);
+                // Note: The 'false' flag here hides the Class Badges
+                showConciseView(title, filteredRoster, false, false, sortPref); 
             }
+            
+            // Explicitly hide timeline entirely for these pages
+            if (timeline) timeline.style.display = 'none';
+            
             updateDropdownLabel('all');
             
         } else {
-            // Final fallback: Look for a specific character
             // Final fallback: Look for a specific character
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
             if (char) {
