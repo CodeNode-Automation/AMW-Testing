@@ -2683,22 +2683,28 @@ window.addEventListener('DOMContentLoaded', async () => {
             mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
 
             function updateCountdown() {
-                const now = new Date();
+                const realNow = new Date();
                 
-                // Calculate the upcoming Tuesday at 00:00 UTC
-                const nextReset = new Date();
-                nextReset.setUTCHours(0, 0, 0, 0);
-                let day = nextReset.getUTCDay();
+                // Get current Berlin time as a pseudo-local Date object
+                const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
+                const berlinNow = new Date(berlinString);
+                
+                // Calculate the upcoming Tuesday at 00:00 Berlin time
+                const nextResetBerlin = new Date(berlinNow);
+                nextResetBerlin.setHours(0, 0, 0, 0);
+                
+                let day = nextResetBerlin.getDay();
                 let diff = (2 - day + 7) % 7; 
                 
-                // If it is currently Tuesday but past 00:00 UTC, target NEXT Tuesday
-                if (diff === 0 && now > nextReset) {
+                // If it is currently Tuesday but past 00:00, target NEXT Tuesday
+                if (diff === 0 && berlinNow > nextResetBerlin) {
                     diff = 7;
                 }
-                nextReset.setUTCDate(nextReset.getUTCDate() + diff);
+                nextResetBerlin.setDate(nextResetBerlin.getDate() + diff);
 
-                // Math for days, hours, minutes, seconds
-                const timeLeft = nextReset - now;
+                // Calculate difference in milliseconds natively
+                const timeLeft = nextResetBerlin - berlinNow;
+                
                 const d = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
                 const h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
