@@ -2803,6 +2803,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
             style.innerHTML = `
+                .progress-bar-glow::after {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; bottom: 0; right: 0;
+                    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+                    background-size: 200% 100%;
+                    animation: shimmerWave 2.5s infinite linear;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                
+                @keyframes shimmerWave {
+                    0% { background-position: 200% 0; }
+                    100% { background-position: -200% 0; }
+                }
+
                 @keyframes pulseSlowXP { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
                 @keyframes pulseFastXP { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
                 @keyframes pulseMaxXP { 0% { opacity: 0.8; filter: brightness(1.5); box-shadow: 0 0 20px #ff8000; } 100% { opacity: 1; filter: brightness(2); box-shadow: 0 0 40px #ffd100; } }

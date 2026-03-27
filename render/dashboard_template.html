@@ -140,57 +140,61 @@
                     </div>
                 </div>
 
-                <div id="guild-xp-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; background: rgba(0,0,0,0.5); border: 1px solid #ffd100; border-radius: 8px; padding: 20px; box-shadow: inset 0 0 15px rgba(255,209,0,0.1); animation: fadeInUp 0.5s forwards;">
-                    <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 25px; text-shadow: 0 2px 4px #000; letter-spacing: 1px;">⚔️ Weekly Guild War Effort ⚔️</h3>
+                <div id="guild-xp-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; background: rgba(0,0,0,0.6); border: 1px solid #ffd100; border-radius: 12px; padding: 25px; box-shadow: inset 0 0 25px rgba(255,209,0,0.15), 0 5px 15px rgba(0,0,0,0.8); animation: fadeInUp 0.5s forwards;">
+                    <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 25px; text-shadow: 0 2px 4px #000; letter-spacing: 1px;">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
-                    <div style="display: flex; flex-direction: column; gap: 25px;">
+                    <div style="display: flex; flex-direction: column; gap: 30px;">
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 1px 1px 2px #000;">
-                                <span>🛡️ Leveling Effort</span>
-                                <span id="guild-xp-tooltip-trigger" style="color: #aaa; font-family: sans-serif; font-size: 11px; font-weight: normal; border-bottom: 1px dotted #aaa; cursor: help; text-shadow: none;">View Top Levelers</span>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #ffd100; text-shadow: 1px 1px 2px #000;">
+                                <span>🛡️ Hero's Journey (XP Gained)</span>
+                                <span id="guild-xp-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Levelers</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 28px; background: #111; border-radius: 14px; border: 1px solid #444; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);">
-                                <div id="guild-xp-fill" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s ease-out;"></div>
+                            <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
+                                <div id="guild-xp-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
                                 
-                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
-                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.3);"></div>
-                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
+                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
+                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.4);"></div>
+                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
                                 
-                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 1,000 Levels Gained</div>
+                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 1,000 Levels Gained</div>
                             </div>
                         </div>
 
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ff4400; text-shadow: 1px 1px 2px #000;">
-                                <span>🩸 PvP Effort (Honorable Kills)</span>
-                                <span id="guild-hk-tooltip-trigger" style="color: #aaa; font-family: sans-serif; font-size: 11px; font-weight: normal; border-bottom: 1px dotted #aaa; cursor: help; text-shadow: none;">View Top Slayers</span>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #ff4400; text-shadow: 1px 1px 2px #000;">
+                                <span>🩸 Blood of the Enemy (HKs)</span>
+                                <span id="guild-hk-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Slayers</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 28px; background: #111; border-radius: 14px; border: 1px solid #444; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);">
-                                <div id="guild-hk-fill" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s ease-out;"></div>
+                            <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
+                                <div id="guild-hk-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
                                 
-                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
-                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.3);"></div>
-                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
+                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
+                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.4);"></div>
+                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
                                 
-                                <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 500 HKs Gained</div>
+                                <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 500 HKs Gained</div>
                             </div>
                         </div>
                         
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 1px 1px 2px #000;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; color: #a335ee; text-shadow: 1px 1px 2px #000;">
                                 <span>🐉 Dragon's Hoard (Epic Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" style="color: #aaa; font-family: sans-serif; font-size: 11px; font-weight: normal; border-bottom: 1px dotted #aaa; cursor: help; text-shadow: none;">View Top Looters</span>
+                                <span id="guild-loot-tooltip-trigger" style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: normal; border-bottom: 1px dotted #bbb; cursor: help; text-shadow: none;">View Top Looters</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 28px; background: #111; border-radius: 14px; border: 1px solid #444; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);">
-                                <div id="guild-loot-fill" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s ease-out;"></div>
+                            <div style="position: relative; width: 100%; height: 34px; background: #111; border-radius: 17px; border: 2px solid #333; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);">
+                                <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);"></div>
                                 
-                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
-                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.3);"></div>
-                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.1);"></div>
+                                <div style="position:absolute; top:0; left:25%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
+                                <div style="position:absolute; top:0; left:50%; width:1px; height:100%; background:rgba(255,255,255,0.4);"></div>
+                                <div style="position:absolute; top:0; left:75%; width:1px; height:100%; background:rgba(255,255,255,0.15);"></div>
                                 
-                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 100 Epics Looted</div>
+                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000, -1px -1px 2px #000; z-index: 2;">0 / 100 Epics Looted</div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #888; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+                        * Note: Weekly guild challenges are currently experimental and subject to change based on community feedback.
                     </div>
                 </div>
 
