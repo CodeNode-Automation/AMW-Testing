@@ -2803,6 +2803,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const style = document.createElement('style');
             style.id = 'war-effort-styles';
             style.innerHTML = `
+                .war-effort-link:hover { color: #fff !important; }
+                
                 .progress-bar-glow::after {
                     content: '';
                     position: absolute;
@@ -2884,11 +2886,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 1000, 'XP');
+        renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
 
-        // 6. Tooltip Generator Helper
+        // 6. Tooltip Generator Helper (Updated to Route on Click)
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
             const tooltipTrigger = document.getElementById(triggerId);
             if (!tooltipTrigger) return;
@@ -2897,7 +2899,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">${titleText}</div>`;
             
             if (sortedContributors.length === 0) {
-                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The war effort just began!</div>`;
+                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The challenges just began!</div>`;
             } else {
                 const topList = sortedContributors.slice(0, 15);
                 topList.forEach(([name, count], index) => {
@@ -2935,23 +2937,29 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
             newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+            
+            // --- NEW: Interactive Navigation ---
             newTrigger.addEventListener('click', e => {
                 e.stopPropagation();
-                if (tooltip.classList.contains('visible')) tooltip.classList.remove('visible');
-                else displayTooltip(e.clientX, e.clientY - 40);
+                tooltip.classList.remove('visible');
+                
+                if (triggerId === 'guild-xp-tooltip-trigger') {
+                    const btn = document.querySelector('.tl-btn[data-type="level_up"]');
+                    if (btn) btn.click();
+                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
+                } else if (triggerId === 'guild-hk-tooltip-trigger') {
+                    window.location.hash = 'ladder-pvp';
+                } else if (triggerId === 'guild-loot-tooltip-trigger') {
+                    const btn = document.querySelector('.tl-btn[data-type="epic"]');
+                    if (btn) btn.click();
+                    document.getElementById('timeline').scrollIntoView({behavior: 'smooth'});
+                }
             });
         }
 
         bindTooltip('guild-xp-tooltip-trigger', levelContributors, "Top Leveling Heroes", "levels");
         bindTooltip('guild-hk-tooltip-trigger', hkContributors, "Top PvP Slayers", "HKs");
         bindTooltip('guild-loot-tooltip-trigger', lootContributors, "Top Treasure Hunters", "Epics");
-
-        // 7. Global click listener to close tooltips on mobile
-        document.addEventListener('click', e => {
-            if (tooltip.classList.contains('visible') && !e.target.closest('#guild-xp-tooltip-trigger') && !e.target.closest('#guild-hk-tooltip-trigger') && !e.target.closest('#guild-loot-tooltip-trigger')) {
-                tooltip.classList.remove('visible');
-            }
-        });
     };
 
     route();
