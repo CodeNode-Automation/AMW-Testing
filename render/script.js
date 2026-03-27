@@ -2680,60 +2680,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         mvpPveList.innerHTML = pveGloat + generateMvpHtml(topTrendPve, false);
         mvpPvpList.innerHTML = pvpGloat + generateMvpHtml(topTrendPvp, true);
 
-        // --- NEW: Live Countdown Timer Logic ---
-        let countdownEl = document.getElementById('mvp-countdown');
-        if (!countdownEl) {
-            countdownEl = document.createElement('div');
-            countdownEl.id = 'mvp-countdown';
-            countdownEl.style.textAlign = 'center';
-            countdownEl.style.marginBottom = '25px';
-            
-            // Insert it between the H3 title and the flex container lists
-            mvpContainer.insertBefore(countdownEl, mvpContainer.children[1]);
-
-            function updateCountdown() {
-                const realNow = new Date();
-                
-                // Get current Berlin time as a pseudo-local Date object
-                const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
-                const berlinNow = new Date(berlinString);
-                
-                // Calculate the upcoming Tuesday at 00:00 Berlin time
-                const nextResetBerlin = new Date(berlinNow);
-                nextResetBerlin.setHours(0, 0, 0, 0);
-                
-                let day = nextResetBerlin.getDay();
-                let diff = (2 - day + 7) % 7; 
-                
-                // If it is currently Tuesday but past 00:00, target NEXT Tuesday
-                if (diff === 0 && berlinNow > nextResetBerlin) {
-                    diff = 7;
-                }
-                nextResetBerlin.setDate(nextResetBerlin.getDate() + diff);
-
-                // Calculate difference in milliseconds natively
-                const timeLeft = nextResetBerlin - berlinNow;
-                
-                const d = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                const h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-                const el = document.getElementById('mvp-countdown');
-                if (el) {
-                    el.innerHTML = `
-                        <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Crowning Ceremony: </span>
-                            <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
-                            ${d}d ${h}h ${m}m ${s}s</span>
-                        </div>`;
-                }
-            }
-
-            // Start the clock
-            setInterval(updateCountdown, 1000);
-            updateCountdown();
-        }
     };
 
     // ==========================================
@@ -2742,6 +2688,55 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.renderGuildXPBar = function() {
         const xpContainer = document.getElementById('guild-xp-container');
         if (!xpContainer || !timelineData || timelineData.length === 0) return;
+
+        // --- Live Countdown Timer Logic ---
+        let countdownEl = document.getElementById('war-effort-countdown');
+        if (!countdownEl) {
+            countdownEl = document.createElement('div');
+            countdownEl.id = 'war-effort-countdown';
+            countdownEl.style.textAlign = 'center';
+            countdownEl.style.marginBottom = '25px';
+            
+            // Insert it between the H3 title and the progress bars
+            xpContainer.insertBefore(countdownEl, xpContainer.children[1]);
+
+            function updateWarEffortCountdown() {
+                const realNow = new Date();
+                const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
+                const berlinNow = new Date(berlinString);
+                
+                const nextResetBerlin = new Date(berlinNow);
+                nextResetBerlin.setHours(0, 0, 0, 0);
+                
+                let day = nextResetBerlin.getDay();
+                let diff = (2 - day + 7) % 7; 
+                
+                if (diff === 0 && berlinNow > nextResetBerlin) {
+                    diff = 7;
+                }
+                nextResetBerlin.setDate(nextResetBerlin.getDate() + diff);
+
+                const timeLeft = nextResetBerlin - berlinNow;
+                
+                const d = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                const el = document.getElementById('war-effort-countdown');
+                if (el) {
+                    el.innerHTML = `
+                        <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
+                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Weekly Reset: </span>
+                            <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
+                            ${d}d ${h}h ${m}m ${s}s</span>
+                        </div>`;
+                }
+            }
+
+            setInterval(updateWarEffortCountdown, 1000);
+            updateWarEffortCountdown();
+        }
 
         // 1. Calculate the Berlin Time Reset Anchor
         const realNow = new Date();
