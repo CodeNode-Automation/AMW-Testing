@@ -378,10 +378,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // --- NEW: Class Distribution Donut Chart ---
-        if (mainDonutChartInstance) mainDonutChartInstance.destroy();
-        mainDonutChartInstance = createDonutChart('classDonutChart', rawGuildRoster, true);
-
         // --- Original Heatmap Grid ---
         let heatmapHtml = '';
         
@@ -1636,10 +1632,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
         
-        const specContainer = document.getElementById('home-spec-container');
-        if (specContainer) specContainer.style.display = 'none';
-        document.querySelectorAll('.clickable-class').forEach(b => b.classList.remove('active-filter'));
-        window.activeClassExpanded = null;
         updateDropdownLabel('all');
 
         // Populate New KPIs
