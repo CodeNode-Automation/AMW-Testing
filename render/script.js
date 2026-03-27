@@ -400,9 +400,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             const dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
             
             heatmapHtml += `
-            <div class="heatmap-col">
+            <div class="heatmap-col" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                 <span class="heatmap-label">${day.day_name}</span>
-                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}"></div>
+                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}" style="width: 100%; max-width: 60px;"></div>
             </div>`;
         });
         heatmapGrid.innerHTML = heatmapHtml;

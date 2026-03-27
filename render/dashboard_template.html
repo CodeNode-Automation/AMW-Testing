@@ -131,12 +131,12 @@
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin-bottom: 30px;">
-                    <div class="heatmap-wrapper" style="flex: 1; width: 100%; margin: 0;">
+                    <div class="heatmap-wrapper" style="flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden;">
                         <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
-                        <div style="position: relative; height: 180px; width: 100%; margin-bottom: 20px;">
-                            <canvas id="activityChart"></canvas>
+                        <div style="position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px;">
+                            <canvas id="activityChart" style="width: 100% !important; height: 100% !important;"></canvas>
                         </div>
-                        <div id="heatmap-grid" class="heatmap-grid"></div>
+                        <div id="heatmap-grid" class="heatmap-grid" style="display: flex; width: 100%; max-width: 100%; justify-content: space-between;"></div>
                     </div>
                 </div>
 
