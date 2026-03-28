@@ -789,8 +789,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
     
-    <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
-        <div style="flex:0 0 260px; display:flex; flex-direction:column; gap:20px;">
+    <div class="card-content-split">
+        <div class="card-left-col">
             <div style="text-align:center;">
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
