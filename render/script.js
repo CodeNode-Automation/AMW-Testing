@@ -146,9 +146,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const cClass = getCharClass(c);
                     const cHex = CLASS_COLORS[cClass] || '#fff';
                     return `
-                        <div class="autocomplete-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left: 3px solid ${cHex}; padding: 12px;">
-                            <img src="${c.render_url || getClassIcon(cClass)}" class="ac-icon" style="border-color: ${cHex};">
-                            <div class="ac-info"><span class="ac-name" style="color: ${cHex}; font-size: 16px;">${c.profile.name}</span><span class="ac-meta">Level ${c.profile.level} ${cClass}</span></div>
+                        <div class="autocomplete-item hero-ac-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left-color: ${cHex};">
+                            <img src="${c.render_url || getClassIcon(cClass)}" class="ac-icon hero-ac-icon" style="border-color: ${cHex};">
+                            <div class="ac-info"><span class="ac-name hero-ac-name" style="color: ${cHex};">${c.profile.name}</span><span class="ac-meta">Level ${c.profile.level} ${cClass}</span></div>
                         </div>`;
                 }).join('');
                 heroSearchAutoComplete.classList.add('show');
@@ -466,7 +466,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const cHex = CLASS_COLORS[cClass] || '#fff';
             const activeSpec = p.active_spec ? p.active_spec : '';
             const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
             let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
@@ -481,15 +481,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
             pveHTML += `
-            <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
-                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
-                <div style="flex: 1; display: flex; flex-direction: column;">
-                    <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${displaySpecClass}</span>
+            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
+                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                <div class="lb-info">
+                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div style="display: flex; align-items: center; color: #ff8000; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                    ${p.equipped_item_level || 0} <span style="font-size:10px; color:#888; margin-left: 3px;">iLvl</span>
+                <div class="lb-score pve-score">
+                    ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
                     ${trendHTML}
                 </div>
             </div>`;
@@ -514,7 +514,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const cHex = CLASS_COLORS[cClass] || '#fff';
             const activeSpec = p.active_spec ? p.active_spec : '';
             const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
             let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';

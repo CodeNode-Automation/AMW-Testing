@@ -178,6 +178,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .custom-tooltip .tt-label { color: #aaa; margin-right: 15px; }
 .custom-tooltip .tt-val { color: white; font-weight: bold; display: flex; align-items: center; }
 
+.leaderboard-row { border-left-width: 4px; border-left-style: solid; padding: 8px 12px; }
+.lb-rank { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; }
+.lb-portrait { width: 28px; height: 28px; border-radius: 50%; border-width: 1px; border-style: solid; object-fit: cover; margin-right: 12px; }
+.lb-info { flex: 1; display: flex; flex-direction: column; }
+.lb-name { font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; }
+.lb-spec { color: #aaa; font-size: 10px; font-style: italic; }
+.lb-score { display: flex; align-items: center; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
+.pve-score { color: #ff8000; }
+.lb-score-label { font-size: 10px; color: #888; margin-left: 3px; }
+.spec-icon-sm { width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222; }
+
 /* ========================================= */
 /* FULL CHARACTER CARDS                      */
 /* ========================================= */
@@ -368,3 +379,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .ac-empty-state { padding: 20px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; }
 .ac-empty-icon { width: 32px; height: 32px; border-radius: 4px; filter: grayscale(100%); margin-bottom: 8px; }
 .ac-empty-text { color: #aaa; font-style: italic; font-size: 13px; }
+
+.hero-ac-item { border-left-width: 3px; border-left-style: solid; padding: 12px; }
+.hero-ac-icon { border-width: 1px; border-style: solid; }
+.hero-ac-name { font-size: 16px; }
