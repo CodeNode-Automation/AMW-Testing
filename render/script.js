@@ -659,9 +659,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             } else {
                 const emptyIcon = EMPTY_ICONS[slot] || 'inv_misc_questionmark';
                 gearHtml += `
-                <div class="item-slot empty-slot" style="border-left-color:#333; opacity:0.6;">
-                    <img src="https://wow.zamimg.com/images/wow/icons/large/${emptyIcon}.jpg" style="filter:grayscale(100%); border-color:#222;">
-                    <span style="color:#666; font-size:13px; font-weight:bold; font-style:italic;">Empty Slot</span>
+                <div class="item-slot empty-slot">
+                    <img src="https://wow.zamimg.com/images/wow/icons/large/${emptyIcon}.jpg" class="empty-slot-icon">
+                    <span class="empty-slot-text">Empty Slot</span>
                 </div>`;
             }
         });
@@ -682,12 +682,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             ${hkBadge}
         </div>
         
-        <div style="margin-top: 20px; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 16px; position: relative; background: #0a0a0a; border: 1px solid #000; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,0.1);">
-            <div style="position: absolute; top: 0; left: 0; width: ${restedPercent}%; height: 100%; background: linear-gradient(to bottom, #3498db 0%, #2980b9 50%, #1f618d 100%); opacity: 0.9;"></div>
-            <div style="position: absolute; top: 0; left: 0; width: ${xpPercent}%; height: 100%; background: linear-gradient(to bottom, #9b59b6 0%, #8e44ad 50%, #732d91 100%);"></div>
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; color: white; font-size: 12px; font-weight: bold; line-height: 16px; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; z-index: 2;">
-                ${xpLabel}
-            </div>
+        <div class="xp-bar-wrapper">
+            <div class="xp-bar-rested" style="width: ${restedPercent}%;"></div>
+            <div class="xp-bar-earned" style="width: ${xpPercent}%;"></div>
+            <div class="xp-bar-label">${xpLabel}</div>
         </div>
     </div>
     
@@ -838,7 +836,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }
                     });
 
-                    let specHtml = `<div class="class-stat-container" style="margin-bottom: 0; gap: 12px; justify-content: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">`;
+                    let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
 
                     specHtml += `
                         <div class="stat-badge spec-btn concise-spec-btn" data-spec="all" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
@@ -2209,7 +2207,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
 
             const specContainer = document.getElementById('home-spec-container');
-            let specHtml = `<div class="class-stat-container" style="margin-bottom: 0; gap: 12px; justify-content: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">`;
+            let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
 
             specHtml += `
                 <div class="stat-badge spec-btn" data-hash="class-${className}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
@@ -2664,9 +2662,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.style.borderLeftColor = c_hex;
                 eventEl.innerHTML = `
                     <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
-                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    <div class="tl-event-header">
+                        <span class="tl-event-name" style="color: ${c_hex};">${c_name}</span>
+                        <span class="tl-event-date">${date_str}</span>
                     </div>
                     <div class="event-box" style="border-left-color: #ffd100;">
                         <span style="font-size: 14px;">⭐</span>
