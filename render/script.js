@@ -38,17 +38,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     let rosterData = [];
     let rawGuildRoster = [];
     let warEffortLocks = {}; 
+    
+    // 1. Fetch CRITICAL Roster Data First
     try {
         const rosterRes = await fetch('asset/roster.json');
         rosterData = await rosterRes.json();
         
         const rawRes = await fetch('asset/raw_roster.json');
         rawGuildRoster = await rawRes.json();
-        
-        // --- NEW: Fetch the backend time-locks ---
-        const weRes = await fetch('asset/war_effort.json');
-        const weData = await weRes.json();
-        warEffortLocks = weData.locks || {};
     } catch (error) {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
@@ -57,6 +54,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             loaderText.innerHTML = 'Failed to load data. Please refresh.';
         }
         return; // Stop executing to prevent cascading errors
+    }
+
+    // 2. Fetch NON-CRITICAL War Effort Locks (Ignore if it fails or is missing)
+    try {
+        const weRes = await fetch('asset/war_effort.json');
+        if (weRes.ok) {
+            const weData = await weRes.json();
+            warEffortLocks = weData.locks || {};
+        }
+    } catch (error) {
+        console.warn("War Effort locks not generated yet. Proceeding with dynamic data.");
     }
 
     // Hide the loading overlay once data is ready
