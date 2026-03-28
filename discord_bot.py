@@ -73,7 +73,6 @@ async def on_ready():
 @bot.tree.command(name="who", description="Pull character data and raid readiness.")
 async def who(interaction: discord.Interaction, character_name: str):
     """Slash command to look up a character."""
-    # Defer the response since the database HTTP call might take a moment
     await interaction.response.defer()
     
     char_data = await fetch_character_from_turso(character_name)
@@ -89,28 +88,34 @@ async def who(interaction: discord.Interaction, character_name: str):
     race = char_data.get("race", "Unknown")
     ilvl = char_data.get("equipped_item_level", 0)
     active_spec = char_data.get("active_spec", "Unknown") or "None"
-    hks = char_data.get("honorable_kills", 0)
     portrait_url = char_data.get("portrait_url", "")
+    last_login_ms = char_data.get("last_login_ms", 0)
 
-    # Build the Discord Embed
+    # Convert Blizzard's millisecond timestamp to standard Unix seconds for Discord
+    last_seen_unix = int(last_login_ms / 1000) if last_login_ms else 0
+    # Discord's native relative time formatting: <t:TIMESTAMP:R>
+    last_seen_str = f"<t:{last_seen_unix}:R>" if last_seen_unix else "Unknown"
+
+    # Build the Discord Embed with a guild-themed purple color
     embed = discord.Embed(
         title=f"Level {level} {race} {char_class}",
-        color=discord.Color.blue()
+        color=discord.Color.purple()
     )
     
     embed.set_author(name=name)
     if portrait_url:
         embed.set_thumbnail(url=portrait_url)
 
-    embed.add_field(name="Item Level", value=f"**{ilvl}**", inline=True)
-    embed.add_field(name="Active Spec", value=active_spec, inline=True)
-    embed.add_field(name="Honorable Kills", value=f"{hks:,}", inline=True)
+    # Added formatting emojis and replaced HKs with Last Seen
+    embed.add_field(name="🛡️ Active Spec", value=f"**{active_spec}**", inline=True)
+    embed.add_field(name="⚔️ Item Level", value=f"**{ilvl}**", inline=True)
+    embed.add_field(name="🕒 Last Seen", value=last_seen_str, inline=True)
     
-    # Raid Readiness check based on your trends.py logic
+    # Raid Readiness check
     if level == 70 and ilvl >= 110:
-        embed.set_footer(text="✅ Raid Ready")
+        embed.set_footer(text="🟢 Raid Ready")
     else:
-        embed.set_footer(text="❌ Not Raid Ready (Requires Lvl 70 & 110+ iLvl)")
+        embed.set_footer(text="🔴 Not Raid Ready (Requires Lvl 70 & 110+ iLvl)")
 
     await interaction.followup.send(embed=embed)
 
