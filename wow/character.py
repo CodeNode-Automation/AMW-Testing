@@ -157,4 +157,56 @@ def update_character_state(char_data, history_data, timeline_data):
         history_data[char_data["char"]]["active_spec"] = profile.get("active_spec")
         history_data[char_data["char"]]["honorable_kills"] = profile.get("honorable_kills", 0)
 
+        # Extract detailed statistics
+        stats = char_data.get("stats", {})
+        if isinstance(stats, dict):
+            history_data[char_data["char"]]["health"] = stats.get("health")
+            history_data[char_data["char"]]["power"] = stats.get("power")
+            
+            pt = stats.get("power_type")
+            history_data[char_data["char"]]["power_type"] = pt.get("name") if isinstance(pt, dict) else pt
+            
+            for base_eff in ["strength", "agility", "intellect", "stamina", "spirit", "armor", "defense"]:
+                obj = stats.get(base_eff, {})
+                if isinstance(obj, dict):
+                    history_data[char_data["char"]][f"{base_eff}_base"] = obj.get("base")
+                    history_data[char_data["char"]][f"{base_eff}_effective"] = obj.get("effective")
+                else:
+                    history_data[char_data["char"]][f"{base_eff}_base"] = None
+                    history_data[char_data["char"]][f"{base_eff}_effective"] = None
+                    
+            def get_val(key):
+                val = stats.get(key)
+                return val.get("value") if isinstance(val, dict) else val
+
+            history_data[char_data["char"]]["melee_crit_value"] = get_val("melee_crit")
+            history_data[char_data["char"]]["melee_haste_value"] = get_val("melee_haste")
+            history_data[char_data["char"]]["spell_crit_value"] = get_val("spell_crit")
+            history_data[char_data["char"]]["ranged_crit"] = get_val("ranged_crit")
+            history_data[char_data["char"]]["ranged_haste"] = get_val("ranged_haste")
+            history_data[char_data["char"]]["spell_haste"] = get_val("spell_haste")
+            history_data[char_data["char"]]["dodge"] = get_val("dodge")
+            history_data[char_data["char"]]["parry"] = get_val("parry")
+            history_data[char_data["char"]]["block"] = get_val("block")
+            history_data[char_data["char"]]["mana_regen"] = get_val("mana_regen")
+            history_data[char_data["char"]]["mana_regen_combat"] = get_val("mana_regen_combat")
+            
+            history_data[char_data["char"]]["attack_power"] = stats.get("attack_power")
+            history_data[char_data["char"]]["spell_power"] = stats.get("spell_power")
+            history_data[char_data["char"]]["spell_penetration"] = stats.get("spell_penetration")
+            
+            mh = stats.get("main_hand_weapon_damage", {})
+            if isinstance(mh, dict):
+                history_data[char_data["char"]]["main_hand_min"] = mh.get("min")
+                history_data[char_data["char"]]["main_hand_max"] = mh.get("max")
+                history_data[char_data["char"]]["main_hand_speed"] = mh.get("speed")
+                history_data[char_data["char"]]["main_hand_dps"] = mh.get("dps")
+                
+            oh = stats.get("off_hand_weapon_damage", {})
+            if isinstance(oh, dict):
+                history_data[char_data["char"]]["off_hand_min"] = oh.get("min")
+                history_data[char_data["char"]]["off_hand_max"] = oh.get("max")
+                history_data[char_data["char"]]["off_hand_speed"] = oh.get("speed")
+                history_data[char_data["char"]]["off_hand_dps"] = oh.get("dps")
+
     return history_data, timeline_data
