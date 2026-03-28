@@ -1823,13 +1823,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         hideAllViews();
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
-        if (timeline) { timeline.style.display = 'block'; timelineTitle.innerHTML = "📜 Guild Recent Activity"; window.currentFilteredChars = null; applyTimelineFilters(); }
-        
         updateDropdownLabel('all');
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.style.display = 'block';
+        
+        // Calculate the War Effort data AND monuments first
         if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
+
+        // Now that monuments exist, apply timeline filters to render them at the top
+        if (timeline) { 
+            timeline.style.display = 'block'; 
+            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
+            window.currentFilteredChars = null; 
+            applyTimelineFilters(); 
+        }
 
         // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -2652,8 +2660,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 kpiEpic.innerText = epicCount;
             }
             
-            applyTimelineFilters(); 
+            // Generate War Effort data first, then render the timeline feed
             if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar(); 
+            applyTimelineFilters();
             
             route();
             
