@@ -420,10 +420,9 @@ async def main_async():
         print("🌐 Generating final HTML Dashboard...")
         dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
         
-        # --- NEW: WAR EFFORT TIME-LOCKING LOGIC ---
+        # --- NEW: WAR EFFORT TIME-LOCKING LOGIC (BULLETPROOF) ---
         we_file = "asset/war_effort.json"
         
-        # Determine the start of the current week (Tuesday 00:00 Berlin)
         berlin_tz = ZoneInfo("Europe/Berlin")
         now_berlin = datetime.now(berlin_tz)
         days_since_tuesday = (now_berlin.weekday() - 1) % 7
@@ -441,32 +440,25 @@ async def main_async():
             except Exception:
                 pass
 
-        # 1. Check XP (750)
+        # 1. XP Lock (Safe)
         if "xp" not in we_data["locks"]:
-            xp_events = [e for e in dashboard_feed if e['type'] == 'level_up' and str(e['timestamp']).replace('T', ' ') >= last_reset_iso]
+            xp_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             if len(xp_events) >= 750:
                 counts = {}
-                for e in xp_events:
-                    c = e['character_name'].lower()
-                    counts[c] = counts.get(c, 0) + 1
+                for e in xp_events: 
+                    c_name = e.get('character_name')
+                    if not c_name: continue
+                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
                 top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
-                mvp = top3[0] if top3 else "Unknown"
-                we_data["locks"]["xp"] = {
-                    "vanguards": top3,
-                    "monument": {
-                        "title": "🛡️ Hero's Journey", 
-                        "desc": f"<span style='color:#ffd100; font-weight:bold;'>{mvp.title()}</span> hit the 750th level!",
-                        "timestamp": now_berlin.isoformat()
-                    }
-                }
+                mvp = top3[0].title() if top3 else "Unknown"
+                we_data["locks"]["xp"] = {"vanguards": top3, "monument": {"title": "🛡️ Hero's Journey", "desc": f"<span style='color:#ffd100; font-weight:bold;'>{mvp}</span> hit the 750th level!", "timestamp": now_berlin.isoformat()}}
 
-        # 2. Check HKs (500)
+        # 2. HK Lock (Safe)
         if "hk" not in we_data["locks"]:
             hk_counts = {}
             total_hks = 0
             for r in roster_data:
-                if not r or not r.get("profile"):
-                    continue
+                if not r or not r.get("profile"): continue
                 prof = r["profile"]
                 trend = prof.get("trend_pvp") or prof.get("trend_hks") or 0
                 if trend > 0:
@@ -478,45 +470,32 @@ async def main_async():
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["hk"] = {"vanguards": top3, "monument": {"title": "🩸 Blood of the Enemy", "desc": f"<span style='color:#ff4400; font-weight:bold;'>{mvp}</span> led the 500 HK charge!", "timestamp": now_berlin.isoformat()}}
 
-        # 3. Check Loot (100)
+        # 3. Loot Lock (Safe)
         if "loot" not in we_data["locks"]:
-            loot_events = [e for e in dashboard_feed if e['type'] == 'item' and e.get('item_quality') in ('EPIC', 'LEGENDARY') and str(e['timestamp']).replace('T', ' ') >= last_reset_iso]
+            loot_events = [e for e in dashboard_feed if e.get('type') == 'item' and e.get('item_quality') in ('EPIC', 'LEGENDARY') and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             if len(loot_events) >= 100:
                 counts = {}
-                for e in loot_events:
-                    c = e['character_name'].lower()
-                    counts[c] = counts.get(c, 0) + 1
+                for e in loot_events: 
+                    c_name = e.get('character_name')
+                    if not c_name: continue
+                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
                 top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
-                mvp = top3[0] if top3 else "Unknown"
-                we_data["locks"]["loot"] = {
-                    "vanguards": top3,
-                    "monument": {
-                        "title": "🐉 Dragon's Hoard", 
-                        "desc": f"<span style='color:#a335ee; font-weight:bold;'>{mvp.title()}</span> looted the 100th Epic!",
-                        "timestamp": now_berlin.isoformat()
-                    }
-                }
+                mvp = top3[0].title() if top3 else "Unknown"
+                we_data["locks"]["loot"] = {"vanguards": top3, "monument": {"title": "🐉 Dragon's Hoard", "desc": f"<span style='color:#a335ee; font-weight:bold;'>{mvp}</span> looted the 100th Epic!", "timestamp": now_berlin.isoformat()}}
 
-        # 4. Check Zenith (10)
+        # 4. Zenith Lock (Safe)
         if "zenith" not in we_data["locks"]:
-            zenith_events = [e for e in dashboard_feed if e['type'] == 'level_up' and e.get('level') == 70 and str(e['timestamp']).replace('T', ' ') >= last_reset_iso]
+            zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             if len(zenith_events) >= 10:
                 counts = {}
-                for e in zenith_events:
-                    c = e['character_name'].lower()
-                    counts[c] = counts.get(c, 0) + 1
+                for e in zenith_events: 
+                    c_name = e.get('character_name')
+                    if not c_name: continue
+                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
                 top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
-                mvp = top3[0] if top3 else "Unknown"
-                we_data["locks"]["zenith"] = {
-                    "vanguards": top3,
-                    "monument": {
-                        "title": "⚡ The Zenith Cohort", 
-                        "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{mvp.title()}</span> was the 10th Level 70!",
-                        "timestamp": now_berlin.isoformat()
-                    }
-                }
+                mvp = top3[0].title() if top3 else "Unknown"
+                we_data["locks"]["zenith"] = {"vanguards": top3, "monument": {"title": "⚡ The Zenith Cohort", "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{mvp}</span> was the 10th Level 70!", "timestamp": now_berlin.isoformat()}}
 
-        # Save Locks
         with open(we_file, "w", encoding="utf-8") as f:
             json.dump(we_data, f, ensure_ascii=False)
         # --- END TIME-LOCKING LOGIC ---
