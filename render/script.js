@@ -222,9 +222,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (customOptions) customOptions.classList.remove('show');
             } else {
                 searchAutoComplete.innerHTML = `
-                    <div style="padding: 20px 10px; text-align: center; display: flex; flex-direction: column; align-items: center;">
-                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" style="width: 32px; height: 32px; border-radius: 4px; filter: grayscale(100%); margin-bottom: 8px;">
-                        <span style="color: #aaa; font-style: italic; font-size: 13px;">No heroes found... Mrgrlrl!</span>
+                    <div class="ac-empty-state">
+                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
+                        <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
                     </div>`;
                 searchAutoComplete.classList.add('show');
             }
@@ -427,9 +427,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const color = count > 0 ? '#ffd100' : '#888';
                 
                 tooltip.innerHTML = `
-                    <div style="font-family:'Cinzel'; font-weight:bold; color:${color}; font-size:16px; margin-bottom:4px;">${count} Activities</div>
-                    <div style="color:#aaa; font-size:12px;">${dateStr}</div>
-                    <div style="color:#666; font-size:10px; margin-top:6px; font-style:italic;">Click to filter timeline</div>
+                    <div class="tooltip-activity" style="color:${color};">${count} Activities</div>
+                    <div class="tooltip-date">${dateStr}</div>
+                    <div class="tooltip-hint">Click to filter timeline</div>
                 `;
                 tooltip.style.borderLeftColor = color;
                 
