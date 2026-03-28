@@ -157,12 +157,4 @@ def update_character_state(char_data, history_data, timeline_data):
         history_data[char_data["char"]]["active_spec"] = profile.get("active_spec")
         history_data[char_data["char"]]["honorable_kills"] = profile.get("honorable_kills", 0)
 
-        stats = char_data.get("stats", {})
-        if isinstance(stats, dict):
-            history_data[char_data["char"]]["strength"] = stats.get("strength", {}).get("effective", 0)
-            history_data[char_data["char"]]["agility"] = stats.get("agility", {}).get("effective", 0)
-            history_data[char_data["char"]]["stamina"] = stats.get("stamina", {}).get("effective", 0)
-            history_data[char_data["char"]]["intellect"] = stats.get("intellect", {}).get("effective", 0)
-            history_data[char_data["char"]]["spirit"] = stats.get("spirit", {}).get("effective", 0)
-
     return history_data, timeline_data
