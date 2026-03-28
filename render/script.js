@@ -3258,12 +3258,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleDateString(undefined, timeOptions);
                     
                     eventEl.innerHTML = `
-                        <div class="monument-icon">🏆</div>
-                        <div class="monument-info">
-                            <div class="monument-title">${mon.title}</div>
-                            <div class="monument-desc">${mon.desc}</div>
+                        <div class="mon-header">
+                            <span class="mon-icon">🏆</span>
+                            <span class="mon-time">${timeStr}</span>
                         </div>
-                        <div class="monument-time">${timeStr}</div>
+                        <div class="mon-title">${mon.title}</div>
+                        <div class="mon-desc">${mon.desc}</div>
                     `;
                     monContainer.appendChild(eventEl);
                 });
