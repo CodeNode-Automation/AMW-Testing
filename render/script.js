@@ -3132,6 +3132,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 colorBase = '#006064'; colorMid = '#3FC7EB'; colorMax = '#00e5ff'; labelName = 'Max Levels'; glowColor = '#00e5ff';
             }
 
+            // --- PRESTIGE GOLD OVERRIDE ---
+            if (pct >= 100) {
+                colorBase = '#b8860b'; colorMid = '#ffd100'; colorMax = '#ffffff'; glowColor = '#ffd100';
+            }
+
             if (fillEl) {
                 setTimeout(() => { 
                     fillEl.style.width = pct + '%'; 
@@ -3180,16 +3185,26 @@ window.addEventListener('DOMContentLoaded', async () => {
             const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
             if (sortedXP[749]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
         }
+        
         if (totalHks >= 500) {
-            window.warEffortVanguards.hk = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+            const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
+            window.warEffortVanguards.hk = topPvpers.slice(0,3).map(x=>x[0]);
+            if (topPvpers.length > 0) {
+                const mvp = topPvpers[0][0];
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'all', title: "🩸 Blood of the Enemy Completed!", desc: `The guild crushed the 500 HK goal, led by the relentless <span style="color:#ff4400; font-weight:bold;">${mvp.charAt(0).toUpperCase() + mvp.slice(1)}</span>!`, timestamp: new Date().toISOString() });
+            }
         }
+        
         if (totalLoot >= 100) {
             window.warEffortVanguards.loot = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
             if (sortedLoot[99]) window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
         }
+        
         if (totalZenith >= 10) {
             window.warEffortVanguards.zenith = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+            const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedZenith[9]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
         }
 
         // 6. Tooltip Generator Helper (Updated to Route on Click)
