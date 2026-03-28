@@ -26,6 +26,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 ::-moz-selection { background: rgba(255, 209, 0, 0.4); color: #fff; text-shadow: none; }
 
 :focus-visible { outline: 2px solid #ffd100 !important; outline-offset: 3px; border-radius: 4px; }
+.search-box:focus-visible, .search-box *:focus-visible, .hero-search-box:focus-visible, .hero-search-box *:focus-visible { outline: none !important; }
+.search-container *, .hero-search-box * { -webkit-tap-highlight-color: transparent; }
 
 /* ========================================= */
 /* OVERLAYS & INTRO                          */
@@ -76,8 +78,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .search-container { position: relative; z-index: 104; }
 .search-box { display: flex; align-items: center; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.1); border-top: 1px solid rgba(0, 0, 0, 0.5); border-radius: 20px; transition: all 0.3s ease; padding: 0 12px; height: 38px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6); }
-.search-box:focus-within { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 100%; height: 42px; z-index: 10010; background: rgba(10,10,10,0.98); box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-color: #ffd100; justify-content: flex-start; padding: 0 15px; }
-.search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; font-size: 15px; padding: 0 8px; outline: none; width: 180px; transition: 0.3s; }
+.search-box:focus-within { border-color: rgba(255, 209, 0, 0.5); box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 209, 0, 0.2); background: rgba(15, 15, 20, 0.8); transform: none; }
+.search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; font-size: 16px; padding: 0 8px; outline: none; width: 180px; transition: 0.3s; }
 .search-box input::placeholder { color: #bbb; }
 .search-autocomplete { position: absolute; top: calc(100% + 5px); right: 0; width: 260px; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid #ffd100; border-radius: 8px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.9); overflow: hidden; }
 .search-autocomplete.show { display: block; animation: fadeIn 0.2s; }
@@ -89,7 +91,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .ac-meta { font-size: 11px; color: #aaa; font-style: italic; }
 
 .hero-search-box { display: flex; align-items: center; background: linear-gradient(135deg, rgba(20, 20, 28, 0.7) 0%, rgba(10, 10, 15, 0.8) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 2px solid rgba(255, 209, 0, 0.2); border-radius: 40px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 209, 0, 0.05); overflow: hidden; padding: 2px; }
-.hero-search-box:focus-within { border-color: rgba(255, 209, 0, 0.8); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 209, 0, 0.25); background: linear-gradient(135deg, rgba(25, 25, 35, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%); }
+.hero-search-box:focus-within { border-color: rgba(255, 209, 0, 0.8); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 209, 0, 0.25); background: linear-gradient(135deg, rgba(25, 25, 35, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%); transform: none; }
 .hero-search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; outline: none; transition: 0.3s; }
 .hero-search-box input::placeholder { color: #888; }
 
@@ -849,10 +851,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-28T11:44:07.739002Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-28T14:13:15.727381Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 310, "loot": 242, "levels": 68, "total_roster": 641, "active_roster": 407}]
+        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 424, "loot": 328, "levels": 96, "total_roster": 641, "active_roster": 407}]
     </script>
 
     <script>
