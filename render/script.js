@@ -37,12 +37,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     // NEW: Download the heavy roster files silently in the background with error handling
     let rosterData = [];
     let rawGuildRoster = [];
+    let warEffortLocks = {}; 
     try {
         const rosterRes = await fetch('asset/roster.json');
         rosterData = await rosterRes.json();
         
         const rawRes = await fetch('asset/raw_roster.json');
         rawGuildRoster = await rawRes.json();
+        
+        // --- NEW: Fetch the backend time-locks ---
+        const weRes = await fetch('asset/war_effort.json');
+        const weData = await weRes.json();
+        warEffortLocks = weData.locks || {};
     } catch (error) {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
@@ -3165,87 +3171,78 @@ window.addEventListener('DOMContentLoaded', async () => {
         // --- NEW: VANGUARD AURA & TIMELINE MONUMENT CALCULATION ---
         window.warEffortVanguards = { xp: [], hk: [], loot: [], zenith: [] };
         window.warEffortMonuments = [];
-        
-        if (totalLevels >= 750) {
-            const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedXP[749]) {
-                const cutoffMs = new Date(sortedXP[749].timestamp).getTime();
-                const lockedContributors = {};
-                sortedXP.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
-                    const cName = (e.character_name || 'Unknown').toLowerCase();
-                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
-                });
-                window.warEffortVanguards.xp = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
-            }
-        }
-        
-        if (totalHks >= 500) {
-            const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
-            window.warEffortVanguards.hk = topPvpers.slice(0,3).map(x=>x[0].toLowerCase());
-            if (topPvpers.length > 0) {
-                const mvp = topPvpers[0][0];
-                window.warEffortMonuments.push({ type: 'monument', filterType: 'all', title: "🩸 Blood of the Enemy Completed!", desc: `The guild crushed the 500 HK goal, led by the relentless <span style="color:#ff4400; font-weight:bold;">${mvp.charAt(0).toUpperCase() + mvp.slice(1)}</span>!`, timestamp: new Date().toISOString() });
-            }
-        }
-        
-        if (totalLoot >= 100) {
-            const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[99]) {
-                const cutoffMs = new Date(sortedLoot[99].timestamp).getTime();
-                const lockedContributors = {};
-                sortedLoot.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
-                    const cName = (e.character_name || 'Unknown').toLowerCase();
-                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
-                });
-                window.warEffortVanguards.loot = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-                window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
-            }
-        }
-        
-        if (totalZenith >= 10) {
-            const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedZenith[9]) {
-                const cutoffMs = new Date(sortedZenith[9].timestamp).getTime();
-                const lockedContributors = {};
-                sortedZenith.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
-                    const cName = (e.character_name || 'Unknown').toLowerCase();
-                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
-                });
-                window.warEffortVanguards.zenith = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+
+        function applyLockFallback(type, fallbackMon, dynVanguards) {
+            if (warEffortLocks[type]) {
+                window.warEffortVanguards[type] = warEffortLocks[type].vanguards;
+                window.warEffortMonuments.push(warEffortLocks[type].monument);
+            } else if (fallbackMon) {
+                window.warEffortVanguards[type] = dynVanguards;
+                window.warEffortMonuments.push(fallbackMon);
             }
         }
 
-        // --- NEW: RENDER DEDICATED MONUMENTS FEED ---
+        if (totalLevels >= 750) {
+            const topDyn = Object.entries(levelContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
+            let fallback = null;
+            const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedXP[749]) fallback = { title: "🛡️ Hero's Journey", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> hit the 750th level!`, timestamp: sortedXP[749].timestamp };
+            applyLockFallback('xp', fallback, topDyn);
+        }
+
+        if (totalHks >= 500) {
+            const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
+            const topDyn = topPvpers.slice(0,3).map(x=>x[0].toLowerCase());
+            let fallback = null;
+            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", desc: `<span style="color:#ff4400; font-weight:bold;">${topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1)}</span> led the 500 HK charge!`, timestamp: new Date().toISOString() };
+            applyLockFallback('hk', fallback, topDyn);
+        }
+
+        if (totalLoot >= 100) {
+            const topDyn = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
+            let fallback = null;
+            const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedLoot[99]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic!`, timestamp: sortedLoot[99].timestamp };
+            applyLockFallback('loot', fallback, topDyn);
+        }
+
+        if (totalZenith >= 10) {
+            const topDyn = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
+            let fallback = null;
+            const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedZenith[9]) fallback = { title: "⚡ The Zenith Cohort", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> was the 10th Level 70!`, timestamp: sortedZenith[9].timestamp };
+            applyLockFallback('zenith', fallback, topDyn);
+        }
+
+        // --- NEW: COMPACT MONUMENTS GRID FEED ---
         const timelineEl = document.getElementById('timeline');
         if (timelineEl) {
             let monContainer = document.getElementById('monuments-container');
             if (!monContainer) {
                 monContainer = document.createElement('div');
                 monContainer.id = 'monuments-container';
-                monContainer.style.marginBottom = '15px';
-                
-                // Insert right above the timeline filters
+                monContainer.className = 'monuments-grid';
                 const filtersEl = timelineEl.querySelector('.timeline-filters');
-                if (filtersEl) {
-                    timelineEl.insertBefore(monContainer, filtersEl);
-                } else {
-                    timelineEl.prepend(monContainer);
-                }
+                if (filtersEl) timelineEl.insertBefore(monContainer, filtersEl);
+                else timelineEl.prepend(monContainer);
             }
             
-            monContainer.innerHTML = ''; // Clear old
+            monContainer.innerHTML = '';
             if (window.warEffortMonuments.length > 0) {
                 window.warEffortMonuments.forEach(mon => {
                     const eventEl = document.createElement('div');
-                    eventEl.className = 'concise-item monument-card';
+                    eventEl.className = 'monument-card';
+                    const dt = new Date(mon.timestamp);
+                    const timeOptions = { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+                    const timeStr = isNaN(dt) ? '' : dt.toLocaleDateString(undefined, timeOptions);
+                    
                     eventEl.innerHTML = `
-                        <div style="width:100%; text-align:center; padding: 10px;">
-                            <div style="font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 5px #ffd100);">🏆</div>
-                            <div style="font-family:'Cinzel'; font-size: 16px; color: #ffd100; font-weight:bold; text-shadow: 1px 1px 2px #000; margin-bottom: 5px;">${mon.title}</div>
-                            <div style="font-size: 13px; color: #eee; line-height: 1.4;">${mon.desc}</div>
+                        <div class="monument-icon">🏆</div>
+                        <div class="monument-info">
+                            <div class="monument-title">${mon.title}</div>
+                            <div class="monument-desc">${mon.desc}</div>
                         </div>
+                        <div class="monument-time">${timeStr}</div>
                     `;
                     monContainer.appendChild(eventEl);
                 });
