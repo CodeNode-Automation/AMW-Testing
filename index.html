@@ -363,13 +363,28 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 @media (hover: none) and (pointer: coarse), (max-width: 800px) {
     .custom-tooltip { display: none !important; }
 }
+
+/* TYPOGRAPHY */
+.loader-text { font-family: 'Cinzel', serif; color: #ffd100; font-size: 18px; margin-top: 15px; text-shadow: 0 2px 4px #000; }
+
+.tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
+.tooltip-date { color:#aaa; font-size:12px; }
+.tooltip-hint { color:#666; font-size:10px; margin-top:6px; font-style:italic; }
+
+/* COMPONENTS */
+.intro-skip-btn { position: absolute; bottom: 30px; right: 30px; color: rgba(255,255,255,0.7); font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; z-index: 10; text-shadow: 1px 1px 3px #000; background: rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: opacity 0.3s; }
+.intro-skip-btn:hover { opacity: 1; color: #fff; }
+
+.ac-empty-state { padding: 20px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.ac-empty-icon { width: 32px; height: 32px; border-radius: 4px; filter: grayscale(100%); margin-bottom: 8px; }
+.ac-empty-text { color: #aaa; font-style: italic; font-size: 13px; }
     </style>
 </head>
 <body>
     <div id="loading-overlay">
         <div class="loader-content">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_tournaments_symbol_bloodelf.jpg" class="pulse-icon" alt="Loading...">
-            <div style="font-family: 'Cinzel', serif; color: #ffd100; font-size: 18px; margin-top: 15px; text-shadow: 0 2px 4px #000;">Fetching Armory Data...</div>
+            <div class="loader-text">Fetching Armory Data...</div>
         </div>
     </div>
     <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
@@ -377,7 +392,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div style="position: absolute; bottom: 30px; right: 30px; color: rgba(255,255,255,0.7); font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; z-index: 10; text-shadow: 1px 1px 3px #000; background: rgba(0,0,0,0.5); padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+        <div class="intro-skip-btn">
             Click anywhere to skip ⏭️
         </div>
     </div>
@@ -851,10 +866,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-28T14:13:15.727381Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-28T14:38:01.058293Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 424, "loot": 328, "levels": 96, "total_roster": 641, "active_roster": 407}]
+        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 447, "loot": 343, "levels": 104, "total_roster": 641, "active_roster": 407}]
     </script>
 
     <script>
@@ -1082,9 +1097,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (customOptions) customOptions.classList.remove('show');
             } else {
                 searchAutoComplete.innerHTML = `
-                    <div style="padding: 20px 10px; text-align: center; display: flex; flex-direction: column; align-items: center;">
-                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" style="width: 32px; height: 32px; border-radius: 4px; filter: grayscale(100%); margin-bottom: 8px;">
-                        <span style="color: #aaa; font-style: italic; font-size: 13px;">No heroes found... Mrgrlrl!</span>
+                    <div class="ac-empty-state">
+                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
+                        <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
                     </div>`;
                 searchAutoComplete.classList.add('show');
             }
@@ -1287,9 +1302,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const color = count > 0 ? '#ffd100' : '#888';
                 
                 tooltip.innerHTML = `
-                    <div style="font-family:'Cinzel'; font-weight:bold; color:${color}; font-size:16px; margin-bottom:4px;">${count} Activities</div>
-                    <div style="color:#aaa; font-size:12px;">${dateStr}</div>
-                    <div style="color:#666; font-size:10px; margin-top:6px; font-style:italic;">Click to filter timeline</div>
+                    <div class="tooltip-activity" style="color:${color};">${count} Activities</div>
+                    <div class="tooltip-date">${dateStr}</div>
+                    <div class="tooltip-hint">Click to filter timeline</div>
                 `;
                 tooltip.style.borderLeftColor = color;
                 
