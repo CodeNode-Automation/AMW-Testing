@@ -311,7 +311,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     .search-box input { width: 0; padding: 0; opacity: 0; cursor: pointer; }
     .search-icon { padding: 8px; cursor: pointer; }
     .search-container { position: static; z-index: 130; }
-    .search-container:focus-within { z-index: 9999; }
+    .search-container:focus-within { z-index: 10015; }
     .search-box:focus-within { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 100%; height: 42px; z-index: 9999; background: rgba(10,10,10,0.98); box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-color: #ffd100; justify-content: flex-start; padding: 0 15px; }
     .search-box:focus-within input { width: 100%; padding: 0 10px; opacity: 1; cursor: text; }
     .search-autocomplete { width: 100%; top: calc(100% + 5px); z-index: 10000; }
