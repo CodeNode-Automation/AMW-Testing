@@ -134,6 +134,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 #backToTopBtn.show { display: block; opacity: 1; }
 #backToTopBtn:hover { background-color: rgba(255, 209, 0, 0.15); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 209, 0, 0.4); }
 
+.trend-indicator { font-size: 12px; margin-left: 12px; width: 30px; text-align: right; display: inline-block; }
+.trend-positive { color: #2ecc71; }
+.trend-negative { color: #e74c3c; }
+.trend-neutral { color: #555; }
+
 /* ========================================= */
 /* BADGES & BANNERS                          */
 /* ========================================= */
@@ -196,6 +201,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .lb-spec { color: #aaa; font-size: 10px; font-style: italic; }
 .lb-score { display: flex; align-items: center; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .pve-score { color: #ff8000; }
+.pvp-score { color: #ff4400; }
 .lb-score-label { font-size: 10px; color: #888; margin-left: 3px; }
 .spec-icon-sm { width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222; }
 
@@ -218,6 +224,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .item-slot a { text-decoration: none; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item-slot a:hover { text-decoration: underline; }
 .gear-grid-container { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.char-badges-container { display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.char-badge { background: rgba(0,0,0,0.7); padding: 5px 14px; border-radius: 20px; font-size: 14px; border-width: 1px; border-style: solid; display: inline-flex; align-items: center; }
+.default-badge { border-color: rgba(255,255,255,0.2); color: #ddd; }
+.stat-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0; padding-top: 15px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+.stat-lbl { color: #bbb; }
+.stat-val { font-weight: bold; }
+.val-wht { color: #fff; }
+.val-org { color: #e67e22; }
+.val-red { color: #e74c3c; }
+.val-blu { color: #3498db; }
+.val-ylw { color: #f1c40f; }
+.val-grn { color: #1abc9c; }
 
 /* ========================================= */
 /* TIMELINE & ACTIVITY                       */
@@ -881,10 +900,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-28T14:42:13.111326Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-28T14:47:35.599555Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 447, "loot": 343, "levels": 104, "total_roster": 641, "active_roster": 407}]
+        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 449, "loot": 344, "levels": 105, "total_roster": 641, "active_roster": 407}]
     </script>
 
     <script>
@@ -1366,9 +1385,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // --- NEW: Trend Arrow Logic for PvE ---
             const trend = p.trend_pve || p.trend_ilvl || 0; 
-            let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
+            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
+            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
             pveHTML += `
             <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
@@ -1420,15 +1439,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
             pvpHTML += `
-            <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px;">
-                <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
-                <div style="flex: 1; display: flex; flex-direction: column;">
-                    <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    <span style="color: #aaa; font-size: 10px; font-style: italic;">${specIconHtml}${displaySpecClass}</span>
+            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
+                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                <div class="lb-info">
+                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
                 </div>
-                <div style="display: flex; align-items: center; color: #ff4400; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                    ${hkCount} <span style="font-size:10px; color:#888; margin-left: 3px;">HKs</span>
+                <div class="lb-score pvp-score">
+                    ${hkCount} <span class="lb-score-label">HKs</span>
                     ${trendHTML}
                 </div>
             </div>`;
@@ -1476,15 +1495,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         const manaRegen = st.mana_regen ? Math.round(st.mana_regen) : 0;
         const dodge = (st.dodge && st.dodge.value) ? st.dodge.value.toFixed(2) + '%' : '0%';
 
-        let advancedStatsHtml = `<div style="border-top:1px solid rgba(255,255,255,0.1); margin: 15px 0; padding-top: 15px;"></div>`;
-        advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🛡️ Armor</span><span style="color:#fff; font-weight:bold;">${armor.toLocaleString()}</span></div>`;
-        if (defense > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🧱 Defense</span><span style="color:#fff; font-weight:bold;">${defense}</span></div>`;
-        if (st.dodge && st.dodge.value > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🤸 Dodge</span><span style="color:#fff; font-weight:bold;">${dodge}</span></div>`;
-        if (ap > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">⚔️ Attack Power</span><span style="color:#e67e22; font-weight:bold;">${ap}</span></div>`;
-        if (st.melee_crit && st.melee_crit.value > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🩸 Melee Crit</span><span style="color:#e74c3c; font-weight:bold;">${meleeCrit}</span></div>`;
-        if (spellPower > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">✨ Spell Power</span><span style="color:#3498db; font-weight:bold;">${spellPower}</span></div>`;
-        if (st.spell_crit && st.spell_crit.value > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🔥 Spell Crit</span><span style="color:#f1c40f; font-weight:bold;">${spellCrit}</span></div>`;
-        if (manaRegen > 0) advancedStatsHtml += `<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">💧 Mana Regen</span><span style="color:#1abc9c; font-weight:bold;">${manaRegen}</span></div>`;
+        let advancedStatsHtml = `<div class="stat-divider"></div>`;
+        advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Armor</span><span class="stat-val val-wht">${armor.toLocaleString()}</span></div>`;
+        if (defense > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧱 Defense</span><span class="stat-val val-wht">${defense}</span></div>`;
+        if (st.dodge && st.dodge.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🤸 Dodge</span><span class="stat-val val-wht">${dodge}</span></div>`;
+        if (ap > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Attack Power</span><span class="stat-val val-org">${ap}</span></div>`;
+        if (st.melee_crit && st.melee_crit.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🩸 Melee Crit</span><span class="stat-val val-red">${meleeCrit}</span></div>`;
+        if (spellPower > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spell Power</span><span class="stat-val val-blu">${spellPower}</span></div>`;
+        if (st.spell_crit && st.spell_crit.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🔥 Spell Crit</span><span class="stat-val val-ylw">${spellCrit}</span></div>`;
+        if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${manaRegen}</span></div>`;
 
         const hks = p.honorable_kills || 0;
         const hkBadge = hks > 0 ? `<span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ff4400; padding:5px 14px; border-radius:20px; font-size:14px; color:#ff4400; box-shadow:0 0 5px rgba(255,68,0,0.5);">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
@@ -1563,12 +1582,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
     <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
         <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
-        <div style="display:flex; justify-content:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
-            <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ffd100; padding:5px 14px; border-radius:20px; font-size:14px; color:#ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:14px; color:#ddd;">Level ${p.level || 0}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ff8000; padding:5px 14px; border-radius:20px; font-size:14px; color:#ff8000;">iLvl ${p.equipped_item_level || 0}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:14px; color:#ddd;">${raceName}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid ${cHex}; padding:5px 14px; border-radius:20px; font-size:14px; color:${cHex}; display:flex; align-items:center;">${specIconHtml}${displaySpecClass}</span>
+        <div class="char-badges-container">
+            <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
+            <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
+            <span class="badge char-badge" style="border-color: #ff8000; color: #ff8000;">iLvl ${p.equipped_item_level || 0}</span>
+            <span class="badge char-badge default-badge">${raceName}</span>
+            <span class="badge char-badge" style="border-color: ${cHex}; color: ${cHex};">${specIconHtml}${displaySpecClass}</span>
             ${hkBadge}
         </div>
         
