@@ -570,11 +570,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const health = st.health || 0;
         const power = st.power || 0;
-        const strVal = (st.strength && st.strength.effective) || 0;
-        const agiVal = (st.agility && st.agility.effective) || 0;
-        const staVal = (st.stamina && st.stamina.effective) || 0;
-        const intVal = (st.intellect && st.intellect.effective) || 0;
-        const spiVal = (st.spirit && st.spirit.effective) || 0;
+        const strVal = st.strength_effective || ((st.strength && st.strength.effective) || 0);
+        const agiVal = st.agility_effective || ((st.agility && st.agility.effective) || 0);
+        const staVal = st.stamina_effective || ((st.stamina && st.stamina.effective) || 0);
+        const intVal = st.intellect_effective || ((st.intellect && st.intellect.effective) || 0);
+        const spiVal = st.spirit_effective || ((st.spirit && st.spirit.effective) || 0);
         const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
         
         // Safely extract stats supporting both the old nested JSON and the new flat Turso schema
@@ -638,10 +638,53 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (mp5 > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana/5 (Combat)</span><span class="stat-val val-grn">${Math.round(mp5)}</span></div>`;
             else if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${Math.round(manaRegen)}</span></div>`;
         }
-        
+
         const hks = p.honorable_kills || 0;
         const hkBadge = hks > 0 ? `<span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ff4400; padding:5px 14px; border-radius:20px; font-size:14px; color:#ff4400; box-shadow:0 0 5px rgba(255,68,0,0.5);">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
         
+        // --- NEW: Page 2 Weapon & Gear Breakdown ---
+        const mhMin = st.main_hand_min || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.min) || 0);
+        const mhMax = st.main_hand_max || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.max) || 0);
+        const mhSpeed = st.main_hand_speed || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.speed) || 0);
+        const mhDps = st.main_hand_dps || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.dps) || 0);
+
+        const ohMin = st.off_hand_min || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.min) || 0);
+        const ohMax = st.off_hand_max || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.max) || 0);
+        const ohSpeed = st.off_hand_speed || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.speed) || 0);
+        const ohDps = st.off_hand_dps || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.dps) || 0);
+
+        const strBase = st.strength_base || ((st.strength && st.strength.base) || 0);
+        const agiBase = st.agility_base || ((st.agility && st.agility.base) || 0);
+        const staBase = st.stamina_base || ((st.stamina && st.stamina.base) || 0);
+        const intBase = st.intellect_base || ((st.intellect && st.intellect.base) || 0);
+        const spiBase = st.spirit_base || ((st.spirit && st.spirit.base) || 0);
+
+        let weaponStatsHtml = '';
+        
+        if (mhDps > 0) {
+            weaponStatsHtml += `<div style="color:#aaa; font-size:11px; text-transform:uppercase; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Main Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(mhMin)} - ${Math.round(mhMax)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${mhSpeed.toFixed(2)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${mhDps.toFixed(1)}</span></div>`;
+        }
+
+        if (ohDps > 0) {
+            weaponStatsHtml += `<div style="margin-top:12px; color:#aaa; font-size:11px; text-transform:uppercase; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Off Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(ohMin)} - ${Math.round(ohMax)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${ohSpeed.toFixed(2)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${ohDps.toFixed(1)}</span></div>`;
+        }
+
+        // Show Gear Contribution for Casters or characters lacking weapon API data
+        if (mhDps === 0 || isCaster || isTank) {
+            weaponStatsHtml += `<div style="margin-top:${mhDps > 0 ? '16px' : '0'}; color:#aaa; font-size:11px; text-transform:uppercase; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Gear Contribution</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${staBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${staVal - staBase}</span></span></div>`;
+            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${intBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${intVal - intBase}</span></span></div>`;
+            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${spiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${spiVal - spiBase}</span></span></div>`;
+            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${strBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${strVal - strBase}</span></span></div>`;
+            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${agiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${agiVal - agiBase}</span></span></div>`;
+        }
+
         const xp = p.experience || 0;
         const restedXp = p.rested_experience || 0;
         let maxXp = p.next_level_experience || p.experience_max || 0;
@@ -738,16 +781,34 @@ window.addEventListener('DOMContentLoaded', async () => {
                 <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
             </div>
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
-                <h3 style="color:${cHex}; font-family:Cinzel; font-size:18px; margin-top:0; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; text-shadow:1px 1px 2px #000;">Combat Stats</h3>
-                <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
-                <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
-                <div style="height:15px;"></div>
-                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">⚔️ Strength</span><span style="color:#ff4d4d; font-weight:bold;">${strVal}</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🏹 Agility</span><span style="color:#2ecc71; font-weight:bold;">${agiVal}</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🛡️ Stamina</span><span style="color:#f1c40f; font-weight:bold;">${staVal}</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🧠 Intellect</span><span style="color:#3498db; font-weight:bold;">${intVal}</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">✨ Spirit</span><span style="color:#9b59b6; font-weight:bold;">${spiVal}</span></div>
-                ${advancedStatsHtml}
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
+                    <h3 class="stat-card-title" style="color:${cHex}; font-family:Cinzel; font-size:18px; margin:0; text-shadow:1px 1px 2px #000;">Combat Stats</h3>
+                    <button onclick="
+                        const p = this.parentElement.parentElement;
+                        const p1 = p.querySelector('.stat-page-1');
+                        const p2 = p.querySelector('.stat-page-2');
+                        const title = p.querySelector('.stat-card-title');
+                        if(p1.style.display === 'none') {
+                            p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; this.innerText = '▶';
+                        } else {
+                            p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; this.innerText = '◀';
+                        }
+                    " style="background:none; border:none; color:#bbb; cursor:pointer; font-size:14px; outline:none; transition:0.2s; padding:0;" onmouseover="this.style.color='#ffd100'" onmouseout="this.style.color='#bbb'">▶</button>
+                </div>
+                <div class="stat-page-1">
+                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
+                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
+                    <div style="height:15px;"></div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">⚔️ Strength</span><span style="color:#ff4d4d; font-weight:bold;">${strVal}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🏹 Agility</span><span style="color:#2ecc71; font-weight:bold;">${agiVal}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🛡️ Stamina</span><span style="color:#f1c40f; font-weight:bold;">${staVal}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🧠 Intellect</span><span style="color:#3498db; font-weight:bold;">${intVal}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">✨ Spirit</span><span style="color:#9b59b6; font-weight:bold;">${spiVal}</span></div>
+                    ${advancedStatsHtml}
+                </div>
+                <div class="stat-page-2" style="display:none; animation: fadeIn 0.3s;">
+                    ${weaponStatsHtml}
+                </div>
             </div>
         </div>
         <div class="gear-grid-container">
