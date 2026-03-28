@@ -81,41 +81,53 @@ async def who(interaction: discord.Interaction, character_name: str):
         await interaction.followup.send(f"❌ Could not find **{character_name.title()}** in the guild database.")
         return
 
-    # Extract the data from the database row
+    # Extract all data, adding Faction for color coding
     name = char_data.get("name", "Unknown").title()
     level = char_data.get("level", 0)
     char_class = char_data.get("class", "Unknown")
     race = char_data.get("race", "Unknown")
+    faction = char_data.get("faction", "Unknown")
     ilvl = char_data.get("equipped_item_level", 0)
     active_spec = char_data.get("active_spec", "Unknown") or "None"
     portrait_url = char_data.get("portrait_url", "")
     last_login_ms = char_data.get("last_login_ms", 0)
 
-    # Convert Blizzard's millisecond timestamp to standard Unix seconds for Discord
+    # Convert timestamp
     last_seen_unix = int(last_login_ms / 1000) if last_login_ms else 0
-    # Discord's native relative time formatting: <t:TIMESTAMP:R>
     last_seen_str = f"<t:{last_seen_unix}:R>" if last_seen_unix else "Unknown"
 
-    # Build the Discord Embed with a guild-themed purple color
+    # Set the card color based on the character's faction
+    if faction.lower() == "horde":
+        embed_color = discord.Color.red()
+    elif faction.lower() == "alliance":
+        embed_color = discord.Color.blue()
+    else:
+        embed_color = discord.Color.dark_gray()
+
+    # Move Name to the Title and Class info to the Description for a cleaner look
     embed = discord.Embed(
-        title=f"Level {level} {race} {char_class}",
-        color=discord.Color.purple()
+        title=name,
+        description=f"Level {level} {race} {char_class}",
+        color=embed_color
     )
     
-    embed.set_author(name=name)
     if portrait_url:
         embed.set_thumbnail(url=portrait_url)
 
-    # Added formatting emojis and replaced HKs with Last Seen
-    embed.add_field(name="🛡️ Active Spec", value=f"**{active_spec}**", inline=True)
-    embed.add_field(name="⚔️ Item Level", value=f"**{ilvl}**", inline=True)
-    embed.add_field(name="🕒 Last Seen", value=last_seen_str, inline=True)
+    # Condense the pertinent specs into a single, non-inline field to prevent layout clutter
+    specs_text = (
+        f"**Specialization:** {active_spec}\n"
+        f"**Item Level:** {ilvl}\n"
+        f"**Last Seen:** {last_seen_str}"
+    )
+    
+    embed.add_field(name="Character Details", value=specs_text, inline=False)
     
     # Raid Readiness check
     if level == 70 and ilvl >= 110:
-        embed.set_footer(text="🟢 Raid Ready")
+        embed.set_footer(text="✅ Raid Ready")
     else:
-        embed.set_footer(text="🔴 Not Raid Ready (Requires Lvl 70 & 110+ iLvl)")
+        embed.set_footer(text="❌ Not Raid Ready (Requires Lvl 70 & 110+ iLvl)")
 
     await interaction.followup.send(embed=embed)
 
