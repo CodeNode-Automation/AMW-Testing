@@ -2714,14 +2714,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             return true;
         });
 
-        // --- NEW: INJECT MONUMENTS INTO FILTERED DATA ---
-        if (window.warEffortMonuments) {
-            window.warEffortMonuments.forEach(mon => {
-                if (tlTypeFilter === 'all' || tlTypeFilter === mon.filterType || (tlTypeFilter === 'rare_plus' && mon.filterType === 'epic')) {
-                    if (!filteredTimelineData.includes(mon)) filteredTimelineData.unshift(mon);
-                }
-            });
-        }
+        // Monument injection moved to a dedicated feed above.
 
         // 2. Clear the old feed and reset the counter
         const container = document.getElementById('timeline-feed-container');
@@ -2766,19 +2759,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const eventEl = document.createElement('div');
             
-            // --- NEW: RENDER MONUMENT CARD ---
-            if (event.type === 'monument') {
-                eventEl.className = 'concise-item monument-card';
-                eventEl.innerHTML = `
-                    <div style="width:100%; text-align:center; padding: 10px;">
-                        <div style="font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 5px #ffd100);">🏆</div>
-                        <div style="font-family:'Cinzel'; font-size: 16px; color: #ffd100; font-weight:bold; text-shadow: 1px 1px 2px #000; margin-bottom: 5px;">${event.title}</div>
-                        <div style="font-size: 13px; color: #eee; line-height: 1.4;">${event.desc}</div>
-                    </div>
-                `;
-                container.appendChild(eventEl);
-                continue; 
-            }
+            // Monument rendering moved to dedicated feed.
             
             // Restored the proper concise-item class from your production site!
             eventEl.className = 'concise-item tt-char';
@@ -3210,6 +3191,41 @@ window.addEventListener('DOMContentLoaded', async () => {
             window.warEffortVanguards.zenith = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
             if (sortedZenith[9]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+        }
+
+        // --- NEW: RENDER DEDICATED MONUMENTS FEED ---
+        const timelineEl = document.getElementById('timeline');
+        if (timelineEl) {
+            let monContainer = document.getElementById('monuments-container');
+            if (!monContainer) {
+                monContainer = document.createElement('div');
+                monContainer.id = 'monuments-container';
+                monContainer.style.marginBottom = '15px';
+                
+                // Insert right above the timeline filters
+                const filtersEl = timelineEl.querySelector('.timeline-filters');
+                if (filtersEl) {
+                    timelineEl.insertBefore(monContainer, filtersEl);
+                } else {
+                    timelineEl.prepend(monContainer);
+                }
+            }
+            
+            monContainer.innerHTML = ''; // Clear old
+            if (window.warEffortMonuments.length > 0) {
+                window.warEffortMonuments.forEach(mon => {
+                    const eventEl = document.createElement('div');
+                    eventEl.className = 'concise-item monument-card';
+                    eventEl.innerHTML = `
+                        <div style="width:100%; text-align:center; padding: 10px;">
+                            <div style="font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 5px #ffd100);">🏆</div>
+                            <div style="font-family:'Cinzel'; font-size: 16px; color: #ffd100; font-weight:bold; text-shadow: 1px 1px 2px #000; margin-bottom: 5px;">${mon.title}</div>
+                            <div style="font-size: 13px; color: #eee; line-height: 1.4;">${mon.desc}</div>
+                        </div>
+                    `;
+                    monContainer.appendChild(eventEl);
+                });
+            }
         }
 
         // 6. Tooltip Generator Helper (Updated to Route on Click)
