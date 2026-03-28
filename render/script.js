@@ -1153,6 +1153,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
             }
 
+            // --- NEW: Vanguard Aura Logic ---
+            let vanguardClass = '';
+            let vanguardBadgeHtml = '';
+            if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
+                const type = hashUrl.replace('war-effort-', '');
+                if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(displayName.toLowerCase())) {
+                    vanguardClass = 'vanguard-aura';
+                    vanguardBadgeHtml = '<span class="vanguard-badge">🌟 VANGUARD</span>';
+                }
+            }
+
             // --- NEW: Custom War Effort Stats Overrides ---
             let statsHtml = `
                 <span>Level <span class="c-val-lvl">${level}</span></span>
@@ -1204,13 +1215,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             // 4. Render the HTML
             if (!isClickable) {
                 return `
-                <div class="concise-char-bar ${podiumClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
+                <div class="concise-char-bar ${podiumClass} ${vanguardClass}" data-class="${cClass}" data-spec="unspecced" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
                     <div style="${innerWrapperStyle}">
                         <div style="display: flex; align-items: center;">
                             ${rankHtml}
                             <div class="c-main-info">
                                 <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}</span>
+                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
                                 <span class="c-meta">${raceName} ${displaySpecClass}</span>
                             </div>
                         </div>
@@ -1221,13 +1232,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             return `
-            <div onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
+            <div onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 <div style="${innerWrapperStyle}">
                     <div style="display: flex; align-items: center;">
                         ${rankHtml}
                         <div class="c-main-info">
                             <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                            <span class="c-name" style="color:${cHex};">${displayName}</span>
+                            <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
                             <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
                         </div>
                     </div>
@@ -2694,6 +2705,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             return true;
         });
 
+        // --- NEW: INJECT MONUMENTS INTO FILTERED DATA ---
+        if (window.warEffortMonuments) {
+            window.warEffortMonuments.forEach(mon => {
+                if (tlTypeFilter === 'all' || tlTypeFilter === mon.filterType || (tlTypeFilter === 'rare_plus' && mon.filterType === 'epic')) {
+                    if (!filteredTimelineData.includes(mon)) filteredTimelineData.unshift(mon);
+                }
+            });
+        }
+
         // 2. Clear the old feed and reset the counter
         const container = document.getElementById('timeline-feed-container');
         if (container) container.innerHTML = '';
@@ -2735,9 +2755,24 @@ window.addEventListener('DOMContentLoaded', async () => {
         for (let i = currentTimelineIndex; i < endIndex; i++) {
             const event = filteredTimelineData[i];
             
-            // Restored the proper concise-item class from your production site!
             const eventEl = document.createElement('div');
-            eventEl.className = 'concise-item tt-char'; 
+            
+            // --- NEW: RENDER MONUMENT CARD ---
+            if (event.type === 'monument') {
+                eventEl.className = 'concise-item monument-card';
+                eventEl.innerHTML = `
+                    <div style="width:100%; text-align:center; padding: 10px;">
+                        <div style="font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 5px #ffd100);">🏆</div>
+                        <div style="font-family:'Cinzel'; font-size: 16px; color: #ffd100; font-weight:bold; text-shadow: 1px 1px 2px #000; margin-bottom: 5px;">${event.title}</div>
+                        <div style="font-size: 13px; color: #eee; line-height: 1.4;">${event.desc}</div>
+                    </div>
+                `;
+                container.appendChild(eventEl);
+                continue; 
+            }
+            
+            // Restored the proper concise-item class from your production site!
+            eventEl.className = 'concise-item tt-char';
             eventEl.style.cursor = 'pointer';
             eventEl.onclick = () => selectCharacter((event.character_name || '').toLowerCase());
             
@@ -3135,6 +3170,27 @@ window.addEventListener('DOMContentLoaded', async () => {
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
         renderBar('guild-zenith-fill', 'guild-zenith-text', totalZenith, 10, 'ZENITH');
+
+        // --- NEW: VANGUARD AURA & TIMELINE MONUMENT CALCULATION ---
+        window.warEffortVanguards = { xp: [], hk: [], loot: [], zenith: [] };
+        window.warEffortMonuments = [];
+        
+        if (totalLevels >= 750) {
+            window.warEffortVanguards.xp = Object.entries(levelContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+            const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedXP[749]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
+        }
+        if (totalHks >= 500) {
+            window.warEffortVanguards.hk = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+        }
+        if (totalLoot >= 100) {
+            window.warEffortVanguards.loot = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+            const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            if (sortedLoot[99]) window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
+        }
+        if (totalZenith >= 10) {
+            window.warEffortVanguards.zenith = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+        }
 
         // 6. Tooltip Generator Helper (Updated to Route on Click)
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
