@@ -577,25 +577,68 @@ window.addEventListener('DOMContentLoaded', async () => {
         const spiVal = (st.spirit && st.spirit.effective) || 0;
         const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
         
-        const armor = (st.armor && st.armor.effective) || 0;
-        const defense = (st.defense && st.defense.effective) || 0;
+        // Safely extract stats supporting both the old nested JSON and the new flat Turso schema
+        const armor = st.armor_effective || ((st.armor && st.armor.effective) || 0);
+        const defense = st.defense_effective || ((st.defense && st.defense.effective) || 0);
+        const dodge = st.dodge || ((st.dodge && st.dodge.value) || 0);
+        const parry = st.parry || 0;
+        const block = st.block || 0;
+        
         const ap = st.attack_power || 0;
+        const meleeCrit = st.melee_crit_value || ((st.melee_crit && st.melee_crit.value) || 0);
+        const meleeHaste = st.melee_haste_value || 0;
+        
+        const rangedCrit = st.ranged_crit || 0;
+        const rangedHaste = st.ranged_haste || 0;
+        
         const spellPower = st.spell_power || 0;
-        const meleeCrit = (st.melee_crit && st.melee_crit.value) ? st.melee_crit.value.toFixed(2) + '%' : '0%';
-        const spellCrit = (st.spell_crit && st.spell_crit.value) ? st.spell_crit.value.toFixed(2) + '%' : '0%';
-        const manaRegen = st.mana_regen ? Math.round(st.mana_regen) : 0;
-        const dodge = (st.dodge && st.dodge.value) ? st.dodge.value.toFixed(2) + '%' : '0%';
+        const spellCrit = st.spell_crit_value || ((st.spell_crit && st.spell_crit.value) || 0);
+        const spellHaste = st.spell_haste || 0;
+        const spellPen = st.spell_penetration || 0;
+        
+        const manaRegen = st.mana_regen || 0;
+        const mp5 = st.mana_regen_combat || 0;
+
+        // Determine logical roles to prevent stat bloat
+        const isTank = ["Protection", "Blood"].includes(activeSpec) || (cClass === "Druid" && activeSpec === "Feral Combat") || cClass === "Warrior";
+        const isHunter = cClass === "Hunter";
+        const isMelee = ["Rogue", "Warrior", "Death Knight"].includes(cClass) || ["Retribution", "Enhancement", "Feral Combat"].includes(activeSpec);
+        const isCaster = ["Mage", "Warlock", "Priest"].includes(cClass) || ["Balance", "Elemental", "Restoration", "Holy"].includes(activeSpec) || (cClass === "Paladin" && ["Holy", "Protection"].includes(activeSpec)) || (cClass === "Shaman" && activeSpec !== "Enhancement") || (cClass === "Druid" && activeSpec !== "Feral Combat");
 
         let advancedStatsHtml = `<div class="stat-divider"></div>`;
         advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Armor</span><span class="stat-val val-wht">${armor.toLocaleString()}</span></div>`;
-        if (defense > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧱 Defense</span><span class="stat-val val-wht">${defense}</span></div>`;
-        if (st.dodge && st.dodge.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🤸 Dodge</span><span class="stat-val val-wht">${dodge}</span></div>`;
-        if (ap > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Attack Power</span><span class="stat-val val-org">${ap}</span></div>`;
-        if (st.melee_crit && st.melee_crit.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🩸 Melee Crit</span><span class="stat-val val-red">${meleeCrit}</span></div>`;
-        if (spellPower > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spell Power</span><span class="stat-val val-blu">${spellPower}</span></div>`;
-        if (st.spell_crit && st.spell_crit.value > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🔥 Spell Crit</span><span class="stat-val val-ylw">${spellCrit}</span></div>`;
-        if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${manaRegen}</span></div>`;
+        
+        // 1. Defenses (Gated to Tanks or High-Defense Off-Tanks)
+        if (isTank || defense > 350) {
+            if (defense > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧱 Defense</span><span class="stat-val val-wht">${defense}</span></div>`;
+            if (dodge > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🤸 Dodge</span><span class="stat-val val-wht">${dodge.toFixed(2)}%</span></div>`;
+            if (parry > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Parry</span><span class="stat-val val-wht">${parry.toFixed(2)}%</span></div>`;
+            if (block > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Block</span><span class="stat-val val-wht">${block.toFixed(2)}%</span></div>`;
+        }
 
+        // 2. Physical Offense (Melee & Ranged)
+        if (isMelee || isHunter) {
+            if (ap > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Attack Power</span><span class="stat-val val-org">${ap}</span></div>`;
+        }
+        if (isMelee) {
+            if (meleeCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🩸 Melee Crit</span><span class="stat-val val-red">${meleeCrit.toFixed(2)}%</span></div>`;
+            if (meleeHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Melee Haste</span><span class="stat-val val-red">${meleeHaste.toFixed(2)}%</span></div>`;
+        }
+        if (isHunter) {
+            if (rangedCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Ranged Crit</span><span class="stat-val val-grn">${rangedCrit.toFixed(2)}%</span></div>`;
+            if (rangedHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Ranged Haste</span><span class="stat-val val-grn">${rangedHaste.toFixed(2)}%</span></div>`;
+        }
+
+        // 3. Spellcasting & Healing
+        if (isCaster) {
+            if (spellPower > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spell Power</span><span class="stat-val val-blu">${spellPower}</span></div>`;
+            if (spellCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🔥 Spell Crit</span><span class="stat-val val-ylw">${spellCrit.toFixed(2)}%</span></div>`;
+            if (spellHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Spell Haste</span><span class="stat-val val-ylw">${spellHaste.toFixed(2)}%</span></div>`;
+            if (spellPen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🌀 Spell Pen</span><span class="stat-val val-blu">${spellPen}</span></div>`;
+            if (mp5 > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana/5 (Combat)</span><span class="stat-val val-grn">${Math.round(mp5)}</span></div>`;
+            else if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${Math.round(manaRegen)}</span></div>`;
+        }
+        
         const hks = p.honorable_kills || 0;
         const hkBadge = hks > 0 ? `<span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ff4400; padding:5px 14px; border-radius:20px; font-size:14px; color:#ff4400; box-shadow:0 0 5px rgba(255,68,0,0.5);">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
         
