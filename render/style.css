@@ -124,6 +124,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 #backToTopBtn.show { display: block; opacity: 1; }
 #backToTopBtn:hover { background-color: rgba(255, 209, 0, 0.15); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 209, 0, 0.4); }
 
+.trend-indicator { font-size: 12px; margin-left: 12px; width: 30px; text-align: right; display: inline-block; }
+.trend-positive { color: #2ecc71; }
+.trend-negative { color: #e74c3c; }
+.trend-neutral { color: #555; }
+
 /* ========================================= */
 /* BADGES & BANNERS                          */
 /* ========================================= */
@@ -186,6 +191,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .lb-spec { color: #aaa; font-size: 10px; font-style: italic; }
 .lb-score { display: flex; align-items: center; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .pve-score { color: #ff8000; }
+.pvp-score { color: #ff4400; }
 .lb-score-label { font-size: 10px; color: #888; margin-left: 3px; }
 .spec-icon-sm { width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222; }
 
@@ -208,6 +214,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .item-slot a { text-decoration: none; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item-slot a:hover { text-decoration: underline; }
 .gear-grid-container { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.char-badges-container { display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.char-badge { background: rgba(0,0,0,0.7); padding: 5px 14px; border-radius: 20px; font-size: 14px; border-width: 1px; border-style: solid; display: inline-flex; align-items: center; }
+.default-badge { border-color: rgba(255,255,255,0.2); color: #ddd; }
+.stat-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0; padding-top: 15px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+.stat-lbl { color: #bbb; }
+.stat-val { font-weight: bold; }
+.val-wht { color: #fff; }
+.val-org { color: #e67e22; }
+.val-red { color: #e74c3c; }
+.val-blu { color: #3498db; }
+.val-ylw { color: #f1c40f; }
+.val-grn { color: #1abc9c; }
 
 /* ========================================= */
 /* TIMELINE & ACTIVITY                       */
