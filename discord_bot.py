@@ -81,7 +81,7 @@ async def who(interaction: discord.Interaction, character_name: str):
         await interaction.followup.send(f"❌ Could not find **{character_name.title()}** in the guild database.")
         return
 
-    # Extract all data, adding Faction for color coding
+    # Extract all data
     name = char_data.get("name", "Unknown").title()
     level = char_data.get("level", 0)
     char_class = char_data.get("class", "Unknown")
@@ -91,12 +91,18 @@ async def who(interaction: discord.Interaction, character_name: str):
     active_spec = char_data.get("active_spec", "Unknown") or "None"
     portrait_url = char_data.get("portrait_url", "")
     last_login_ms = char_data.get("last_login_ms", 0)
+    
+    # Extract new primary stats
+    strength = char_data.get("strength", 0)
+    agility = char_data.get("agility", 0)
+    stamina = char_data.get("stamina", 0)
+    intellect = char_data.get("intellect", 0)
+    spirit = char_data.get("spirit", 0)
 
     # Convert timestamp
     last_seen_unix = int(last_login_ms / 1000) if last_login_ms else 0
     last_seen_str = f"<t:{last_seen_unix}:R>" if last_seen_unix else "Unknown"
 
-    # Set the card color based on the character's faction
     if faction.lower() == "horde":
         embed_color = discord.Color.red()
     elif faction.lower() == "alliance":
@@ -104,24 +110,27 @@ async def who(interaction: discord.Interaction, character_name: str):
     else:
         embed_color = discord.Color.dark_gray()
 
-    # Move Name to the Title and Class info to the Description for a cleaner look
     embed = discord.Embed(
-        title=name,
-        description=f"Level {level} {race} {char_class}",
+        title=f"Level {level} {race} {char_class}",
         color=embed_color
     )
     
+    embed.set_author(name=name)
     if portrait_url:
         embed.set_thumbnail(url=portrait_url)
 
-    # Condense the pertinent specs into a single, non-inline field to prevent layout clutter
-    specs_text = (
-        f"**Specialization:** {active_spec}\n"
-        f"**Item Level:** {ilvl}\n"
-        f"**Last Seen:** {last_seen_str}"
-    )
-    
-    embed.add_field(name="Character Details", value=specs_text, inline=False)
+    # Core details displayed in an inline grid
+    embed.add_field(name="🛡️ Active Spec", value=f"**{active_spec}**", inline=True)
+    embed.add_field(name="⚔️ Item Level", value=f"**{ilvl}**", inline=True)
+    embed.add_field(name="🕒 Last Seen", value=last_seen_str, inline=True)
+
+    # Primary Stats displayed in an inline grid
+    embed.add_field(name="⚔️ Strength", value=f"{strength}", inline=True)
+    embed.add_field(name="🏹 Agility", value=f"{agility}", inline=True)
+    embed.add_field(name="🛡️ Stamina", value=f"{stamina}", inline=True)
+    embed.add_field(name="🧠 Intellect", value=f"{intellect}", inline=True)
+    embed.add_field(name="✨ Spirit", value=f"{spirit}", inline=True)
+    embed.add_field(name="\u200B", value="\u200B", inline=True) 
     
     # Raid Readiness check
     if level == 70 and ilvl >= 110:

@@ -88,7 +88,7 @@ async def setup_database(session):
     """Ensures database schema exists via HTTP API."""
     print("📂 Ensuring Turso schema exists...")
     schema_queries = [
-        "CREATE TABLE IF NOT EXISTS characters (name TEXT PRIMARY KEY, class TEXT, race TEXT, faction TEXT, guild TEXT, level INTEGER, equipped_item_level INTEGER, xp INTEGER, xp_max INTEGER, health INTEGER, power INTEGER, last_login_ms INTEGER, portrait_url TEXT, active_spec TEXT, honorable_kills INTEGER)",
+        "CREATE TABLE IF NOT EXISTS characters (name TEXT PRIMARY KEY, class TEXT, race TEXT, faction TEXT, guild TEXT, level INTEGER, equipped_item_level INTEGER, xp INTEGER, xp_max INTEGER, health INTEGER, power INTEGER, last_login_ms INTEGER, portrait_url TEXT, active_spec TEXT, honorable_kills INTEGER, strength INTEGER, agility INTEGER, stamina INTEGER, intellect INTEGER, spirit INTEGER)",
         "CREATE TABLE IF NOT EXISTS gear (character_name TEXT, slot TEXT, item_id INTEGER, name TEXT, quality TEXT, icon_data TEXT, tooltip_params TEXT, last_detected TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (character_name, slot, item_id))",
         "CREATE TABLE IF NOT EXISTS timeline (timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, character_name TEXT, class TEXT, type TEXT, item_id INTEGER, item_name TEXT, item_quality TEXT, item_icon TEXT, level INTEGER)",
         "CREATE INDEX IF NOT EXISTS idx_timeline_timestamp ON timeline (timestamp DESC)",
@@ -310,8 +310,8 @@ async def main_async():
                 batch_stmts.append({
                     "q": """
                         INSERT OR REPLACE INTO characters 
-                        (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills, strength, agility, stamina, intellect, spirit) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     "params": [
                         char_name, 
@@ -323,7 +323,12 @@ async def main_async():
                         data.get('last_login_ms'),
                         data.get('portrait_url'),
                         data.get('active_spec'),
-                        data.get('honorable_kills')
+                        data.get('honorable_kills'),
+                        data.get('strength', 0),
+                        data.get('agility', 0),
+                        data.get('stamina', 0),
+                        data.get('intellect', 0),
+                        data.get('spirit', 0)
                     ]
                 })
                 
