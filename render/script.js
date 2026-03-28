@@ -3167,9 +3167,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.warEffortMonuments = [];
         
         if (totalLevels >= 750) {
-            window.warEffortVanguards.xp = Object.entries(levelContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedXP[749]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
+            if (sortedXP[749]) {
+                const cutoffMs = new Date(sortedXP[749].timestamp).getTime();
+                const lockedContributors = {};
+                sortedXP.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.xp = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
+            }
         }
         
         if (totalHks >= 500) {
@@ -3182,15 +3190,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (totalLoot >= 100) {
-            window.warEffortVanguards.loot = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[99]) window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
+            if (sortedLoot[99]) {
+                const cutoffMs = new Date(sortedLoot[99].timestamp).getTime();
+                const lockedContributors = {};
+                sortedLoot.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.loot = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
+            }
         }
         
         if (totalZenith >= 10) {
-            window.warEffortVanguards.zenith = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedZenith[9]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+            if (sortedZenith[9]) {
+                const cutoffMs = new Date(sortedZenith[9].timestamp).getTime();
+                const lockedContributors = {};
+                sortedZenith.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.zenith = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+            }
         }
 
         // --- NEW: RENDER DEDICATED MONUMENTS FEED ---
