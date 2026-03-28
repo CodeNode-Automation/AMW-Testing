@@ -429,8 +429,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 /* WAR EFFORT INCENTIVES                     */
 /* ========================================= */
-.vanguard-aura { box-shadow: 0 0 15px #ffd100, inset 0 0 10px rgba(255, 209, 0, 0.3) !important; border-color: #ffd100 !important; animation: pulseMaxZENITH 1.5s infinite alternate !important; z-index: 5; position: relative; }
-.vanguard-badge { background: linear-gradient(90deg, #ff8000, #ffd100); color: #000; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-shadow: none; margin-left: 8px; box-shadow: 0 0 8px #ffd100; vertical-align: middle; letter-spacing: 0.5px; }
+.vanguard-aura { background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(10, 10, 15, 0.9) 100%) !important; border-left-color: #fff !important; box-shadow: inset 20px 0 30px -20px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(0,0,0,0.5) !important; z-index: 5; position: relative; }
+.vanguard-badge { background: rgba(0, 0, 0, 0.7); color: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.4); font-size: 9px; font-weight: bold; letter-spacing: 1px; margin-left: 8px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.5); vertical-align: middle; }
 .monument-card { background: linear-gradient(135deg, rgba(40,30,10,0.9) 0%, rgba(20,15,5,0.95) 100%) !important; border: 2px solid #ffd100 !important; box-shadow: 0 10px 25px rgba(255,209,0,0.2), inset 0 0 20px rgba(255,209,0,0.1) !important; cursor: default !important; transform: scale(1.02); margin-bottom: 15px; }
     </style>
 </head>
@@ -920,10 +920,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-28T17:40:09.206389Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-28T17:52:18.835414Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 541, "loot": 424, "levels": 117, "total_roster": 642, "active_roster": 407}]
+        [{"date": "2026-03-22", "day_name": "Sun", "count": 691, "loot": 542, "levels": 149, "total_roster": null, "active_roster": null}, {"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 549, "loot": 429, "levels": 120, "total_roster": 642, "active_roster": 407}]
     </script>
 
     <script>
@@ -4096,9 +4096,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.warEffortMonuments = [];
         
         if (totalLevels >= 750) {
-            window.warEffortVanguards.xp = Object.entries(levelContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedXP[749]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
+            if (sortedXP[749]) {
+                const cutoffMs = new Date(sortedXP[749].timestamp).getTime();
+                const lockedContributors = {};
+                sortedXP.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.xp = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "🛡️ Hero's Journey Completed!", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> gained the 750th Level to crush the weekly goal!`, timestamp: sortedXP[749].timestamp });
+            }
         }
         
         if (totalHks >= 500) {
@@ -4111,15 +4119,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (totalLoot >= 100) {
-            window.warEffortVanguards.loot = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[99]) window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
+            if (sortedLoot[99]) {
+                const cutoffMs = new Date(sortedLoot[99].timestamp).getTime();
+                const lockedContributors = {};
+                sortedLoot.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.loot = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'epic', title: "🐉 Dragon's Hoard Completed!", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic to crush the weekly goal!`, timestamp: sortedLoot[99].timestamp });
+            }
         }
         
         if (totalZenith >= 10) {
-            window.warEffortVanguards.zenith = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedZenith[9]) window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+            if (sortedZenith[9]) {
+                const cutoffMs = new Date(sortedZenith[9].timestamp).getTime();
+                const lockedContributors = {};
+                sortedZenith.filter(e => new Date(e.timestamp).getTime() <= cutoffMs).forEach(e => {
+                    const cName = (e.character_name || 'Unknown').toLowerCase();
+                    lockedContributors[cName] = (lockedContributors[cName] || 0) + 1;
+                });
+                window.warEffortVanguards.zenith = Object.entries(lockedContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+                window.warEffortMonuments.push({ type: 'monument', filterType: 'level_up', title: "⚡ The Zenith Cohort Completed!", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> became the 10th Level 70 to crush the weekly goal!`, timestamp: sortedZenith[9].timestamp });
+            }
         }
 
         // --- NEW: RENDER DEDICATED MONUMENTS FEED ---
