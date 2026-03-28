@@ -320,7 +320,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     .card-content { flex-direction: column; }
     .sidebar { flex: auto; width: 100%; }
     .character-portrait img { max-width: 140px; }
-    .hero-search-box { width: 100% !important; border-radius: 25px !important; cursor: text !important; justify-content: flex-start !important; }
+    
+    /* Keep hero search container underneath the nav bar */
+    #main-dashboard .search-container { z-index: 10 !important; position: relative !important; }
+    #main-dashboard .search-container:focus-within { z-index: 10 !important; }
+    
+    /* Override inherited nav search behavior to prevent jumping and overlapping */
+    .hero-search-box { width: 100% !important; border-radius: 25px !important; cursor: text !important; justify-content: flex-start !important; z-index: 10 !important; }
+    .hero-search-box:focus-within { position: relative !important; transform: translateY(-3px) scale(1.02) !important; right: auto !important; top: auto !important; height: auto !important; }
+    
     .hero-search-box input { display: block !important; width: 100% !important; opacity: 1 !important; padding: 0 15px !important; position: relative !important; pointer-events: auto !important; font-size: 16px !important; box-sizing: border-box !important; }
     .hero-search-box .search-icon { position: relative !important; left: 0 !important; transform: none !important; pointer-events: none !important; }
 }
