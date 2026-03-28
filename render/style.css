@@ -143,7 +143,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .milestone-banner { display: flex; align-items: center; background: linear-gradient(90deg, rgba(25, 15, 40, 0.9) 0%, rgba(10, 10, 15, 0.95) 50%, rgba(40, 25, 15, 0.9) 100%); backdrop-filter: blur(8px); border: 1px solid rgba(255, 209, 0, 0.2); border-left: 4px solid #ffd100; border-right: 4px solid #a335ee; border-radius: 12px; padding: 15px 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(163, 53, 238, 0.15), inset 0 0 15px rgba(255, 209, 0, 0.05); position: relative; overflow: hidden; }
 .milestone-banner::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); animation: shimmerWave 4s infinite linear; pointer-events: none; }
 .milestone-icon { font-size: 24px; margin-right: 15px; animation: pulseGlow 2s infinite alternate; }
-.milestone-text { flex: 1; font-family: 'Cinzel', serif; font-size: 15px; color: #eee; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.milestone-text { flex: 1; font-family: 'Cinzel', serif; font-size: 15px; color: #eee; overflow: hidden; white-space: normal; word-wrap: break-word; line-height: 1.4; }
+.milestone-text-rotator { transition: opacity 0.5s ease-in-out; opacity: 1; }
 .milestone-highlight { color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
 .milestone-epic { color: #a335ee; font-weight: bold; text-shadow: 1px 1px 2px #000; }
 
