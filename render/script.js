@@ -1174,7 +1174,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const type = hashUrl.replace('war-effort-', '');
                 if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(displayName.toLowerCase())) {
                     vanguardClass = 'vanguard-aura';
-                    vanguardBadgeHtml = '<span class="vanguard-badge">🌟 VANGUARD</span>';
+                    let timeText = '';
+                    
+                    // Grab the locked timestamp and format it nicely
+                    if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
+                        const dt = new Date(window.warEffortLockTimes[type]);
+                        if (!isNaN(dt)) {
+                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleDateString(undefined, {month:'short', day:'numeric'})} ${dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})</span>`;
+                        }
+                    }
+                    
+                    vanguardBadgeHtml = `<span class="vanguard-badge">🌟 VANGUARD${timeText}</span>`;
                 }
             }
 
@@ -3179,14 +3189,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         // --- NEW: VANGUARD AURA & TIMELINE MONUMENT CALCULATION ---
         window.warEffortVanguards = { xp: [], hk: [], loot: [], zenith: [] };
         window.warEffortMonuments = [];
+        window.warEffortLockTimes = {}; // <-- NEW: Store the exact time it locked
 
         function applyLockFallback(type, fallbackMon, dynVanguards) {
             if (warEffortLocks[type]) {
                 window.warEffortVanguards[type] = warEffortLocks[type].vanguards;
                 window.warEffortMonuments.push(warEffortLocks[type].monument);
+                window.warEffortLockTimes[type] = warEffortLocks[type].monument.timestamp;
             } else if (fallbackMon) {
                 window.warEffortVanguards[type] = dynVanguards;
                 window.warEffortMonuments.push(fallbackMon);
+                window.warEffortLockTimes[type] = fallbackMon.timestamp;
             }
         }
 
