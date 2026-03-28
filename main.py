@@ -465,21 +465,18 @@ async def main_async():
             hk_counts = {}
             total_hks = 0
             for r in roster_data:
-                trend = r.get('profile', {}).get('trend_pvp') or r.get('profile', {}).get('trend_hks') or 0
+                if not r or not r.get("profile"):
+                    continue
+                prof = r["profile"]
+                trend = prof.get("trend_pvp") or prof.get("trend_hks") or 0
                 if trend > 0:
                     total_hks += trend
-                    hk_counts[r['profile']['name'].lower()] = trend
+                    hk_counts[prof.get("name", "Unknown").lower()] = trend
+
             if total_hks >= 500:
                 top3 = [k for k, v in sorted(hk_counts.items(), key=lambda item: item[1], reverse=True)[:3]]
-                mvp = top3[0] if top3 else "Unknown"
-                we_data["locks"]["hk"] = {
-                    "vanguards": top3,
-                    "monument": {
-                        "title": "🩸 Blood of the Enemy", 
-                        "desc": f"<span style='color:#ff4400; font-weight:bold;'>{mvp.title()}</span> led the 500 HK charge!",
-                        "timestamp": now_berlin.isoformat()
-                    }
-                }
+                mvp = top3[0].title() if top3 else "Unknown"
+                we_data["locks"]["hk"] = {"vanguards": top3, "monument": {"title": "🩸 Blood of the Enemy", "desc": f"<span style='color:#ff4400; font-weight:bold;'>{mvp}</span> led the 500 HK charge!", "timestamp": now_berlin.isoformat()}}
 
         # 3. Check Loot (100)
         if "loot" not in we_data["locks"]:
