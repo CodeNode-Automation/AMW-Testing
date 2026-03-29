@@ -46,12 +46,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     let rawGuildRoster = [];
     let warEffortLocks = {}; 
     
-    // 1. Fetch CRITICAL Roster Data First
+    // 1. Fetch CRITICAL Roster Data Firstt
     try {
-        const rosterRes = await fetch('asset/roster.json');
+        const cb = new Date().getTime(); // Cache Buster
+        const rosterRes = await fetch(`asset/roster.json?t=${cb}`);
         rosterData = await rosterRes.json();
         
-        const rawRes = await fetch('asset/raw_roster.json');
+        const rawRes = await fetch(`asset/raw_roster.json?t=${cb}`);
         rawGuildRoster = await rawRes.json();
     } catch (error) {
         console.error("Failed to load armory data:", error);
@@ -65,7 +66,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Fetch NON-CRITICAL War Effort Locks (Ignore if it fails or is missing)
     try {
-        const weRes = await fetch('asset/war_effort.json');
+        const cb = new Date().getTime();
+        const weRes = await fetch(`asset/war_effort.json?t=${cb}`);
         if (weRes.ok) {
             const weData = await weRes.json();
             warEffortLocks = weData.locks || {};
@@ -2787,7 +2789,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchTimeline() {
         try {
-            const response = await fetch('asset/timeline.json');
+            const cb = new Date().getTime();
+            const response = await fetch(`asset/timeline.json?t=${cb}`);
             timelineData = await response.json();
             
             // --- FIX: Update Epic Loot KPI dynamically after fetch ---
