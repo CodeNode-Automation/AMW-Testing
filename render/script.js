@@ -2975,7 +2975,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             const c_hex = CLASS_COLORS[event.class] || '#ffd100';
             const c_name = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
             
-            if (event.type === 'level_up') {
+            if (event.type === 'badge') {
+                eventEl.style.borderLeftColor = c_hex;
+                let badgeIcon = '🎖️', badgeColor = '#aaa', badgeText = '';
+                
+                if (event.badge_type === 'mvp_pve') { badgeIcon = '👑'; badgeColor = '#ff8000'; badgeText = 'PvE Champion'; }
+                else if (event.badge_type === 'mvp_pvp') { badgeIcon = '⚔️'; badgeColor = '#ff4400'; badgeText = 'PvP Champion'; }
+                else if (event.badge_type === 'vanguard') { badgeIcon = '🌟'; badgeColor = '#00ffcc'; badgeText = 'Vanguard Status'; }
+                else if (event.badge_type === 'campaign') { badgeIcon = '🎖️'; badgeColor = '#aaa'; badgeText = 'Campaign Participant'; }
+                
+                eventEl.innerHTML = `
+                    <div class="timeline-node" style="background: ${badgeColor}; box-shadow: 0 0 8px ${badgeColor};"></div>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                        <span style="color:#888; font-size:11px;">${date_str}</span>
+                    </div>
+                    <div class="event-box" style="border-left-color: ${badgeColor}; background: rgba(0,0,0,0.4);">
+                        <span style="font-size: 16px; margin-right: 8px; filter: drop-shadow(0 0 3px ${badgeColor});">${badgeIcon}</span>
+                        <span style="color: ${badgeColor}; font-weight: bold; text-shadow: 1px 1px 2px #000;">Awarded: ${badgeText} - ${event.category}</span>
+                    </div>
+                `;
+            } else if (event.type === 'level_up') {
                 eventEl.style.borderLeftColor = c_hex;
                 eventEl.innerHTML = `
                     <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>

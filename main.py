@@ -548,39 +548,52 @@ async def main_async():
         # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
         print("🏅 Calculating Cumulative War Effort & MVP Badges...")
         try:
-            historical_data = await fetch_turso(session, "SELECT category, vanguards, participants FROM war_effort_history")
+            historical_data = await fetch_turso(session, "SELECT week_anchor, category, vanguards, participants FROM war_effort_history")
             vanguard_tallies, campaign_tallies = {}, {}
+            badge_events = [] # NEW: Hold timeline events
             cat_map = {"xp": "XP", "hk": "HKs", "loot": "Loot", "zenith": "Zenith"}
 
             if historical_data:
                 for row in historical_data:
-                    cat = row.get('category', '') if isinstance(row, dict) else row[0]
-                    v_json = row.get('vanguards', '[]') if isinstance(row, dict) else row[1]
-                    p_json = row.get('participants', '[]') if isinstance(row, dict) else row[2]
+                    week_anchor = row.get('week_anchor') if isinstance(row, dict) else row[0]
+                    cat = row.get('category', '') if isinstance(row, dict) else row[1]
+                    v_json = row.get('vanguards', '[]') if isinstance(row, dict) else row[2]
+                    p_json = row.get('participants', '[]') if isinstance(row, dict) else row[3]
                     
                     label = cat_map.get(cat.lower(), cat.title())
+                    timestamp = f"{week_anchor}T12:00:00Z" # Default to noon on reset day
 
                     try:
                         for v in json.loads(v_json):
                             v_lower = v.lower()
                             if v_lower not in vanguard_tallies: vanguard_tallies[v_lower] = []
                             vanguard_tallies[v_lower].append(label)
+                            badge_events.append({"timestamp": timestamp, "character_name": v.title(), "type": "badge", "badge_type": "vanguard", "category": label})
                     except: pass
                     try:
                         for p in json.loads(p_json):
                             p_lower = p.lower()
                             if p_lower not in campaign_tallies: campaign_tallies[p_lower] = []
                             campaign_tallies[p_lower].append(label)
+                            badge_events.append({"timestamp": timestamp, "character_name": p.title(), "type": "badge", "badge_type": "campaign", "category": label})
                     except: pass
 
-            mvp_data = await fetch_turso(session, "SELECT champion, category FROM reigning_champs_history")
+            mvp_data = await fetch_turso(session, "SELECT week_anchor, champion, category FROM reigning_champs_history")
             pve_champs, pvp_champs = {}, {}
             if mvp_data:
                 for row in mvp_data:
-                    champ = row.get('champion', '').lower() if isinstance(row, dict) else row[0].lower()
-                    cat = row.get('category', '').lower() if isinstance(row, dict) else row[1].lower()
-                    if cat == 'pve': pve_champs[champ] = pve_champs.get(champ, 0) + 1
-                    if cat == 'pvp': pvp_champs[champ] = pvp_champs.get(champ, 0) + 1
+                    week_anchor = row.get('week_anchor') if isinstance(row, dict) else row[0]
+                    champ = row.get('champion', '').lower() if isinstance(row, dict) else row[1].lower()
+                    cat = row.get('category', '').lower() if isinstance(row, dict) else row[2].lower()
+                    
+                    timestamp = f"{week_anchor}T12:00:00Z"
+
+                    if cat == 'pve': 
+                        pve_champs[champ] = pve_champs.get(champ, 0) + 1
+                        badge_events.append({"timestamp": timestamp, "character_name": champ.title(), "type": "badge", "badge_type": "mvp_pve", "category": "PvE Leaderboard"})
+                    if cat == 'pvp': 
+                        pvp_champs[champ] = pvp_champs.get(champ, 0) + 1
+                        badge_events.append({"timestamp": timestamp, "character_name": champ.title(), "type": "badge", "badge_type": "mvp_pvp", "category": "PvP Leaderboard"})
 
             for r in roster_data:
                 if not r or not r.get("profile"): continue
@@ -693,6 +706,15 @@ async def main_async():
         if batch_stmts_chars:
             await push_turso_batch(session, batch_stmts_chars)
         print("✅ Final push to Turso complete!")
+
+        # --- NEW: INJECT BADGES INTO TIMELINE ---
+        orig_chars = {r['name'].lower(): r for r in char_rows}
+        for ev in badge_events:
+            c_name_lower = ev["character_name"].lower()
+            ev["class"] = orig_chars.get(c_name_lower, {}).get("class", "Unknown")
+        
+        dashboard_feed.extend(badge_events)
+        dashboard_feed.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
 
         # Dump the heavy timeline payload to an external JSON file
         with open("asset/timeline.json", "w", encoding="utf-8") as f:
