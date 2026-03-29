@@ -924,10 +924,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T18:00:21.962832Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T18:04:28.638362Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 569, "loot": 434, "levels": 135, "total_roster": 643, "active_roster": 406}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 573, "loot": 437, "levels": 136, "total_roster": 643, "active_roster": 406}]
     </script>
 
     <script>
@@ -982,17 +982,21 @@ function getThematicName(rawName) {
     const clean = rawName.toLowerCase().trim();
     const map = {
         'xp': "Hero's Journey",
+        'hks': "Blood of the Enemy", // Fixed to match main.py output
+        'hk': "Blood of the Enemy",
         'loot': "Dragon's Hoard",
-        'hks': "Blood of the Enemy",
         'zenith': "The Zenith Cohort",
         'pve_gold': "PvE Ladder (Gold)",
         'pve_silver': "PvE Ladder (Silver)",
         'pve_bronze': "PvE Ladder (Bronze)",
         'pvp_gold': "PvP Ladder (Gold)",
         'pvp_silver': "PvP Ladder (Silver)",
-        'pvp_bronze': "PvP Ladder (Bronze)"
+        'pvp_bronze': "PvP Ladder (Bronze)",
+        'mvp_pve': "PvE MVP Champion",
+        'mvp_pvp': "PvP MVP Champion",
+        'vanguard': "Vanguard Status",
+        'campaign': "Campaign Participant"
     };
-    // Preserve unmapped names (like 'kara' or 'gruul' for vanguards) by capitalizing them
     return map[clean] || (rawName.charAt(0).toUpperCase() + rawName.slice(1));
 }
 
@@ -1815,6 +1819,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const guildRank = p.guild_rank || 'Member';
         const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges);
         const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges);
+        const prevMvps = config.prev_mvps || {};
+        const isPveReigning = prevMvps.pve && prevMvps.pve.name && prevMvps.pve.name.toLowerCase() === charName.toLowerCase();
+        const isPvpReigning = prevMvps.pvp && prevMvps.pvp.name && prevMvps.pvp.name.toLowerCase() === charName.toLowerCase();
+
         const vCount = vBadges.length;
         const cCount = cBadges.length;
         const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count) || 0;
@@ -1838,6 +1846,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
         
         let extraBadges = '';
+        if (isPveReigning) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 209, 0, 0.2); border-color: #ffd100; color: #ffd100; font-weight: bold; box-shadow: 0 0 15px rgba(255, 209, 0, 0.8); animation: pulseGlow 2s infinite alternate;" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
+        if (isPvpReigning) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 68, 0, 0.2); border-color: #ff4400; color: #ff4400; font-weight: bold; box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); animation: pulseGlow 2s infinite alternate;" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
+        
         if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
         if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
         if (pveBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${tPveBronze}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
@@ -2356,6 +2367,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar.pvp_silver) || 0;
                 const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar.pvp_bronze) || 0;
 
+                const prevMvps = config.prev_mvps || {};
+                const isPveReigning = prevMvps.pve && prevMvps.pve.name && prevMvps.pve.name.toLowerCase() === cleanName;
+                const isPvpReigning = prevMvps.pvp && prevMvps.pvp.name && prevMvps.pvp.name.toLowerCase() === cleanName;
+
                 // 1. Build the data-awards attribute for the Bubbles
                 if (pveGold > 0) awardsAttr.push('pve_gold');
                 if (pveSilver > 0) awardsAttr.push('pve_silver');
@@ -2382,6 +2397,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 // 3. Inject them into the HTML
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
+                
+                if (isPveReigning) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 209, 0, 0.25); border:1px solid #ffd100; color:#ffd100; font-size:10px; font-weight:bold; padding:1px 6px; border-radius:4px; box-shadow: 0 0 8px rgba(255,209,0,0.6);" title="Current Reigning PvE Champion!">👑 Reigning MVP</span>`;
+                if (isPvpReigning) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.25); border:1px solid #ff4400; color:#ff4400; font-size:10px; font-weight:bold; padding:1px 6px; border-radius:4px; box-shadow: 0 0 8px rgba(255,68,0,0.6);" title="Current Reigning PvP Champion!">⚔️ Reigning MVP</span>`;
+                
                 if (pveGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${tPveGold}">🛡️🥇 ${pveGold}</span>`;
                 if (pveSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${tPveSilver}">🛡️🥈 ${pveSilver}</span>`;
                 if (pveBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${tPveBronze}">🛡️🥉 ${pveBronze}</span>`;
