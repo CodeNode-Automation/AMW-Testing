@@ -483,18 +483,22 @@ async def main_async():
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["loot"] = {"vanguards": top3, "monument": {"title": "🐉 Dragon's Hoard", "desc": f"<span style='color:#a335ee; font-weight:bold;'>{mvp}</span> looted the 100th Epic!", "timestamp": now_berlin.isoformat()}}
 
-        # 4. Zenith Lock (Safe)
+        # 4. Zenith Lock (Speedrun Logic)
         if "zenith" not in we_data["locks"]:
             zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
-            if len(zenith_events) >= 10:
-                counts = {}
-                for e in zenith_events: 
-                    c_name = e.get('character_name')
-                    if not c_name: continue
-                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
-                top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
-                mvp = top3[0].title() if top3 else "Unknown"
-                we_data["locks"]["zenith"] = {"vanguards": top3, "monument": {"title": "⚡ The Zenith Cohort", "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{mvp}</span> was the 10th Level 70!", "timestamp": now_berlin.isoformat()}}
+            
+            # Sort oldest to newest
+            zenith_events_sorted = sorted(zenith_events, key=lambda x: str(x.get('timestamp', '')))
+            unique_70s = []
+            for e in zenith_events_sorted:
+                c_name = e.get('character_name')
+                if c_name and c_name.lower() not in unique_70s:
+                    unique_70s.append(c_name.lower())
+                    
+            if len(unique_70s) >= 10:
+                top3 = unique_70s[:3] # The first 3 to hit 70 get Vanguard
+                tenth_man = unique_70s[9].title() # The 10th person gets the Monument shoutout
+                we_data["locks"]["zenith"] = {"vanguards": top3, "monument": {"title": "⚡ The Zenith Cohort", "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{tenth_man}</span> was the 10th Level 70!", "timestamp": now_berlin.isoformat()}}
 
         with open(we_file, "w", encoding="utf-8") as f:
             json.dump(we_data, f, ensure_ascii=False)

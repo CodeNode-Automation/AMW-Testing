@@ -1048,14 +1048,30 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // Override sorting for ALL War Effort challenges
             if (hashUrl.startsWith('war-effort-')) {
+                const type = hashUrl.replace('war-effort-', '');
+                
+                // --- NEW: FORCE VANGUARDS TO HOLD TOP 3 RANKS ---
+                if (window.warEffortVanguards && window.warEffortVanguards[type]) {
+                    const vanguards = window.warEffortVanguards[type];
+                    const idxA = vanguards.indexOf(nameA);
+                    const idxB = vanguards.indexOf(nameB);
+                    
+                    // If both are Vanguards, keep their locked 1st/2nd/3rd order
+                    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                    // If only A is a Vanguard, A wins
+                    if (idxA !== -1) return -1;
+                    // If only B is a Vanguard, B wins
+                    if (idxB !== -1) return 1;
+                }
+                
                 if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
                     valA = window.warEffortContext[nameA] || 0;
                     valB = window.warEffortContext[nameB] || 0;
                     return valB - valA; // High to Low Contributions
                 } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
-                    valA = window.warEffortContextRaw[nameA] || 0;
-                    valB = window.warEffortContextRaw[nameB] || 0;
-                    return valB - valA; // Newest first (highest timestamp)
+                    valA = window.warEffortContextRaw[nameA] || Infinity;
+                    valB = window.warEffortContextRaw[nameB] || Infinity;
+                    return valA - valB; // Low to High (Earliest to hit 70 wins!)
                 } else if (hashUrl === 'war-effort-loot' && window.warEffortContext) {
                     valA = window.warEffortContext[nameA] ? window.warEffortContext[nameA].length : 0;
                     valB = window.warEffortContext[nameB] ? window.warEffortContext[nameB].length : 0;
@@ -3269,13 +3285,19 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (totalZenith >= 10) {
-            const topDyn = Object.entries(zenithContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
+            const sortedZenithAsc = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            const uniqueZ = [];
+            sortedZenithAsc.forEach(e => {
+                const n = (e.character_name || '').toLowerCase();
+                if(n && !uniqueZ.includes(n)) uniqueZ.push(n);
+            });
+            
+            const topDyn = uniqueZ.slice(0,3);
             let fallback = null;
-            const sortedZenith = timelineData.filter(e => e.type === 'level_up' && e.level === 70 && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedZenith[9]) fallback = { title: "⚡ The Zenith Cohort", desc: `<span style="color:#3FC7EB; font-weight:bold;">${sortedZenith[9].character_name}</span> was the 10th Level 70!`, timestamp: sortedZenith[9].timestamp };
+            if (uniqueZ[9]) fallback = { title: "⚡ The Zenith Cohort", desc: `<span style="color:#3FC7EB; font-weight:bold;">${uniqueZ[9].charAt(0).toUpperCase() + uniqueZ[9].slice(1)}</span> was the 10th Level 70!`, timestamp: new Date().toISOString() };
             applyLockFallback('zenith', fallback, topDyn);
         }
-
+        
         // --- NEW: COMPACT MONUMENTS GRID FEED ---
         const timelineEl = document.getElementById('timeline');
         if (timelineEl) {
