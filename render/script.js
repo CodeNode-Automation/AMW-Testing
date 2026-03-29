@@ -50,7 +50,7 @@ function getThematicName(rawName) {
     const map = {
         'xp': "Hero's Journey",
         'loot': "Dragon's Hoard",
-        'hk': "Blood of the Enemy",
+        'hks': "Blood of the Enemy",
         'zenith': "The Zenith Cohort",
         'pve_gold': "PvE Ladder (Gold)",
         'pve_silver': "PvE Ladder (Silver)",
@@ -673,7 +673,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         return tooltip.replace(/"/g, '&quot;');
     }
-    
+
     function renderFullCard(charName) {
         const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
         if (!char) return "";
