@@ -924,10 +924,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T18:04:28.638362Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T18:11:42.732529Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 573, "loot": 437, "levels": 136, "total_roster": 643, "active_roster": 406}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 581, "loot": 443, "levels": 138, "total_roster": 643, "active_roster": 406}]
     </script>
 
     <script>
@@ -3384,22 +3384,55 @@ window.addEventListener('DOMContentLoaded', async () => {
         const hash = window.location.hash.substring(1);
         const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
 
+        const wrapper = document.getElementById('concise-content-wrapper');
+        const leftCol = document.getElementById('concise-left-col');
+        const badgesContainer = document.getElementById('concise-class-badges');
+
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
-            document.getElementById('concise-left-col').style.display = 'flex';
+            leftCol.style.display = 'flex';
+            
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            badgesContainer.style.flexWrap = 'wrap';
+            badgesContainer.style.justifyContent = 'center';
+            badgesContainer.style.maxWidth = '900px';
+            if (timeline) timeline.style.width = ''; // Reset timeline width
+            
         } else if (showBadges === 'awards') {
             renderAwardFilterBadges(characters, isRawRoster);
-            document.getElementById('concise-left-col').style.display = 'flex';
+            leftCol.style.display = 'flex';
+            
+            // Stack layout: Bubbles single-file on top, character list stretched wide below
+            wrapper.style.flexDirection = 'column';
+            leftCol.style.maxWidth = '100%';
+            leftCol.style.width = '100%';
+            badgesContainer.style.flexWrap = 'nowrap';
+            badgesContainer.style.justifyContent = 'flex-start';
+            badgesContainer.style.maxWidth = '100%';
+            badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
+            badgesContainer.style.paddingBottom = '10px';
+            
+            // Stretch the activity feed slightly since we have the extra real estate
+            if (timeline) timeline.style.width = '440px'; 
+            
         } else {
-            document.getElementById('concise-class-badges').style.display = 'none';
+            badgesContainer.style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
             
-            // Fix: Completely collapse the left column if no charts and no badges are needed
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            if (timeline) timeline.style.width = ''; // Reset timeline width
+            
             if (!chartViews.includes(hash)) {
-                document.getElementById('concise-left-col').style.display = 'none';
+                leftCol.style.display = 'none';
             } else {
-                document.getElementById('concise-left-col').style.display = 'flex';
+                leftCol.style.display = 'flex';
             }
         }
 
