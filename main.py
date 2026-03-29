@@ -441,11 +441,46 @@ async def main_async():
             except Exception:
                 pass
 
-        # Ensure the history table exists in Turso
+        # Ensure the history tables exist in Turso
         try:
             await fetch_turso(session, "CREATE TABLE IF NOT EXISTS war_effort_history (week_anchor TEXT, category TEXT, vanguards TEXT, participants TEXT, PRIMARY KEY(week_anchor, category))")
-        except Exception as e:
-            pass
+            await fetch_turso(session, "CREATE TABLE IF NOT EXISTS reigning_champs_history (week_anchor TEXT, category TEXT, champion TEXT, score INTEGER, PRIMARY KEY(week_anchor, category))")
+        except Exception: pass
+
+        # --- NEW: THE "DIFF CHECKER" TO PREVENT WRITE BLEED ---
+        db_we_state, db_mvp_state = {}, {}
+        try:
+            we_rows = await fetch_turso(session, f"SELECT category, vanguards, participants FROM war_effort_history WHERE week_anchor='{week_anchor}'")
+            if we_rows:
+                for r in we_rows:
+                    cat = r.get('category') if isinstance(r, dict) else r[0]
+                    v = r.get('vanguards') if isinstance(r, dict) else r[1]
+                    p = r.get('participants') if isinstance(r, dict) else r[2]
+                    db_we_state[cat] = {'vanguards': v, 'participants': p}
+                    
+            mvp_rows = await fetch_turso(session, f"SELECT category, champion, score FROM reigning_champs_history WHERE week_anchor='{week_anchor}'")
+            if mvp_rows:
+                for r in mvp_rows:
+                    cat = r.get('category') if isinstance(r, dict) else r[0]
+                    champ = r.get('champion') if isinstance(r, dict) else r[1]
+                    score = r.get('score') if isinstance(r, dict) else r[2]
+                    db_mvp_state[cat] = {'champion': champ, 'score': score}
+        except Exception: pass
+
+        async def smart_update_we(category, vanguards_list, participants_list):
+            v_json, p_json = json.dumps(vanguards_list), json.dumps(participants_list)
+            old = db_we_state.get(category, {})
+            if old.get('vanguards') != v_json or old.get('participants') != p_json:
+                safe_v, safe_p = v_json.replace("'", "''"), p_json.replace("'", "''")
+                try: await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', '{category}', '{safe_v}', '{safe_p}')")
+                except Exception: pass
+
+        async def smart_update_mvp(category, champ, score):
+            old = db_mvp_state.get(category, {})
+            if old.get('champion') != champ or old.get('score') != score:
+                try: await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', '{category}', '{champ}', {score})")
+                except Exception: pass
+        # --- END DIFF CHECKER ---
 
         # 1. XP Logic
         xp_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
@@ -465,11 +500,7 @@ async def main_async():
             current_vanguards = we_data["locks"]["xp"]["vanguards"]
 
         if current_vanguards or len(xp_counts) > 0:
-            try:
-                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
-                safe_participants = json.dumps(list(xp_counts.keys())).replace("'", "''")
-                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'xp', '{safe_vanguards}', '{safe_participants}')")
-            except Exception: pass
+            await smart_update_we('xp', current_vanguards, list(xp_counts.keys()))
 
         # 2. HK Logic
         hk_counts = {}
@@ -493,11 +524,7 @@ async def main_async():
             current_vanguards = we_data["locks"]["hk"]["vanguards"]
 
         if current_vanguards or len(hk_counts) > 0:
-            try:
-                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
-                safe_participants = json.dumps(list(hk_counts.keys())).replace("'", "''")
-                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'hk', '{safe_vanguards}', '{safe_participants}')")
-            except Exception: pass
+            await smart_update_we('hk', current_vanguards, list(hk_counts.keys()))
 
         # 3. Loot Logic
         loot_events = [e for e in dashboard_feed if e.get('type') == 'item' and e.get('item_quality') in ('EPIC', 'LEGENDARY') and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
@@ -517,11 +544,7 @@ async def main_async():
             current_vanguards = we_data["locks"]["loot"]["vanguards"]
 
         if current_vanguards or len(loot_counts) > 0:
-            try:
-                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
-                safe_participants = json.dumps(list(loot_counts.keys())).replace("'", "''")
-                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'loot', '{safe_vanguards}', '{safe_participants}')")
-            except Exception: pass
+            await smart_update_we('loot', current_vanguards, list(loot_counts.keys()))
 
         # 4. Zenith Logic
         zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
@@ -543,11 +566,29 @@ async def main_async():
             current_vanguards = we_data["locks"]["zenith"]["vanguards"]
 
         if current_vanguards or len(unique_70s) > 0:
-            try:
-                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
-                safe_participants = json.dumps(unique_70s).replace("'", "''")
-                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'zenith', '{safe_vanguards}', '{safe_participants}')")
-            except Exception: pass
+            await smart_update_we('zenith', current_vanguards, unique_70s)
+
+        # 5. MVP Reigning Champs Logic
+        pve_mvp, pve_score = "Unknown", 0
+        pvp_mvp, pvp_score = "Unknown", 0
+        
+        for r in roster_data:
+            p = r.get("profile", {})
+            if not p: continue
+            
+            pve_val = p.get("trend_pve") or p.get("trend_ilvl") or 0
+            pvp_val = p.get("trend_pvp") or p.get("trend_hks") or 0
+            
+            if pve_val > pve_score:
+                pve_score = pve_val
+                pve_mvp = p.get("name", "Unknown").lower()
+                
+            if pvp_val > pvp_score:
+                pvp_score = pvp_val
+                pvp_mvp = p.get("name", "Unknown").lower()
+                
+        if pve_score > 0: await smart_update_mvp('pve', pve_mvp, pve_score)
+        if pvp_score > 0: await smart_update_mvp('pvp', pvp_mvp, pvp_score)
 
         # Save JSON Lockfile
         with open(we_file, "w", encoding="utf-8") as f:
