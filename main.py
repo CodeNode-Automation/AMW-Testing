@@ -514,27 +514,31 @@ async def main_async():
         if current_vanguards or len(unique_70s) > 0:
             await smart_update_we('zenith', current_vanguards, unique_70s)
 
-        # 5. MVP Reigning Champs Logic
-        pve_mvp, pve_score = "Unknown", 0
-        pvp_mvp, pvp_score = "Unknown", 0
-        
-        for r in roster_data:
-            p = r.get("profile", {})
-            if not p: continue
+        # 5. MVP Reigning Champs Logic (Save CONFIRMED winners from last week)
+        # We must NOT save the current week's leader until the week is actually over!
+        prev_week_anchor = (last_reset_berlin - timedelta(days=7)).strftime("%Y-%m-%d")
+
+        try:
+            # FIX: Clean up the database by deleting any premature entries for the ongoing week
+            await fetch_turso(session, f"DELETE FROM reigning_champs_history WHERE week_anchor = '{week_anchor}'")
+        except Exception:
+            pass
+
+        async def smart_update_prev_mvp(category, champ, score):
+            try: 
+                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{prev_week_anchor}', '{category}', '{champ}', {score})")
+            except Exception: 
+                pass
+
+        # Extract to variables first to satisfy Pylance type-checking
+        pve_winner = prev_mvps.get("pve")
+        pvp_winner = prev_mvps.get("pvp")
+
+        if pve_winner: 
+            await smart_update_prev_mvp('pve', pve_winner["name"], pve_winner["score"])
             
-            pve_val = p.get("trend_pve") or p.get("trend_ilvl") or 0
-            pvp_val = p.get("trend_pvp") or p.get("trend_hks") or 0
-            
-            if pve_val > pve_score:
-                pve_score = pve_val
-                pve_mvp = p.get("name", "Unknown").lower()
-                
-            if pvp_val > pvp_score:
-                pvp_score = pvp_val
-                pvp_mvp = p.get("name", "Unknown").lower()
-                
-        if pve_score > 0: await smart_update_mvp('pve', pve_mvp, pve_score)
-        if pvp_score > 0: await smart_update_mvp('pvp', pvp_mvp, pvp_score)
+        if pvp_winner: 
+            await smart_update_prev_mvp('pvp', pvp_winner["name"], pvp_winner["score"])
 
         # Save JSON Lockfile
         with open(we_file, "w", encoding="utf-8") as f:
