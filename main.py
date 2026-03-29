@@ -573,8 +573,8 @@ async def main_async():
             pve_champs, pvp_champs = {}, {}
             if mvp_data:
                 for row in mvp_data:
-                    champ = row.get('champion', row[0]).lower() if isinstance(row, dict) else row[0].lower()
-                    cat = row.get('category', row[1]).lower() if isinstance(row, dict) else row[1].lower()
+                    champ = row.get('champion', '').lower() if isinstance(row, dict) else row[0].lower()
+                    cat = row.get('category', '').lower() if isinstance(row, dict) else row[1].lower()
                     if cat == 'pve': pve_champs[champ] = pve_champs.get(champ, 0) + 1
                     if cat == 'pvp': pvp_champs[champ] = pvp_champs.get(champ, 0) + 1
 
