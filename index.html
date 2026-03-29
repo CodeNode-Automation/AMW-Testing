@@ -440,6 +440,40 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .mon-time { font-size: 9px; color: #888; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-title { font-family: 'Cinzel'; font-size: 12px; color: #ffd100; font-weight: bold; line-height: 1.2; margin-bottom: 4px; }
 .mon-desc { font-size: 10px; color: #ccc; line-height: 1.3; }
+
+/* NEW NAVBAR & LOGO */
+.nav-logo-link { display: flex; align-items: center; text-decoration: none; outline: none; }
+.nav-logo-img { max-height: 42px; width: auto; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6)); transition: transform 0.3s; }
+.nav-logo-img:hover { transform: scale(1.05); }
+.nav-center { flex: 1; display: flex; justify-content: center; }
+.nav-right { margin-left: auto; }
+
+/* WAR EFFORT 2x2 GRID */
+.war-effort-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 1000px; margin: 20px auto 0 auto; }
+.war-effort-card { background: rgba(15, 15, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); transition: transform 0.3s ease; }
+.war-effort-card:hover { transform: translateY(-3px); border-color: rgba(255,209,0,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.5); }
+
+/* MVP PODIUMS */
+.mvp-podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 20px; height: 170px; padding-bottom: 10px; }
+.podium-slot { display: flex; flex-direction: column; align-items: center; width: 110px; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid; border-radius: 8px 8px 0 0; padding: 15px 10px 10px 10px; position: relative; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; }
+.podium-slot:hover { transform: translateY(-5px); }
+.podium-1 { height: 150px; border-top-color: #ffd100; background: linear-gradient(180deg, rgba(255,209,0,0.15) 0%, rgba(0,0,0,0.8) 100%); z-index: 3; order: 2; box-shadow: 0 0 20px rgba(255,209,0,0.2); }
+.podium-2 { height: 125px; border-top-color: #c0c0c0; background: linear-gradient(180deg, rgba(192,192,192,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: 2; order: 1; margin-right: -10px; }
+.podium-3 { height: 110px; border-top-color: #cd7f32; background: linear-gradient(180deg, rgba(205,127,50,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: 1; order: 3; margin-left: -10px; }
+.podium-portrait { width: 45px; height: 45px; border-radius: 50%; border: 2px solid; object-fit: cover; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.8); }
+.podium-1 .podium-portrait { width: 55px; height: 55px; border-color: #ffd100; }
+.podium-2 .podium-portrait { border-color: #c0c0c0; }
+.podium-3 .podium-portrait { border-color: #cd7f32; }
+.podium-name { font-family: 'Cinzel', serif; font-size: 13px; font-weight: bold; text-shadow: 1px 1px 2px #000; text-align: center; margin-bottom: 5px; word-break: break-word; line-height: 1.1; }
+.podium-score { font-size: 13px; font-weight: bold; color: #2ecc71; text-shadow: 1px 1px 2px #000; }
+.podium-rank { position: absolute; top: -14px; width: 26px; height: 26px; border-radius: 50%; background: #111; border: 1px solid; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.9); }
+.podium-1 .podium-rank { border-color: #ffd100; color: #ffd100; }
+.podium-2 .podium-rank { border-color: #c0c0c0; color: #c0c0c0; }
+.podium-3 .podium-rank { border-color: #cd7f32; color: #cd7f32; }
+
+/* MOBILE OVERRIDES */
+@media (max-width: 900px) { .war-effort-grid { grid-template-columns: 1fr; } .controls-wrapper { flex-wrap: wrap; justify-content: center; } .nav-center { order: 3; width: 100%; flex: 0 0 100%; margin-top: 10px; } }
+@media (max-width: 600px) { .mvp-podium-container { flex-direction: column; height: auto; align-items: center; gap: 10px; padding-top: 10px; } .podium-slot { width: 100%; height: auto !important; flex-direction: row; order: unset !important; margin: 0 !important; border-radius: 8px; border-top: 1px solid rgba(255,255,255,0.05); border-left: 4px solid; justify-content: flex-start; padding: 10px 15px; } .podium-1 { border-left-color: #ffd100; } .podium-2 { border-left-color: #c0c0c0; } .podium-3 { border-left-color: #cd7f32; } .podium-rank { position: static; margin-right: 15px; } .podium-portrait { width: 36px !important; height: 36px !important; margin-bottom: 0; margin-right: 15px; } .podium-name { margin-bottom: 0; flex: 1; text-align: left; font-size: 15px; } .podium-score { font-size: 14px; margin-top: 0; } }
     </style>
 </head>
 <body>
@@ -505,7 +539,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     <div class="embers-container"></div>
 
     <div class="navbar">
-        <div class="controls-wrapper">
+        <div class="controls-wrapper" style="justify-content: flex-start; gap: 20px;">
+            <a href="#" onclick="returnToHome()" class="nav-logo-link">
+                <img src="asset/amw.webp" alt="AMW Logo" class="nav-logo-img">
+            </a>
             <button class="mobile-menu-toggle" aria-label="Toggle Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -530,7 +567,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
 
-            <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
+            <div class="custom-select-wrapper nav-right" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
                 <div class="custom-select" id="customCharSelect" tabindex="0">
                     <span class="selected-value">Select View...</span>
                     <span style="font-size: 12px; color: #aaa;">▼</span>
@@ -551,7 +588,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
             </div>
             
-            <div class="search-container">
+            <div class="search-container nav-center">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
@@ -566,8 +603,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
         <div class="main-content">
             <div id="empty-state">
-                
-                <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" class="main-logo">
                 
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
                 <p style="font-family: 'Marcellus', serif; max-width: 600px; margin: 0 auto 20px auto; color: #bbb; font-size: 16px;">
@@ -602,66 +637,37 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <div id="guild-xp-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 40px auto; background: linear-gradient(135deg, rgba(20, 15, 25, 0.6) 0%, rgba(10, 8, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.4); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,209,0,0.05); animation: fadeInUp 0.5s forwards;">
                     <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(255, 209, 0, 0.3); letter-spacing: 2px; font-size: 24px;">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); letter-spacing: 1px;">
-                                <span>🛡️ Hero's Journey (XP Gained)</span>
-                                <span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                    <div class="war-effort-grid">
+                        <div class="war-effort-card">
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #ffd100; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🛡️ Hero's Journey (XP)</h3>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-xp-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 750 Levels Gained</div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); letter-spacing: 1px;">
-                                <span>🩸 Blood of the Enemy (HKs)</span>
-                                <span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
-                            </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-hk-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 500 HKs Gained</div>
-                            </div>
+                            <div class="xp-bar-wrapper"><div id="guild-xp-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-xp-text" class="xp-bar-label"></div></div>
+                            <div style="margin-top: 12px;"><span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
                         </div>
                         
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); letter-spacing: 1px;">
-                                <span>🐉 Dragon's Hoard (Epic Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                        <div class="war-effort-card">
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #ff4400; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🩸 Blood of the Enemy (PvP)</h3>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 100 Epics Looted</div>
-                            </div>
+                            <div class="xp-bar-wrapper"><div id="guild-hk-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-hk-text" class="xp-bar-label"></div></div>
+                            <div style="margin-top: 12px;"><span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
                         </div>
 
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); letter-spacing: 1px;">
-                                <span>⚡ The Zenith Cohort (Max Level Pushes)</span>
-                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                        <div class="war-effort-card">
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #a335ee; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🐉 Dragon's Hoard (Loot)</h3>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-zenith-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-zenith-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 10 New Level 70s</div>
+                            <div class="xp-bar-wrapper"><div id="guild-loot-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-loot-text" class="xp-bar-label"></div></div>
+                            <div style="margin-top: 12px;"><span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
+                        </div>
+
+                        <div class="war-effort-card">
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #3FC7EB; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">⚡ The Zenith Cohort (Lvl 70)</h3>
                             </div>
+                            <div class="xp-bar-wrapper"><div id="guild-zenith-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-zenith-text" class="xp-bar-label"></div></div>
+                            <div style="margin-top: 12px;"><span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
                         </div>
                     </div>
                     
@@ -924,10 +930,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T20:56:01.664480Z", "active_14_days": 406, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T21:12:29.652847Z", "active_14_days": 406, "raid_ready_count": 18, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 703, "loot": 532, "levels": 171, "total_roster": 643, "active_roster": 406}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 721, "loot": 545, "levels": 176, "total_roster": 643, "active_roster": 406}]
     </script>
 
     <script>
@@ -4396,7 +4402,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
             
-            return chars.map((char, index) => {
+            let html = `<div class="mvp-podium-container">`;
+            
+            html += chars.map((char, index) => {
                 const p = char.profile;
                 const cClass = getCharClass(char);
                 const cHex = CLASS_COLORS[cClass] || '#fff';
@@ -4405,20 +4413,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const label = isPvp ? 'HKs' : 'iLvl';
                 
                 const podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : 'podium-3';
-                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : '#cd7f32';
                 
                 return `
-                <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px; margin-bottom: 0;">
-                    <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: 18px; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                    <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
-                    <div style="flex: 1; display: flex; flex-direction: column;">
-                        <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; color: #2ecc71; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:10px; color:#888; margin-left: 3px; text-transform:uppercase;">${label}</span>
-                    </div>
+                <div class="podium-slot tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')">
+                    <div class="podium-rank">#${index + 1}</div>
+                    <img src="${portraitURL}" class="podium-portrait">
+                    <div class="podium-name" style="color: ${cHex};">${p.name}</div>
+                    <div class="podium-score">▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888;">${label}</span></div>
                 </div>`;
             }).join('');
+            
+            html += `</div>`;
+            return html;
         }
 
         function generateGloatingHtml(mvpData, isPvp) {
