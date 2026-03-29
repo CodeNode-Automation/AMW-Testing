@@ -1517,12 +1517,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // --- NEW: Badge Filter Logic ---
             if (tlTypeFilter.startsWith('badge_')) {
-                if (eventType !== 'badge') return false; // Show ONLY badges
+                if (tlTypeFilter === 'badge_all') return true; // Fix: Explicitly allow all badge types
                 if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
                 if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
                 if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
-                
-                // FIX: Add the missing logic to evaluate the Medals button
                 if (tlTypeFilter === 'badge_ladder' && !['pve_gold','pve_silver','pve_bronze','pvp_gold','pvp_silver','pvp_bronze'].includes(event.badge_type)) return false;
             } else {
                 if (eventType === 'badge') return false; // NEVER show badges in normal feeds
@@ -1624,7 +1622,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (filtersContainer) {
             filtersContainer.innerHTML = `
                 <div class="filter-group">
-                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn" data-type="all">All</button> <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
                     <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
                 </div>
