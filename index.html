@@ -928,10 +928,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T09:37:49.532278Z", "active_14_days": 408, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T09:59:12.471488Z", "active_14_days": 408, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 298, "loot": 239, "levels": 59, "total_roster": 642, "active_roster": 408}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 317, "loot": 256, "levels": 61, "total_roster": 642, "active_roster": 408}]
     </script>
 
     <script>
@@ -2129,11 +2129,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     vanguardClass = 'vanguard-aura';
                     let timeText = '';
                     
-                    // Grab the locked timestamp and format it nicely
+                    // Grab the locked timestamp and format it nicely (24-Hour)
                     if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
                         const dt = new Date(window.warEffortLockTimes[type]);
                         if (!isNaN(dt)) {
-                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleDateString(undefined, {month:'short', day:'numeric'})} ${dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})</span>`;
+                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         }
                     }
                     
@@ -2892,7 +2892,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             let cleanTs = (recent.timestamp || '').replace('Z', '+00:00');
                             if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                             const dt = new Date(cleanTs);
-                            if (!isNaN(dt.getTime())) timeStr = ` <span style="color:#888; font-size:11px; white-space:nowrap; margin-left:4px;">(${dt.toLocaleDateString(undefined, {month:'short', day:'numeric'})})</span>`;
+                            if (!isNaN(dt.getTime())) timeStr = ` <span style="color:#888; font-size:11px; white-space:nowrap; margin-left:4px;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         } catch(e) {}
 
                         if (recent.type === 'level_up') {
@@ -3792,13 +3792,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.setAttribute('data-quality', event.item_quality);
             }
             
-            // Format the date to match production (e.g., "Mar 24")
+            // Format the date to 24-hour clock (e.g., "24 Mar 14:30")
             let date_str = event.timestamp.substring(0, 10);
             try {
                 const cleanTs = event.timestamp.replace('Z', '+00:00');
                 const dt = new Date(cleanTs);
                 if (!isNaN(dt.getTime())) {
-                    date_str = dt.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+                    date_str = dt.toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
                 }
             } catch(e) {}
             
@@ -4254,9 +4254,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const eventEl = document.createElement('div');
                     eventEl.className = 'monument-card';
                     const dt = new Date(mon.timestamp);
-                    const timeOptions = { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
-                    const timeStr = isNaN(dt) ? '' : dt.toLocaleDateString(undefined, timeOptions);
-                    
+                    const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
                     eventEl.innerHTML = `
                         <div class="mon-header">
                             <span class="mon-icon">🏆</span>
