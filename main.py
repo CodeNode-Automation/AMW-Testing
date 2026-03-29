@@ -581,17 +581,31 @@ async def main_async():
             for r in roster_data:
                 if not r or not r.get("profile"): continue
                 c_name = r["profile"].get("name", "").lower()
-                r["profile"]["vanguard_badges"] = vanguard_tallies.get(c_name, [])
-                r["profile"]["campaign_badges"] = campaign_tallies.get(c_name, [])
-                r["profile"]["pve_champ_count"] = pve_champs.get(c_name, 0)
-                r["profile"]["pvp_champ_count"] = pvp_champs.get(c_name, 0)
+                
+                # Fetch tallies safely
+                v_badges = vanguard_tallies.get(c_name, [])
+                c_badges = campaign_tallies.get(c_name, [])
+                pve_count = pve_champs.get(c_name, 0)
+                pvp_count = pvp_champs.get(c_name, 0)
+
+                # Inject into profile
+                r["profile"]["vanguard_badges"] = v_badges
+                r["profile"]["campaign_badges"] = c_badges
+                r["profile"]["pve_champ_count"] = pve_count
+                r["profile"]["pvp_champ_count"] = pvp_count
+                
+                # FAILSAFE: Inject at the top level so it survives strict JSON serializers
+                r["vanguard_badges"] = v_badges
+                r["campaign_badges"] = c_badges
+                r["pve_champ_count"] = pve_count
+                r["pvp_champ_count"] = pvp_count
                 
                 # Critical Fix: Save to history_data so it makes it to the database!
                 if c_name in history_data:
-                    history_data[c_name]["vanguard_badges"] = r["profile"]["vanguard_badges"]
-                    history_data[c_name]["campaign_badges"] = r["profile"]["campaign_badges"]
-                    history_data[c_name]["pve_champ_count"] = r["profile"]["pve_champ_count"]
-                    history_data[c_name]["pvp_champ_count"] = r["profile"]["pvp_champ_count"]
+                    history_data[c_name]["vanguard_badges"] = v_badges
+                    history_data[c_name]["campaign_badges"] = c_badges
+                    history_data[c_name]["pve_champ_count"] = pve_count
+                    history_data[c_name]["pvp_champ_count"] = pvp_count
                 
         except Exception as e:
             print(f"⚠️ Failed to aggregate badges from Turso: {e}")
