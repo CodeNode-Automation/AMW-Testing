@@ -519,148 +519,101 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     const pveContainer = document.getElementById('pve-leaderboard');
-    const pveWrapper = document.getElementById('pve-leaderboard-container');
+    const pveWrapper = document.getElementById('pve-leaderboard-container');
 
-    const topPve = rosterData
-        .filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
-        .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
-        .slice(0, 25);
+    const topPve = rosterData
+        .filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
+        .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
+        .slice(0, 25);
 
-    // --- NEW: Generic Helper to draw a Top 3 Podium for Leaderboards ---
-    function generateLeaderboardPodium(chars, isPvp) {
-        if (chars.length === 0) return '';
-        
-        const podiumBlocks = chars.map((char, index) => {
-            const p = char.profile;
-            const cClass = getCharClass(char);
-            const cHex = CLASS_COLORS[cClass] || '#fff';
-            const portraitURL = char.render_url || getClassIcon(cClass);
-            
-            const score = isPvp ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
-            const label = isPvp ? 'HKs' : 'iLvl';
-            const scoreColor = isPvp ? '#ff4400' : '#ff8000';
-            
-            const trend = isPvp ? (p.trend_pvp || 0) : (p.trend_pve || p.trend_ilvl || 0);
-            let trendHTML = '<span style="color: #555; font-size: 11px; margin-left: 4px;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 11px; margin-left: 4px;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 11px; margin-left: 4px;">▼ ${Math.abs(trend)}</span>`;
+    if (topPve.length > 0 && pveContainer) {
+        pveWrapper.style.display = 'block';
+        let pveHTML = '';
+        topPve.forEach((char, index) => {
+            const p = char.profile;
+            const cClass = getCharClass(char);
+            const cHex = CLASS_COLORS[cClass] || '#fff';
+            const activeSpec = p.active_spec ? p.active_spec : '';
+            const specIconUrl = getSpecIcon(cClass, activeSpec);
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
+            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
-            const rank = index + 1;
-            const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
-            const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
+            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+            const rankSize = index < 3 ? '18px' : '15px';
+            const portraitURL = char.render_url || getClassIcon(cClass);
 
-            // Using flex-shrink: 0 and precise line-heights to perfectly fit the 80px CSS boundary
-            return `
-            <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex}; padding: 25px 5px 5px 5px;">
-                <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
-                <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0;">${p.name}</div>
-                <div style="color: ${scoreColor}; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; flex-shrink: 0; white-space: nowrap; line-height: 1.2;">
-                    ${score} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
-                </div>
-                <div style="z-index: 2; flex-shrink: 0; line-height: 1; margin-top: 2px;">
-                    ${trendHTML}
-                </div>
-            </div>`;
-        }).join('');
+            // --- NEW: Trend Arrow Logic for PvE ---
+            const trend = p.trend_pve || p.trend_ilvl || 0; 
+            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
+            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
-        return `<div class="mvp-podium-container" style="margin-top: 35px; margin-bottom: 20px;">${podiumBlocks}</div>`;
-    }
+            pveHTML += `
+            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
+                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                <div class="lb-info">
+                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                </div>
+                <div class="lb-score pve-score">
+                    ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
+                    ${trendHTML}
+                </div>
+            </div>`;
+        });
+        pveContainer.innerHTML = pveHTML;
+    }
 
-    if (topPve.length > 0 && pveContainer) {
-        pveWrapper.style.display = 'block';
-        let pveHTML = generateLeaderboardPodium(topPve.slice(0, 3), false);
-        
-        // Wrap the rows in a stacked flex layout to prevent overlap issues
-        pveHTML += `<div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">`;
-        topPve.slice(3).forEach((char, index) => {
-            const p = char.profile;
-            const cClass = getCharClass(char);
-            const cHex = CLASS_COLORS[cClass] || '#fff';
-            const activeSpec = p.active_spec ? p.active_spec : '';
-            const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
-            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+    const pvpContainer = document.getElementById('pvp-leaderboard');
+    const pvpWrapper = document.getElementById('pvp-leaderboard-container');
 
-            const actualRank = index + 4;
-            const rankColor = '#777';
-            const rankSize = '15px';
-            const portraitURL = char.render_url || getClassIcon(cClass);
+    const topPvp = rosterData
+        .filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
+        .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0))
+        .slice(0, 25); // Changed to Top 25
 
-            const trend = p.trend_pve || p.trend_ilvl || 0; 
-            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
-            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
+    if (topPvp.length > 0 && pvpContainer) {
+        pvpWrapper.style.display = 'block';
+        let pvpHTML = '';
+        topPvp.forEach((char, index) => {
+            const p = char.profile;
+            const cClass = getCharClass(char);
+            const cHex = CLASS_COLORS[cClass] || '#fff';
+            const activeSpec = p.active_spec ? p.active_spec : '';
+            const specIconUrl = getSpecIcon(cClass, activeSpec);
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
+            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
-            pveHTML += `
-            <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${actualRank}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pve-score">
-                    ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
-        });
-        pveHTML += `</div>`;
-        pveContainer.innerHTML = pveHTML;
-    }
+            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
+            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+            const rankSize = index < 3 ? '18px' : '15px';
+            const hkCount = (p.honorable_kills || 0).toLocaleString();
+            const portraitURL = char.render_url || getClassIcon(cClass);
 
-    const pvpContainer = document.getElementById('pvp-leaderboard');
-    const pvpWrapper = document.getElementById('pvp-leaderboard-container');
+            // --- Trend Arrow Logic for PvP ---
+            const trend = p.trend_pvp || 0; 
+            let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
+            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
-    const topPvp = rosterData
-        .filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
-        .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0))
-        .slice(0, 25);
-
-    if (topPvp.length > 0 && pvpContainer) {
-        pvpWrapper.style.display = 'block';
-        let pvpHTML = generateLeaderboardPodium(topPvp.slice(0, 3), true);
-        
-        // Wrap the rows in a stacked flex layout to prevent overlap issues
-        pvpHTML += `<div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">`;
-        topPvp.slice(3).forEach((char, index) => {
-            const p = char.profile;
-            const cClass = getCharClass(char);
-            const cHex = CLASS_COLORS[cClass] || '#fff';
-            const activeSpec = p.active_spec ? p.active_spec : '';
-            const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
-            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
-            const actualRank = index + 4;
-            const rankColor = '#777';
-            const rankSize = '15px';
-            const hkCount = (p.honorable_kills || 0).toLocaleString();
-            const portraitURL = char.render_url || getClassIcon(cClass);
-
-            const trend = p.trend_pvp || 0; 
-            let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
-
-            pvpHTML += `
-            <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${actualRank}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pvp-score">
-                    ${hkCount} <span class="lb-score-label">HKs</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
-        });
-        pvpHTML += `</div>`;
-        pvpContainer.innerHTML = pvpHTML;
-    }
+            pvpHTML += `
+            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
+                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                <div class="lb-info">
+                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                </div>
+                <div class="lb-score pvp-score">
+                    ${hkCount} <span class="lb-score-label">HKs</span>
+                    ${trendHTML}
+                </div>
+            </div>`;
+        });
+        pvpContainer.innerHTML = pvpHTML;
+    }
     
     setupTooltips();
 
