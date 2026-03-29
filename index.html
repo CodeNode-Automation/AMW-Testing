@@ -518,6 +518,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
+                <button class="nav-btn" onclick="window.location.hash='badges'" style="color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer;">🌟 Hall of Heroes</button>
                 
                 <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
@@ -543,6 +544,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     </div>
                     <div class="custom-option" data-value="raidready" role="option">
                         <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                    </div>
+                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
+                        <span style="font-size:16px;">🌟</span> Hall of Heroes
                     </div>
                 </div>
             </div>
@@ -673,7 +677,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 35px; font-size: 12px; color: #888; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; letter-spacing: 0.5px;">
+                    <button onclick="window.location.hash='badges'" style="margin-top: 35px; width: 100%; padding: 12px; background: linear-gradient(90deg, rgba(255,209,0,0.1), rgba(255,128,0,0.2)); border: 1px solid #ffd100; color: #ffd100; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; box-shadow: 0 0 10px rgba(255,209,0,0.3); transition: all 0.3s ease;" onmouseover="this.style.boxShadow='0 0 20px rgba(255,209,0,0.6)'; this.style.background='linear-gradient(90deg, rgba(255,209,0,0.2), rgba(255,128,0,0.4))';" onmouseout="this.style.boxShadow='0 0 10px rgba(255,209,0,0.3)'; this.style.background='linear-gradient(90deg, rgba(255,209,0,0.1), rgba(255,128,0,0.2))';">
+                        🌟 View Hall of Heroes
+                    </button>
+                    
+                    <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #888; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; letter-spacing: 0.5px;">
                         * Note: Weekly guild challenges are currently experimental and subject to change based on community feedback.
                     </div>
                 </div>
@@ -928,10 +936,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T13:49:05.738841Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T14:11:33.908413Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 454, "loot": 352, "levels": 102, "total_roster": 643, "active_roster": 408}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 459, "loot": 354, "levels": 105, "total_roster": 643, "active_roster": 408}]
     </script>
 
     <script>
@@ -1241,6 +1249,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             selectValueText.innerHTML = "📊 Analytics";
         } else if (hash === 'architecture') {
             selectValueText.innerHTML = "⚙️ Architecture";
+        } else if (hash === 'badges') {
+            selectValueText.innerHTML = "🌟 Hall of Heroes";
         } else if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
             selectValueText.innerHTML = "⚡ Filter Active";
         } else {
@@ -2075,6 +2085,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return valB - valA; // High to Low
             } else if (currentSortMethod === 'name') {
                 return nameA.localeCompare(nameB); // A to Z
+            } else if (currentSortMethod === 'badges') {
+                // --- NEW: Sort by Total Badge Count ---
+                const getScore = (prof) => {
+                    const vCount = safeParseArray(prof.vanguard_badges).length;
+                    const cCount = safeParseArray(prof.campaign_badges).length;
+                    const pve = parseInt(prof.pve_champ_count) || 0;
+                    const pvp = parseInt(prof.pvp_champ_count) || 0;
+                    return vCount + cCount + pve + pvp;
+                };
+                return getScore(profB) - getScore(profA); // High to Low
             }
             return 0;
         });
@@ -2089,6 +2109,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
                         <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
                         <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
+                        <option value="badges" ${currentSortMethod === 'badges' ? 'selected' : ''}>Total Badges</option>
                         <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
                     </select>
                 </div>
@@ -3165,6 +3186,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
             updateDropdownLabel('all');
+        } else if (hash === 'badges') {
+            // --- NEW: Hall of Heroes Dedicated View ---
+            const badgeRoster = rosterData.filter(c => {
+                const p = c.profile;
+                if (!p) return false;
+                const vCount = safeParseArray(p.vanguard_badges || c.vanguard_badges).length;
+                const cCount = safeParseArray(p.campaign_badges || c.campaign_badges).length;
+                const pveCount = parseInt(p.pve_champ_count || c.pve_champ_count) || 0;
+                const pvpCount = parseInt(p.pvp_champ_count || c.pvp_champ_count) || 0;
+                return (vCount + cCount + pveCount + pvpCount) > 0; // Must have at least 1 badge
+            });
+            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, true, 'badges');
+            updateDropdownLabel('badges');
+            
         } else if (hash === 'active') {
             const activeRoster = rosterData.filter(c => {
                 const lastLogin = c.profile && c.profile.last_login_timestamp ? c.profile.last_login_timestamp : 0;
