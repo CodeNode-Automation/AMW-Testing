@@ -936,10 +936,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T15:10:20.475537Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T15:30:31.312888Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1138, "loot": 1020, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 498, "loot": 378, "levels": 120, "total_roster": 643, "active_roster": 408}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1138, "loot": 1020, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 507, "loot": 386, "levels": 121, "total_roster": 643, "active_roster": 407}]
     </script>
 
     <script>
@@ -2453,6 +2453,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
                 if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
                 if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
+                
+                // FIX: Add the missing logic to evaluate the Medals button
                 if (tlTypeFilter === 'badge_ladder' && !['pve_gold','pve_silver','pve_bronze','pvp_gold','pvp_silver','pvp_bronze'].includes(event.badge_type)) return false;
             } else {
                 if (eventType === 'badge') return false; // NEVER show badges in normal feeds
