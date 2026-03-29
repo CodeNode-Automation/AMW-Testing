@@ -804,11 +804,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const cTooltip = summarizeBadges(cBadges);
         
         let extraBadges = '';
-        if (pveChamp > 0) extraBadges += `<span class="badge char-badge" style="border-color: #ff8000; color: #ff8000; box-shadow: 0 0 8px rgba(255,128,0,0.4);" title="${pveChamp}x PvE Champion">👑 PvE Champ x${pveChamp}</span>`;
-        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge" style="border-color: #ff4400; color: #ff4400; box-shadow: 0 0 8px rgba(255,68,0,0.4);" title="${pvpChamp}x PvP Champion">⚔️ PvP Champ x${pvpChamp}</span>`;
-        if (vCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 8px rgba(0,255,204,0.4);" title="Vanguard: ${vTooltip}">🌟 Vanguard x${vCount}</span>`;
-        if (cCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #aaa; color: #fff;" title="Campaigns: ${cTooltip}">🎖️ ${cCount} Campaigns</span>`;
-
+        if (pveChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 128, 0, 0.15); border-color: #ff8000; color: #ffad33; font-weight: bold; box-shadow: 0 0 10px rgba(255,128,0,0.5);" title="${pveChamp}x PvE Champion">👑 PvE Champ x${pveChamp}</span>`;
+        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 68, 0, 0.15); border-color: #ff4400; color: #ff7733; font-weight: bold; box-shadow: 0 0 10px rgba(255,68,0,0.5);" title="${pvpChamp}x PvP Champion">⚔️ PvP Champ x${pvpChamp}</span>`;
+        if (vCount > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(0, 255, 204, 0.15); border-color: #00ffcc; color: #66ffeb; font-weight: bold; box-shadow: 0 0 10px rgba(0,255,204,0.5);" title="Vanguard: ${vTooltip}">🌟 Vanguard x${vCount}</span>`;
+        if (cCount > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(170, 170, 170, 0.15); border-color: #aaa; color: #ddd; font-weight: bold; box-shadow: 0 0 8px rgba(255,255,255,0.2);" title="Campaigns: ${cTooltip}">🎖️ Campaigns x${cCount}</span>`;
+        
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
     <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
@@ -1192,12 +1192,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
 
-                let cBadgesHtml = '';
-                if (pveChamp > 0) cBadgesHtml += `<span style="color:#ff8000; font-size:12px; margin-left:6px; filter:drop-shadow(0 0 2px #ff8000);" title="${pveChamp}x PvE Champion">👑</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="color:#ff4400; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #ff4400);" title="${pvpChamp}x PvP Champion">⚔️</span>`;
-                if (vCount > 0) cBadgesHtml += `<span style="color:#00ffcc; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #00ffcc);" title="Vanguard: ${vTooltip}">🌟</span>`;
-                if (cCount > 0) cBadgesHtml += `<span style="color:#aaa; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #fff);" title="Campaigns: ${cTooltip}">🎖️</span>`;
-                
+                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
+                if (pveChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 128, 0, 0.15); border:1px solid rgba(255, 128, 0, 0.4); color:#ffad33; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px; box-shadow:0 0 5px rgba(255,128,0,0.3);" title="${pveChamp}x PvE Champion">👑 ${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.15); border:1px solid rgba(255, 68, 0, 0.4); color:#ff7733; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px; box-shadow:0 0 5px rgba(255,68,0,0.3);" title="${pvpChamp}x PvP Champion">⚔️ ${pvpChamp}</span>`;
+                if (vCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(0, 255, 204, 0.15); border:1px solid rgba(0, 255, 204, 0.4); color:#66ffeb; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px; box-shadow:0 0 5px rgba(0,255,204,0.3);" title="Vanguard: ${vTooltip}">🌟 ${vCount}</span>`;
+                if (cCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(170, 170, 170, 0.15); border:1px solid rgba(170, 170, 170, 0.4); color:#ddd; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px; box-shadow:0 0 5px rgba(255,255,255,0.1);" title="Campaigns: ${cTooltip}">🎖️ ${cCount}</span>`;
+                cBadgesHtml += '</div>';
+
                 cleanName = (p.name || 'Unknown').toLowerCase();
                 displayName = (p.name || 'Unknown') + cBadgesHtml;
                 cClass = getCharClass(deepChar);
@@ -1411,12 +1412,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
                 
-                let cBadgesHtml = '';
-                if (pveChamp > 0) cBadgesHtml += `<span style="color:#ff8000; font-size:12px; margin-left:8px; text-shadow: 0 0 4px rgba(255,128,0,0.8);" title="${pveChamp}x PvE Champion">👑x${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="color:#ff4400; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(255,68,0,0.8);" title="${pvpChamp}x PvP Champion">⚔️x${pvpChamp}</span>`;
-                if (vCount > 0) cBadgesHtml += `<span style="color:#00ffcc; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(0,255,204,0.8);" title="Vanguard: ${vTooltip}">🌟x${vCount}</span>`;
-                if (cCount > 0) cBadgesHtml += `<span style="color:#aaa; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(255,255,255,0.5);" title="Campaigns: ${cTooltip}">🎖️x${cCount}</span>`;
-                
+                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
+                if (pveChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 128, 0, 0.2); border:1px solid rgba(255, 128, 0, 0.5); color:#ffad33; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">👑 ${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 68, 0, 0.2); border:1px solid rgba(255, 68, 0, 0.5); color:#ff7733; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">⚔️ ${pvpChamp}</span>`;
+                if (vCount > 0) cBadgesHtml += `<span style="background:rgba(0, 255, 204, 0.2); border:1px solid rgba(0, 255, 204, 0.5); color:#66ffeb; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🌟 ${vCount}</span>`;
+                if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🎖️ ${cCount}</span>`;
+                cBadgesHtml += '</div>';
+
                 tooltip.innerHTML = `
                     <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${cBadgesHtml}</div>
                     <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val" style="color:#ffd100;">${guildRank}</span></div>
