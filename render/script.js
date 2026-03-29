@@ -1133,6 +1133,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             // 2. Setup Variables
             let isClickable = false;
+            let cleanName = ''; // <--- NEW: Strict logic name
             let displayName, cClass, raceName, cHex, portraitURL, level;
             let activeSpecAttr = 'unspecced';
             let specIconHtml = '';
@@ -1146,11 +1147,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const p = deepChar.profile;
                 isClickable = true;
                 
-                // Add tiny Vanguard star if they have the history
+                // Add tiny MVP and Vanguard stars
                 const vCount = p.vanguard_count || 0;
-                const vStar = vCount > 0 ? `<span style="color:#00ffcc; font-size:12px; margin-left:4px; filter:drop-shadow(0 0 2px #00ffcc);" title="${vCount}x Vanguard">🌟</span>` : '';
+                const pveChamp = p.pve_champ_count || 0;
+                const pvpChamp = p.pvp_champ_count || 0;
                 
-                displayName = (p.name || 'Unknown') + vStar;
+                let cBadges = '';
+                if (pveChamp > 0) cBadges += `<span style="color:#ff8000; font-size:12px; margin-left:6px; filter:drop-shadow(0 0 2px #ff8000);" title="${pveChamp}x PvE Champ">👑</span>`;
+                if (pvpChamp > 0) cBadges += `<span style="color:#ff4400; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #ff4400);" title="${pvpChamp}x PvP Champ">⚔️</span>`;
+                if (vCount > 0) cBadges += `<span style="color:#00ffcc; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #00ffcc);" title="${vCount}x Vanguard">🌟</span>`;
+                
+                cleanName = (p.name || 'Unknown').toLowerCase();
+                displayName = (p.name || 'Unknown') + cBadges;
                 cClass = getCharClass(deepChar);
                 raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
                 cHex = CLASS_COLORS[cClass] || "#fff";
@@ -1174,6 +1182,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     else trendHTML = `<span style="color: #555; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">-</span>`;
                 }
             } else {
+                cleanName = (char.name || 'Unknown').toLowerCase();
                 displayName = char.name || 'Unknown';
                 cClass = char.class || 'Unknown';
                 raceName = char.race || 'Unknown';
@@ -1200,7 +1209,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let vanguardBadgeHtml = '';
             if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
                 const type = hashUrl.replace('war-effort-', '');
-                if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(displayName.toLowerCase())) {
+                if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(cleanName)) { // FIXED: Using cleanName
                     vanguardClass = 'vanguard-aura';
                     let timeText = '';
                     
@@ -1233,7 +1242,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
                     statsHtml = `<span style="color:#ff4400; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${trendVal.toLocaleString()} HKs Contributed</span>`;
                 } else if (window.warEffortContext) {
-                    const charKey = displayName.toLowerCase();
+                    const charKey = cleanName; // FIXED: Using cleanName
                     const contextData = window.warEffortContext[charKey];
                     
                     if (contextData) {
@@ -1284,7 +1293,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             return `
-            <div onclick="selectCharacter('${displayName.toLowerCase()}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${displayName.toLowerCase()}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
+            <div onclick="selectCharacter('${cleanName}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" style="border-left-color:${cHex}; ${barStyleOverride}">
                 <div style="${innerWrapperStyle}">
                     <div style="display: flex; align-items: center;">
                         ${rankHtml}
