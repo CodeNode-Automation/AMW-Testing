@@ -420,7 +420,7 @@ async def main_async():
         print("🌐 Generating final HTML Dashboard...")
         dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
         
-        # --- NEW: WAR EFFORT TIME-LOCKING LOGIC (BULLETPROOF) ---
+        # --- NEW: WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
         we_file = "asset/war_effort.json"
         
         berlin_tz = ZoneInfo("Europe/Berlin")
@@ -429,8 +429,9 @@ async def main_async():
         last_reset_berlin = now_berlin - timedelta(days=days_since_tuesday)
         last_reset_berlin = last_reset_berlin.replace(hour=0, minute=0, second=0, microsecond=0)
         last_reset_iso = last_reset_berlin.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        week_anchor = last_reset_berlin.strftime("%Y-%m-%d")
         
-        we_data = {"week_anchor": last_reset_berlin.strftime("%Y-%m-%d"), "locks": {}}
+        we_data = {"week_anchor": week_anchor, "locks": {}}
         if os.path.exists(we_file):
             try:
                 with open(we_file, "r", encoding="utf-8") as f:
@@ -439,6 +440,12 @@ async def main_async():
                         we_data["locks"] = old_we.get("locks", {})
             except Exception:
                 pass
+
+        # Ensure the history table exists in Turso
+        try:
+            await fetch_turso(session, "CREATE TABLE IF NOT EXISTS war_effort_history (week_anchor TEXT, category TEXT, vanguards TEXT, participants TEXT, PRIMARY KEY(week_anchor, category))")
+        except Exception as e:
+            print(f"⚠️ Could not verify/create war_effort_history table: {e}")
 
         # 1. XP Lock (Safe)
         if "xp" not in we_data["locks"]:
@@ -452,6 +459,12 @@ async def main_async():
                 top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["xp"] = {"vanguards": top3, "monument": {"title": "🛡️ Hero's Journey", "desc": f"<span style='color:#ffd100; font-weight:bold;'>{mvp}</span> hit the 750th level!", "timestamp": now_berlin.isoformat()}}
+                
+                try:
+                    safe_vanguards = json.dumps(top3).replace("'", "''")
+                    safe_participants = json.dumps(list(counts.keys())).replace("'", "''")
+                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'xp', '{safe_vanguards}', '{safe_participants}')")
+                except Exception: pass
 
         # 2. HK Lock (Safe)
         if "hk" not in we_data["locks"]:
@@ -469,6 +482,12 @@ async def main_async():
                 top3 = [k for k, v in sorted(hk_counts.items(), key=lambda item: item[1], reverse=True)[:3]]
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["hk"] = {"vanguards": top3, "monument": {"title": "🩸 Blood of the Enemy", "desc": f"<span style='color:#ff4400; font-weight:bold;'>{mvp}</span> led the 500 HK charge!", "timestamp": now_berlin.isoformat()}}
+                
+                try:
+                    safe_vanguards = json.dumps(top3).replace("'", "''")
+                    safe_participants = json.dumps(list(hk_counts.keys())).replace("'", "''")
+                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'hk', '{safe_vanguards}', '{safe_participants}')")
+                except Exception: pass
 
         # 3. Loot Lock (Safe)
         if "loot" not in we_data["locks"]:
@@ -483,11 +502,16 @@ async def main_async():
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["loot"] = {"vanguards": top3, "monument": {"title": "🐉 Dragon's Hoard", "desc": f"<span style='color:#a335ee; font-weight:bold;'>{mvp}</span> looted the 100th Epic!", "timestamp": now_berlin.isoformat()}}
 
+                try:
+                    safe_vanguards = json.dumps(top3).replace("'", "''")
+                    safe_participants = json.dumps(list(counts.keys())).replace("'", "''")
+                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'loot', '{safe_vanguards}', '{safe_participants}')")
+                except Exception: pass
+
         # 4. Zenith Lock (Speedrun Logic)
         if "zenith" not in we_data["locks"]:
             zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             
-            # Sort oldest to newest
             zenith_events_sorted = sorted(zenith_events, key=lambda x: str(x.get('timestamp', '')))
             unique_70s = []
             for e in zenith_events_sorted:
@@ -496,12 +520,47 @@ async def main_async():
                     unique_70s.append(c_name.lower())
                     
             if len(unique_70s) >= 10:
-                top3 = unique_70s[:3] # The first 3 to hit 70 get Vanguard
-                tenth_man = unique_70s[9].title() # The 10th person gets the Monument shoutout
+                top3 = unique_70s[:3]
+                tenth_man = unique_70s[9].title() if len(unique_70s) > 9 else "Unknown"
                 we_data["locks"]["zenith"] = {"vanguards": top3, "monument": {"title": "⚡ The Zenith Cohort", "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{tenth_man}</span> was the 10th Level 70!", "timestamp": now_berlin.isoformat()}}
+                
+                try:
+                    safe_vanguards = json.dumps(top3).replace("'", "''")
+                    safe_participants = json.dumps(unique_70s).replace("'", "''")
+                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'zenith', '{safe_vanguards}', '{safe_participants}')")
+                except Exception: pass
 
         with open(we_file, "w", encoding="utf-8") as f:
             json.dump(we_data, f, ensure_ascii=False)
+            
+        # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
+        print("🏅 Calculating Cumulative War Effort Badges...")
+        try:
+            historical_data = await fetch_turso(session, "SELECT vanguards, participants FROM war_effort_history")
+            vanguard_tallies, campaign_tallies = {}, {}
+            
+            if historical_data:
+                for row in historical_data:
+                    # Handle both dictionary and tuple formats safely
+                    v_json = row.get('vanguards', '[]') if isinstance(row, dict) else row[0]
+                    p_json = row.get('participants', '[]') if isinstance(row, dict) else row[1]
+                    
+                    try:
+                        for v in json.loads(v_json): vanguard_tallies[v.lower()] = vanguard_tallies.get(v.lower(), 0) + 1
+                    except: pass
+                    try:
+                        for p in json.loads(p_json): campaign_tallies[p.lower()] = campaign_tallies.get(p.lower(), 0) + 1
+                    except: pass
+
+            # Inject the counts directly into the character profiles before saving
+            for r in roster_data:
+                if not r or not r.get("profile"): continue
+                c_name = r["profile"].get("name", "").lower()
+                r["profile"]["vanguard_count"] = vanguard_tallies.get(c_name, 0)
+                r["profile"]["campaigns_count"] = campaign_tallies.get(c_name, 0)
+                
+        except Exception as e:
+            print(f"⚠️ Failed to aggregate badges from Turso: {e}")
         # --- END TIME-LOCKING LOGIC ---
 
         # Dump the heavy timeline payload to an external JSON file

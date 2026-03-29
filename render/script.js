@@ -766,8 +766,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // --- NEW: Grab the Guild Rank ---
+        // --- NEW: Grab the Guild Rank & Badges ---
         const guildRank = p.guild_rank || 'Member';
+        const vCount = p.vanguard_count || 0;
+        const cCount = p.campaigns_count || 0;
+        
+        let extraBadges = '';
+        if (vCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 8px rgba(0,255,204,0.4);">🌟 Vanguard x${vCount}</span>`;
+        if (cCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #aaa; color: #fff;">🎖️ ${cCount} Campaigns</span>`;
 
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
@@ -775,6 +781,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
         <div class="char-badges-container">
             <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
+            ${extraBadges}
             <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
             <span class="badge char-badge" style="border-color: #ff8000; color: #ff8000;">iLvl ${p.equipped_item_level || 0}</span>
             <span class="badge char-badge default-badge">${raceName}</span>
@@ -1138,7 +1145,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (deepChar && deepChar.profile) {
                 const p = deepChar.profile;
                 isClickable = true;
-                displayName = p.name || 'Unknown';
+                
+                // Add tiny Vanguard star if they have the history
+                const vCount = p.vanguard_count || 0;
+                const vStar = vCount > 0 ? `<span style="color:#00ffcc; font-size:12px; margin-left:4px; filter:drop-shadow(0 0 2px #00ffcc);" title="${vCount}x Vanguard">🌟</span>` : '';
+                
+                displayName = (p.name || 'Unknown') + vStar;
                 cClass = getCharClass(deepChar);
                 raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
                 cHex = CLASS_COLORS[cClass] || "#fff";
@@ -1337,11 +1349,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222;">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
-                // --- NEW: Grab the Guild Rank from the profile ---
+                // --- NEW: Grab the Guild Rank & Vanguard Status ---
                 const guildRank = p.guild_rank || 'Member';
+                const vCount = p.vanguard_count || 0;
+                const vBadgeHtml = vCount > 0 ? `<span style="color:#00ffcc; font-size:12px; margin-left:8px; text-shadow: 0 0 4px rgba(0,255,204,0.8);">🌟x${vCount}</span>` : '';
                 
                 tooltip.innerHTML = `
-                    <div class="tt-name" style="color:${cHex};">${p.name || 'Unknown'}</div>
+                    <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${vBadgeHtml}</div>
                     <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val" style="color:#ffd100;">${guildRank}</span></div>
                     <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val">${p.level || 0} / ${raceName}</span></div>
                     <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val" style="color:${cHex}; display:flex; align-items:center;">${specIconHtml}${displaySpecClass}</span></div>
