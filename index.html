@@ -936,10 +936,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T16:04:41.663814Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T16:27:16.135358Z", "active_14_days": 407, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1142, "loot": 1024, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 531, "loot": 403, "levels": 128, "total_roster": 643, "active_roster": 407}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1142, "loot": 1024, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 538, "loot": 408, "levels": 130, "total_roster": 643, "active_roster": 407}]
     </script>
 
     <script>
@@ -2569,6 +2569,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (filtersContainer) {
             filtersContainer.innerHTML = `
                 <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
                     <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
                     <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
@@ -3916,81 +3917,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             
         } catch (error) {
             console.error("Failed to load timeline data:", error);
-        }
-    }
-
-    function applyTimelineFilters() {
-        if (!timeline) return;
-
-        const now = Date.now();
-        
-        // 1. Filter the raw data array directly instead of the DOM elements
-        filteredTimelineData = timelineData.filter(event => {
-            const charName = (event.character_name || '').toLowerCase();
-            const eventType = event.type;
-            const timestampStr = event.timestamp || '';
-            const itemQuality = event.item_quality || 'COMMON';
-
-            // Filter by Character
-            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
-
-            // Filter by Rarity/Type
-            if (tlTypeFilter === 'rare_plus') {
-                if (eventType !== 'item') return false;
-                if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
-            } else if (tlTypeFilter === 'epic') {
-                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
-            } else if (tlTypeFilter === 'legendary') {
-                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
-            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
-                return false;
-            }
-
-            // Filter by Date (Hours)
-            if (tlSpecificDate && timestampStr) {
-                if (!timestampStr.startsWith(tlSpecificDate)) return false;
-            } else if (tlDateFilter !== 'all' && timestampStr) {
-                let cleanTs = timestampStr.replace('Z', '+00:00');
-                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                const eventDate = new Date(cleanTs).getTime();
-                if (!isNaN(eventDate)) {
-                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
-                    if ((now - eventDate) > hoursMs) return false;
-                }
-            }
-
-            return true;
-        });
-
-        // Monument injection moved to a dedicated feed above.
-
-        // 2. Clear the old feed and reset the counter
-        const container = document.getElementById('timeline-feed-container');
-        if (container) container.innerHTML = '';
-        currentTimelineIndex = 0;
-
-        // 3. Handle empty states or render the first batch
-        let noResultsMsg = document.getElementById('tl-no-results');
-        if (filteredTimelineData.length === 0) {
-            if (container) container.style.display = 'none';
-            if (!noResultsMsg) {
-                noResultsMsg = document.createElement('div');
-                noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.style.color = '#888';
-                noResultsMsg.style.textAlign = 'center';
-                noResultsMsg.style.padding = '20px';
-                noResultsMsg.style.fontStyle = 'italic';
-                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
-                document.getElementById('timeline').appendChild(noResultsMsg);
-            } else {
-                noResultsMsg.style.display = 'block';
-            }
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-        } else {
-            if (container) container.style.display = 'flex';
-            if (noResultsMsg) noResultsMsg.style.display = 'none';
-            renderTimelineBatch();
         }
     }
 
