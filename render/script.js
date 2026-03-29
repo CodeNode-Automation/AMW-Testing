@@ -1624,6 +1624,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (filtersContainer) {
             filtersContainer.innerHTML = `
                 <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
                     <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
                     <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
@@ -2971,81 +2972,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             
         } catch (error) {
             console.error("Failed to load timeline data:", error);
-        }
-    }
-
-    function applyTimelineFilters() {
-        if (!timeline) return;
-
-        const now = Date.now();
-        
-        // 1. Filter the raw data array directly instead of the DOM elements
-        filteredTimelineData = timelineData.filter(event => {
-            const charName = (event.character_name || '').toLowerCase();
-            const eventType = event.type;
-            const timestampStr = event.timestamp || '';
-            const itemQuality = event.item_quality || 'COMMON';
-
-            // Filter by Character
-            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
-
-            // Filter by Rarity/Type
-            if (tlTypeFilter === 'rare_plus') {
-                if (eventType !== 'item') return false;
-                if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
-            } else if (tlTypeFilter === 'epic') {
-                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
-            } else if (tlTypeFilter === 'legendary') {
-                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
-            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
-                return false;
-            }
-
-            // Filter by Date (Hours)
-            if (tlSpecificDate && timestampStr) {
-                if (!timestampStr.startsWith(tlSpecificDate)) return false;
-            } else if (tlDateFilter !== 'all' && timestampStr) {
-                let cleanTs = timestampStr.replace('Z', '+00:00');
-                if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                const eventDate = new Date(cleanTs).getTime();
-                if (!isNaN(eventDate)) {
-                    const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
-                    if ((now - eventDate) > hoursMs) return false;
-                }
-            }
-
-            return true;
-        });
-
-        // Monument injection moved to a dedicated feed above.
-
-        // 2. Clear the old feed and reset the counter
-        const container = document.getElementById('timeline-feed-container');
-        if (container) container.innerHTML = '';
-        currentTimelineIndex = 0;
-
-        // 3. Handle empty states or render the first batch
-        let noResultsMsg = document.getElementById('tl-no-results');
-        if (filteredTimelineData.length === 0) {
-            if (container) container.style.display = 'none';
-            if (!noResultsMsg) {
-                noResultsMsg = document.createElement('div');
-                noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.style.color = '#888';
-                noResultsMsg.style.textAlign = 'center';
-                noResultsMsg.style.padding = '20px';
-                noResultsMsg.style.fontStyle = 'italic';
-                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
-                document.getElementById('timeline').appendChild(noResultsMsg);
-            } else {
-                noResultsMsg.style.display = 'block';
-            }
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-        } else {
-            if (container) container.style.display = 'flex';
-            if (noResultsMsg) noResultsMsg.style.display = 'none';
-            renderTimelineBatch();
         }
     }
 
