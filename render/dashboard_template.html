@@ -87,6 +87,7 @@
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
+                <button class="nav-btn" onclick="window.location.hash='badges'" style="color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer;">🌟 Hall of Heroes</button>
                 
                 <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
@@ -112,6 +113,9 @@
                     </div>
                     <div class="custom-option" data-value="raidready" role="option">
                         <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                    </div>
+                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
+                        <span style="font-size:16px;">🌟</span> Hall of Heroes
                     </div>
                 </div>
             </div>
@@ -242,7 +246,11 @@
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 35px; font-size: 12px; color: #888; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; letter-spacing: 0.5px;">
+                    <button onclick="window.location.hash='badges'" style="margin-top: 35px; width: 100%; padding: 12px; background: linear-gradient(90deg, rgba(255,209,0,0.1), rgba(255,128,0,0.2)); border: 1px solid #ffd100; color: #ffd100; font-family: 'Cinzel'; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; box-shadow: 0 0 10px rgba(255,209,0,0.3); transition: all 0.3s ease;" onmouseover="this.style.boxShadow='0 0 20px rgba(255,209,0,0.6)'; this.style.background='linear-gradient(90deg, rgba(255,209,0,0.2), rgba(255,128,0,0.4))';" onmouseout="this.style.boxShadow='0 0 10px rgba(255,209,0,0.3)'; this.style.background='linear-gradient(90deg, rgba(255,209,0,0.1), rgba(255,128,0,0.2))';">
+                        🌟 View Hall of Heroes
+                    </button>
+                    
+                    <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #888; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; letter-spacing: 0.5px;">
                         * Note: Weekly guild challenges are currently experimental and subject to change based on community feedback.
                     </div>
                 </div>

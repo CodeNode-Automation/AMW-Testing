@@ -304,6 +304,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             selectValueText.innerHTML = "📊 Analytics";
         } else if (hash === 'architecture') {
             selectValueText.innerHTML = "⚙️ Architecture";
+        } else if (hash === 'badges') {
+            selectValueText.innerHTML = "🌟 Hall of Heroes";
         } else if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
             selectValueText.innerHTML = "⚡ Filter Active";
         } else {
@@ -1138,6 +1140,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return valB - valA; // High to Low
             } else if (currentSortMethod === 'name') {
                 return nameA.localeCompare(nameB); // A to Z
+            } else if (currentSortMethod === 'badges') {
+                // --- NEW: Sort by Total Badge Count ---
+                const getScore = (prof) => {
+                    const vCount = safeParseArray(prof.vanguard_badges).length;
+                    const cCount = safeParseArray(prof.campaign_badges).length;
+                    const pve = parseInt(prof.pve_champ_count) || 0;
+                    const pvp = parseInt(prof.pvp_champ_count) || 0;
+                    return vCount + cCount + pve + pvp;
+                };
+                return getScore(profB) - getScore(profA); // High to Low
             }
             return 0;
         });
@@ -1152,6 +1164,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
                         <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
                         <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
+                        <option value="badges" ${currentSortMethod === 'badges' ? 'selected' : ''}>Total Badges</option>
                         <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
                     </select>
                 </div>
@@ -2228,6 +2241,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         } else if (hash === 'total') {
             showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
             updateDropdownLabel('all');
+        } else if (hash === 'badges') {
+            // --- NEW: Hall of Heroes Dedicated View ---
+            const badgeRoster = rosterData.filter(c => {
+                const p = c.profile;
+                if (!p) return false;
+                const vCount = safeParseArray(p.vanguard_badges || c.vanguard_badges).length;
+                const cCount = safeParseArray(p.campaign_badges || c.campaign_badges).length;
+                const pveCount = parseInt(p.pve_champ_count || c.pve_champ_count) || 0;
+                const pvpCount = parseInt(p.pvp_champ_count || c.pvp_champ_count) || 0;
+                return (vCount + cCount + pveCount + pvpCount) > 0; // Must have at least 1 badge
+            });
+            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, true, 'badges');
+            updateDropdownLabel('badges');
+            
         } else if (hash === 'active') {
             const activeRoster = rosterData.filter(c => {
                 const lastLogin = c.profile && c.profile.last_login_timestamp ? c.profile.last_login_timestamp : 0;
