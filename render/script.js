@@ -844,8 +844,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
         const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
         const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-        const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], `Vanguard: ${summarizeBadges(vBadges)}`);
-        const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], `Campaigns: ${summarizeBadges(cBadges)}`);
+        const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
+        const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
         
         let extraBadges = '';
         if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
@@ -1387,8 +1387,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
                 const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
                 const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], `Vanguard: ${summarizeBadges(vBadges)}`);
-                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], `Campaigns: ${summarizeBadges(cBadges)}`);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
 
                 // 3. Inject them into the HTML
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
@@ -1628,8 +1628,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
                 const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
                 const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], `Vanguard: ${summarizeBadges(vBadges)}`);
-                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], `Campaigns: ${summarizeBadges(cBadges)}`);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
 
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
                 if (pveGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveGold}">🥇 ${pveGold}</span>`;
