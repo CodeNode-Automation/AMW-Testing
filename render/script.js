@@ -3463,7 +3463,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
             
-            return chars.map((char, index) => {
+            let html = `<div class="mvp-podium-container">`;
+            
+            html += chars.map((char, index) => {
                 const p = char.profile;
                 const cClass = getCharClass(char);
                 const cHex = CLASS_COLORS[cClass] || '#fff';
@@ -3472,20 +3474,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const label = isPvp ? 'HKs' : 'iLvl';
                 
                 const podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : 'podium-3';
-                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : '#cd7f32';
                 
                 return `
-                <div class="pvp-row tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left: 4px solid ${cHex}; padding: 8px 12px; margin-bottom: 0;">
-                    <div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: 18px; width: 30px; text-shadow: 1px 1px 2px #000;">#${index + 1}</div>
-                    <img src="${portraitURL}" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid ${cHex}; object-fit: cover; margin-right: 12px;">
-                    <div style="flex: 1; display: flex; flex-direction: column;">
-                        <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; color: #2ecc71; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:10px; color:#888; margin-left: 3px; text-transform:uppercase;">${label}</span>
-                    </div>
+                <div class="podium-slot tt-char ${podiumClass}" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')">
+                    <div class="podium-rank">#${index + 1}</div>
+                    <img src="${portraitURL}" class="podium-portrait">
+                    <div class="podium-name" style="color: ${cHex};">${p.name}</div>
+                    <div class="podium-score">▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888;">${label}</span></div>
                 </div>`;
             }).join('');
+            
+            html += `</div>`;
+            return html;
         }
 
         function generateGloatingHtml(mvpData, isPvp) {
