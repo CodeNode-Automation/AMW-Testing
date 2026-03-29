@@ -420,7 +420,7 @@ async def main_async():
         print("🌐 Generating final HTML Dashboard...")
         dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
         
-        # --- NEW: WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
+        # --- NEW: DECOUPLED WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
         we_file = "asset/war_effort.json"
         
         berlin_tz = ZoneInfo("Europe/Berlin")
@@ -445,119 +445,185 @@ async def main_async():
         try:
             await fetch_turso(session, "CREATE TABLE IF NOT EXISTS war_effort_history (week_anchor TEXT, category TEXT, vanguards TEXT, participants TEXT, PRIMARY KEY(week_anchor, category))")
         except Exception as e:
-            print(f"⚠️ Could not verify/create war_effort_history table: {e}")
+            pass
 
-        # 1. XP Lock (Safe)
+        # 1. XP Logic
+        xp_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
+        xp_counts = {}
+        for e in xp_events: 
+            c_name = e.get('character_name')
+            if c_name: xp_counts[c_name.lower()] = xp_counts.get(c_name.lower(), 0) + 1
+
+        current_vanguards = []
         if "xp" not in we_data["locks"]:
-            xp_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             if len(xp_events) >= 750:
-                counts = {}
-                for e in xp_events: 
-                    c_name = e.get('character_name')
-                    if not c_name: continue
-                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
-                top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
+                top3 = [k for k, v in sorted(xp_counts.items(), key=lambda item: item[1], reverse=True)[:3]]
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["xp"] = {"vanguards": top3, "monument": {"title": "🛡️ Hero's Journey", "desc": f"<span style='color:#ffd100; font-weight:bold;'>{mvp}</span> hit the 750th level!", "timestamp": now_berlin.isoformat()}}
-                
-                try:
-                    safe_vanguards = json.dumps(top3).replace("'", "''")
-                    safe_participants = json.dumps(list(counts.keys())).replace("'", "''")
-                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'xp', '{safe_vanguards}', '{safe_participants}')")
-                except Exception: pass
+                current_vanguards = top3
+        else:
+            current_vanguards = we_data["locks"]["xp"]["vanguards"]
 
-        # 2. HK Lock (Safe)
+        if current_vanguards or len(xp_counts) > 0:
+            try:
+                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
+                safe_participants = json.dumps(list(xp_counts.keys())).replace("'", "''")
+                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'xp', '{safe_vanguards}', '{safe_participants}')")
+            except Exception: pass
+
+        # 2. HK Logic
+        hk_counts = {}
+        total_hks = 0
+        for r in roster_data:
+            if not r or not r.get("profile"): continue
+            prof = r["profile"]
+            trend = prof.get("trend_pvp") or prof.get("trend_hks") or 0
+            if trend > 0:
+                total_hks += trend
+                hk_counts[prof.get("name", "Unknown").lower()] = trend
+
+        current_vanguards = []
         if "hk" not in we_data["locks"]:
-            hk_counts = {}
-            total_hks = 0
-            for r in roster_data:
-                if not r or not r.get("profile"): continue
-                prof = r["profile"]
-                trend = prof.get("trend_pvp") or prof.get("trend_hks") or 0
-                if trend > 0:
-                    total_hks += trend
-                    hk_counts[prof.get("name", "Unknown").lower()] = trend
-
             if total_hks >= 500:
                 top3 = [k for k, v in sorted(hk_counts.items(), key=lambda item: item[1], reverse=True)[:3]]
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["hk"] = {"vanguards": top3, "monument": {"title": "🩸 Blood of the Enemy", "desc": f"<span style='color:#ff4400; font-weight:bold;'>{mvp}</span> led the 500 HK charge!", "timestamp": now_berlin.isoformat()}}
-                
-                try:
-                    safe_vanguards = json.dumps(top3).replace("'", "''")
-                    safe_participants = json.dumps(list(hk_counts.keys())).replace("'", "''")
-                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'hk', '{safe_vanguards}', '{safe_participants}')")
-                except Exception: pass
+                current_vanguards = top3
+        else:
+            current_vanguards = we_data["locks"]["hk"]["vanguards"]
 
-        # 3. Loot Lock (Safe)
+        if current_vanguards or len(hk_counts) > 0:
+            try:
+                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
+                safe_participants = json.dumps(list(hk_counts.keys())).replace("'", "''")
+                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'hk', '{safe_vanguards}', '{safe_participants}')")
+            except Exception: pass
+
+        # 3. Loot Logic
+        loot_events = [e for e in dashboard_feed if e.get('type') == 'item' and e.get('item_quality') in ('EPIC', 'LEGENDARY') and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
+        loot_counts = {}
+        for e in loot_events: 
+            c_name = e.get('character_name')
+            if c_name: loot_counts[c_name.lower()] = loot_counts.get(c_name.lower(), 0) + 1
+            
+        current_vanguards = []
         if "loot" not in we_data["locks"]:
-            loot_events = [e for e in dashboard_feed if e.get('type') == 'item' and e.get('item_quality') in ('EPIC', 'LEGENDARY') and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
             if len(loot_events) >= 100:
-                counts = {}
-                for e in loot_events: 
-                    c_name = e.get('character_name')
-                    if not c_name: continue
-                    counts[c_name.lower()] = counts.get(c_name.lower(), 0) + 1
-                top3 = [k for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True)[:3]]
+                top3 = [k for k, v in sorted(loot_counts.items(), key=lambda item: item[1], reverse=True)[:3]]
                 mvp = top3[0].title() if top3 else "Unknown"
                 we_data["locks"]["loot"] = {"vanguards": top3, "monument": {"title": "🐉 Dragon's Hoard", "desc": f"<span style='color:#a335ee; font-weight:bold;'>{mvp}</span> looted the 100th Epic!", "timestamp": now_berlin.isoformat()}}
+                current_vanguards = top3
+        else:
+            current_vanguards = we_data["locks"]["loot"]["vanguards"]
 
-                try:
-                    safe_vanguards = json.dumps(top3).replace("'", "''")
-                    safe_participants = json.dumps(list(counts.keys())).replace("'", "''")
-                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'loot', '{safe_vanguards}', '{safe_participants}')")
-                except Exception: pass
+        if current_vanguards or len(loot_counts) > 0:
+            try:
+                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
+                safe_participants = json.dumps(list(loot_counts.keys())).replace("'", "''")
+                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'loot', '{safe_vanguards}', '{safe_participants}')")
+            except Exception: pass
 
-        # 4. Zenith Lock (Speedrun Logic)
+        # 4. Zenith Logic
+        zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
+        zenith_events_sorted = sorted(zenith_events, key=lambda x: str(x.get('timestamp', '')))
+        unique_70s = []
+        for e in zenith_events_sorted:
+            c_name = e.get('character_name')
+            if c_name and c_name.lower() not in unique_70s:
+                unique_70s.append(c_name.lower())
+
+        current_vanguards = []
         if "zenith" not in we_data["locks"]:
-            zenith_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and e.get('level') == 70 and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
-            
-            zenith_events_sorted = sorted(zenith_events, key=lambda x: str(x.get('timestamp', '')))
-            unique_70s = []
-            for e in zenith_events_sorted:
-                c_name = e.get('character_name')
-                if c_name and c_name.lower() not in unique_70s:
-                    unique_70s.append(c_name.lower())
-                    
             if len(unique_70s) >= 10:
                 top3 = unique_70s[:3]
                 tenth_man = unique_70s[9].title() if len(unique_70s) > 9 else "Unknown"
                 we_data["locks"]["zenith"] = {"vanguards": top3, "monument": {"title": "⚡ The Zenith Cohort", "desc": f"<span style='color:#3FC7EB; font-weight:bold;'>{tenth_man}</span> was the 10th Level 70!", "timestamp": now_berlin.isoformat()}}
-                
-                try:
-                    safe_vanguards = json.dumps(top3).replace("'", "''")
-                    safe_participants = json.dumps(unique_70s).replace("'", "''")
-                    await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'zenith', '{safe_vanguards}', '{safe_participants}')")
-                except Exception: pass
+                current_vanguards = top3
+        else:
+            current_vanguards = we_data["locks"]["zenith"]["vanguards"]
 
+        if current_vanguards or len(unique_70s) > 0:
+            try:
+                safe_vanguards = json.dumps(current_vanguards).replace("'", "''")
+                safe_participants = json.dumps(unique_70s).replace("'", "''")
+                await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', 'zenith', '{safe_vanguards}', '{safe_participants}')")
+            except Exception: pass
+
+        # Save JSON Lockfile
         with open(we_file, "w", encoding="utf-8") as f:
             json.dump(we_data, f, ensure_ascii=False)
-            
-        # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
-        print("🏅 Calculating Cumulative War Effort Badges...")
+
+       # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
+        print("🏅 Calculating Cumulative War Effort & MVP Badges...")
         try:
-            historical_data = await fetch_turso(session, "SELECT vanguards, participants FROM war_effort_history")
-            vanguard_tallies, campaign_tallies = {}, {}
+            await fetch_turso(session, "CREATE TABLE IF NOT EXISTS reigning_champs_history (week_anchor TEXT, category TEXT, champion TEXT, score INTEGER, PRIMARY KEY(week_anchor, category))")
+
+            # --- NEW: SAVE CURRENT REIGNING CHAMPS TO TURSO ---
+            pve_mvp, pve_score = "Unknown", 0
+            pvp_mvp, pvp_score = "Unknown", 0
             
+            for r in roster_data:
+                p = r.get("profile", {})
+                if not p: continue
+                
+                pve_val = p.get("trend_pve") or p.get("trend_ilvl") or 0
+                pvp_val = p.get("trend_pvp") or p.get("trend_hks") or 0
+                
+                if pve_val > pve_score:
+                    pve_score = pve_val
+                    pve_mvp = p.get("name", "Unknown").lower()
+                    
+                if pvp_val > pvp_score:
+                    pvp_score = pvp_val
+                    pvp_mvp = p.get("name", "Unknown").lower()
+                    
+            if pve_score > 0:
+                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', 'pve', '{pve_mvp}', {pve_score})")
+            if pvp_score > 0:
+                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', 'pvp', '{pvp_mvp}', {pvp_score})")
+            # --- END NEW MVP LOGIC ---
+
+            historical_data = await fetch_turso(session, "SELECT category, vanguards, participants FROM war_effort_history")
+            vanguard_tallies, campaign_tallies = {}, {}
+            cat_map = {"xp": "XP", "hk": "HKs", "loot": "Loot", "zenith": "Zenith"}
+
             if historical_data:
                 for row in historical_data:
-                    # Handle both dictionary and tuple formats safely
-                    v_json = row.get('vanguards', '[]') if isinstance(row, dict) else row[0]
-                    p_json = row.get('participants', '[]') if isinstance(row, dict) else row[1]
+                    cat = row.get('category', '') if isinstance(row, dict) else row[0]
+                    v_json = row.get('vanguards', '[]') if isinstance(row, dict) else row[1]
+                    p_json = row.get('participants', '[]') if isinstance(row, dict) else row[2]
                     
+                    label = cat_map.get(cat.lower(), cat.title())
+
                     try:
-                        for v in json.loads(v_json): vanguard_tallies[v.lower()] = vanguard_tallies.get(v.lower(), 0) + 1
+                        for v in json.loads(v_json):
+                            v_lower = v.lower()
+                            if v_lower not in vanguard_tallies: vanguard_tallies[v_lower] = []
+                            vanguard_tallies[v_lower].append(label)
                     except: pass
                     try:
-                        for p in json.loads(p_json): campaign_tallies[p.lower()] = campaign_tallies.get(p.lower(), 0) + 1
+                        for p in json.loads(p_json):
+                            p_lower = p.lower()
+                            if p_lower not in campaign_tallies: campaign_tallies[p_lower] = []
+                            campaign_tallies[p_lower].append(label)
                     except: pass
 
-            # Inject the counts directly into the character profiles before saving
+            mvp_data = await fetch_turso(session, "SELECT champion, category FROM reigning_champs_history")
+            pve_champs, pvp_champs = {}, {}
+            if mvp_data:
+                for row in mvp_data:
+                    champ = row.get('champion', row[0]).lower() if isinstance(row, dict) else row[0].lower()
+                    cat = row.get('category', row[1]).lower() if isinstance(row, dict) else row[1].lower()
+                    if cat == 'pve': pve_champs[champ] = pve_champs.get(champ, 0) + 1
+                    if cat == 'pvp': pvp_champs[champ] = pvp_champs.get(champ, 0) + 1
+
             for r in roster_data:
                 if not r or not r.get("profile"): continue
                 c_name = r["profile"].get("name", "").lower()
-                r["profile"]["vanguard_count"] = vanguard_tallies.get(c_name, 0)
-                r["profile"]["campaigns_count"] = campaign_tallies.get(c_name, 0)
+                r["profile"]["vanguard_badges"] = vanguard_tallies.get(c_name, [])
+                r["profile"]["campaign_badges"] = campaign_tallies.get(c_name, [])
+                r["profile"]["pve_champ_count"] = pve_champs.get(c_name, 0)
+                r["profile"]["pvp_champ_count"] = pvp_champs.get(c_name, 0)
                 
         except Exception as e:
             print(f"⚠️ Failed to aggregate badges from Turso: {e}")

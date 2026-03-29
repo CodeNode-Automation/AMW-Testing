@@ -28,6 +28,13 @@ const TBC_XP = {
     60: 494000, 61: 517000, 62: 550000, 63: 587000, 64: 632000, 65: 684000, 66: 745000, 67: 815000, 68: 895000, 69: 985000
 };
 
+// --- Helper: Summarize Badges for Tooltips ---
+function summarizeBadges(badgeArray) {
+    if (!badgeArray || badgeArray.length === 0) return "";
+    const counts = badgeArray.reduce((acc, val) => { acc[val] = (acc[val] || 0) + 1; return acc; }, {});
+    return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -768,12 +775,21 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // --- NEW: Grab the Guild Rank & Badges ---
         const guildRank = p.guild_rank || 'Member';
-        const vCount = p.vanguard_count || 0;
-        const cCount = p.campaigns_count || 0;
+        const vBadges = p.vanguard_badges || [];
+        const cBadges = p.campaign_badges || [];
+        const vCount = vBadges.length;
+        const cCount = cBadges.length;
+        const pveChamp = p.pve_champ_count || 0;
+        const pvpChamp = p.pvp_champ_count || 0;
+
+        const vTooltip = summarizeBadges(vBadges);
+        const cTooltip = summarizeBadges(cBadges);
         
         let extraBadges = '';
-        if (vCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 8px rgba(0,255,204,0.4);">🌟 Vanguard x${vCount}</span>`;
-        if (cCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #aaa; color: #fff;">🎖️ ${cCount} Campaigns</span>`;
+        if (pveChamp > 0) extraBadges += `<span class="badge char-badge" style="border-color: #ff8000; color: #ff8000; box-shadow: 0 0 8px rgba(255,128,0,0.4);" title="${pveChamp}x PvE Champion">👑 PvE Champ x${pveChamp}</span>`;
+        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge" style="border-color: #ff4400; color: #ff4400; box-shadow: 0 0 8px rgba(255,68,0,0.4);" title="${pvpChamp}x PvP Champion">⚔️ PvP Champ x${pvpChamp}</span>`;
+        if (vCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 8px rgba(0,255,204,0.4);" title="Vanguard: ${vTooltip}">🌟 Vanguard x${vCount}</span>`;
+        if (cCount > 0) extraBadges += `<span class="badge char-badge" style="border-color: #aaa; color: #fff;" title="Campaigns: ${cTooltip}">🎖️ ${cCount} Campaigns</span>`;
 
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
@@ -1148,17 +1164,24 @@ window.addEventListener('DOMContentLoaded', async () => {
                 isClickable = true;
                 
                 // Add tiny MVP and Vanguard stars
-                const vCount = p.vanguard_count || 0;
+                const vBadges = p.vanguard_badges || [];
+                const cBadges = p.campaign_badges || [];
+                const vCount = vBadges.length;
+                const cCount = cBadges.length;
                 const pveChamp = p.pve_champ_count || 0;
                 const pvpChamp = p.pvp_champ_count || 0;
                 
-                let cBadges = '';
-                if (pveChamp > 0) cBadges += `<span style="color:#ff8000; font-size:12px; margin-left:6px; filter:drop-shadow(0 0 2px #ff8000);" title="${pveChamp}x PvE Champ">👑</span>`;
-                if (pvpChamp > 0) cBadges += `<span style="color:#ff4400; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #ff4400);" title="${pvpChamp}x PvP Champ">⚔️</span>`;
-                if (vCount > 0) cBadges += `<span style="color:#00ffcc; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #00ffcc);" title="${vCount}x Vanguard">🌟</span>`;
+                const vTooltip = summarizeBadges(vBadges);
+                const cTooltip = summarizeBadges(cBadges);
+
+                let cBadgesHtml = '';
+                if (pveChamp > 0) cBadgesHtml += `<span style="color:#ff8000; font-size:12px; margin-left:6px; filter:drop-shadow(0 0 2px #ff8000);" title="${pveChamp}x PvE Champion">👑</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="color:#ff4400; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #ff4400);" title="${pvpChamp}x PvP Champion">⚔️</span>`;
+                if (vCount > 0) cBadgesHtml += `<span style="color:#00ffcc; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #00ffcc);" title="Vanguard: ${vTooltip}">🌟</span>`;
+                if (cCount > 0) cBadgesHtml += `<span style="color:#aaa; font-size:12px; margin-left:2px; filter:drop-shadow(0 0 2px #fff);" title="Campaigns: ${cTooltip}">🎖️</span>`;
                 
                 cleanName = (p.name || 'Unknown').toLowerCase();
-                displayName = (p.name || 'Unknown') + cBadges;
+                displayName = (p.name || 'Unknown') + cBadgesHtml;
                 cClass = getCharClass(deepChar);
                 raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
                 cHex = CLASS_COLORS[cClass] || "#fff";
@@ -1358,13 +1381,26 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222;">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
-                // --- NEW: Grab the Guild Rank & Vanguard Status ---
+                // --- NEW: Grab the Guild Rank & MVP Badges ---
                 const guildRank = p.guild_rank || 'Member';
-                const vCount = p.vanguard_count || 0;
-                const vBadgeHtml = vCount > 0 ? `<span style="color:#00ffcc; font-size:12px; margin-left:8px; text-shadow: 0 0 4px rgba(0,255,204,0.8);">🌟x${vCount}</span>` : '';
+                const vBadges = p.vanguard_badges || [];
+                const cBadges = p.campaign_badges || [];
+                const vCount = vBadges.length;
+                const cCount = cBadges.length;
+                const pveChamp = p.pve_champ_count || 0;
+                const pvpChamp = p.pvp_champ_count || 0;
+
+                const vTooltip = summarizeBadges(vBadges);
+                const cTooltip = summarizeBadges(cBadges);
+                
+                let cBadgesHtml = '';
+                if (pveChamp > 0) cBadgesHtml += `<span style="color:#ff8000; font-size:12px; margin-left:8px; text-shadow: 0 0 4px rgba(255,128,0,0.8);" title="${pveChamp}x PvE Champion">👑x${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="color:#ff4400; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(255,68,0,0.8);" title="${pvpChamp}x PvP Champion">⚔️x${pvpChamp}</span>`;
+                if (vCount > 0) cBadgesHtml += `<span style="color:#00ffcc; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(0,255,204,0.8);" title="Vanguard: ${vTooltip}">🌟x${vCount}</span>`;
+                if (cCount > 0) cBadgesHtml += `<span style="color:#aaa; font-size:12px; margin-left:4px; text-shadow: 0 0 4px rgba(255,255,255,0.5);" title="Campaigns: ${cTooltip}">🎖️x${cCount}</span>`;
                 
                 tooltip.innerHTML = `
-                    <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${vBadgeHtml}</div>
+                    <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${cBadgesHtml}</div>
                     <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val" style="color:#ffd100;">${guildRank}</span></div>
                     <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val">${p.level || 0} / ${raceName}</span></div>
                     <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val" style="color:${cHex}; display:flex; align-items:center;">${specIconHtml}${displaySpecClass}</span></div>
