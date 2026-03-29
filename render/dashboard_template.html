@@ -74,10 +74,7 @@
     <div class="embers-container"></div>
 
     <div class="navbar">
-        <div class="controls-wrapper" style="justify-content: flex-start; gap: 20px;">
-            <a href="#" onclick="returnToHome()" class="nav-btn nav-btn-home" style="margin: 0; width: auto; padding: 8px 18px; font-size: 15px; border-color: rgba(255, 209, 0, 0.4);">
-                <span class="home-text">🏰 Home Dashboard</span>
-            </a>
+        <div class="controls-wrapper">
             <button class="mobile-menu-toggle" aria-label="Toggle Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -102,35 +99,33 @@
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
 
-            <div class="nav-right" style="display: flex; gap: 15px; align-items: center;">
-                <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
-                    <div class="custom-select" id="customCharSelect" tabindex="0">
-                        <span class="selected-value">Select View...</span>
-                        <span style="font-size: 12px; color: #aaa;">▼</span>
+            <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
+                <div class="custom-select" id="customCharSelect" tabindex="0">
+                    <span class="selected-value">Select View...</span>
+                    <span style="font-size: 12px; color: #aaa;">▼</span>
+                </div>
+                <div class="custom-select-options" id="customCharOptions" role="listbox">
+                    <div class="custom-option" data-value="total" role="option">
+                        <span style="font-size:16px;">🌍</span> View Entire Guild
                     </div>
-                    <div class="custom-select-options" id="customCharOptions" role="listbox">
-                        <div class="custom-option" data-value="total" role="option">
-                            <span style="font-size:16px;">🌍</span> View Entire Guild
-                        </div>
-                        <div class="custom-option" data-value="active" role="option">
-                            <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
-                        </div>
-                        <div class="custom-option" data-value="raidready" role="option">
-                            <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
-                        </div>
-                        <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
-                            <span style="font-size:16px;">🌟</span> Hall of Heroes
-                        </div>
+                    <div class="custom-option" data-value="active" role="option">
+                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
+                    </div>
+                    <div class="custom-option" data-value="raidready" role="option">
+                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                    </div>
+                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
+                        <span style="font-size:16px;">🌟</span> Hall of Heroes
                     </div>
                 </div>
-                
-                <div class="search-container">
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
-                    </div>
-                    <div id="search-autocomplete" class="search-autocomplete"></div>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
                 </div>
+                <div id="search-autocomplete" class="search-autocomplete"></div>
             </div>
         </div>
     </div>
@@ -139,12 +134,9 @@
     
     <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
         <div class="main-content">
-            
-            <div style="width: 100%; display: flex; justify-content: flex-start; margin-bottom: 20px;">
-                <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" style="max-width: 280px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));">
-            </div>
-
             <div id="empty-state">
+                
+                <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" class="main-logo">
                 
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
                 <p style="font-family: 'Marcellus', serif; max-width: 600px; margin: 0 auto 20px auto; color: #bbb; font-size: 16px;">
@@ -179,37 +171,66 @@
                 <div id="guild-xp-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 40px auto; background: linear-gradient(135deg, rgba(20, 15, 25, 0.6) 0%, rgba(10, 8, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.4); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,209,0,0.05); animation: fadeInUp 0.5s forwards;">
                     <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(255, 209, 0, 0.3); letter-spacing: 2px; font-size: 24px;">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
-                    <div class="war-effort-grid">
-                        <div class="war-effort-card">
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <h3 style="color: #ffd100; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🛡️ Hero's Journey (XP)</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); letter-spacing: 1px;">
+                                <span>🛡️ Hero's Journey (XP Gained)</span>
+                                <span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
                             </div>
-                            <div class="xp-bar-wrapper"><div id="guild-xp-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-xp-text" class="xp-bar-label"></div></div>
-                            <div style="margin-top: 12px;"><span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
+                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
+                                <div id="guild-xp-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
+                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
+                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 750 Levels Gained</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); letter-spacing: 1px;">
+                                <span>🩸 Blood of the Enemy (HKs)</span>
+                                <span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                            </div>
+                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
+                                <div id="guild-hk-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
+                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
+                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 500 HKs Gained</div>
+                            </div>
                         </div>
                         
-                        <div class="war-effort-card">
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <h3 style="color: #ff4400; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🩸 Blood of the Enemy (PvP)</h3>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); letter-spacing: 1px;">
+                                <span>🐉 Dragon's Hoard (Epic Loot)</span>
+                                <span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
                             </div>
-                            <div class="xp-bar-wrapper"><div id="guild-hk-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-hk-text" class="xp-bar-label"></div></div>
-                            <div style="margin-top: 12px;"><span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
+                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
+                                <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
+                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
+                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 100 Epics Looted</div>
+                            </div>
                         </div>
 
-                        <div class="war-effort-card">
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <h3 style="color: #a335ee; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">🐉 Dragon's Hoard (Loot)</h3>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); letter-spacing: 1px;">
+                                <span>⚡ The Zenith Cohort (Max Level Pushes)</span>
+                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
                             </div>
-                            <div class="xp-bar-wrapper"><div id="guild-loot-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-loot-text" class="xp-bar-label"></div></div>
-                            <div style="margin-top: 12px;"><span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
-                        </div>
-
-                        <div class="war-effort-card">
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <h3 style="color: #3FC7EB; font-family: 'Cinzel'; margin:0; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">⚡ The Zenith Cohort (Lvl 70)</h3>
+                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
+                                <div id="guild-zenith-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
+                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
+                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
+                                <div id="guild-zenith-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 10 New Level 70s</div>
                             </div>
-                            <div class="xp-bar-wrapper"><div id="guild-zenith-fill" class="xp-bar-earned progress-bar-glow" style="width: 0%; transition: width 1.5s ease;"></div><div id="guild-zenith-text" class="xp-bar-label"></div></div>
-                            <div style="margin-top: 12px;"><span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-size: 11px; cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.3);">View Contributors ➔</span></div>
                         </div>
                     </div>
                     
