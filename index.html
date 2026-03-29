@@ -924,10 +924,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T17:38:47.908352Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T17:50:56.862421Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 566, "loot": 431, "levels": 135, "total_roster": 643, "active_roster": 406}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 568, "loot": 433, "levels": 135, "total_roster": 643, "active_roster": 406}]
     </script>
 
     <script>
@@ -976,11 +976,35 @@ function safeParseArray(val) {
     return [];
 }
 
+// --- Helper: Map Raw Badge Names to Thematic Names ---
+function getThematicName(rawName) {
+    if (!rawName) return 'Awarded';
+    const clean = rawName.toLowerCase().trim();
+    const map = {
+        'xp': "Hero's Journey",
+        'loot': "Dragon's Hoard",
+        'hk': "Blood of the Enemy",
+        'zenith': "The Zenith Cohort",
+        'pve_gold': "PvE Ladder (Gold)",
+        'pve_silver': "PvE Ladder (Silver)",
+        'pve_bronze': "PvE Ladder (Bronze)",
+        'pvp_gold': "PvP Ladder (Gold)",
+        'pvp_silver': "PvP Ladder (Silver)",
+        'pvp_bronze': "PvP Ladder (Bronze)"
+    };
+    // Preserve unmapped names (like 'kara' or 'gruul' for vanguards) by capitalizing them
+    return map[clean] || (rawName.charAt(0).toUpperCase() + rawName.slice(1));
+}
+
 // --- Helper: Summarize Badges for Tooltips ---
 function summarizeBadges(badgeArray) {
     const arr = safeParseArray(badgeArray);
     if (arr.length === 0) return "";
-    const counts = arr.reduce((acc, val) => { acc[val] = (acc[val] || 0) + 1; return acc; }, {});
+    const counts = arr.reduce((acc, val) => { 
+        const niceName = getThematicName(val);
+        acc[niceName] = (acc[niceName] || 0) + 1; 
+        return acc; 
+    }, {});
     return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
 }
 
@@ -1542,7 +1566,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             events.forEach(e => {
                 let dStr = e.timestamp.substring(0, 10);
-                const key = `${e.badge_type}_${dStr}`;
+                // Include the specific category so different campaigns aren't squashed
+                const key = `${e.badge_type}_${e.category || ''}_${dStr}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
                     uniqueEvents.push(e);
@@ -1558,7 +1583,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (events.length > 0) {
                 tooltip += ' \n-------------------\n';
-                tooltip += events.map(e => {
+                
+                const lineCounts = {};
+                events.forEach(e => {
                     let dStr = e.timestamp.substring(0, 10);
                     try {
                         let cleanTs = e.timestamp.replace('Z', '+00:00');
@@ -1566,13 +1593,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const dt = new Date(cleanTs);
                         if (!isNaN(dt.getTime())) dStr = dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
                     } catch(err) {}
-                    return `• ${dStr}: ${e.category || 'Awarded'}`;
+                    
+                    const catName = getThematicName(e.category);
+                    const lineStr = `• ${dStr}: ${catName}`;
+                    lineCounts[lineStr] = (lineCounts[lineStr] || 0) + 1;
+                });
+
+                tooltip += Object.entries(lineCounts).map(([line, count]) => {
+                    return count > 1 ? `${line} (x${count})` : line;
                 }).join('\n');
             }
         }
         return tooltip.replace(/"/g, '&quot;');
     }
-
+    
     function renderFullCard(charName) {
         const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
         if (!char) return "";
@@ -2685,10 +2719,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         tempFilteredData.forEach(e => {
             if (e.type === 'badge') {
-                // Ensure a character only gets one timeline row per badge type per day
+                // Ensure a character only gets one timeline row per specific badge category per day
                 let dStr = (e.timestamp || '').substring(0, 10);
                 const charName = (e.character_name || '').toLowerCase();
-                const key = `badge_${charName}_${e.badge_type}_${dStr}`;
+                const key = `badge_${charName}_${e.badge_type}_${e.category || ''}_${dStr}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
                     uniqueEvents.push(e);
