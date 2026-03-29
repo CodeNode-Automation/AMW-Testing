@@ -2508,12 +2508,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             updateDropdownLabel('badges');
             
             // --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
-            
-            // Safety Failsafe: Force the column out of the DOM entirely
-            const leftCol = document.getElementById('concise-left-col');
-            if (leftCol) leftCol.style.display = 'none';
-            
-            // --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
             if (timeline) {
                 timelineTitle.innerHTML = `📜 Hall of Heroes Award History`;
                 const filtersContainer = document.querySelector('.timeline-filters');
