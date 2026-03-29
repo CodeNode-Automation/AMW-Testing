@@ -2451,22 +2451,55 @@ window.addEventListener('DOMContentLoaded', async () => {
         const hash = window.location.hash.substring(1);
         const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
 
+        const wrapper = document.getElementById('concise-content-wrapper');
+        const leftCol = document.getElementById('concise-left-col');
+        const badgesContainer = document.getElementById('concise-class-badges');
+
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
-            document.getElementById('concise-left-col').style.display = 'flex';
+            leftCol.style.display = 'flex';
+            
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            badgesContainer.style.flexWrap = 'wrap';
+            badgesContainer.style.justifyContent = 'center';
+            badgesContainer.style.maxWidth = '900px';
+            if (timeline) timeline.style.width = ''; // Reset timeline width
+            
         } else if (showBadges === 'awards') {
             renderAwardFilterBadges(characters, isRawRoster);
-            document.getElementById('concise-left-col').style.display = 'flex';
+            leftCol.style.display = 'flex';
+            
+            // Stack layout: Bubbles single-file on top, character list stretched wide below
+            wrapper.style.flexDirection = 'column';
+            leftCol.style.maxWidth = '100%';
+            leftCol.style.width = '100%';
+            badgesContainer.style.flexWrap = 'nowrap';
+            badgesContainer.style.justifyContent = 'flex-start';
+            badgesContainer.style.maxWidth = '100%';
+            badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
+            badgesContainer.style.paddingBottom = '10px';
+            
+            // Stretch the activity feed slightly since we have the extra real estate
+            if (timeline) timeline.style.width = '440px'; 
+            
         } else {
-            document.getElementById('concise-class-badges').style.display = 'none';
+            badgesContainer.style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
             
-            // Fix: Completely collapse the left column if no charts and no badges are needed
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            if (timeline) timeline.style.width = ''; // Reset timeline width
+            
             if (!chartViews.includes(hash)) {
-                document.getElementById('concise-left-col').style.display = 'none';
+                leftCol.style.display = 'none';
             } else {
-                document.getElementById('concise-left-col').style.display = 'flex';
+                leftCol.style.display = 'flex';
             }
         }
 
