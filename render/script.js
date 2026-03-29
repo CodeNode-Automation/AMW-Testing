@@ -3015,7 +3015,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000;">${p.name}</span>
                     </div>
                     <div style="display: flex; align-items: center; color: #2ecc71; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:10px; color:#888; margin-left: 3px;">${label}</span>
+                        ▲ ${trend.toLocaleString()} <span style="font-size:10px; color:#888; margin-left: 3px; text-transform:uppercase;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
