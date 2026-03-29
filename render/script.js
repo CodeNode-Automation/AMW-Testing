@@ -3233,6 +3233,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         mvpPveList.innerHTML = pveGloat + generateMvpHtml(topTrendPve, false);
         mvpPvpList.innerHTML = pvpGloat + generateMvpHtml(topTrendPvp, true);
 
+        // Re-bind tooltips to the newly injected MVP elements
+        if (typeof setupTooltips === 'function') {
+            setupTooltips();
+        }
     };
 
     // ==========================================
