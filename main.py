@@ -88,7 +88,7 @@ async def setup_database(session):
     """Ensures database schema exists via HTTP API."""
     print("📂 Ensuring Turso schema exists...")
     schema_queries = [
-        "CREATE TABLE IF NOT EXISTS characters (name TEXT PRIMARY KEY, class TEXT, race TEXT, faction TEXT, guild TEXT, level INTEGER, equipped_item_level INTEGER, xp INTEGER, xp_max INTEGER, health INTEGER, power INTEGER, last_login_ms INTEGER, portrait_url TEXT, active_spec TEXT, honorable_kills INTEGER, power_type TEXT, strength_base INTEGER, strength_effective INTEGER, agility_base INTEGER, agility_effective INTEGER, intellect_base INTEGER, intellect_effective INTEGER, stamina_base INTEGER, stamina_effective INTEGER, melee_crit_value REAL, melee_haste_value REAL, attack_power INTEGER, main_hand_min REAL, main_hand_max REAL, main_hand_speed REAL, main_hand_dps REAL, off_hand_min REAL, off_hand_max REAL, off_hand_speed REAL, off_hand_dps REAL, spell_power INTEGER, spell_penetration INTEGER, spell_crit_value REAL, mana_regen REAL, mana_regen_combat REAL, armor_base INTEGER, armor_effective INTEGER, dodge REAL, parry REAL, block REAL, ranged_crit REAL, ranged_haste REAL, spell_haste REAL, spirit_base INTEGER, spirit_effective INTEGER, defense_base INTEGER, defense_effective INTEGER)",
+        "CREATE TABLE IF NOT EXISTS characters (name TEXT PRIMARY KEY, class TEXT, race TEXT, faction TEXT, guild TEXT, level INTEGER, equipped_item_level INTEGER, xp INTEGER, xp_max INTEGER, health INTEGER, power INTEGER, last_login_ms INTEGER, portrait_url TEXT, active_spec TEXT, honorable_kills INTEGER, power_type TEXT, strength_base INTEGER, strength_effective INTEGER, agility_base INTEGER, agility_effective INTEGER, intellect_base INTEGER, intellect_effective INTEGER, stamina_base INTEGER, stamina_effective INTEGER, melee_crit_value REAL, melee_haste_value REAL, attack_power INTEGER, main_hand_min REAL, main_hand_max REAL, main_hand_speed REAL, main_hand_dps REAL, off_hand_min REAL, off_hand_max REAL, off_hand_speed REAL, off_hand_dps REAL, spell_power INTEGER, spell_penetration INTEGER, spell_crit_value REAL, mana_regen REAL, mana_regen_combat REAL, armor_base INTEGER, armor_effective INTEGER, dodge REAL, parry REAL, block REAL, ranged_crit REAL, ranged_haste REAL, spell_haste REAL, spirit_base INTEGER, spirit_effective INTEGER, defense_base INTEGER, defense_effective INTEGER, vanguard_badges TEXT, campaign_badges TEXT, pve_champ_count INTEGER, pvp_champ_count INTEGER)",
         "CREATE TABLE IF NOT EXISTS gear (character_name TEXT, slot TEXT, item_id INTEGER, name TEXT, quality TEXT, icon_data TEXT, tooltip_params TEXT, last_detected TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (character_name, slot, item_id))",
         "CREATE TABLE IF NOT EXISTS timeline (timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, character_name TEXT, class TEXT, type TEXT, item_id INTEGER, item_name TEXT, item_quality TEXT, item_icon TEXT, level INTEGER)",
         "CREATE INDEX IF NOT EXISTS idx_timeline_timestamp ON timeline (timestamp DESC)",
@@ -290,73 +290,24 @@ async def main_async():
         realm_data, new_gt_row, new_daily_stats_row = process_global_trends(roster_data, raw_guild_roster, realm_data, global_trend_record)
 
         print("\n===========================================")
-        print("💾 Compiling Batch Payload for Turso...")
-        batch_stmts = []
-        
-        # Create a lookup for original character rows to prevent redundant writes
-        orig_chars = {r['name']: r for r in char_rows}
+        print("💾 Phase 1: Pushing Gear, Timeline, and History to Turso...")
+        batch_stmts_initial = []
 
+        # Only write gear if it is explicitly marked as new or changed
         for char_name, data in history_data.items():
-            orig = orig_chars.get(char_name, {})
-            
-            # Only write to characters table if stats actually changed or it is a new character
-            if (orig.get('equipped_item_level') != data.get('equipped_item_level') or 
-                orig.get('level') != data.get('level') or
-                orig.get('last_login_ms') != data.get('last_login_ms') or 
-                orig.get('honorable_kills') != data.get('honorable_kills') or
-                orig.get('active_spec') != data.get('active_spec') or
-                not orig):
-                
-                batch_stmts.append({
-                    "q": """
-                        INSERT OR REPLACE INTO characters 
-                        (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills,
-                        health, power, power_type, strength_base, strength_effective, agility_base, agility_effective, 
-                        intellect_base, intellect_effective, stamina_base, stamina_effective, melee_crit_value, 
-                        melee_haste_value, attack_power, main_hand_min, main_hand_max, main_hand_speed, main_hand_dps, 
-                        off_hand_min, off_hand_max, off_hand_speed, off_hand_dps, spell_power, spell_penetration, 
-                        spell_crit_value, mana_regen, mana_regen_combat, armor_base, armor_effective, dodge, parry, 
-                        block, ranged_crit, ranged_haste, spell_haste, spirit_base, spirit_effective, defense_base, defense_effective) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    "params": [
-                        char_name, data.get('level', 0), data.get('class'), data.get('race'), data.get('faction'),
-                        data.get('equipped_item_level'), data.get('last_login_ms'), data.get('portrait_url'),
-                        data.get('active_spec'), data.get('honorable_kills'),
-                        
-                        data.get('health'), data.get('power'), data.get('power_type'),
-                        data.get('strength_base'), data.get('strength_effective'),
-                        data.get('agility_base'), data.get('agility_effective'),
-                        data.get('intellect_base'), data.get('intellect_effective'),
-                        data.get('stamina_base'), data.get('stamina_effective'),
-                        data.get('melee_crit_value'), data.get('melee_haste_value'),
-                        data.get('attack_power'),
-                        data.get('main_hand_min'), data.get('main_hand_max'), data.get('main_hand_speed'), data.get('main_hand_dps'),
-                        data.get('off_hand_min'), data.get('off_hand_max'), data.get('off_hand_speed'), data.get('off_hand_dps'),
-                        data.get('spell_power'), data.get('spell_penetration'), data.get('spell_crit_value'),
-                        data.get('mana_regen'), data.get('mana_regen_combat'),
-                        data.get('armor_base'), data.get('armor_effective'),
-                        data.get('dodge'), data.get('parry'), data.get('block'),
-                        data.get('ranged_crit'), data.get('ranged_haste'), data.get('spell_haste'),
-                        data.get('spirit_base'), data.get('spirit_effective'),
-                        data.get('defense_base'), data.get('defense_effective')
-                    ]
-                })
-                
-            # Only write gear if it is explicitly marked as new or changed
             for slot, item in data.items():
                 if isinstance(item, dict) and 'item_id' in item and item.get('is_new'):
-                    batch_stmts.append({
+                    batch_stmts_initial.append({
                         "q": "INSERT OR REPLACE INTO gear (character_name, slot, item_id, name, quality, icon_data, tooltip_params) VALUES (?, ?, ?, ?, ?, ?, ?)",
                         "params": [char_name, slot, item.get('item_id'), item.get('name'), item.get('quality'), item.get('icon_data'), item.get('tooltip_params')]
                     })
-                    
+
         for ev in timeline_data_new:
             char_name = ev.get('character')
             if ev.get('type') == 'level_up':
                 level = ev.get('level')
                 if f"{char_name}_level_{level}" not in known_timeline:
-                    batch_stmts.append({
+                    batch_stmts_initial.append({
                         "q": "INSERT INTO timeline (timestamp, character_name, class, type, level) VALUES (?, ?, ?, ?, ?)",
                         "params": [ev.get('timestamp'), char_name, ev.get('class'), 'level_up', level]
                     })
@@ -365,14 +316,14 @@ async def main_async():
                 it = ev.get('item', {})
                 item_id = it.get('item_id')
                 if f"{char_name}_item_{item_id}" not in known_timeline:
-                    batch_stmts.append({
+                    batch_stmts_initial.append({
                         "q": "INSERT INTO timeline (timestamp, character_name, class, type, item_id, item_name, item_quality, item_icon) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         "params": [ev.get('timestamp'), char_name, ev.get('class'), 'item', item_id, it.get('name'), it.get('quality'), it.get('icon_data')]
                     })
                     known_timeline.add(f"{char_name}_item_{item_id}")
 
         for row in char_history_inserts:
-            batch_stmts.append({
+            batch_stmts_initial.append({
                 "q": """
                     INSERT INTO char_history (char_name, record_date, ilvl, hks) 
                     VALUES (?, ?, ?, ?) 
@@ -382,48 +333,44 @@ async def main_async():
                 """,
                 "params": list(row)
             })
-            
-        batch_stmts.append({
+
+        batch_stmts_initial.append({
             "q": "INSERT OR REPLACE INTO global_trends (id, last_total, trend_total, last_active, trend_active, last_ready, trend_ready) VALUES (?, ?, ?, ?, ?, ?, ?)",
             "params": list(new_gt_row)
         })
-        
-        batch_stmts.append({
+
+        batch_stmts_initial.append({
             "q": "INSERT OR REPLACE INTO daily_roster_stats (date, total_roster, active_roster, avg_ilvl_70, total_hks) VALUES (?, ?, ?, ?, ?)",
             "params": list(new_daily_stats_row)
         })
 
         # Automatically delete characters and gear for players who left the guild
         if roster_names:
-            # Calculate who is in our database but no longer in the Blizzard roster
             departed_chars = [char for char in history_data.keys() if char not in roster_names]
-            
             if departed_chars:
-                # Title-case the names just to make the terminal printout look nice
                 formatted_names = [name.title() for name in departed_chars]
                 print(f"🧹 Removing {len(departed_chars)} departed guild member(s): {', '.join(formatted_names)}")
 
             placeholders = ",".join(["?"] * len(roster_names))
-            batch_stmts.append({
+            batch_stmts_initial.append({
                 "q": f"DELETE FROM characters WHERE name NOT IN ({placeholders})",
                 "params": roster_names
             })
-            batch_stmts.append({
+            batch_stmts_initial.append({
                 "q": f"DELETE FROM gear WHERE character_name NOT IN ({placeholders})",
                 "params": roster_names
             })
 
-        print(f"☁️ Pushing {len(batch_stmts)} statements to Turso via HTTP API...")
-        await push_turso_batch(session, batch_stmts)
-        print("✅ Final push to Turso complete!")
+        if batch_stmts_initial:
+            await push_turso_batch(session, batch_stmts_initial)
 
-        print("🌐 Generating final HTML Dashboard...")
+
+        print("🌐 Fetching updated timeline for War Efforts...")
         dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
-        
-        # --- NEW: DECOUPLED WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
+
+        # --- DECOUPLED WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
         we_file = "asset/war_effort.json"
         
-        berlin_tz = ZoneInfo("Europe/Berlin")
         now_berlin = datetime.now(berlin_tz)
         days_since_tuesday = (now_berlin.weekday() - 1) % 7
         last_reset_berlin = now_berlin - timedelta(days=days_since_tuesday)
@@ -447,7 +394,7 @@ async def main_async():
             await fetch_turso(session, "CREATE TABLE IF NOT EXISTS reigning_champs_history (week_anchor TEXT, category TEXT, champion TEXT, score INTEGER, PRIMARY KEY(week_anchor, category))")
         except Exception: pass
 
-        # --- NEW: THE "DIFF CHECKER" TO PREVENT WRITE BLEED ---
+        # THE "DIFF CHECKER" TO PREVENT WRITE BLEED
         db_we_state, db_mvp_state = {}, {}
         try:
             we_rows = await fetch_turso(session, f"SELECT category, vanguards, participants FROM war_effort_history WHERE week_anchor='{week_anchor}'")
@@ -480,7 +427,6 @@ async def main_async():
             if old.get('champion') != champ or old.get('score') != score:
                 try: await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', '{category}', '{champ}', {score})")
                 except Exception: pass
-        # --- END DIFF CHECKER ---
 
         # 1. XP Logic
         xp_events = [e for e in dashboard_feed if e.get('type') == 'level_up' and str(e.get('timestamp', '')).replace('T', ' ') >= last_reset_iso]
@@ -594,36 +540,10 @@ async def main_async():
         with open(we_file, "w", encoding="utf-8") as f:
             json.dump(we_data, f, ensure_ascii=False)
 
-       # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
+
+        # --- AGGREGATE HISTORICAL BADGES FROM TURSO ---
         print("🏅 Calculating Cumulative War Effort & MVP Badges...")
         try:
-            await fetch_turso(session, "CREATE TABLE IF NOT EXISTS reigning_champs_history (week_anchor TEXT, category TEXT, champion TEXT, score INTEGER, PRIMARY KEY(week_anchor, category))")
-
-            # --- NEW: SAVE CURRENT REIGNING CHAMPS TO TURSO ---
-            pve_mvp, pve_score = "Unknown", 0
-            pvp_mvp, pvp_score = "Unknown", 0
-            
-            for r in roster_data:
-                p = r.get("profile", {})
-                if not p: continue
-                
-                pve_val = p.get("trend_pve") or p.get("trend_ilvl") or 0
-                pvp_val = p.get("trend_pvp") or p.get("trend_hks") or 0
-                
-                if pve_val > pve_score:
-                    pve_score = pve_val
-                    pve_mvp = p.get("name", "Unknown").lower()
-                    
-                if pvp_val > pvp_score:
-                    pvp_score = pvp_val
-                    pvp_mvp = p.get("name", "Unknown").lower()
-                    
-            if pve_score > 0:
-                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', 'pve', '{pve_mvp}', {pve_score})")
-            if pvp_score > 0:
-                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{week_anchor}', 'pvp', '{pvp_mvp}', {pvp_score})")
-            # --- END NEW MVP LOGIC ---
-
             historical_data = await fetch_turso(session, "SELECT category, vanguards, participants FROM war_effort_history")
             vanguard_tallies, campaign_tallies = {}, {}
             cat_map = {"xp": "XP", "hk": "HKs", "loot": "Loot", "zenith": "Zenith"}
@@ -666,9 +586,83 @@ async def main_async():
                 r["profile"]["pve_champ_count"] = pve_champs.get(c_name, 0)
                 r["profile"]["pvp_champ_count"] = pvp_champs.get(c_name, 0)
                 
+                # Critical Fix: Save to history_data so it makes it to the database!
+                if c_name in history_data:
+                    history_data[c_name]["vanguard_badges"] = r["profile"]["vanguard_badges"]
+                    history_data[c_name]["campaign_badges"] = r["profile"]["campaign_badges"]
+                    history_data[c_name]["pve_champ_count"] = r["profile"]["pve_champ_count"]
+                    history_data[c_name]["pvp_champ_count"] = r["profile"]["pvp_champ_count"]
+                
         except Exception as e:
             print(f"⚠️ Failed to aggregate badges from Turso: {e}")
-        # --- END TIME-LOCKING LOGIC ---
+
+        print("\n===========================================")
+        print("💾 Phase 2: Pushing Character Profiles (with Badges) to Turso...")
+        batch_stmts_chars = []
+        
+        orig_chars = {r['name']: r for r in char_rows}
+
+        for char_name, data in history_data.items():
+            orig = orig_chars.get(char_name, {})
+            
+            v_badges_json = json.dumps(data.get('vanguard_badges', []))
+            c_badges_json = json.dumps(data.get('campaign_badges', []))
+            
+            # Check for changes, including the new badge arrays!
+            if (orig.get('equipped_item_level') != data.get('equipped_item_level') or 
+                orig.get('level') != data.get('level') or
+                orig.get('last_login_ms') != data.get('last_login_ms') or 
+                orig.get('honorable_kills') != data.get('honorable_kills') or
+                orig.get('active_spec') != data.get('active_spec') or
+                str(orig.get('vanguard_badges') or '[]') != v_badges_json or
+                str(orig.get('campaign_badges') or '[]') != c_badges_json or
+                orig.get('pve_champ_count') != data.get('pve_champ_count', 0) or
+                orig.get('pvp_champ_count') != data.get('pvp_champ_count', 0) or
+                not orig):
+                
+                batch_stmts_chars.append({
+                    "q": """
+                        INSERT OR REPLACE INTO characters 
+                        (name, level, class, race, faction, equipped_item_level, last_login_ms, portrait_url, active_spec, honorable_kills,
+                        health, power, power_type, strength_base, strength_effective, agility_base, agility_effective, 
+                        intellect_base, intellect_effective, stamina_base, stamina_effective, melee_crit_value, 
+                        melee_haste_value, attack_power, main_hand_min, main_hand_max, main_hand_speed, main_hand_dps, 
+                        off_hand_min, off_hand_max, off_hand_speed, off_hand_dps, spell_power, spell_penetration, 
+                        spell_crit_value, mana_regen, mana_regen_combat, armor_base, armor_effective, dodge, parry, 
+                        block, ranged_crit, ranged_haste, spell_haste, spirit_base, spirit_effective, defense_base, defense_effective,
+                        vanguard_badges, campaign_badges, pve_champ_count, pvp_champ_count) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    "params": [
+                        char_name, data.get('level', 0), data.get('class'), data.get('race'), data.get('faction'),
+                        data.get('equipped_item_level'), data.get('last_login_ms'), data.get('portrait_url'),
+                        data.get('active_spec'), data.get('honorable_kills'),
+                        
+                        data.get('health'), data.get('power'), data.get('power_type'),
+                        data.get('strength_base'), data.get('strength_effective'),
+                        data.get('agility_base'), data.get('agility_effective'),
+                        data.get('intellect_base'), data.get('intellect_effective'),
+                        data.get('stamina_base'), data.get('stamina_effective'),
+                        data.get('melee_crit_value'), data.get('melee_haste_value'),
+                        data.get('attack_power'),
+                        data.get('main_hand_min'), data.get('main_hand_max'), data.get('main_hand_speed'), data.get('main_hand_dps'),
+                        data.get('off_hand_min'), data.get('off_hand_max'), data.get('off_hand_speed'), data.get('off_hand_dps'),
+                        data.get('spell_power'), data.get('spell_penetration'), data.get('spell_crit_value'),
+                        data.get('mana_regen'), data.get('mana_regen_combat'),
+                        data.get('armor_base'), data.get('armor_effective'),
+                        data.get('dodge'), data.get('parry'), data.get('block'),
+                        data.get('ranged_crit'), data.get('ranged_haste'), data.get('spell_haste'),
+                        data.get('spirit_base'), data.get('spirit_effective'),
+                        data.get('defense_base'), data.get('defense_effective'),
+                        
+                        v_badges_json, c_badges_json,
+                        data.get('pve_champ_count', 0), data.get('pvp_champ_count', 0)
+                    ]
+                })
+
+        if batch_stmts_chars:
+            await push_turso_batch(session, batch_stmts_chars)
+        print("✅ Final push to Turso complete!")
 
         # Dump the heavy timeline payload to an external JSON file
         with open("asset/timeline.json", "w", encoding="utf-8") as f:
