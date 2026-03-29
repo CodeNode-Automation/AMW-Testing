@@ -605,8 +605,26 @@ async def main_async():
         for char_name, data in history_data.items():
             orig = orig_chars.get(char_name, {})
             
-            v_badges_json = json.dumps(data.get('vanguard_badges', []))
-            c_badges_json = json.dumps(data.get('campaign_badges', []))
+            # 1. Grab badges from the newly aggregated dictionary (Default to empty array)
+            v_badges = vanguard_tallies.get(char_name.lower(), [])
+            c_badges = campaign_tallies.get(char_name.lower(), [])
+            pve_count = pve_champs.get(char_name.lower(), 0)
+            pvp_count = pvp_champs.get(char_name.lower(), 0)
+            
+            v_badges_json = json.dumps(v_badges)
+            c_badges_json = json.dumps(c_badges)
+            
+            # Ensure the data object has them so they get passed to HTML generation
+            data['vanguard_badges'] = v_badges
+            data['campaign_badges'] = c_badges
+            data['pve_champ_count'] = pve_count
+            data['pvp_champ_count'] = pvp_count
+            
+            # Safely handle JSON strings from Turso to avoid false positive changes
+            orig_v_badges = orig.get('vanguard_badges')
+            orig_c_badges = orig.get('campaign_badges')
+            if not orig_v_badges or orig_v_badges == 'None': orig_v_badges = '[]'
+            if not orig_c_badges or orig_c_badges == 'None': orig_c_badges = '[]'
             
             # Check for changes, including the new badge arrays!
             if (orig.get('equipped_item_level') != data.get('equipped_item_level') or 
@@ -614,10 +632,10 @@ async def main_async():
                 orig.get('last_login_ms') != data.get('last_login_ms') or 
                 orig.get('honorable_kills') != data.get('honorable_kills') or
                 orig.get('active_spec') != data.get('active_spec') or
-                str(orig.get('vanguard_badges') or '[]') != v_badges_json or
-                str(orig.get('campaign_badges') or '[]') != c_badges_json or
-                orig.get('pve_champ_count') != data.get('pve_champ_count', 0) or
-                orig.get('pvp_champ_count') != data.get('pvp_champ_count', 0) or
+                orig_v_badges != v_badges_json or
+                orig_c_badges != c_badges_json or
+                orig.get('pve_champ_count') != pve_count or
+                orig.get('pvp_champ_count') != pvp_count or
                 not orig):
                 
                 batch_stmts_chars.append({
@@ -656,7 +674,7 @@ async def main_async():
                         data.get('defense_base'), data.get('defense_effective'),
                         
                         v_badges_json, c_badges_json,
-                        data.get('pve_champ_count', 0), data.get('pvp_champ_count', 0)
+                        pve_count, pvp_count
                     ]
                 })
 
