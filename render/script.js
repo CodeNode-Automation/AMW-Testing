@@ -1154,9 +1154,19 @@ window.addEventListener('DOMContentLoaded', async () => {
             return 0;
         });
 
-        // Add Sorting Dropdown UI to the top of the list (Hide for ALL specific War Effort pages)
+        // Add Sorting Dropdown UI to the top of the list
         let sortUI = '';
-        if (!hashUrl.startsWith('war-effort-')) {
+        if (hashUrl === 'badges') {
+            sortUI = `
+                <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
+                    <span style="color: #888; font-size: 14px;">Sort By:</span>
+                    <select id="concise-sort-dropdown" class="sort-select">
+                        <option value="badges" ${currentSortMethod === 'badges' ? 'selected' : ''}>Total Badges</option>
+                        <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
+                    </select>
+                </div>
+            `;
+        } else if (!hashUrl.startsWith('war-effort-')) {
             sortUI = `
                 <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
                     <span style="color: #888; font-size: 14px;">Sort By:</span>
@@ -1164,7 +1174,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                         <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
                         <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
                         <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
-                        <option value="badges" ${currentSortMethod === 'badges' ? 'selected' : ''}>Total Badges</option>
                         <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
                     </select>
                 </div>
@@ -1458,61 +1467,65 @@ window.addEventListener('DOMContentLoaded', async () => {
     function applyTimelineFilters() {
         if (!timeline) return;
 
-        let visibleCount = 0;
         const now = Date.now();
-        const feedContainer = document.querySelector('.timeline-feed');
+        
+        // 1. Filter the raw data array directly instead of the DOM elements
+        filteredTimelineData = timelineData.filter(event => {
+            const charName = (event.character_name || '').toLowerCase();
+            const eventType = event.type;
+            const timestampStr = event.timestamp || '';
+            const itemQuality = event.item_quality || 'COMMON';
 
-        document.querySelectorAll('#timeline .concise-item').forEach(el => {
-            const charName = el.getAttribute('data-char');
-            const eventType = el.getAttribute('data-event-type');
-            const timestampStr = el.getAttribute('data-timestamp');
-            const itemQuality = el.getAttribute('data-quality'); // NEW: Grab the quality tag!
-            
-            let show = true;
-            
-            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) show = false;
-            
-            // --- NEW: Rarity Filtering Logic ---
-            if (tlTypeFilter === 'rare_plus') {
-                // Only show items
-                if (eventType !== 'item') show = false; 
+            // Filter by Character
+            if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
+
+            // --- NEW: Badge Filter Logic ---
+            if (tlTypeFilter.startsWith('badge_')) {
+                if (eventType !== 'badge') return false; // Show ONLY badges
+                if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
+                if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
+                if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
+            } else {
+                if (eventType === 'badge') return false; // NEVER show badges in normal feeds
                 
-                // Hide low quality items
-                if (eventType === 'item' && (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON')) show = false;
-            } else if (tlTypeFilter === 'epic') {
-                // If they click Epics+, show ONLY Epic OR Legendary items
-                if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) show = false;
-            } else if (tlTypeFilter === 'legendary') {
-                // If they click Legendaries, show ONLY Orange items
-                if (eventType !== 'item' || itemQuality !== 'LEGENDARY') show = false;
-            } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
-                // Normal "Loot" or "Levels" logic
-                show = false;
+                // Normal Rarity/Type filters
+                if (tlTypeFilter === 'rare_plus') {
+                    if (eventType !== 'item') return false;
+                    if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
+                } else if (tlTypeFilter === 'epic') {
+                    if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
+                } else if (tlTypeFilter === 'legendary') {
+                    if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
+                } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
+                    return false;
+                }
             }
 
+            // Filter by Date (Hours)
             if (tlSpecificDate && timestampStr) {
-                if (!timestampStr.startsWith(tlSpecificDate)) {
-                    show = false;
-                }
+                if (!timestampStr.startsWith(tlSpecificDate)) return false;
             } else if (tlDateFilter !== 'all' && timestampStr) {
                 let cleanTs = timestampStr.replace('Z', '+00:00');
                 if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                
                 const eventDate = new Date(cleanTs).getTime();
                 if (!isNaN(eventDate)) {
-                    // Calculate based on Hours instead of Days
                     const hoursMs = parseInt(tlDateFilter) * 60 * 60 * 1000;
-                    if ((now - eventDate) > hoursMs) show = false;
+                    if ((now - eventDate) > hoursMs) return false;
                 }
             }
 
-            el.style.display = show ? 'flex' : 'none';
-            if (show) visibleCount++;
+            return true;
         });
-        
+
+        // 2. Clear the old feed and reset the counter
+        const container = document.getElementById('timeline-feed-container');
+        if (container) container.innerHTML = '';
+        currentTimelineIndex = 0;
+
+        // 3. Handle empty states or render the first batch
         let noResultsMsg = document.getElementById('tl-no-results');
-        if (visibleCount === 0) {
-            feedContainer.style.display = 'none';
+        if (filteredTimelineData.length === 0) {
+            if (container) container.style.display = 'none';
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('div');
                 noResultsMsg.id = 'tl-no-results';
@@ -1520,14 +1533,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 noResultsMsg.style.textAlign = 'center';
                 noResultsMsg.style.padding = '20px';
                 noResultsMsg.style.fontStyle = 'italic';
-                noResultsMsg.innerText = 'No high-end loot found for these filters yet... keep raiding!';
-                timeline.appendChild(noResultsMsg);
+                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
+                document.getElementById('timeline').appendChild(noResultsMsg);
             } else {
                 noResultsMsg.style.display = 'block';
             }
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
-            feedContainer.style.display = 'flex';
+            if (container) container.style.display = 'flex';
             if (noResultsMsg) noResultsMsg.style.display = 'none';
+            renderTimelineBatch();
         }
     }
 
@@ -2252,9 +2268,43 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const pvpCount = parseInt(p.pvp_champ_count || c.pvp_champ_count) || 0;
                 return (vCount + cCount + pveCount + pvpCount) > 0; // Must have at least 1 badge
             });
-            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, true, 'badges');
+            
+            // 1. The 4th parameter 'false' disables rendering the badge UI entirely
+            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, false, 'badges');
             updateDropdownLabel('badges');
             
+            // 2. EXPLICITLY HIDE THE LEFT COLUMN (Class Bubbles)
+            const leftCol = document.getElementById('concise-left-col');
+            if (leftCol) leftCol.style.display = 'none';
+            
+            // 3. --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
+            if (timeline) {
+                timelineTitle.innerHTML = `📜 Hall of Heroes Award History`;
+                const filtersContainer = document.querySelector('.timeline-filters');
+                if (filtersContainer) {
+                    filtersContainer.innerHTML = `
+                        <div class="filter-group">
+                            <button class="tl-btn active" style="color: #ffd100; border-color: rgba(255, 209, 0, 0.5);" data-type="badge_all">All Badges</button>
+                            <button class="tl-btn" style="color: #ff8000; border-color: rgba(255, 128, 0, 0.5);" data-type="badge_mvp">MVP Champs</button>
+                            <button class="tl-btn" style="color: #00ffcc; border-color: rgba(0, 255, 204, 0.5);" data-type="badge_vanguard">Vanguards</button>
+                            <button class="tl-btn" style="color: #aaa; border-color: rgba(170, 170, 170, 0.5);" data-type="badge_campaign">Campaigns</button>
+                        </div>
+                    `;
+                    document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            tlTypeFilter = e.target.getAttribute('data-type');
+                            applyTimelineFilters();
+                        });
+                    });
+                }
+                tlTypeFilter = 'badge_all';
+                tlDateFilter = 'all'; // Ignore time limits for history
+                window.currentFilteredChars = null; 
+                applyTimelineFilters();
+            }
+
         } else if (hash === 'active') {
             const activeRoster = rosterData.filter(c => {
                 const lastLogin = c.profile && c.profile.last_login_timestamp ? c.profile.last_login_timestamp : 0;
