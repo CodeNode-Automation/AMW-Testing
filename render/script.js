@@ -541,34 +541,38 @@ window.addEventListener('DOMContentLoaded', async () => {
             const scoreColor = isPvp ? '#ff4400' : '#ff8000';
             
             const trend = isPvp ? (p.trend_pvp || 0) : (p.trend_pve || p.trend_ilvl || 0);
-            let trendHTML = '<span style="color: #555; font-size: 11px; margin-left: 6px;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 11px; margin-left: 6px;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 11px; margin-left: 6px;">▼ ${Math.abs(trend)}</span>`;
+            let trendHTML = '<span style="color: #555; font-size: 11px; margin-left: 4px;">-</span>';
+            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 11px; margin-left: 4px;">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 11px; margin-left: 4px;">▼ ${Math.abs(trend)}</span>`;
 
             const rank = index + 1;
             const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
             const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
 
+            // Using flex-shrink: 0 and precise line-heights to perfectly fit the 80px CSS boundary
             return `
-            <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+            <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex}; padding: 25px 5px 5px 5px;">
                 <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                 <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                <div style="color: ${scoreColor}; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; z-index: 2; display: flex; align-items: center; justify-content: center;">
-                    ${score} <span style="font-size:9px; color:#888; text-transform:uppercase; margin-left: 3px;">${label}</span> ${trendHTML}
+                <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0;">${p.name}</div>
+                <div style="color: ${scoreColor}; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; flex-shrink: 0; white-space: nowrap; line-height: 1.2;">
+                    ${score} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
+                </div>
+                <div style="z-index: 2; flex-shrink: 0; line-height: 1; margin-top: 2px;">
+                    ${trendHTML}
                 </div>
             </div>`;
         }).join('');
 
-        return `<div class="mvp-podium-container" style="margin-top: 25px; margin-bottom: 20px;">${podiumBlocks}</div>`;
+        return `<div class="mvp-podium-container" style="margin-top: 35px; margin-bottom: 20px;">${podiumBlocks}</div>`;
     }
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
-        // Render Podium for Ranks 1-3
         let pveHTML = generateLeaderboardPodium(topPve.slice(0, 3), false);
         
-        // Render List for Ranks 4-25
+        // Wrap the rows in a stacked flex layout to prevent overlap issues
+        pveHTML += `<div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">`;
         topPve.slice(3).forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -602,6 +606,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>`;
         });
+        pveHTML += `</div>`;
         pveContainer.innerHTML = pveHTML;
     }
 
@@ -615,10 +620,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPvp.length > 0 && pvpContainer) {
         pvpWrapper.style.display = 'block';
-        // Render Podium for Ranks 1-3
         let pvpHTML = generateLeaderboardPodium(topPvp.slice(0, 3), true);
         
-        // Render List for Ranks 4-25
+        // Wrap the rows in a stacked flex layout to prevent overlap issues
+        pvpHTML += `<div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">`;
         topPvp.slice(3).forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -653,6 +658,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>`;
         });
+        pvpHTML += `</div>`;
         pvpContainer.innerHTML = pvpHTML;
     }
     
