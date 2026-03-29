@@ -43,11 +43,35 @@ function safeParseArray(val) {
     return [];
 }
 
+// --- Helper: Map Raw Badge Names to Thematic Names ---
+function getThematicName(rawName) {
+    if (!rawName) return 'Awarded';
+    const clean = rawName.toLowerCase().trim();
+    const map = {
+        'xp': "Hero's Journey",
+        'loot': "Dragon's Hoard",
+        'hk': "Blood of the Enemy",
+        'zenith': "The Zenith Cohort",
+        'pve_gold': "PvE Ladder (Gold)",
+        'pve_silver': "PvE Ladder (Silver)",
+        'pve_bronze': "PvE Ladder (Bronze)",
+        'pvp_gold': "PvP Ladder (Gold)",
+        'pvp_silver': "PvP Ladder (Silver)",
+        'pvp_bronze': "PvP Ladder (Bronze)"
+    };
+    // Preserve unmapped names (like 'kara' or 'gruul' for vanguards) by capitalizing them
+    return map[clean] || (rawName.charAt(0).toUpperCase() + rawName.slice(1));
+}
+
 // --- Helper: Summarize Badges for Tooltips ---
 function summarizeBadges(badgeArray) {
     const arr = safeParseArray(badgeArray);
     if (arr.length === 0) return "";
-    const counts = arr.reduce((acc, val) => { acc[val] = (acc[val] || 0) + 1; return acc; }, {});
+    const counts = arr.reduce((acc, val) => { 
+        const niceName = getThematicName(val);
+        acc[niceName] = (acc[niceName] || 0) + 1; 
+        return acc; 
+    }, {});
     return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
 }
 
@@ -609,7 +633,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             events.forEach(e => {
                 let dStr = e.timestamp.substring(0, 10);
-                const key = `${e.badge_type}_${dStr}`;
+                // Include the specific category so different campaigns aren't squashed
+                const key = `${e.badge_type}_${e.category || ''}_${dStr}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
                     uniqueEvents.push(e);
@@ -625,7 +650,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (events.length > 0) {
                 tooltip += ' \n-------------------\n';
-                tooltip += events.map(e => {
+                
+                const lineCounts = {};
+                events.forEach(e => {
                     let dStr = e.timestamp.substring(0, 10);
                     try {
                         let cleanTs = e.timestamp.replace('Z', '+00:00');
@@ -633,13 +660,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const dt = new Date(cleanTs);
                         if (!isNaN(dt.getTime())) dStr = dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
                     } catch(err) {}
-                    return `• ${dStr}: ${e.category || 'Awarded'}`;
+                    
+                    const catName = getThematicName(e.category);
+                    const lineStr = `• ${dStr}: ${catName}`;
+                    lineCounts[lineStr] = (lineCounts[lineStr] || 0) + 1;
+                });
+
+                tooltip += Object.entries(lineCounts).map(([line, count]) => {
+                    return count > 1 ? `${line} (x${count})` : line;
                 }).join('\n');
             }
         }
         return tooltip.replace(/"/g, '&quot;');
     }
-
+    
     function renderFullCard(charName) {
         const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
         if (!char) return "";
@@ -1752,10 +1786,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         tempFilteredData.forEach(e => {
             if (e.type === 'badge') {
-                // Ensure a character only gets one timeline row per badge type per day
+                // Ensure a character only gets one timeline row per specific badge category per day
                 let dStr = (e.timestamp || '').substring(0, 10);
                 const charName = (e.character_name || '').toLowerCase();
-                const key = `badge_${charName}_${e.badge_type}_${dStr}`;
+                const key = `badge_${charName}_${e.badge_type}_${e.category || ''}_${dStr}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
                     uniqueEvents.push(e);
