@@ -28,10 +28,26 @@ const TBC_XP = {
     60: 494000, 61: 517000, 62: 550000, 63: 587000, 64: 632000, 65: 684000, 66: 745000, 67: 815000, 68: 895000, 69: 985000
 };
 
+// --- Helper: Safely Parse Arrays ---
+function safeParseArray(val) {
+    if (!val) return [];
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') {
+        try {
+            const parsed = JSON.parse(val);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+    return [];
+}
+
 // --- Helper: Summarize Badges for Tooltips ---
 function summarizeBadges(badgeArray) {
-    if (!badgeArray || badgeArray.length === 0) return "";
-    const counts = badgeArray.reduce((acc, val) => { acc[val] = (acc[val] || 0) + 1; return acc; }, {});
+    const arr = safeParseArray(badgeArray);
+    if (arr.length === 0) return "";
+    const counts = arr.reduce((acc, val) => { acc[val] = (acc[val] || 0) + 1; return acc; }, {});
     return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
 }
 
@@ -777,12 +793,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // --- NEW: Grab the Guild Rank & Badges ---
         const guildRank = p.guild_rank || 'Member';
-        const vBadges = p.vanguard_badges || [];
-        const cBadges = p.campaign_badges || [];
+        const vBadges = safeParseArray(p.vanguard_badges);
+        const cBadges = safeParseArray(p.campaign_badges);
         const vCount = vBadges.length;
         const cCount = cBadges.length;
-        const pveChamp = p.pve_champ_count || 0;
-        const pvpChamp = p.pvp_champ_count || 0;
+        const pveChamp = parseInt(p.pve_champ_count) || 0;
+        const pvpChamp = parseInt(p.pvp_champ_count) || 0;
 
         const vTooltip = summarizeBadges(vBadges);
         const cTooltip = summarizeBadges(cBadges);
@@ -1166,12 +1182,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 isClickable = true;
                 
                 // Add tiny MVP and Vanguard stars
-                const vBadges = p.vanguard_badges || [];
-                const cBadges = p.campaign_badges || [];
+                const vBadges = safeParseArray(p.vanguard_badges);
+                const cBadges = safeParseArray(p.campaign_badges);
                 const vCount = vBadges.length;
                 const cCount = cBadges.length;
-                const pveChamp = p.pve_champ_count || 0;
-                const pvpChamp = p.pvp_champ_count || 0;
+                const pveChamp = parseInt(p.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count) || 0;
                 
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
@@ -1385,12 +1401,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 // --- NEW: Grab the Guild Rank & MVP Badges ---
                 const guildRank = p.guild_rank || 'Member';
-                const vBadges = p.vanguard_badges || [];
-                const cBadges = p.campaign_badges || [];
+                const vBadges = safeParseArray(p.vanguard_badges);
+                const cBadges = safeParseArray(p.campaign_badges);
                 const vCount = vBadges.length;
                 const cCount = cBadges.length;
-                const pveChamp = p.pve_champ_count || 0;
-                const pvpChamp = p.pvp_champ_count || 0;
+                const pveChamp = parseInt(p.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count) || 0;
 
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
