@@ -928,10 +928,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T11:49:37.258859Z", "active_14_days": 409, "raid_ready_count": 22, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T12:35:52.385929Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 381, "loot": 297, "levels": 84, "total_roster": 643, "active_roster": 409}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 396, "loot": 308, "levels": 88, "total_roster": 643, "active_roster": 408}]
     </script>
 
     <script>
@@ -983,12 +983,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     let rawGuildRoster = [];
     let warEffortLocks = {}; 
     
-    // 1. Fetch CRITICAL Roster Data First
+    // 1. Fetch CRITICAL Roster Data Firstt
     try {
-        const rosterRes = await fetch('asset/roster.json');
+        const cb = new Date().getTime(); // Cache Buster
+        const rosterRes = await fetch(`asset/roster.json?t=${cb}`);
         rosterData = await rosterRes.json();
         
-        const rawRes = await fetch('asset/raw_roster.json');
+        const rawRes = await fetch(`asset/raw_roster.json?t=${cb}`);
         rawGuildRoster = await rawRes.json();
     } catch (error) {
         console.error("Failed to load armory data:", error);
@@ -1002,7 +1003,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Fetch NON-CRITICAL War Effort Locks (Ignore if it fails or is missing)
     try {
-        const weRes = await fetch('asset/war_effort.json');
+        const cb = new Date().getTime();
+        const weRes = await fetch(`asset/war_effort.json?t=${cb}`);
         if (weRes.ok) {
             const weData = await weRes.json();
             warEffortLocks = weData.locks || {};
@@ -3724,7 +3726,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchTimeline() {
         try {
-            const response = await fetch('asset/timeline.json');
+            const cb = new Date().getTime();
+            const response = await fetch(`asset/timeline.json?t=${cb}`);
             timelineData = await response.json();
             
             // --- FIX: Update Epic Loot KPI dynamically after fetch ---
