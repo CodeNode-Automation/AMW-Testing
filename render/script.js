@@ -1696,7 +1696,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const now = Date.now();
         
         // 1. Filter the raw data array directly instead of the DOM elements
-        filteredTimelineData = timelineData.filter(event => {
+        let tempFilteredData = timelineData.filter(event => {
             const charName = (event.character_name || '').toLowerCase();
             const eventType = event.type;
             const timestampStr = event.timestamp || '';
@@ -1745,6 +1745,28 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             return true;
         });
+
+        // --- NEW: Deduplicate identical badge events in the feed ---
+        const uniqueEvents = [];
+        const seenKeys = new Set();
+        
+        tempFilteredData.forEach(e => {
+            if (e.type === 'badge') {
+                // Ensure a character only gets one timeline row per badge type per day
+                let dStr = (e.timestamp || '').substring(0, 10);
+                const charName = (e.character_name || '').toLowerCase();
+                const key = `badge_${charName}_${e.badge_type}_${dStr}`;
+                if (!seenKeys.has(key)) {
+                    seenKeys.add(key);
+                    uniqueEvents.push(e);
+                }
+            } else {
+                // Let items and level-ups pass through normally
+                uniqueEvents.push(e);
+            }
+        });
+        
+        filteredTimelineData = uniqueEvents;
 
         // 2. Clear the old feed and reset the counter
         const container = document.getElementById('timeline-feed-container');
