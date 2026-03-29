@@ -75,8 +75,8 @@
 
     <div class="navbar">
         <div class="controls-wrapper" style="justify-content: flex-start; gap: 20px;">
-            <a href="#" onclick="returnToHome()" class="nav-logo-link">
-                <img src="asset/amw.webp" alt="AMW Logo" class="nav-logo-img">
+            <a href="#" onclick="returnToHome()" class="nav-btn nav-btn-home" style="margin: 0; width: auto; padding: 8px 18px; font-size: 15px; border-color: rgba(255, 209, 0, 0.4);">
+                <span class="home-text">🏰 Home Dashboard</span>
             </a>
             <button class="mobile-menu-toggle" aria-label="Toggle Menu">
                 <span></span><span></span><span></span>
@@ -102,33 +102,35 @@
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
 
-            <div class="custom-select-wrapper nav-right" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
-                <div class="custom-select" id="customCharSelect" tabindex="0">
-                    <span class="selected-value">Select View...</span>
-                    <span style="font-size: 12px; color: #aaa;">▼</span>
+            <div class="nav-right" style="display: flex; gap: 15px; align-items: center;">
+                <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
+                    <div class="custom-select" id="customCharSelect" tabindex="0">
+                        <span class="selected-value">Select View...</span>
+                        <span style="font-size: 12px; color: #aaa;">▼</span>
+                    </div>
+                    <div class="custom-select-options" id="customCharOptions" role="listbox">
+                        <div class="custom-option" data-value="total" role="option">
+                            <span style="font-size:16px;">🌍</span> View Entire Guild
+                        </div>
+                        <div class="custom-option" data-value="active" role="option">
+                            <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
+                        </div>
+                        <div class="custom-option" data-value="raidready" role="option">
+                            <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                        </div>
+                        <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
+                            <span style="font-size:16px;">🌟</span> Hall of Heroes
+                        </div>
+                    </div>
                 </div>
-                <div class="custom-select-options" id="customCharOptions" role="listbox">
-                    <div class="custom-option" data-value="total" role="option">
-                        <span style="font-size:16px;">🌍</span> View Entire Guild
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
                     </div>
-                    <div class="custom-option" data-value="active" role="option">
-                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
-                    </div>
-                    <div class="custom-option" data-value="raidready" role="option">
-                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
-                    </div>
-                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
-                        <span style="font-size:16px;">🌟</span> Hall of Heroes
-                    </div>
+                    <div id="search-autocomplete" class="search-autocomplete"></div>
                 </div>
-            </div>
-            
-            <div class="search-container nav-center">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
-                </div>
-                <div id="search-autocomplete" class="search-autocomplete"></div>
             </div>
         </div>
     </div>
@@ -137,6 +139,11 @@
     
     <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
         <div class="main-content">
+            
+            <div style="width: 100%; display: flex; justify-content: flex-start; margin-bottom: 20px;">
+                <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" style="max-width: 280px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));">
+            </div>
+
             <div id="empty-state">
                 
                 <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
