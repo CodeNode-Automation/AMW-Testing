@@ -600,33 +600,27 @@ async def main_async():
         print("💾 Phase 2: Pushing Character Profiles (with Badges) to Turso...")
         batch_stmts_chars = []
         
-        orig_chars = {r['name']: r for r in char_rows}
+        # Lowercase the lookup keys to prevent mismatch
+        orig_chars = {r['name'].lower(): r for r in char_rows}
 
         for char_name, data in history_data.items():
-            orig = orig_chars.get(char_name, {})
+            safe_name = char_name.lower()
+            orig = orig_chars.get(safe_name, {})
             
-            # 1. Grab badges from the newly aggregated dictionary (Default to empty array)
-            v_badges = vanguard_tallies.get(char_name.lower(), [])
-            c_badges = campaign_tallies.get(char_name.lower(), [])
-            pve_count = pve_champs.get(char_name.lower(), 0)
-            pvp_count = pvp_champs.get(char_name.lower(), 0)
+            # 1. Grab badges DIRECTLY from the tallies (Bypass case sensitivity issues)
+            v_badges = vanguard_tallies.get(safe_name, [])
+            c_badges = campaign_tallies.get(safe_name, [])
+            pve_count = pve_champs.get(safe_name, 0)
+            pvp_count = pvp_champs.get(safe_name, 0)
             
             v_badges_json = json.dumps(v_badges)
             c_badges_json = json.dumps(c_badges)
             
-            # Ensure the data object has them so they get passed to HTML generation
-            data['vanguard_badges'] = v_badges
-            data['campaign_badges'] = c_badges
-            data['pve_champ_count'] = pve_count
-            data['pvp_champ_count'] = pvp_count
+            # Safely handle JSON strings from Turso
+            orig_v_badges = str(orig.get('vanguard_badges') or '[]')
+            orig_c_badges = str(orig.get('campaign_badges') or '[]')
             
-            # Safely handle JSON strings from Turso to avoid false positive changes
-            orig_v_badges = orig.get('vanguard_badges')
-            orig_c_badges = orig.get('campaign_badges')
-            if not orig_v_badges or orig_v_badges == 'None': orig_v_badges = '[]'
-            if not orig_c_badges or orig_c_badges == 'None': orig_c_badges = '[]'
-            
-            # Check for changes, including the new badge arrays!
+            # Check for changes, forcing an update if the badges don't match exactly!
             if (orig.get('equipped_item_level') != data.get('equipped_item_level') or 
                 orig.get('level') != data.get('level') or
                 orig.get('last_login_ms') != data.get('last_login_ms') or 
