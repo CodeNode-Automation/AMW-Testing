@@ -590,11 +590,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     setupTooltips();
 
     // --- Helper: Get Detailed Badge History from Timeline ---
-    function getDetailedBadgeTooltip(charName, badgeTypes, baseTitle) {
+    function getDetailedBadgeTooltip(charName, badgeTypes, baseTitle, actualCount) {
         let tooltip = baseTitle;
         if (!timelineData || timelineData.length === 0 || !charName) return tooltip.replace(/"/g, '&quot;');
         
-        const events = timelineData.filter(e => 
+        let events = timelineData.filter(e => 
             e.type === 'badge' && 
             (e.character_name || '').toLowerCase() === charName.toLowerCase() &&
             badgeTypes.includes(e.badge_type)
@@ -602,17 +602,40 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (events.length > 0) {
             events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            tooltip += ' \n-------------------\n';
-            tooltip += events.map(e => {
+            
+            // Deduplicate identical events from the backend (same badge, same day)
+            const uniqueEvents = [];
+            const seenKeys = new Set();
+            
+            events.forEach(e => {
                 let dStr = e.timestamp.substring(0, 10);
-                try {
-                    let cleanTs = e.timestamp.replace('Z', '+00:00');
-                    if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                    const dt = new Date(cleanTs);
-                    if (!isNaN(dt.getTime())) dStr = dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-                } catch(err) {}
-                return `• ${dStr}: ${e.category || 'Awarded'}`;
-            }).join('\n');
+                const key = `${e.badge_type}_${dStr}`;
+                if (!seenKeys.has(key)) {
+                    seenKeys.add(key);
+                    uniqueEvents.push(e);
+                }
+            });
+            
+            events = uniqueEvents;
+            
+            // Failsafe: Never show more events than the character actually has badges
+            if (actualCount !== undefined && actualCount > 0) {
+                events = events.slice(0, actualCount);
+            }
+            
+            if (events.length > 0) {
+                tooltip += ' \n-------------------\n';
+                tooltip += events.map(e => {
+                    let dStr = e.timestamp.substring(0, 10);
+                    try {
+                        let cleanTs = e.timestamp.replace('Z', '+00:00');
+                        if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                        const dt = new Date(cleanTs);
+                        if (!isNaN(dt.getTime())) dStr = dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                    } catch(err) {}
+                    return `• ${dStr}: ${e.category || 'Awarded'}`;
+                }).join('\n');
+            }
         }
         return tooltip.replace(/"/g, '&quot;');
     }
@@ -836,16 +859,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
         const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
 
-        const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`);
-        const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`);
-        const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`);
-        const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`);
-        const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`);
-        const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
-        const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
-        const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-        const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
-        const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
+        const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+        const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+        const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+        const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+        const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+        const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+        const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+        const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+        const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+        const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
         
         let extraBadges = '';
         if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
@@ -1379,16 +1402,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (cCount > 0) awardsAttr.push('campaign');
 
                 // 2. Generate the dynamic date tooltips
-                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`);
-                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`);
-                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`);
-                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`);
-                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`);
-                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
-                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
-                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
-                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
+                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
                 // 3. Inject them into the HTML
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
@@ -1620,16 +1643,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
                 const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
 
-                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`);
-                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`);
-                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`);
-                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`);
-                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`);
-                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`);
-                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`);
-                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`);
-                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges));
-                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges));
+                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
                 if (pveGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveGold}">🥇 ${pveGold}</span>`;
