@@ -1192,11 +1192,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     vanguardClass = 'vanguard-aura';
                     let timeText = '';
                     
-                    // Grab the locked timestamp and format it nicely
+                    // Grab the locked timestamp and format it nicely (24-Hour)
                     if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
                         const dt = new Date(window.warEffortLockTimes[type]);
                         if (!isNaN(dt)) {
-                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleDateString(undefined, {month:'short', day:'numeric'})} ${dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})</span>`;
+                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         }
                     }
                     
@@ -1955,7 +1955,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             let cleanTs = (recent.timestamp || '').replace('Z', '+00:00');
                             if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                             const dt = new Date(cleanTs);
-                            if (!isNaN(dt.getTime())) timeStr = ` <span style="color:#888; font-size:11px; white-space:nowrap; margin-left:4px;">(${dt.toLocaleDateString(undefined, {month:'short', day:'numeric'})})</span>`;
+                            if (!isNaN(dt.getTime())) timeStr = ` <span style="color:#888; font-size:11px; white-space:nowrap; margin-left:4px;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         } catch(e) {}
 
                         if (recent.type === 'level_up') {
@@ -2855,13 +2855,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 eventEl.setAttribute('data-quality', event.item_quality);
             }
             
-            // Format the date to match production (e.g., "Mar 24")
+            // Format the date to 24-hour clock (e.g., "24 Mar 14:30")
             let date_str = event.timestamp.substring(0, 10);
             try {
                 const cleanTs = event.timestamp.replace('Z', '+00:00');
                 const dt = new Date(cleanTs);
                 if (!isNaN(dt.getTime())) {
-                    date_str = dt.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+                    date_str = dt.toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
                 }
             } catch(e) {}
             
@@ -3317,9 +3317,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const eventEl = document.createElement('div');
                     eventEl.className = 'monument-card';
                     const dt = new Date(mon.timestamp);
-                    const timeOptions = { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
-                    const timeStr = isNaN(dt) ? '' : dt.toLocaleDateString(undefined, timeOptions);
-                    
+                    const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
                     eventEl.innerHTML = `
                         <div class="mon-header">
                             <span class="mon-icon">🏆</span>
