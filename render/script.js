@@ -51,6 +51,16 @@ function summarizeBadges(badgeArray) {
     return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
 }
 
+// --- Helper: Format arrays of timestamps to German DD.MM.YYYY ---
+function formatGermanDate(tsArray) {
+    if (!tsArray || tsArray.length === 0) return "";
+    return tsArray.map(ts => {
+        const d = new Date(ts);
+        if (isNaN(d)) return '';
+        return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear();
+    }).filter(Boolean).join(', ');
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -793,33 +803,44 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // --- NEW: Grab the Guild Rank & Badges (Scope-Safe) ---
+        // --- NEW: Grab the Guild Rank & Badges with Dates ---
         const guildRank = p.guild_rank || 'Member';
-        const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges);
-        const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges);
+        const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges || deepChar?.vanguard_badges);
+        const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges || deepChar?.campaign_badges);
         const vCount = vBadges.length;
         const cCount = cBadges.length;
-        const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count) || 0;
-        const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count) || 0;
-        const pveGold = parseInt(p.pve_gold || char.pve_gold) || 0;
-        const pveSilver = parseInt(p.pve_silver || char.pve_silver) || 0;
-        const pveBronze = parseInt(p.pve_bronze || char.pve_bronze) || 0;
-        const pvpGold = parseInt(p.pvp_gold || char.pvp_gold) || 0;
-        const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
-        const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
+        
+        const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count || deepChar?.pve_champ_count) || 0;
+        const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count || deepChar?.pvp_champ_count) || 0;
+        const pveGold = parseInt(p.pve_gold || char.pve_gold || deepChar?.pve_gold) || 0;
+        const pveSilver = parseInt(p.pve_silver || char.pve_silver || deepChar?.pve_silver) || 0;
+        const pveBronze = parseInt(p.pve_bronze || char.pve_bronze || deepChar?.pve_bronze) || 0;
+        const pvpGold = parseInt(p.pvp_gold || char.pvp_gold || deepChar?.pvp_gold) || 0;
+        const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar?.pvp_silver) || 0;
+        const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar?.pvp_bronze) || 0;
+
+        // Format German Dates
+        const pveGoldD = formatGermanDate(safeParseArray(p.pve_gold_dates || char.pve_gold_dates || deepChar?.pve_gold_dates));
+        const pveSilverD = formatGermanDate(safeParseArray(p.pve_silver_dates || char.pve_silver_dates || deepChar?.pve_silver_dates));
+        const pveBronzeD = formatGermanDate(safeParseArray(p.pve_bronze_dates || char.pve_bronze_dates || deepChar?.pve_bronze_dates));
+        const pvpGoldD = formatGermanDate(safeParseArray(p.pvp_gold_dates || char.pvp_gold_dates || deepChar?.pvp_gold_dates));
+        const pvpSilverD = formatGermanDate(safeParseArray(p.pvp_silver_dates || char.pvp_silver_dates || deepChar?.pvp_silver_dates));
+        const pvpBronzeD = formatGermanDate(safeParseArray(p.pvp_bronze_dates || char.pvp_bronze_dates || deepChar?.pvp_bronze_dates));
+        const pveChampD = formatGermanDate(safeParseArray(p.pve_champ_dates || char.pve_champ_dates || deepChar?.pve_champ_dates));
+        const pvpChampD = formatGermanDate(safeParseArray(p.pvp_champ_dates || char.pvp_champ_dates || deepChar?.pvp_champ_dates));
 
         const vTooltip = summarizeBadges(vBadges);
         const cTooltip = summarizeBadges(cBadges);
         
         let extraBadges = '';
-        if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${pveGold}x PvE Gold Medal">🛡️🥇 PvE Gold x${pveGold}</span>`;
-        if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${pveSilver}x PvE Silver Medal">🛡️🥈 PvE Silver x${pveSilver}</span>`;
-        if (pveBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${pveBronze}x PvE Bronze Medal">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
-        if (pvpGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${pvpGold}x PvP Gold Medal">⚔️🥇 PvP Gold x${pvpGold}</span>`;
-        if (pvpSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${pvpSilver}x PvP Silver Medal">⚔️🥈 PvP Silver x${pvpSilver}</span>`;
-        if (pvpBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${pvpBronze}x PvP Bronze Medal">⚔️🥉 PvP Bronze x${pvpBronze}</span>`;
-        if (pveChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 128, 0, 0.15); border-color: #ff8000; color: #ffad33; font-weight: bold; box-shadow: 0 0 10px rgba(255,128,0,0.5);" title="${pveChamp}x PvE Champion">👑 PvE Champ x${pveChamp}</span>`;
-        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 68, 0, 0.15); border-color: #ff4400; color: #ff7733; font-weight: bold; box-shadow: 0 0 10px rgba(255,68,0,0.5);" title="${pvpChamp}x PvP Champion">⚔️ PvP Champ x${pvpChamp}</span>`;
+        if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${pveGold}x PvE Gold Medal ${pveGoldD ? `(${pveGoldD})` : ''}">🛡️🥇 PvE Gold x${pveGold}</span>`;
+        if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${pveSilver}x PvE Silver Medal ${pveSilverD ? `(${pveSilverD})` : ''}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
+        if (pveBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${pveBronze}x PvE Bronze Medal ${pveBronzeD ? `(${pveBronzeD})` : ''}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
+        if (pvpGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${pvpGold}x PvP Gold Medal ${pvpGoldD ? `(${pvpGoldD})` : ''}">⚔️🥇 PvP Gold x${pvpGold}</span>`;
+        if (pvpSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${pvpSilver}x PvP Silver Medal ${pvpSilverD ? `(${pvpSilverD})` : ''}">⚔️🥈 PvP Silver x${pvpSilver}</span>`;
+        if (pvpBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${pvpBronze}x PvP Bronze Medal ${pvpBronzeD ? `(${pvpBronzeD})` : ''}">⚔️🥉 PvP Bronze x${pvpBronze}</span>`;
+        if (pveChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 128, 0, 0.15); border-color: #ff8000; color: #ffad33; font-weight: bold; box-shadow: 0 0 10px rgba(255,128,0,0.5);" title="${pveChamp}x PvE Champion ${pveChampD ? `(${pveChampD})` : ''}">👑 PvE Champ x${pveChamp}</span>`;
+        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 68, 0, 0.15); border-color: #ff4400; color: #ff7733; font-weight: bold; box-shadow: 0 0 10px rgba(255,68,0,0.5);" title="${pvpChamp}x PvP Champion ${pvpChampD ? `(${pvpChampD})` : ''}">⚔️ PvP Champ x${pvpChamp}</span>`;
         if (vCount > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(0, 255, 204, 0.15); border-color: #00ffcc; color: #66ffeb; font-weight: bold; box-shadow: 0 0 10px rgba(0,255,204,0.5);" title="Vanguard: ${vTooltip}">🌟 Vanguard x${vCount}</span>`;
         if (cCount > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(170, 170, 170, 0.15); border-color: #aaa; color: #ddd; font-weight: bold; box-shadow: 0 0 8px rgba(255,255,255,0.2);" title="Campaigns: ${cTooltip}">🎖️ Campaigns x${cCount}</span>`;
         
@@ -1215,32 +1236,45 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const p = deepChar.profile;
                 isClickable = true;
                 
+                // --- NEW: Grab the Guild Rank & Badges with Dates ---
                 const guildRank = p.guild_rank || 'Member';
-                const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges || deepChar.vanguard_badges);
-                const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges || deepChar.campaign_badges);
+                const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges || deepChar?.vanguard_badges);
+                const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges || deepChar?.campaign_badges);
                 const vCount = vBadges.length;
                 const cCount = cBadges.length;
-                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count || deepChar.pve_champ_count) || 0;
-                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count || deepChar.pvp_champ_count) || 0;
-                const pveGold = parseInt(p.pve_gold || char.pve_gold || deepChar.pve_gold) || 0;
-                const pveSilver = parseInt(p.pve_silver || char.pve_silver || deepChar.pve_silver) || 0;
-                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze || deepChar.pve_bronze) || 0;
-                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold || deepChar.pvp_gold) || 0;
-                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar.pvp_silver) || 0;
-                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar.pvp_bronze) || 0;
+                
+                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count || deepChar?.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count || deepChar?.pvp_champ_count) || 0;
+                const pveGold = parseInt(p.pve_gold || char.pve_gold || deepChar?.pve_gold) || 0;
+                const pveSilver = parseInt(p.pve_silver || char.pve_silver || deepChar?.pve_silver) || 0;
+                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze || deepChar?.pve_bronze) || 0;
+                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold || deepChar?.pvp_gold) || 0;
+                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar?.pvp_silver) || 0;
+                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar?.pvp_bronze) || 0;
+
+                // Format German Dates
+                const pveGoldD = formatGermanDate(safeParseArray(p.pve_gold_dates || char.pve_gold_dates || deepChar?.pve_gold_dates));
+                const pveSilverD = formatGermanDate(safeParseArray(p.pve_silver_dates || char.pve_silver_dates || deepChar?.pve_silver_dates));
+                const pveBronzeD = formatGermanDate(safeParseArray(p.pve_bronze_dates || char.pve_bronze_dates || deepChar?.pve_bronze_dates));
+                const pvpGoldD = formatGermanDate(safeParseArray(p.pvp_gold_dates || char.pvp_gold_dates || deepChar?.pvp_gold_dates));
+                const pvpSilverD = formatGermanDate(safeParseArray(p.pvp_silver_dates || char.pvp_silver_dates || deepChar?.pvp_silver_dates));
+                const pvpBronzeD = formatGermanDate(safeParseArray(p.pvp_bronze_dates || char.pvp_bronze_dates || deepChar?.pvp_bronze_dates));
+                const pveChampD = formatGermanDate(safeParseArray(p.pve_champ_dates || char.pve_champ_dates || deepChar?.pve_champ_dates));
+                const pvpChampD = formatGermanDate(safeParseArray(p.pvp_champ_dates || char.pvp_champ_dates || deepChar?.pvp_champ_dates));
 
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
 
+                // Determine if we are in Full Card view (extraBadges) or Tooltip/List view (cBadgesHtml)
                 let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
-                if (pveGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveGold}x PvE Gold Medal">🛡️🥇 ${pveGold}</span>`;
-                if (pveSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveSilver}x PvE Silver Medal">🛡️🥈 ${pveSilver}</span>`;
-                if (pveBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveBronze}x PvE Bronze Medal">🛡️🥉 ${pveBronze}</span>`;
-                if (pvpGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpGold}x PvP Gold Medal">⚔️🥇 ${pvpGold}</span>`;
-                if (pvpSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpSilver}x PvP Silver Medal">⚔️🥈 ${pvpSilver}</span>`;
-                if (pvpBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpBronze}x PvP Bronze Medal">⚔️🥉 ${pvpBronze}</span>`;
-                if (pveChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 128, 0, 0.15); border:1px solid rgba(255, 128, 0, 0.4); color:#ffad33; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveChamp}x PvE Champion">👑 ${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.15); border:1px solid rgba(255, 68, 0, 0.4); color:#ff7733; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpChamp}x PvP Champion">⚔️ ${pvpChamp}</span>`;
+                if (pveGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveGold}x PvE Gold Medal ${pveGoldD ? `(${pveGoldD})` : ''}">🛡️🥇 ${pveGold}</span>`;
+                if (pveSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveSilver}x PvE Silver Medal ${pveSilverD ? `(${pveSilverD})` : ''}">🛡️🥈 ${pveSilver}</span>`;
+                if (pveBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveBronze}x PvE Bronze Medal ${pveBronzeD ? `(${pveBronzeD})` : ''}">🛡️🥉 ${pveBronze}</span>`;
+                if (pvpGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpGold}x PvP Gold Medal ${pvpGoldD ? `(${pvpGoldD})` : ''}">⚔️🥇 ${pvpGold}</span>`;
+                if (pvpSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpSilver}x PvP Silver Medal ${pvpSilverD ? `(${pvpSilverD})` : ''}">⚔️🥈 ${pvpSilver}</span>`;
+                if (pvpBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpBronze}x PvP Bronze Medal ${pvpBronzeD ? `(${pvpBronzeD})` : ''}">⚔️🥉 ${pvpBronze}</span>`;
+                if (pveChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 128, 0, 0.15); border:1px solid rgba(255, 128, 0, 0.4); color:#ffad33; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveChamp}x PvE Champion ${pveChampD ? `(${pveChampD})` : ''}">👑 ${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.15); border:1px solid rgba(255, 68, 0, 0.4); color:#ff7733; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpChamp}x PvP Champion ${pvpChampD ? `(${pvpChampD})` : ''}">⚔️ ${pvpChamp}</span>`;
                 if (vCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(0, 255, 204, 0.15); border:1px solid rgba(0, 255, 204, 0.4); color:#66ffeb; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="Vanguard: ${vTooltip}">🌟 ${vCount}</span>`;
                 if (cCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(170, 170, 170, 0.15); border:1px solid rgba(170, 170, 170, 0.4); color:#ddd; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="Campaigns: ${cTooltip}">🎖️ ${cCount}</span>`;
                 cBadgesHtml += '</div>';
@@ -1446,35 +1480,47 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222;">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
-                // --- NEW: Grab the Guild Rank & MVP Badges (Scope-Safe) ---
+                // --- NEW: Grab the Guild Rank & Badges with Dates ---
                 const guildRank = p.guild_rank || 'Member';
-                const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges);
-                const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges);
+                const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges || deepChar?.vanguard_badges);
+                const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges || deepChar?.campaign_badges);
                 const vCount = vBadges.length;
                 const cCount = cBadges.length;
-                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count) || 0;
-                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count) || 0;
-                const pveGold = parseInt(p.pve_gold || char.pve_gold) || 0;
-                const pveSilver = parseInt(p.pve_silver || char.pve_silver) || 0;
-                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze) || 0;
-                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold) || 0;
-                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
-                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
+                
+                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count || deepChar?.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count || deepChar?.pvp_champ_count) || 0;
+                const pveGold = parseInt(p.pve_gold || char.pve_gold || deepChar?.pve_gold) || 0;
+                const pveSilver = parseInt(p.pve_silver || char.pve_silver || deepChar?.pve_silver) || 0;
+                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze || deepChar?.pve_bronze) || 0;
+                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold || deepChar?.pvp_gold) || 0;
+                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar?.pvp_silver) || 0;
+                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar?.pvp_bronze) || 0;
+
+                // Format German Dates
+                const pveGoldD = formatGermanDate(safeParseArray(p.pve_gold_dates || char.pve_gold_dates || deepChar?.pve_gold_dates));
+                const pveSilverD = formatGermanDate(safeParseArray(p.pve_silver_dates || char.pve_silver_dates || deepChar?.pve_silver_dates));
+                const pveBronzeD = formatGermanDate(safeParseArray(p.pve_bronze_dates || char.pve_bronze_dates || deepChar?.pve_bronze_dates));
+                const pvpGoldD = formatGermanDate(safeParseArray(p.pvp_gold_dates || char.pvp_gold_dates || deepChar?.pvp_gold_dates));
+                const pvpSilverD = formatGermanDate(safeParseArray(p.pvp_silver_dates || char.pvp_silver_dates || deepChar?.pvp_silver_dates));
+                const pvpBronzeD = formatGermanDate(safeParseArray(p.pvp_bronze_dates || char.pvp_bronze_dates || deepChar?.pvp_bronze_dates));
+                const pveChampD = formatGermanDate(safeParseArray(p.pve_champ_dates || char.pve_champ_dates || deepChar?.pve_champ_dates));
+                const pvpChampD = formatGermanDate(safeParseArray(p.pvp_champ_dates || char.pvp_champ_dates || deepChar?.pvp_champ_dates));
 
                 const vTooltip = summarizeBadges(vBadges);
                 const cTooltip = summarizeBadges(cBadges);
 
-                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
-                if (pveGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥇 ${pveGold}</span>`;
-                if (pveSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥈 ${pveSilver}</span>`;
-                if (pveBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥉 ${pveBronze}</span>`;
-                if (pvpGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥇 ${pvpGold}</span>`;
-                if (pvpSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥈 ${pvpSilver}</span>`;
-                if (pvpBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🥉 ${pvpBronze}</span>`;
-                if (pveChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 128, 0, 0.2); border:1px solid rgba(255, 128, 0, 0.5); color:#ffad33; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">👑 ${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 68, 0, 0.2); border:1px solid rgba(255, 68, 0, 0.5); color:#ff7733; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">⚔️ ${pvpChamp}</span>`;
-                if (vCount > 0) cBadgesHtml += `<span style="background:rgba(0, 255, 204, 0.2); border:1px solid rgba(0, 255, 204, 0.5); color:#66ffeb; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🌟 ${vCount}</span>`;
-                if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;">🎖️ ${cCount}</span>`;
+                // Determine if we are in Full Card view (extraBadges) or Tooltip/List view (cBadgesHtml)
+                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
+                if (pveGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveGold}x PvE Gold Medal ${pveGoldD ? `(${pveGoldD})` : ''}">🛡️🥇 ${pveGold}</span>`;
+                if (pveSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveSilver}x PvE Silver Medal ${pveSilverD ? `(${pveSilverD})` : ''}">🛡️🥈 ${pveSilver}</span>`;
+                if (pveBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveBronze}x PvE Bronze Medal ${pveBronzeD ? `(${pveBronzeD})` : ''}">🛡️🥉 ${pveBronze}</span>`;
+                if (pvpGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpGold}x PvP Gold Medal ${pvpGoldD ? `(${pvpGoldD})` : ''}">⚔️🥇 ${pvpGold}</span>`;
+                if (pvpSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpSilver}x PvP Silver Medal ${pvpSilverD ? `(${pvpSilverD})` : ''}">⚔️🥈 ${pvpSilver}</span>`;
+                if (pvpBronze > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(205, 127, 50, 0.15); border:1px solid rgba(205, 127, 50, 0.4); color:#cd7f32; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpBronze}x PvP Bronze Medal ${pvpBronzeD ? `(${pvpBronzeD})` : ''}">⚔️🥉 ${pvpBronze}</span>`;
+                if (pveChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 128, 0, 0.15); border:1px solid rgba(255, 128, 0, 0.4); color:#ffad33; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pveChamp}x PvE Champion ${pveChampD ? `(${pveChampD})` : ''}">👑 ${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.15); border:1px solid rgba(255, 68, 0, 0.4); color:#ff7733; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${pvpChamp}x PvP Champion ${pvpChampD ? `(${pvpChampD})` : ''}">⚔️ ${pvpChamp}</span>`;
+                if (vCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(0, 255, 204, 0.15); border:1px solid rgba(0, 255, 204, 0.4); color:#66ffeb; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="Vanguard: ${vTooltip}">🌟 ${vCount}</span>`;
+                if (cCount > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(170, 170, 170, 0.15); border:1px solid rgba(170, 170, 170, 0.4); color:#ddd; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="Campaigns: ${cTooltip}">🎖️ ${cCount}</span>`;
                 cBadgesHtml += '</div>';
 
                 tooltip.innerHTML = `
@@ -1521,8 +1567,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
                 if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
                 if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
-                
-                // FIX: Add the missing logic to evaluate the Medals button
                 if (tlTypeFilter === 'badge_ladder' && !['pve_gold','pve_silver','pve_bronze','pvp_gold','pvp_silver','pvp_bronze'].includes(event.badge_type)) return false;
             } else {
                 if (eventType === 'badge') return false; // NEVER show badges in normal feeds
