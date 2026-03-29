@@ -924,10 +924,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T18:11:42.732529Z", "active_14_days": 406, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-29T19:48:38.304883Z", "active_14_days": 406, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1144, "loot": 1026, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 581, "loot": 443, "levels": 138, "total_roster": 643, "active_roster": 406}]
+        [{"date": "2026-03-23", "day_name": "Mon", "count": 575, "loot": 431, "levels": 144, "total_roster": 535, "active_roster": 309}, {"date": "2026-03-24", "day_name": "Tue", "count": 1148, "loot": 1030, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 653, "loot": 494, "levels": 159, "total_roster": 643, "active_roster": 406}]
     </script>
 
     <script>
@@ -2154,6 +2154,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             'pvp_gold': { label: 'PvP Gold', icon: '🥇', color: '#ffd700' },
             'pve_silver': { label: 'PvE Silver', icon: '🥈', color: '#c0c0c0' },
             'pvp_silver': { label: 'PvP Silver', icon: '🥈', color: '#c0c0c0' },
+            'pve_bronze': { label: 'PvE Bronze', icon: '🥉', color: '#cd7f32' },
+            'pvp_bronze': { label: 'PvP Bronze', icon: '🥉', color: '#cd7f32' },
             'vanguard': { label: 'Vanguards', icon: '🌟', color: '#00ffcc' },
             'campaign': { label: 'Campaigns', icon: '🎖️', color: '#aaa' }
         };
@@ -3399,7 +3401,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.flexWrap = 'wrap';
             badgesContainer.style.justifyContent = 'center';
             badgesContainer.style.maxWidth = '900px';
-            if (timeline) timeline.style.width = ''; // Reset timeline width
+            if (timeline) {
+                timeline.style.width = ''; 
+                timeline.style.maxWidth = ''; // Reset timeline width
+            }
             
         } else if (showBadges === 'awards') {
             renderAwardFilterBadges(characters, isRawRoster);
@@ -3415,8 +3420,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
             badgesContainer.style.paddingBottom = '10px';
             
-            // Stretch the activity feed slightly since we have the extra real estate
-            if (timeline) timeline.style.width = '440px'; 
+            // Stretch the activity feed slightly, but keep it responsive for mobile!
+            if (timeline) {
+                timeline.style.width = '100%'; 
+                timeline.style.maxWidth = '440px'; 
+            }
             
         } else {
             badgesContainer.style.display = 'none';
@@ -3427,7 +3435,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             wrapper.style.flexDirection = 'row';
             leftCol.style.maxWidth = '350px';
             leftCol.style.width = 'auto';
-            if (timeline) timeline.style.width = ''; // Reset timeline width
+            if (timeline) {
+                timeline.style.width = ''; 
+                timeline.style.maxWidth = ''; // Reset timeline width
+            }
             
             if (!chartViews.includes(hash)) {
                 leftCol.style.display = 'none';
