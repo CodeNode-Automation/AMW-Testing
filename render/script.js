@@ -3714,11 +3714,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (textEl) {
                 if (pct >= 100) {
-                    textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ➔ GOAL CRUSHED!`;
+                    textEl.innerHTML = `<span style="color:#ddd; margin-right:8px;">${labelName}:</span> ${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} <span style="color:#fff; margin-left:8px; text-shadow: 0 0 10px ${colorMax};">🔥 CRUSHED!</span>`;
                     textEl.style.color = colorMid;
-                    textEl.style.textShadow = `0 0 10px ${colorMax}, 1px 1px 2px #000`;
+                    textEl.style.textShadow = `0 0 8px rgba(0,0,0,0.8), 1px 1px 2px #000`;
                 } else {
-                    textEl.innerText = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} ${labelName} Gained`;
+                    textEl.innerHTML = `<span style="color:#ccc; font-size:11px; margin-right:8px; text-transform:uppercase;">${labelName}:</span> <span style="font-size:15px;">${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}</span>`;
                 }
             }
         }
