@@ -1508,6 +1508,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
                 if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
                 if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
+                
+                // FIX: Add the missing logic to evaluate the Medals button
                 if (tlTypeFilter === 'badge_ladder' && !['pve_gold','pve_silver','pve_bronze','pvp_gold','pvp_silver','pvp_bronze'].includes(event.badge_type)) return false;
             } else {
                 if (eventType === 'badge') return false; // NEVER show badges in normal feeds
