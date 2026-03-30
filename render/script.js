@@ -3913,12 +3913,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const dt = new Date(mon.timestamp);
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
                     eventEl.innerHTML = `
-                        <div class="mon-header">
-                            <span class="mon-icon">🏆</span>
-                            <span class="mon-time">${timeStr}</span>
+                        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                            <span style="font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6));">🏆</span>
+                            <div style="display: flex; flex-direction: column; flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                    <span style="font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">${mon.title}</span>
+                                    <span style="font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${timeStr}</span>
+                                </div>
+                                <div style="font-size: 12px; color: #ddd; line-height: 1.3;">${mon.desc}</div>
+                            </div>
                         </div>
-                        <div class="mon-title">${mon.title}</div>
-                        <div class="mon-desc">${mon.desc}</div>
                     `;
                     monContainer.appendChild(eventEl);
                 });
