@@ -142,7 +142,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 /* BADGES & BANNERS                          */
 /* ========================================= */
-.class-stat-container { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; max-width: 900px; margin: 0 auto 40px auto; position: relative; }
+.class-stat-container { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; padding-top: 15px !important; padding-bottom: 25px !important; padding-left: 20px; padding-right: 20px; margin-top: -10px !important; -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
 .stat-badge { display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, rgba(30, 30, 35, 0.6) 0%, rgba(10, 10, 15, 0.9) 100%); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); padding: 10px 18px; border-radius: 12px; min-width: 105px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); user-select: none; border-left: 3px solid; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 .stat-badge:hover { transform: translateY(-5px) scale(1.03); background: linear-gradient(180deg, rgba(45, 45, 50, 0.8) 0%, rgba(15, 15, 20, 0.9) 100%); border-right-color: rgba(255, 209, 0, 0.3); border-top-color: rgba(255, 209, 0, 0.5); border-bottom-color: rgba(255, 209, 0, 0.3); box-shadow: 0 12px 24px rgba(0,0,0,0.8), 0 0 20px rgba(255, 209, 0, 0.15); }
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
@@ -940,7 +940,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-30T01:00:49.167334Z", "active_14_days": 407, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T01:14:16.997286Z", "active_14_days": 407, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 102, "loot": 77, "levels": 25, "total_roster": 647, "active_roster": 407}]
@@ -3498,6 +3498,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.flexWrap = 'wrap';
             badgesContainer.style.justifyContent = 'center';
             badgesContainer.style.maxWidth = '900px';
+            
+            // FIX: Reset inline padding/margins when leaving the Hall of Heroes
+            badgesContainer.style.overflowX = 'visible'; 
+            badgesContainer.style.padding = ''; 
+            badgesContainer.style.marginTop = '';
+            
             if (timeline) {
                 timeline.style.width = ''; 
                 timeline.style.maxWidth = ''; // Reset timeline width
@@ -3515,7 +3521,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.justifyContent = 'flex-start';
             badgesContainer.style.maxWidth = '100%';
             badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
-            badgesContainer.style.paddingBottom = '10px';
+            
+            // FIX: Generous internal padding gives the bubbles room to grow without getting severed
+            badgesContainer.style.padding = '15px 10px 25px 10px';
+            badgesContainer.style.marginTop = '-10px';
             
             // Stretch the activity feed slightly, but keep it responsive for mobile!
             if (timeline) {
