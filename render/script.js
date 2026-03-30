@@ -554,12 +554,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pveHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
                     <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
-                    <div class="trend-pill" style="z-index: 2; font-weight: bold;">${podiumTrend}</div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pveListHTML += `
@@ -618,12 +617,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pvpHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
                     <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
-                    <div class="trend-pill" style="z-index: 2; font-weight: bold;">${podiumTrend}</div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pvpListHTML += `
@@ -1688,9 +1686,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
                     podiumStatText = `<div style="color:#3FC7EB; font-weight:bold; font-size:11px;">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
                 } else if (hashUrl === 'ladder-pve') {
-                    podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div class="trend-pill">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 } else if (hashUrl === 'ladder-pvp') {
-                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div><div class="trend-pill">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 }
 
                 let pVanguard = '';
@@ -1700,14 +1698,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 podiumsHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     ${pVanguard}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div class="podium-data-pill">
-                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                        <div style="text-align: center;">${podiumStatText}</div>
-                    </div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                    <div style="z-index: 2; text-align: center;">${podiumStatText}</div>
                 </div>`;
             } else {
                 listItemsHTML += rowHTML;
@@ -3586,12 +3581,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div class="trend-pill" style="color: #2ecc71; font-weight: bold; z-index: 2;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase; margin-left: 3px;">${label}</span>
+                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
+                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
@@ -3907,16 +3901,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const dt = new Date(mon.timestamp);
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
                     eventEl.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                            <span style="font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6));">🏆</span>
-                            <div style="display: flex; flex-direction: column; flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                    <span style="font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">${mon.title}</span>
-                                    <span style="font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${timeStr}</span>
-                                </div>
-                                <div style="font-size: 12px; color: #ddd; line-height: 1.3;">${mon.desc}</div>
-                            </div>
+                        <div class="mon-header">
+                            <span class="mon-icon">🏆</span>
+                            <span class="mon-time">${timeStr}</span>
                         </div>
+                        <div class="mon-title">${mon.title}</div>
+                        <div class="mon-desc">${mon.desc}</div>
                     `;
                     monContainer.appendChild(eventEl);
                 });
