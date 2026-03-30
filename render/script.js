@@ -552,19 +552,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
                 else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
 
-                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
-                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
-
                 pveHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 6px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="background: rgba(255, 128, 0, 0.15); border: 1px solid rgba(255, 128, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ff8000; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5); margin-bottom: 4px;">
-                        ${p.equipped_item_level || 0} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">iLvl</span>
-                    </div>
-                    <div style="z-index: 2; text-align: center; font-size: 11px; font-weight: bold;">${podiumTrend}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pveListHTML += `
@@ -621,19 +615,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
                 else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
 
-                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
-                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
-
                 pvpHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 6px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="background: rgba(255, 68, 0, 0.15); border: 1px solid rgba(255, 68, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ff4400; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5); margin-bottom: 4px;">
-                        ${hkCount} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">HKs</span>
-                    </div>
-                    <div style="z-index: 2; text-align: center; font-size: 11px; font-weight: bold;">${podiumTrend}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pvpListHTML += `
@@ -1690,42 +1678,31 @@ window.addEventListener('DOMContentLoaded', async () => {
                 let podiumStatText = '';
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    podiumStatText = `<div style="background: rgba(255, 68, 0, 0.15); border: 1px solid rgba(255, 68, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ff4400; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">+${trendVal.toLocaleString()} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">HKs</span></div>`;
+                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">+${trendVal.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>`;
                 } else if (hashUrl === 'war-effort-xp' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div style="background: rgba(255, 209, 0, 0.15); border: 1px solid rgba(255, 209, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ffd100; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">+${window.warEffortContext[cleanName]} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">Levels</span></div>`;
+                    podiumStatText = `<div style="color:#ffd100; font-weight:bold; font-size:13px;">+${window.warEffortContext[cleanName]} <span style="font-size:9px; color:#888; text-transform:uppercase;">Levels</span></div>`;
                 } else if (hashUrl === 'war-effort-loot' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div style="background: rgba(163, 53, 238, 0.15); border: 1px solid rgba(163, 53, 238, 0.4); border-radius: 12px; padding: 2px 8px; color: #a335ee; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">${window.warEffortContext[cleanName].length} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">Epics</span></div>`;
+                    podiumStatText = `<div style="color:#a335ee; font-weight:bold; font-size:13px;">${window.warEffortContext[cleanName].length} <span style="font-size:9px; color:#888; text-transform:uppercase;">Epics</span></div>`;
                 } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div style="background: rgba(63, 199, 235, 0.15); border: 1px solid rgba(63, 199, 235, 0.4); border-radius: 12px; padding: 2px 8px; color: #3FC7EB; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
-                } else if (hashUrl === 'badges') {
-                    const totalScore = vCount + cCount + pveChamp + pvpChamp + pveGold + pveSilver + pveBronze + pvpGold + pvpSilver + pvpBronze;
-                    podiumStatText = `<div style="background: rgba(255, 209, 0, 0.15); border: 1px solid rgba(255, 209, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ffd100; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">${totalScore} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">Awards</span></div>`;
+                    podiumStatText = `<div style="color:#3FC7EB; font-weight:bold; font-size:11px;">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
                 } else if (hashUrl === 'ladder-pve') {
-                    podiumStatText = `<div style="background: rgba(255, 128, 0, 0.15); border: 1px solid rgba(255, 128, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ff8000; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5); margin-bottom: 4px;">${statValue} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">iLvl</span></div><div style="font-size:11px; display:flex; justify-content:center;">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 } else if (hashUrl === 'ladder-pvp') {
-                    podiumStatText = `<div style="background: rgba(255, 68, 0, 0.15); border: 1px solid rgba(255, 68, 0, 0.4); border-radius: 12px; padding: 2px 8px; color: #ff4400; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5); margin-bottom: 4px;">${statValue} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">HKs</span></div><div style="font-size:11px; display:flex; justify-content:center;">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 }
 
                 let pVanguard = '';
                 if (vanguardClass !== '') {
                     pVanguard = `<div style="position:absolute; top:-10px; right:-10px; font-size:22px; filter:drop-shadow(0 0 5px #00ffcc); z-index:10;" title="Vanguard">🌟</div>`;
                 }
-                
-                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
-                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
-                
-                // Add the Trophy case to the podium block (scaled down to fit)
-                const podiumTrophyCase = hasBadges ? `<div style="transform: scale(0.85); width: 115%; display: flex; justify-content: center; flex-wrap: wrap;">${cBadgesHtml}</div>` : '';
 
                 podiumsHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
                     ${pVanguard}
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 6px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                    <div style="z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center;">${podiumStatText}</div>
-                    ${podiumTrophyCase}
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                    <div style="z-index: 2; text-align: center;">${podiumStatText}</div>
                 </div>`;
             } else {
                 listItemsHTML += rowHTML;
@@ -3602,19 +3579,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
-                // ADDING: A glowing crown and class-colored aura for the #1 MVP
-                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
-                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
-
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 8px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    
-                    <div style="background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.4); border-radius: 12px; padding: 2px 8px; color: #2ecc71; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">${label}</span>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
+                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
