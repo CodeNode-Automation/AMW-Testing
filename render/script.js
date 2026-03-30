@@ -3579,13 +3579,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
+                // ADDING: A glowing crown and class-colored aura for the #1 MVP
+                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
+                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
+
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    ${crownHtml}
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 8px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    
+                    <div style="background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.4); border-radius: 12px; padding: 2px 8px; color: #2ecc71; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
