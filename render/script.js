@@ -554,11 +554,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pveHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
-                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    <div class="podium-data-pill">
+                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                        <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
+                        <div style="text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    </div>
                 </div>`;
             } else {
                 pveListHTML += `
@@ -617,11 +620,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pvpHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
-                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    <div class="podium-data-pill">
+                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                        <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
+                        <div style="text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    </div>
                 </div>`;
             } else {
                 pvpListHTML += `
@@ -1698,11 +1704,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 podiumsHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
+                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     ${pVanguard}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                    <div style="z-index: 2; text-align: center;">${podiumStatText}</div>
+                    <div class="podium-data-pill">
+                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                        <div style="text-align: center;">${podiumStatText}</div>
+                    </div>
                 </div>`;
             } else {
                 listItemsHTML += rowHTML;
@@ -3581,11 +3590,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
+                    <div class="podium-data-pill">
+                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                        <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">
+                            ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
+                        </div>
                     </div>
                 </div>`;
             }).join('');
