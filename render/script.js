@@ -528,7 +528,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
-        let pveHTML = '';
+        let pveHTML = '<div class="lb-podium-wrap">';
+        let pveListHTML = '<div class="lb-list-wrap">';
         topPve.forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -537,33 +538,45 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconUrl = getSpecIcon(cClass, activeSpec);
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
-            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-            const rankSize = index < 3 ? '18px' : '15px';
             const portraitURL = char.render_url || getClassIcon(cClass);
-
-            // --- NEW: Trend Arrow Logic for PvE ---
             const trend = p.trend_pve || p.trend_ilvl || 0; 
             let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
             if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
-            pveHTML += `
-            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pve-score">
-                    ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span style="color: #555;">-</span>';
+                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+
+                pveHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                </div>`;
+            } else {
+                pveListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pve-score">
+                        ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
         });
-        pveContainer.innerHTML = pveHTML;
+        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
     }
 
     const pvpContainer = document.getElementById('pvp-leaderboard');
@@ -576,7 +589,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPvp.length > 0 && pvpContainer) {
         pvpWrapper.style.display = 'block';
-        let pvpHTML = '';
+        let pvpHTML = '<div class="lb-podium-wrap">';
+        let pvpListHTML = '<div class="lb-list-wrap">';
         topPvp.forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -585,34 +599,46 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconUrl = getSpecIcon(cClass, activeSpec);
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
-            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-            const rankSize = index < 3 ? '18px' : '15px';
             const hkCount = (p.honorable_kills || 0).toLocaleString();
             const portraitURL = char.render_url || getClassIcon(cClass);
-
-            // --- Trend Arrow Logic for PvP ---
             const trend = p.trend_pvp || 0; 
             let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
             if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
-            pvpHTML += `
-            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pvp-score">
-                    ${hkCount} <span class="lb-score-label">HKs</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span style="color: #555;">-</span>';
+                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+
+                pvpHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                </div>`;
+            } else {
+                pvpListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pvp-score">
+                        ${hkCount} <span class="lb-score-label">HKs</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
         });
-        pvpContainer.innerHTML = pvpHTML;
+        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>';
     }
     
     setupTooltips();
