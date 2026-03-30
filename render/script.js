@@ -2621,19 +2621,23 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.style.display = 'none';
             
-            // Restore default column layout
-            wrapper.style.flexDirection = 'row';
-            leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
+            leftCol.style.display = 'flex'; // FIX: Never hide the character roster!
+            
+            // Give War Effort podiums the full screen width they deserve
+            if (hash.startsWith('war-effort-')) {
+                wrapper.style.flexDirection = 'column';
+                leftCol.style.maxWidth = '100%';
+                leftCol.style.width = '100%';
+            } else {
+                // Restore default column layout
+                wrapper.style.flexDirection = 'row';
+                leftCol.style.maxWidth = '350px';
+                leftCol.style.width = 'auto';
+            }
+            
             if (timeline) {
                 timeline.style.width = ''; 
                 timeline.style.maxWidth = ''; // Reset timeline width
-            }
-            
-            if (!chartViews.includes(hash)) {
-                leftCol.style.display = 'none';
-            } else {
-                leftCol.style.display = 'flex';
             }
         }
 
