@@ -2549,6 +2549,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.flexWrap = 'wrap';
             badgesContainer.style.justifyContent = 'center';
             badgesContainer.style.maxWidth = '900px';
+            
+            // FIX: Reset inline padding/margins when leaving the Hall of Heroes
+            badgesContainer.style.overflowX = 'visible'; 
+            badgesContainer.style.padding = ''; 
+            badgesContainer.style.marginTop = '';
+            
             if (timeline) {
                 timeline.style.width = ''; 
                 timeline.style.maxWidth = ''; // Reset timeline width
@@ -2566,7 +2572,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.justifyContent = 'flex-start';
             badgesContainer.style.maxWidth = '100%';
             badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
-            badgesContainer.style.paddingBottom = '10px';
+            
+            // FIX: Generous internal padding gives the bubbles room to grow without getting severed
+            badgesContainer.style.padding = '15px 10px 25px 10px';
+            badgesContainer.style.marginTop = '-10px';
             
             // Stretch the activity feed slightly, but keep it responsive for mobile!
             if (timeline) {
