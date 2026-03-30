@@ -3879,7 +3879,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const topDyn = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[49]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[49].character_name}</span> looted the 50th Epic!`, timestamp: sortedLoot[49].timestamp };
+            if (sortedLoot[49]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[49].character_name}</span> looted the 60th Epic!`, timestamp: sortedLoot[49].timestamp };
             applyLockFallback('loot', fallback, topDyn);
         }
 
@@ -3897,7 +3897,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('zenith', fallback, topDyn);
         }
 
-        if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 50 && totalZenith >= 10) {
+        if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 60 && totalZenith >= 10) {
             // 1. Find the exact timestamp when the final challenge was completed
             const lockTimes = [
                 new Date(window.warEffortLockTimes.xp).getTime(),
