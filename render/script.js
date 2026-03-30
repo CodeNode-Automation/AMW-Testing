@@ -3658,17 +3658,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const xpContainer = document.getElementById('guild-xp-container');
         if (!xpContainer || !timelineData || timelineData.length === 0) return;
 
-        // --- Live Countdown Timer Logic ---
-        let countdownEl = document.getElementById('war-effort-countdown');
-        if (!countdownEl) {
-            countdownEl = document.createElement('div');
-            countdownEl.id = 'war-effort-countdown';
-            countdownEl.style.textAlign = 'center';
-            countdownEl.style.marginBottom = '25px';
+        // --- Live Countdown Timer Logic (Command Ribbon) ---
+        if (!window.warEffortTimerInitialized) {
+            window.warEffortTimerInitialized = true;
             
-            // Insert it between the H3 title and the progress bars
-            xpContainer.insertBefore(countdownEl, xpContainer.children[1]);
-
             function updateWarEffortCountdown() {
                 const realNow = new Date();
                 const berlinString = realNow.toLocaleString("en-US", {timeZone: "Europe/Berlin"});
@@ -3692,17 +3685,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-                const el = document.getElementById('war-effort-countdown');
+                const el = document.getElementById('ribbon-countdown');
                 if (el) {
                     el.innerHTML = `
-                        <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 209, 0, 0.2); padding: 8px 18px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px #000;">Next Weekly Reset: </span>
-                            <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 18px; text-shadow: 0 0 8px rgba(255, 128, 0, 0.6), 1px 1px 2px #000; margin-left: 6px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000;">Next Weekly Reset</span>
+                            <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 20px; text-shadow: 0 0 12px rgba(255, 128, 0, 0.5), 1px 1px 2px #000; letter-spacing: 1px;">
                             ${d}d ${h}h ${m}m ${s}s</span>
                         </div>`;
                 }
             }
-
             setInterval(updateWarEffortCountdown, 1000);
             updateWarEffortCountdown();
         }
