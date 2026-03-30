@@ -469,6 +469,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .home-dashboard-grid { display: flex !important; flex-direction: column !important; gap: 40px !important; }
 .podium-block::after { display: none !important; content: none !important; } .podium-block { overflow: visible !important; }
 
+.hero-header-row { display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 30px; width: 100%; text-align: left; } .hero-logo-col { flex: 0 0 auto; } .hero-text-col { display: flex; flex-direction: column; align-items: flex-start; flex: 1; max-width: 600px; } .main-logo { margin: 0 !important; max-width: 170px !important; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8)) !important; } @media (max-width: 800px) { .hero-header-row { flex-direction: column; text-align: center; gap: 15px; } .hero-text-col { align-items: center; } .hero-text-col p { margin: 0 auto 20px auto !important; text-align: center; } }
 
     </style>
 </head>
@@ -597,21 +598,25 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <div class="main-content">
             <div id="empty-state">
                 
-                <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" class="main-logo">
-                
-                <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000; margin-top: 0;">Azeroths Most Wanted Armory</h2>
-                <p style="font-family: 'Marcellus', serif; max-width: 600px; margin: 0 auto 20px auto; color: #bbb; font-size: 16px;">
-                    Search for a hero below, or select a stat box to filter the roster. Inspect dynamic equipment, stats, and guild loot history.
-                </p>
-
-                <div class="search-container" style="position: relative; max-width: 450px; margin: 0 auto 35px auto; width: 100%;">
-                    <div class="search-box hero-search-box" style="box-sizing: border-box;">
-                        <span class="search-icon" style="font-size: 18px; padding-left: 15px;">🔍</span>
-                        <input type="text" id="heroCharSearch" autocomplete="off" placeholder="Search for a guild member..." style="width: 100%; height: 46px; font-size: 16px; padding: 0 15px; box-sizing: border-box;" />
+                <div class="hero-header-row">
+                    <div class="hero-logo-col">
+                        <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" class="main-logo">
                     </div>
-                    <div id="hero-search-autocomplete" class="search-autocomplete" style="width: 100%; top: calc(100% + 8px);"></div>
+                    <div class="hero-text-col">
+                        <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 8px;">Azeroths Most Wanted Armory</h2>
+                        <p style="font-family: 'Marcellus', serif; max-width: 550px; margin: 0 0 20px 0; color: #aaa; font-size: 14px; line-height: 1.5;">
+                            Search for a hero below, or select a stat box to filter the roster. Inspect dynamic equipment, stats, and guild loot history.
+                        </p>
+                        
+                        <div class="search-container" style="position: relative; max-width: 450px; width: 100%;">
+                            <div class="search-box hero-search-box" style="box-sizing: border-box;">
+                                <span class="search-icon" style="font-size: 18px; padding-left: 15px;">🔍</span>
+                                <input type="text" id="heroCharSearch" autocomplete="off" placeholder="Search for a guild member..." style="width: 100%; height: 46px; font-size: 16px; padding: 0 15px; box-sizing: border-box;" />
+                            </div>
+                            <div id="hero-search-autocomplete" class="search-autocomplete" style="width: 100%; top: calc(100% + 8px);"></div>
+                        </div>
+                    </div>
                 </div>
-
 
                 <div id="recent-milestones-container" style="display:none; width: 100%; max-width: 1050px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards;">
                     <div class="milestone-banner">
@@ -958,10 +963,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-30T12:35:43.585800Z", "active_14_days": 411, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T12:47:39.328261Z", "active_14_days": 411, "raid_ready_count": 19, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 198, "loot": 151, "levels": 47, "total_roster": 651, "active_roster": 411}]
+        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 207, "loot": 156, "levels": 51, "total_roster": 651, "active_roster": 411}]
     </script>
 
     <script>
