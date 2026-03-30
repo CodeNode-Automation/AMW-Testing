@@ -3839,7 +3839,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
         renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
-        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 100, 'LOOT');
+        renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 60, 'LOOT');
         renderBar('guild-zenith-fill', 'guild-zenith-text', totalZenith, 10, 'ZENITH');
 
         // --- NEW: VANGUARD AURA & TIMELINE MONUMENT CALCULATION ---
@@ -3875,11 +3875,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('hk', fallback, topDyn);
         }
 
-        if (totalLoot >= 100) {
+        if (totalLoot >= 60) {
             const topDyn = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[99]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[99].character_name}</span> looted the 100th Epic!`, timestamp: sortedLoot[99].timestamp };
+            if (sortedLoot[49]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[49].character_name}</span> looted the 50th Epic!`, timestamp: sortedLoot[49].timestamp };
             applyLockFallback('loot', fallback, topDyn);
         }
 
@@ -3895,6 +3895,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             let fallback = null;
             if (uniqueZ[9]) fallback = { title: "⚡ The Zenith Cohort", desc: `<span style="color:#3FC7EB; font-weight:bold;">${uniqueZ[9].charAt(0).toUpperCase() + uniqueZ[9].slice(1)}</span> was the 10th Level 70!`, timestamp: new Date().toISOString() };
             applyLockFallback('zenith', fallback, topDyn);
+        }
+
+        if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 50 && totalZenith >= 10) {
+            // 1. Find the exact timestamp when the final challenge was completed
+            const lockTimes = [
+                new Date(window.warEffortLockTimes.xp).getTime(),
+                new Date(window.warEffortLockTimes.hk).getTime(),
+                new Date(window.warEffortLockTimes.loot).getTime(),
+                new Date(window.warEffortLockTimes.zenith).getTime()
+            ];
+            const flawlessCompletionTime = new Date(Math.max(...lockTimes));
+            
+            // 2. Format the start of the week (e.g., "Mar 24")
+            const weekStart = new Date(lastResetMs).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+
+            // 3. Push the monument with the dynamic week and accurate completion time
+            window.warEffortMonuments.push({
+                title: "🌟 FLAWLESS VICTORY",
+                desc: `<span style="color:#ffd100; font-weight:bold;">The guild crushed ALL FOUR War Efforts for the week of ${weekStart}!</span> Glory to Azeroth's Most Wanted!`,
+                timestamp: flawlessCompletionTime.toISOString()
+            });
         }
         
         // --- NEW: COMPACT MONUMENTS GRID FEED ---
