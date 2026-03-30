@@ -452,6 +452,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .podium-step-2 { height: 100px; order: 1; border-color: #c0c0c0; background: linear-gradient(180deg, rgba(192,192,192,0.1) 0%, rgba(0,0,0,0.6) 100%); z-index: 2; }
 .podium-step-3 { height: 80px; order: 3; border-color: #cd7f32; background: linear-gradient(180deg, rgba(205,127,50,0.1) 0%, rgba(0,0,0,0.6) 100%); z-index: 1; }
 .podium-rank { font-family: 'Cinzel'; font-weight: bold; text-shadow: 1px 1px 2px #000; position: absolute; opacity: 0.15; bottom: -2px; left: 50%; transform: translateX(-50%); font-size: 45px; pointer-events: none; line-height: 1; }
+.lb-podium-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-top: 25px; margin-bottom: 15px; width: 100%; } .lb-list-wrap { display: flex; flex-direction: column; gap: 8px; width: 100%; } @media(max-width:600px){ .lb-podium-wrap { gap: 4px; } .podium-block { padding: 25px 2px 8px 2px; } }
     </style>
 </head>
 <body>
@@ -936,10 +937,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-29T22:29:46.463609Z", "active_14_days": 405, "raid_ready_count": 18, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T00:05:07.842934Z", "active_14_days": 407, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 24, "loot": 19, "levels": 5, "total_roster": 643, "active_roster": 405}]
+        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 91, "loot": 69, "levels": 22, "total_roster": 647, "active_roster": 407}]
     </script>
 
     <script>
@@ -1473,7 +1474,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
-        let pveHTML = '';
+        let pveHTML = '<div class="lb-podium-wrap">';
+        let pveListHTML = '<div class="lb-list-wrap">';
         topPve.forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -1482,33 +1484,45 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconUrl = getSpecIcon(cClass, activeSpec);
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
-            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-            const rankSize = index < 3 ? '18px' : '15px';
             const portraitURL = char.render_url || getClassIcon(cClass);
-
-            // --- NEW: Trend Arrow Logic for PvE ---
             const trend = p.trend_pve || p.trend_ilvl || 0; 
             let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
             if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
-            pveHTML += `
-            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pve-score">
-                    ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span style="color: #555;">-</span>';
+                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+
+                pveHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                </div>`;
+            } else {
+                pveListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pve-score">
+                        ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
         });
-        pveContainer.innerHTML = pveHTML;
+        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
     }
 
     const pvpContainer = document.getElementById('pvp-leaderboard');
@@ -1521,7 +1535,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPvp.length > 0 && pvpContainer) {
         pvpWrapper.style.display = 'block';
-        let pvpHTML = '';
+        let pvpHTML = '<div class="lb-podium-wrap">';
+        let pvpListHTML = '<div class="lb-list-wrap">';
         topPvp.forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -1530,34 +1545,46 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specIconUrl = getSpecIcon(cClass, activeSpec);
             const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-
-            let podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-            const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-            const rankSize = index < 3 ? '18px' : '15px';
             const hkCount = (p.honorable_kills || 0).toLocaleString();
             const portraitURL = char.render_url || getClassIcon(cClass);
-
-            // --- Trend Arrow Logic for PvP ---
             const trend = p.trend_pvp || 0; 
             let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
             if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
             else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
 
-            pvpHTML += `
-            <div class="pvp-row tt-char ${podiumClass} leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                <div class="lb-rank" style="color: ${rankColor}; font-size: ${rankSize};">#${index + 1}</div>
-                <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                <div class="lb-info">
-                    <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                    <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                </div>
-                <div class="lb-score pvp-score">
-                    ${hkCount} <span class="lb-score-label">HKs</span>
-                    ${trendHTML}
-                </div>
-            </div>`;
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span style="color: #555;">-</span>';
+                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+
+                pvpHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                </div>`;
+            } else {
+                pvpListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pvp-score">
+                        ${hkCount} <span class="lb-score-label">HKs</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
         });
-        pvpContainer.innerHTML = pvpHTML;
+        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>';
     }
     
     setupTooltips();
