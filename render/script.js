@@ -2576,9 +2576,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             leftCol.style.display = 'flex';
             
             // Restore default column layout
+            wrapper.style.display = 'flex';
             wrapper.style.flexDirection = 'row';
+            wrapper.style.alignItems = 'flex-start';
             leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
+            leftCol.style.width = '100%';
             badgesContainer.style.flexWrap = 'wrap';
             badgesContainer.style.justifyContent = 'center';
             badgesContainer.style.maxWidth = '900px';
@@ -2589,7 +2591,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             badgesContainer.style.marginTop = '';
             
             if (timeline) {
-                timeline.style.width = ''; 
+                timeline.style.display = 'block';
+                timeline.style.width = '100%'; 
                 timeline.style.maxWidth = ''; // Reset timeline width
             }
             
@@ -2598,7 +2601,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             leftCol.style.display = 'flex';
             
             // Stack layout: Bubbles single-file on top, character list stretched wide below
+            wrapper.style.display = 'flex';
             wrapper.style.flexDirection = 'column';
+            wrapper.style.alignItems = 'stretch';
             leftCol.style.maxWidth = '100%';
             leftCol.style.width = '100%';
             badgesContainer.style.flexWrap = 'nowrap';
@@ -2612,6 +2617,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             // Stretch the activity feed slightly, but keep it responsive for mobile!
             if (timeline) {
+                timeline.style.display = 'block';
                 timeline.style.width = '100%'; 
                 timeline.style.maxWidth = '440px'; 
             }
@@ -2623,21 +2629,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             leftCol.style.display = 'flex'; // FIX: Never hide the character roster!
             
-            // Give War Effort podiums the full screen width they deserve
+            // Layout specific routing
+            wrapper.style.display = 'flex';
+            wrapper.style.alignItems = 'flex-start';
+            
             if (hash.startsWith('war-effort-')) {
+                // Give War Effort podiums the full screen width they deserve
                 wrapper.style.flexDirection = 'column';
+                wrapper.style.alignItems = 'stretch';
                 leftCol.style.maxWidth = '100%';
                 leftCol.style.width = '100%';
+                if (timeline) timeline.style.display = 'none';
             } else {
-                // Restore default column layout
+                // Restore default side-by-side layout
                 wrapper.style.flexDirection = 'row';
                 leftCol.style.maxWidth = '350px';
-                leftCol.style.width = 'auto';
-            }
-            
-            if (timeline) {
-                timeline.style.width = ''; 
-                timeline.style.maxWidth = ''; // Reset timeline width
+                leftCol.style.width = '100%';
+                if (timeline) {
+                    timeline.style.display = 'block';
+                    timeline.style.width = '100%'; 
+                    timeline.style.maxWidth = ''; // Reset timeline width
+                }
             }
         }
 
