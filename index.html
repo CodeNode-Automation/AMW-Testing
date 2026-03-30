@@ -473,6 +473,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .command-ribbon-container { display: flex; gap: 20px; width: 100%; max-width: 1050px; margin: 0 auto 40px auto; align-items: stretch; animation: fadeInUp 0.5s forwards; } .ribbon-left { flex: 3; display: flex; flex-direction: column; justify-content: center; } .ribbon-left .milestone-banner { height: 100%; margin: 0 !important; max-width: 100% !important; } .ribbon-right { flex: 2; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(20, 15, 25, 0.8) 0%, rgba(10, 8, 15, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.3); border-radius: 12px; padding: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 209, 0, 0.05); } @media (max-width: 800px) { .command-ribbon-container { flex-direction: column; gap: 15px; margin-bottom: 30px; } }
 
+@media (max-width: 600px) { .mvp-podium-container, .lb-podium-wrap { gap: 4px !important; margin-top: 35px !important; } .podium-block { padding: 22px 2px 6px 2px !important; } .podium-avatar { width: 32px !important; height: 32px !important; top: -16px !important; border-width: 1px !important; } .podium-step-1 { height: 125px !important; } .podium-step-2 { height: 105px !important; } .podium-step-3 { height: 90px !important; } .podium-rank { font-size: 35px !important; } .podium-block > div { font-size: 11px !important; margin-bottom: 4px !important; } .podium-block > div > span { font-size: 8px !important; margin-left: 2px !important; } .podium-block > div[style*="top:-42px"] { top: -32px !important; font-size: 18px !important; margin-bottom: 0 !important; } .podium-block > div[style*="border-radius: 12px"], .podium-block > div[style*="border-radius: 12px"] * { padding: 2px 4px !important; font-size: 10px !important; letter-spacing: -0.5px !important; } }
+
     </style>
 </head>
 <body>
@@ -968,10 +970,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-30T13:32:03.663032Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T13:41:22.755189Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 214, "loot": 161, "levels": 53, "total_roster": 651, "active_roster": 410}]
+        [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 214, "loot": 161, "levels": 53, "total_roster": 651, "active_roster": 411}]
     </script>
 
     <script>
@@ -4556,13 +4558,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
+                // ADDING: A glowing crown and class-colored aura for the #1 MVP
+                const crownHtml = rank === 1 ? `<div style="position:absolute; top:-42px; left:50%; transform:translateX(-50%); font-size:22px; filter:drop-shadow(0 0 8px #ffd100); z-index:10; animation: floatLogo 4s ease-in-out infinite;">👑</div>` : '';
+                const glowStyle = rank === 1 ? `box-shadow: 0 0 15px ${cHex}, 0 0 30px ${cHex};` : '';
+
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    ${crownHtml}
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex}; ${glowStyle}">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 8px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    
+                    <div style="background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.4); border-radius: 12px; padding: 2px 8px; color: #2ecc71; font-weight: bold; font-size: 11px; text-shadow: 1px 1px 2px #000; z-index: 2; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#ccc; text-transform:uppercase; margin-left:4px;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
