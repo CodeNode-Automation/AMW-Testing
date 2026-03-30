@@ -459,7 +459,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .home-dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%; max-width: 1200px; margin: 0 auto; } @media(min-width: 1024px) { .home-dashboard-grid { grid-template-columns: 1fr 1fr; grid-template-areas: "heatmap heatmap" "wareffort mvps" "leaderboards leaderboards"; align-items: stretch; gap: 40px; } .home-dashboard-grid > div:nth-child(1) { grid-area: heatmap; } .home-dashboard-grid > #guild-xp-container { grid-area: wareffort; margin: 0 !important; } .home-dashboard-grid > #weekly-mvps-container { grid-area: mvps; margin: 0 !important; } .home-dashboard-grid > #leaderboards-wrapper { grid-area: leaderboards; margin: 0 auto !important; } }
 .pvp-row, .podium-block { position: relative; overflow: hidden; } .pvp-row::after, .podium-block::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); transition: 0s; pointer-events: none; z-index: 10; } .pvp-row:hover::after, .podium-block:hover::after { left: 100%; transition: left 0.5s ease-in-out; }
-.hero-search-box { position: relative; background-clip: padding-box; border: 2px solid transparent !important; } .hero-search-box::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(90deg, #ff8000, #a335ee, #3FC7EB, #ffd100, #ff8000); background-size: 400% 100%; z-index: -1; border-radius: 40px; opacity: 0.3; transition: opacity 0.4s ease; animation: arcaneScroll 6s linear infinite; pointer-events: none; } .hero-search-box:hover::before, .hero-search-box:focus-within::before { opacity: 1; box-shadow: 0 0 20px rgba(163, 53, 238, 0.4); } @keyframes arcaneScroll { 0% { background-position: 100% 0; } 100% { background-position: 0% 0; } }
     </style>
 </head>
 <body>
@@ -948,7 +947,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-30T10:51:51.790483Z", "active_14_days": 409, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T10:56:08.305157Z", "active_14_days": 409, "raid_ready_count": 20, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 166, "loot": 128, "levels": 38, "total_roster": 649, "active_roster": 409}]
