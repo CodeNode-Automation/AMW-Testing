@@ -1425,7 +1425,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Generate the HTML for the list
-        const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
+        const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl === 'badges' || hashUrl.startsWith('war-effort-');
         let podiumsHTML = '';
         let listItemsHTML = '';
 
@@ -1515,7 +1515,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 baseName = p.name || 'Unknown';
                 cleanName = (p.name || 'Unknown').toLowerCase();
-                displayName = (p.name || 'Unknown') + cBadgesHtml;
+                displayName = p.name || 'Unknown';
                 cClass = getCharClass(deepChar);
                 raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
                 cHex = CLASS_COLORS[cClass] || "#fff";
@@ -1633,6 +1633,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // 4. Render the HTML Row (or intercept for Podium)
             let rowHTML = '';
+            
+            // Format the trophy case to only show if there are actual badges
+            const hasBadges = cBadgesHtml && cBadgesHtml.includes('<span');
+            const trophyCaseHtml = hasBadges ? `<div style="margin-top: 6px; margin-left: -8px;">${cBadgesHtml}</div>` : '';
+
             if (!isClickable) {
                 rowHTML = `
                 <div class="concise-char-bar ${podiumClass} ${vanguardClass}" data-class="${cClass}" data-spec="unspecced" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
@@ -1641,8 +1646,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                             ${rankHtml}
                             <div class="c-main-info">
                                 <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
+                                    <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                                    ${trophyCaseHtml}
+                                </div>
                             </div>
                         </div>
                         ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
@@ -1657,8 +1665,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                             ${rankHtml}
                             <div class="c-main-info">
                                 <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
+                                    <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                                    ${trophyCaseHtml}
+                                </div>
                             </div>
                         </div>
                         ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
@@ -1683,6 +1694,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     podiumStatText = `<div style="color:#a335ee; font-weight:bold; font-size:13px;">${window.warEffortContext[cleanName].length} <span style="font-size:9px; color:#888; text-transform:uppercase;">Epics</span></div>`;
                 } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
                     podiumStatText = `<div style="color:#3FC7EB; font-weight:bold; font-size:11px;">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
+                } else if (hashUrl === 'badges') {
+                    const totalScore = vCount + cCount + pveChamp + pvpChamp + pveGold + pveSilver + pveBronze + pvpGold + pvpSilver + pvpBronze;
+                    podiumStatText = `<div style="color:#ffd100; font-weight:bold; font-size:13px;">${totalScore} <span style="font-size:9px; color:#888; text-transform:uppercase;">Awards</span></div>`;
                 } else if (hashUrl === 'ladder-pve') {
                     podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 } else if (hashUrl === 'ladder-pvp') {
@@ -1693,14 +1707,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (vanguardClass !== '') {
                     pVanguard = `<div style="position:absolute; top:-10px; right:-10px; font-size:22px; filter:drop-shadow(0 0 5px #00ffcc); z-index:10;" title="Vanguard">🌟</div>`;
                 }
+                
+                // Add the Trophy case to the podium block (scaled down to fit)
+                const podiumTrophyCase = hasBadges ? `<div style="transform: scale(0.85); width: 115%; display: flex; justify-content: center; flex-wrap: wrap;">${cBadgesHtml}</div>` : '';
 
                 podiumsHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
                     ${pVanguard}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                    <div style="z-index: 2; text-align: center;">${podiumStatText}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                    <div style="z-index: 2; text-align: center; margin-bottom: 2px;">${podiumStatText}</div>
+                    ${podiumTrophyCase}
                 </div>`;
             } else {
                 listItemsHTML += rowHTML;
