@@ -1966,6 +1966,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         
+        // Show nav search by default on sub-pages
+        const navSearch = document.querySelector('.navbar .search-container');
+        if (navSearch) navSearch.style.display = 'block';
+
         if (timeline) timeline.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -2382,6 +2386,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         updateDropdownLabel('all');
+
+        // Hide nav search purely on the homepage
+        const navSearch = document.querySelector('.navbar .search-container');
+        if (navSearch) navSearch.style.display = 'none';
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.style.display = 'block';
