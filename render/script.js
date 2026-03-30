@@ -3406,28 +3406,31 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (event.type === 'badge') {
                 eventEl.style.borderLeftColor = c_hex;
+                eventEl.style.padding = '8px 12px'; // Tighter padding for badges
                 let badgeIcon = '🎖️', badgeColor = '#aaa', badgeText = '';
                 
-                if (event.badge_type === 'mvp_pve') { badgeIcon = '👑'; badgeColor = '#ff8000'; badgeText = 'PvE MVP Champion'; }
-                else if (event.badge_type === 'mvp_pvp') { badgeIcon = '⚔️'; badgeColor = '#ff4400'; badgeText = 'PvP MVP Champion'; }
-                else if (event.badge_type === 'vanguard') { badgeIcon = '🌟'; badgeColor = '#00ffcc'; badgeText = 'Vanguard Status'; }
-                else if (event.badge_type === 'campaign') { badgeIcon = '🎖️'; badgeColor = '#aaa'; badgeText = 'Campaign Participant'; }
-                else if (event.badge_type === 'pve_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvE Ladder 1st Place'; }
-                else if (event.badge_type === 'pve_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvE Ladder 2nd Place'; }
-                else if (event.badge_type === 'pve_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvE Ladder 3rd Place'; }
-                else if (event.badge_type === 'pvp_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvP Ladder 1st Place'; }
-                else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP Ladder 2nd Place'; }
-                else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP Ladder 3rd Place'; }
+                if (event.badge_type === 'mvp_pve') { badgeIcon = '👑'; badgeColor = '#ff8000'; badgeText = 'PvE MVP'; }
+                else if (event.badge_type === 'mvp_pvp') { badgeIcon = '⚔️'; badgeColor = '#ff4400'; badgeText = 'PvP MVP'; }
+                else if (event.badge_type === 'vanguard') { badgeIcon = '🌟'; badgeColor = '#00ffcc'; badgeText = 'Vanguard'; }
+                else if (event.badge_type === 'campaign') { badgeIcon = '🎖️'; badgeColor = '#aaa'; badgeText = 'Campaign'; }
+                else if (event.badge_type === 'pve_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvE 1st'; }
+                else if (event.badge_type === 'pve_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvE 2nd'; }
+                else if (event.badge_type === 'pve_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvE 3rd'; }
+                else if (event.badge_type === 'pvp_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvP 1st'; }
+                else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP 2nd'; }
+                else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP 3rd'; }
                 
                 eventEl.innerHTML = `
                     <div class="timeline-node" style="background: ${badgeColor}; box-shadow: 0 0 8px ${badgeColor};"></div>
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
-                        <span style="color:#888; font-size:11px;">${date_str}</span>
-                    </div>
-                    <div class="event-box" style="border-left-color: ${badgeColor}; background: rgba(0,0,0,0.4);">
-                        <span style="font-size: 16px; margin-right: 8px; filter: drop-shadow(0 0 3px ${badgeColor});">${badgeIcon}</span>
-                        <span style="color: ${badgeColor}; font-weight: bold; text-shadow: 1px 1px 2px #000;">Awarded: ${badgeText} - ${event.category}</span>
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; gap: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:14px; text-shadow:1px 1px 2px #000;">${c_name}</span>
+                            <div style="display: inline-flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-left: 2px solid ${badgeColor}; border-radius: 4px; padding: 2px 6px; gap: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8);">
+                                <span style="font-size: 11px; filter: drop-shadow(0 0 2px ${badgeColor});">${badgeIcon}</span>
+                                <span style="color: ${badgeColor}; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">${badgeText} <span style="color: #888; font-weight: normal;">• ${event.category}</span></span>
+                            </div>
+                        </div>
+                        <span style="color:#888; font-size:10px;">${date_str}</span>
                     </div>
                 `;
             } else if (event.type === 'level_up') {
