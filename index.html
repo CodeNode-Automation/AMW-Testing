@@ -323,7 +323,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes floatLogo { 0% { transform: translateY(0px); filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); } 50% { transform: translateY(-8px); filter: drop-shadow(0 20px 25px rgba(255, 209, 0, 0.15)); } 100% { transform: translateY(0px); filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes floatCrown { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-5px); } }
 
 @keyframes pulseSlowXP { 0% { opacity: 0.8; filter: brightness(1); } 100% { opacity: 1; filter: brightness(1.2); } }
 @keyframes pulseFastXP { 0% { opacity: 0.7; filter: brightness(1.2); } 100% { opacity: 1; filter: brightness(1.5); } }
@@ -434,7 +433,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 .vanguard-aura { background: rgba(30, 35, 45, 0.95) !important; border-left-color: #00ffcc !important; box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; z-index: 5; position: relative; }
 .vanguard-badge { background: #111; color: #fff; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-left: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.8); display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
-.monuments-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; width: 100%; } .monument-card { background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid #ffd100; padding: 10px 14px; display: flex; align-items: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s ease; cursor: default; backdrop-filter: blur(5px); } .monument-card:hover { transform: translateX(4px); background: linear-gradient(90deg, rgba(35, 35, 45, 0.8) 0%, rgba(15, 15, 20, 0.95) 100%); border-left-color: #ff8000; box-shadow: -4px 8px 15px rgba(0,0,0,0.6), 0 0 15px rgba(255, 209, 0, 0.1); }
+.monuments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 15px; width: 100%; }
 .monument-card { background: linear-gradient(135deg, rgba(25, 25, 30, 0.9) 0%, rgba(10, 10, 15, 0.95) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #ffd100; padding: 8px 10px; display: flex; flex-direction: column; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 .mon-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .mon-icon { font-size: 16px; filter: drop-shadow(0 0 2px rgba(255,209,0,0.5)); }
@@ -448,10 +447,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .mvp-podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-top: 40px; padding-bottom: 10px; width: 100%; }
 .podium-block { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 32%; border-radius: 8px 8px 0 0; position: relative; transition: transform 0.3s ease; cursor: pointer; text-align: center; padding: 25px 5px 10px 5px; border-bottom: none !important; }
 .podium-block:hover { transform: translateY(-5px); z-index: 10; }
-.podium-crown { position: absolute; top: -52px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 10; animation: floatCrown 3s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(255,209,0,0.8)); pointer-events: none; }
-.trend-pill { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2px 8px; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); backdrop-filter: blur(4px); font-size: 11px; margin-top: 2px; }
-.podium-crown { position: absolute; top: -52px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 10; animation: floatCrown 3s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(255,209,0,0.8)); pointer-events: none; }
-.podium-data-pill { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 92%; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); margin-top: auto; margin-bottom: 8px; backdrop-filter: blur(4px); }
+.podium-avatar { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 44px; height: 44px; border-radius: 50%; border: 2px solid; object-fit: cover; box-shadow: 0 5px 10px rgba(0,0,0,0.8); background: #000; }
 .podium-step-1 { height: 155px; order: 2; border-top: 3px solid #ffdf00 !important; background: linear-gradient(180deg, rgba(255, 223, 0, 0.35) 0%, rgba(200, 140, 0, 0.15) 50%, rgba(0, 0, 0, 0.8) 100%) !important; box-shadow: 0 -10px 25px rgba(255, 223, 0, 0.25), inset 0 4px 10px rgba(255, 255, 255, 0.4) !important; z-index: 3; position: relative; }
 .podium-step-2 { height: 130px; order: 1; border-top: 3px solid #e0e0e0 !important; background: linear-gradient(180deg, rgba(224, 224, 224, 0.3) 0%, rgba(150, 150, 150, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%) !important; box-shadow: 0 -8px 20px rgba(224, 224, 224, 0.2), inset 0 4px 8px rgba(255, 255, 255, 0.5) !important; z-index: 2; position: relative; }
 .podium-step-3 { height: 110px; order: 3; border-top: 3px solid #cd7f32 !important; background: linear-gradient(180deg, rgba(205, 127, 50, 0.35) 0%, rgba(139, 69, 19, 0.15) 50%, rgba(0, 0, 0, 0.8) 100%) !important; box-shadow: 0 -6px 15px rgba(205, 127, 50, 0.2), inset 0 4px 8px rgba(255, 160, 100, 0.3) !important; z-index: 1; position: relative; }
@@ -477,6 +473,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .command-ribbon-container { display: flex; gap: 20px; width: 100%; max-width: 1050px; margin: 0 auto 40px auto; align-items: stretch; animation: fadeInUp 0.5s forwards; } .ribbon-left { flex: 3; display: flex; flex-direction: column; justify-content: center; } .ribbon-left .milestone-banner { height: 100%; margin: 0 !important; max-width: 100% !important; } .ribbon-right { flex: 2; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(20, 15, 25, 0.8) 0%, rgba(10, 8, 15, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.3); border-radius: 12px; padding: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 209, 0, 0.05); } @media (max-width: 800px) { .command-ribbon-container { flex-direction: column; gap: 15px; margin-bottom: 30px; } }
 
+.monuments-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; width: 100%; } .monument-card { background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid #ffd100; padding: 10px 14px; display: flex; align-items: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s ease; cursor: default; backdrop-filter: blur(5px); } .monument-card:hover { transform: translateX(4px); background: linear-gradient(90deg, rgba(35, 35, 45, 0.8) 0%, rgba(15, 15, 20, 0.95) 100%); border-left-color: #ff8000; box-shadow: -4px 8px 15px rgba(0,0,0,0.6), 0 0 15px rgba(255, 209, 0, 0.1); }
     </style>
 </head>
 <body>
@@ -972,7 +969,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-30T15:15:38.682196Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
+        {"last_updated": "2026-03-30T15:20:25.317160Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": null, "pvp": null}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-24", "day_name": "Tue", "count": 532, "loot": 414, "levels": 118, "total_roster": 608, "active_roster": 355}, {"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 244, "loot": 180, "levels": 64, "total_roster": 651, "active_roster": 410}]
@@ -1535,12 +1532,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pveHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
                     <div style="color: #ff8000; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
-                    <div class="trend-pill" style="z-index: 2; font-weight: bold;">${podiumTrend}</div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pveListHTML += `
@@ -1599,12 +1595,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 pvpHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
                     <div style="color: #ff4400; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
-                    <div class="trend-pill" style="z-index: 2; font-weight: bold;">${podiumTrend}</div>
+                    <div style="z-index: 2; text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
                 </div>`;
             } else {
                 pvpListHTML += `
@@ -2669,9 +2664,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
                     podiumStatText = `<div style="color:#3FC7EB; font-weight:bold; font-size:11px;">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
                 } else if (hashUrl === 'ladder-pve') {
-                    podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div class="trend-pill">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff8000; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 } else if (hashUrl === 'ladder-pvp') {
-                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div><div class="trend-pill">${trendHTML}</div>`;
+                    podiumStatText = `<div style="color:#ff4400; font-weight:bold; font-size:13px;">${statValue} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div><div style="font-size:11px; margin-top:2px; display:flex; justify-content:center;">${trendHTML}</div>`;
                 }
 
                 let pVanguard = '';
@@ -2681,14 +2676,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 podiumsHTML += `
                 <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     ${pVanguard}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div class="podium-data-pill">
-                        <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                        <div style="text-align: center;">${podiumStatText}</div>
-                    </div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                    <div style="z-index: 2; text-align: center;">${podiumStatText}</div>
                 </div>`;
             } else {
                 listItemsHTML += rowHTML;
@@ -4567,12 +4559,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 return `
                 <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${rank === 1 ? '<div class="podium-crown">👑</div>' : ''}
                     <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
                     <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
                     <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div class="trend-pill" style="color: #2ecc71; font-weight: bold; z-index: 2;">
-                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase; margin-left: 3px;">${label}</span>
+                    <div style="color: #2ecc71; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000; z-index: 2;">
+                        ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
                     </div>
                 </div>`;
             }).join('');
