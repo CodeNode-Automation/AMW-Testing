@@ -12,7 +12,6 @@
 
 /* Layout */
 .load-more-container { text-align: center; margin-top: 20px; margin-bottom: 40px; }
-.d-none { display: none !important; }
 
 /* ========================================= */
 /* BASE & GLOBALS                            */
@@ -1056,23 +1055,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
-    <template id="tpl-timeline-filters-default">
-        <div class="filter-group">
-            <button class="tl-btn" data-type="all">All</button>
-            <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
-            <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
-            <button class="tl-btn" data-type="level_up">Levels</button>
-        </div>
-        <div class="filter-group">
-            <select id="tl-date-filter" class="tl-select">
-                <option value="12">Last 12 Hours</option>
-                <option value="24">Last 24 Hours</option>
-                <option value="48">Last 48 Hours</option>
-                <option value="all" selected>All Available</option>
-            </select>
-        </div>
-    </template>
-    
     <template id="tpl-monument-card">
         <div class="monument-inner-wrapper">
             <span class="monument-trophy">🏆</span>
@@ -1364,12 +1346,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
                 
                 <div id="leaderboards-wrapper" class="leaderboards-wrapper">
-                    <div id="pve-leaderboard-container" class="leaderboard-panel d-none">
+                    <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pve" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
-                    <div id="pvp-leaderboard-container" class="leaderboard-panel d-none">
+                    <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pvp" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
@@ -1597,10 +1579,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T19:48:33.795085Z", "active_14_days": 414, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T19:53:38.942780Z", "active_14_days": 414, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 395, "loot": 287, "levels": 108, "total_roster": 658, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 400, "loot": 291, "levels": 109, "total_roster": 658, "active_roster": 414}]
     </script>
 
     <script>
@@ -3788,11 +3770,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     function hideAllViews() {
-        emptyState.classList.add('d-none');
-        conciseView.classList.add('d-none');
-        fullCardContainer.classList.add('d-none');
-        if (analyticsView) analyticsView.classList.add('d-none');
-        if (architectureView) architectureView.classList.add('d-none');
+        emptyState.style.display = 'none';
+        conciseView.style.display = 'none';
+        fullCardContainer.style.display = 'none';
+        if (analyticsView) analyticsView.style.display = 'none';
+        if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         
@@ -3806,12 +3788,22 @@ window.addEventListener('DOMContentLoaded', async () => {
         // --- RESTORE DEFAULT TIMELINE HTML ---
         const filtersContainer = document.querySelector('.timeline-filters');
         if (filtersContainer) {
-            filtersContainer.textContent = '';
-            const tpl = document.getElementById('tpl-timeline-filters-default');
-            if (tpl) {
-                filtersContainer.appendChild(tpl.content.cloneNode(true));
-            }
-            
+            filtersContainer.innerHTML = `
+                <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
+                    <button class="tl-btn" data-type="level_up">Levels</button>
+                </div>
+                <div class="filter-group">
+                    <select id="tl-date-filter" class="tl-select">
+                        <option value="12">Last 12 Hours</option>
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="all" selected>All Available</option>
+                    </select>
+                </div>
+            `;
             // Re-bind standard events
             document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -4226,7 +4218,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showHomeView() {
         hideAllViews();
-        emptyState.classList.remove('d-none');
+        emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         updateDropdownLabel('all');
 
