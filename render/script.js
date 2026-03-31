@@ -1155,10 +1155,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (!specContainer) {
             specContainer = document.createElement('div');
             specContainer.id = 'concise-spec-container';
-            specContainer.style.display = 'none';
-            specContainer.style.textAlign = 'center';
-            specContainer.style.marginBottom = '20px';
-            specContainer.style.animation = 'fadeInUp 0.3s forwards';
+            specContainer.className = 'concise-spec-container-default';
             container.parentNode.appendChild(specContainer); 
         } else {
             specContainer.style.display = 'none';
@@ -1198,7 +1195,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 badgeDiv.setAttribute('data-class', cls);
                 badgeDiv.style.borderColor = color;
-                badgeDiv.style.cursor = 'pointer';
                 badgeDiv.title = `Filter ${cls}s`;
                 
                 clsSpan.textContent = cls;

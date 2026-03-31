@@ -458,8 +458,7 @@
                 </div>
                 
                 </div> </div> 
-            <div id="analytics-view" style="display: none; animation: fadeInUp 0.5s forwards;">
-                <h2 class="view-main-title analytics-title">Guild Analytics</h2>
+            <div id="analytics-view" class="analytics-view-container">
                 
                 <div class="stat-box-container analytics-kpi-wrapper">
                     <div class="stat-box clickable stat-box-kpi-pve" id="kpi-box-pve" title="View Full PvE Ladder">
@@ -538,7 +537,7 @@
                         <div class="arch-logo-pill">
                             <img src="asset/software_logo/python.png" alt="Python">
                         </div>
-                        <div class="arch-phase" style="color: #3498db; border-color: #3498db; background: rgba(52, 152, 219, 0.1);">STEP 1: EXTRACTION</div>
+                        <div class="arch-phase arch-phase-extraction">STEP 1: EXTRACTION</div>
                         <h3>Asynchronous Pull</h3>
                         <p>Python utilizes <strong>AsyncIO</strong> and <strong>Aiohttp</strong> to concurrently fetch live character profiles from the Blizzard REST API, processing vast amounts of data in seconds.</p>
                     </div>
@@ -555,7 +554,7 @@
                             <img src="asset/software_logo/turso.png" alt="Turso">
                             <img src="asset/software_logo/sqlite.png" alt="SQLite">
                         </div>
-                        <div class="arch-phase" style="color: #1abc9c; border-color: #1abc9c; background: rgba(26, 188, 156, 0.1);">STEP 2: STORAGE</div>
+                        <div class="arch-phase arch-phase-storage">STEP 2: STORAGE</div>
                         <h3>Edge Database</h3>
                         <p>Processed data is pushed in bulk transactions to a Turso edge database (libSQL/SQLite). This allows for infinite, free storage of historical guild trends and loot timelines.</p>
                     </div>
