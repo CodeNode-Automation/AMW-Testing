@@ -91,6 +91,13 @@
         </div>
     </template>
 
+    <template id="tpl-home-spec-badge">
+        <div class="stat-badge spec-btn home-spec-badge-btn">
+            <span class="stat-badge-cls home-spec-badge-cls"></span>
+            <span class="stat-badge-count home-spec-badge-count"></span>
+        </div>
+    </template>
+    
     <template id="tpl-timeline-levelup">
         <div class="timeline-node timeline-node-gold"></div>
         <div class="tl-event-header">
@@ -571,7 +578,7 @@
                             <img src="asset/software_logo/github.png" alt="GitHub">
                             <img src="asset/software_logo/cron.png" alt="Cron">
                         </div>
-                        <div class="arch-phase" style="color: #9b59b6; border-color: #9b59b6; background: rgba(155, 89, 182, 0.1);">STEP 3: AUTOMATION</div>
+                        <div class="arch-phase arch-phase-automation">STEP 3: AUTOMATION</div>
                         <h3>CI/CD Pipeline</h3>
                         <p>GitHub Actions acts as our server. A strict <strong>Cron</strong> schedule triggers the pipeline to update the database and rebuild the website without human intervention.</p>
                     </div>
@@ -588,7 +595,7 @@
                             <img src="asset/software_logo/jinga.png" alt="Jinja2">
                             <img src="asset/software_logo/html5.png" alt="HTML5">
                         </div>
-                        <div class="arch-phase" style="color: #e67e22; border-color: #e67e22; background: rgba(230, 126, 34, 0.1);">STEP 4: COMPILATION</div>
+                        <div class="arch-phase arch-phase-compilation">STEP 4: COMPILATION</div>
                         <h3>Static Generation</h3>
                         <p><strong>Jinja2</strong> templates inject the latest database queries into raw HTML. The result is a lightning-fast, ultra-secure static frontend powered by HTML5 and modern CSS.</p>
                     </div>
@@ -604,7 +611,7 @@
                         <div class="arch-logo-pill">
                             <img src="asset/software_logo/json.png" alt="JSON">
                         </div>
-                        <div class="arch-phase" style="color: #f1c40f; border-color: #f1c40f; background: rgba(241, 196, 15, 0.1);">STEP 5: VISUALIZATION</div>
+                        <div class="arch-phase arch-phase-visualization">STEP 5: VISUALIZATION</div>
                         <h3>Client-Side Rendering</h3>
                         <p>Heavy payloads are pre-compiled into static <strong>JSON</strong> files. The frontend consumes this data natively, using <strong>Chart.js</strong> to render analytics with zero database latency.</p>
                     </div>

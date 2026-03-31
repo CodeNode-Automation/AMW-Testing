@@ -3294,34 +3294,70 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
 
             const specContainer = document.getElementById('home-spec-container');
-            let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
-
-            specHtml += `
-                <div class="stat-badge spec-btn" data-hash="class-${className}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: ${cHex};">All ${formattedClass}s</span>
-                    <span class="stat-badge-count">${classRosterRaw.length}</span>
-                </div>`;
+            specContainer.textContent = '';
+            
+            const wrapDiv = document.createElement('div');
+            wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+            
+            const template = document.getElementById('tpl-home-spec-badge');
+            if (template) {
+                // All Class Badge
+                let clone = template.content.cloneNode(true);
+                let badge = clone.querySelector('.spec-btn');
+                badge.setAttribute('data-hash', `class-${className}`);
+                badge.style.borderColor = cHex;
+                badge.classList.add('home-spec-badge-all');
+                badge.title = `View all ${formattedClass}s`;
                 
-            Object.keys(specCounts).sort().forEach(spec => {
-                const iconUrl = getSpecIcon(formattedClass, spec);
-                const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:5px; border: 1px solid #222;">` : '';
-                specHtml += `
-                <div class="stat-badge spec-btn" data-hash="spec-${className}-${spec.toLowerCase().replace(/\s+/g, '')}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95);" title="View ${spec} ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: ${cHex}; display: flex; align-items: center;">${iconHtml}${spec}</span>
-                    <span class="stat-badge-count">${specCounts[spec]}</span>
-                </div>`;
-            });
-
-            if (unspeccedCount > 0) {
-                 specHtml += `
-                <div class="stat-badge spec-btn" data-hash="spec-${className}-unspecced" style="border-color: #888; cursor: pointer; transform: scale(0.95);" title="View Unspecced ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: #888;">Unspecced</span>
-                    <span class="stat-badge-count">${unspeccedCount}</span>
-                </div>`;
+                let clsSpan = clone.querySelector('.stat-badge-cls');
+                clsSpan.style.color = cHex;
+                clsSpan.textContent = `All ${formattedClass}s`;
+                
+                clone.querySelector('.stat-badge-count').textContent = classRosterRaw.length;
+                wrapDiv.appendChild(clone);
+                
+                // Individual Spec Badges
+                Object.keys(specCounts).sort().forEach(spec => {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-${spec.toLowerCase().replace(/\\s+/g, '')}`);
+                    badge.style.borderColor = cHex;
+                    badge.title = `View ${spec} ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = cHex;
+                    
+                    const iconUrl = getSpecIcon(formattedClass, spec);
+                    if (iconUrl) {
+                        const img = document.createElement('img');
+                        img.src = iconUrl;
+                        img.className = 'spec-badge-icon';
+                        clsSpan.appendChild(img);
+                    }
+                    clsSpan.appendChild(document.createTextNode(spec));
+                    
+                    clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
+                    wrapDiv.appendChild(clone);
+                });
+                
+                // Unspecced Badge
+                if (unspeccedCount > 0) {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-unspecced`);
+                    badge.style.borderColor = '#888';
+                    badge.title = `View Unspecced ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = '#888';
+                    clsSpan.textContent = 'Unspecced';
+                    
+                    clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                    wrapDiv.appendChild(clone);
+                }
             }
-
-            specHtml += `</div>`;
-            specContainer.innerHTML = specHtml;
+            
+            specContainer.appendChild(wrapDiv);
             specContainer.style.display = 'block';
 
             document.querySelectorAll('.spec-btn').forEach(btn => {
