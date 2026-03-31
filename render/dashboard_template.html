@@ -250,7 +250,7 @@
                 <div id="guild-xp-container" class="weekly-challenges-container" style="display:none;">
                     <h3 class="weekly-challenges-title">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="weekly-challenges-flex-container">
                         
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); letter-spacing: 1px;">
@@ -313,7 +313,7 @@
                         </div>
                     </div>
                     
-                    <button onclick="window.location.hash='badges'" class="view-heroes-btn">
+                    <button id="btn-view-heroes" class="view-heroes-btn">
                         🌟 View Hall of Heroes
                     </button>
                     
@@ -354,7 +354,7 @@
                 <h2 class="view-main-title analytics-title">Guild Analytics</h2>
                 
                 <div class="stat-box-container analytics-kpi-wrapper">
-                    <div class="stat-box clickable stat-box-kpi-pve" onclick="window.location.hash='ladder-pve'" title="View Full PvE Ladder">
+                    <div class="stat-box clickable stat-box-kpi-pve" id="kpi-box-pve" title="View Full PvE Ladder">
                         <span id="kpi-avg-ilvl" class="stat-value kpi-val-pve">0</span>
                         <span class="stat-label">Avg Level 70 iLvl</span>
                     </div>

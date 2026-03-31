@@ -166,6 +166,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loader) loader.classList.add('hidden');
     
     const active14Days = config.active_14_days;
+    const btnViewHeroes = document.getElementById('btn-view-heroes');
+    if (btnViewHeroes) {
+        btnViewHeroes.addEventListener('click', () => {
+            window.location.hash = 'badges';
+        });
+    }
     const raidReadyCount = config.raid_ready_count;
 
     const rawDate = new Date(config.last_updated);
@@ -412,7 +418,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (char) {
                 const cClass = getCharClass(char);
                 const cHex = CLASS_COLORS[cClass] || '#fff';
-                selectValueText.innerHTML = `<span style="color: ${cHex}; text-shadow: 1px 1px 2px #000;">${char.profile.name}</span>`;
+                selectValueText.textContent = char.profile.name;
+                selectValueText.className = 'selected-value char-selected-text';
+                selectValueText.style.color = cHex;
             } else {
                 selectValueText.innerHTML = "Select View...";
             }
@@ -2360,10 +2368,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const kpiIlvl = document.getElementById('kpi-avg-ilvl');
         if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
+        
         const kpiEpic = document.getElementById('kpi-epic-loot');
         if (kpiEpic) kpiEpic.innerText = epicLootCount;
+
         const kpiHks = document.getElementById('kpi-total-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+
+        const kpiBoxPve = document.getElementById('kpi-box-pve');
+        if (kpiBoxPve) {
+            kpiBoxPve.addEventListener('click', () => {
+                window.location.hash = 'ladder-pve';
+            });
+        }
 
         if(window.roleChartInstance) window.roleChartInstance.destroy();
         window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
