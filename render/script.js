@@ -2716,45 +2716,59 @@ window.addEventListener('DOMContentLoaded', async () => {
                     milestoneCont.style.display = 'flex';
                     milestoneText.classList.add('milestone-text-rotator');
 
-                    // 2. Pre-build the HTML strings for all 5 events
-                    const slideHtml = recentEvents.map(recent => {
-                        const charName = `<span class="milestone-highlight">${recent.character_name}</span>`;
+                    // 2. Pre-build the DOM elements for all 5 events
+                    const slideElements = recentEvents.map(recent => {
                         let timeStr = '';
                         try {
                             let cleanTs = (recent.timestamp || '').replace('Z', '+00:00');
                             if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                             const dt = new Date(cleanTs);
-                            if (!isNaN(dt.getTime())) timeStr = ` <span style="color:#888; font-size:11px; white-space:nowrap; margin-left:4px;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
+                            if (!isNaN(dt.getTime())) timeStr = ` (${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})`;
                         } catch(e) {}
 
+                        let clone;
                         if (recent.type === 'level_up') {
-                            return `Congratulations to ${charName} for reaching <span class="milestone-highlight">Level 70!</span> 🎉${timeStr}`;
+                            const tpl = document.getElementById('tpl-milestone-level');
+                            clone = tpl.content.cloneNode(true);
+                            clone.querySelector('.ms-char').textContent = recent.character_name;
+                            clone.querySelector('.ms-time').textContent = timeStr;
                         } else {
-                            const qClass = recent.item_quality === 'LEGENDARY' ? 'color:#ff8000;' : 'color:#a335ee;';
-                            return `${charName} just looted <a href="https://www.wowhead.com/wotlk/item=${recent.item_id}" target="_blank" style="${qClass} font-weight:bold; text-decoration:none;">[${recent.item_name}]</a>!${timeStr}`;
+                            const tpl = document.getElementById('tpl-milestone-loot');
+                            clone = tpl.content.cloneNode(true);
+                            clone.querySelector('.ms-char').textContent = recent.character_name;
+                            clone.querySelector('.ms-time').textContent = timeStr;
+                            const link = clone.querySelector('.ms-loot-link');
+                            link.href = `https://www.wowhead.com/wotlk/item=${recent.item_id}`;
+                            link.textContent = `[${recent.item_name}]`;
+                            link.classList.add(recent.item_quality === 'LEGENDARY' ? 'ms-loot-link-legendary' : 'ms-loot-link-epic');
                         }
+                        
+                        const wrapper = document.createElement('span');
+                        wrapper.appendChild(clone);
+                        return wrapper;
                     });
 
                     // 3. Initialize the first slide
-                    milestoneText.innerHTML = slideHtml[0];
+                    milestoneText.textContent = '';
+                    milestoneText.appendChild(slideElements[0].cloneNode(true));
 
                     // 4. Start the rotating carousel if there is more than 1 event
-                    if (slideHtml.length > 1) {
+                    if (slideElements.length > 1) {
                         let currentSlide = 0;
 
-                        // Clear existing interval if route() is called multiple times
                         if (window.milestoneInterval) clearInterval(window.milestoneInterval);
 
                         window.milestoneInterval = setInterval(() => {
-                            milestoneText.style.opacity = '0'; // Fade out
+                            milestoneText.style.opacity = '0';
 
                             setTimeout(() => {
-                                currentSlide = (currentSlide + 1) % slideHtml.length;
-                                milestoneText.innerHTML = slideHtml[currentSlide];
-                                milestoneText.style.opacity = '1'; // Fade in
-                            }, 500); // Wait for fade out to finish before swapping text
+                                currentSlide = (currentSlide + 1) % slideElements.length;
+                                milestoneText.textContent = '';
+                                milestoneText.appendChild(slideElements[currentSlide].cloneNode(true));
+                                milestoneText.style.opacity = '1';
+                            }, 500);
 
-                        }, 4500); // Swap every 4.5 seconds
+                        }, 4500);
                     }
                 } else {
                     milestoneCont.style.display = 'none';
@@ -2867,13 +2881,34 @@ window.addEventListener('DOMContentLoaded', async () => {
                 donutContainer.style.alignItems = 'center';
                 donutContainer.style.gap = '20px';
                 
-               let kpiHtml = '';
+               donutContainer.textContent = '';
+                const template = document.getElementById('tpl-concise-dashboard-widgets');
+                if (template) {
+                    donutContainer.appendChild(template.content.cloneNode(true));
+                }
+                const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
+                
+                const addKpi = (val, label, colorHex) => {
+                    const kpiTpl = document.getElementById('tpl-concise-kpi-box');
+                    if (kpiTpl && kpiContainer) {
+                        const clone = kpiTpl.content.cloneNode(true);
+                        const box = clone.querySelector('.concise-stat-box');
+                        box.style.borderColor = colorHex;
+                        box.style.minWidth = '200px';
+                        box.style.marginBottom = '5px';
+                        const valSpan = clone.querySelector('.concise-stat-value');
+                        valSpan.style.color = colorHex;
+                        valSpan.textContent = val;
+                        clone.querySelector('.concise-stat-label').textContent = label;
+                        kpiContainer.appendChild(clone);
+                    }
+                };
+
                 if (hash === 'raidready') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Average iLvl</span></div>`;
+                    addKpi(avgIlvl, 'Average iLvl', '#ff8000');
                 } else if (hash === 'ladder-pve') {
                     const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    
                     const lvl70s = characters.filter(c => {
                         const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
                         return p && p.level === 70;
@@ -2883,49 +2918,29 @@ window.addEventListener('DOMContentLoaded', async () => {
                         return sum + ((p && p.equipped_item_level) || 0);
                     }, 0) / lvl70s.length) : 0;
                     
-                    kpiHtml = `
-                        <div style="display:flex; gap:15px; margin-bottom: 5px; flex-wrap: wrap; justify-content:center;">
-                            <div class="stat-box" style="border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg iLvl</span></div>
-                            <div class="stat-box" style="border-color: #a335ee;"><span class="stat-value" style="color:#a335ee;">${avgLvl70Ilvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
-                        </div>`;
+                    addKpi(avgIlvl, 'Avg iLvl', '#ff8000');
+                    addKpi(avgLvl70Ilvl, 'Avg Lvl 70 iLvl', '#a335ee');
                 } else if (hash === 'ladder-pvp') {
                     const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
                     const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
-                    kpiHtml = `<div class="stat-box" style="margin-bottom: 5px; min-width: 200px; border-color: #ff4400;"><span class="stat-value" style="color:#ff4400;">${displayHks}</span><span class="stat-label">Total HKs</span></div>`;
+                    addKpi(displayHks, 'Total HKs', '#ff4400');
                 } else if (hash === 'active' || hash === 'total') {
-                    // Match raw roster names to deep profile roster to get accurate levels and iLvls
                     const avgLvl = Math.round(characters.reduce((sum, c) => {
                         const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
                         return sum + ((p && p.level) || c.level || 0);
                     }, 0) / characters.length) || 0;
-                    
                     const lvl70s = characters.filter(c => {
                         const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
                         return p && p.level === 70;
                     });
-                    
                     const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
                         const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
                         return sum + ((p && p.equipped_item_level) || 0);
                     }, 0) / lvl70s.length) : 0;
                     
-                    kpiHtml = `
-                        <div style="display:flex; gap:15px; margin-bottom: 5px; flex-wrap: wrap; justify-content:center;">
-                            <div class="stat-box" style="border-color: #ffd100;"><span class="stat-value" style="color:#ffd100;">${avgLvl}</span><span class="stat-label">Avg Level</span></div>
-                            <div class="stat-box" style="border-color: #ff8000;"><span class="stat-value" style="color:#ff8000;">${avgIlvl}</span><span class="stat-label">Avg Lvl 70 iLvl</span></div>
-                        </div>`;
+                    addKpi(avgLvl, 'Avg Level', '#ffd100');
+                    addKpi(avgIlvl, 'Avg Lvl 70 iLvl', '#ff8000');
                 }
-
-                let chartsHtml = kpiHtml + `<div style="display:flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%;">`;
-                
-                // Show Roles on everything.
-                chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Raid Roles</h4><canvas id="conciseRoleChart"></canvas></div>`;
-                
-                // Show Class Distribution
-                chartsHtml += `<div style="flex: 1; min-width: 280px; max-width: 350px; height: 280px; position: relative;"><h4 style="text-align:center; color:#ffd100; font-family:'Cinzel'; margin-top:0;">Class Distribution</h4><canvas id="conciseClassChart"></canvas></div>`;
-
-                chartsHtml += `</div>`;
-                donutContainer.innerHTML = chartsHtml;
 
                 if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
                 if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();

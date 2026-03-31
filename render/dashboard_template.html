@@ -217,6 +217,35 @@
         </div>
     </template>
 
+    <template id="tpl-concise-dashboard-widgets">
+        <div class="kpi-flex-row concise-kpi-container"></div>
+        <div class="charts-flex-row">
+            <div class="concise-chart-panel">
+                <h4 class="concise-chart-title">Raid Roles</h4>
+                <canvas id="conciseRoleChart"></canvas>
+            </div>
+            <div class="concise-chart-panel">
+                <h4 class="concise-chart-title">Class Distribution</h4>
+                <canvas id="conciseClassChart"></canvas>
+            </div>
+        </div>
+    </template>
+    
+    <template id="tpl-concise-kpi-box">
+        <div class="stat-box concise-stat-box">
+            <span class="stat-value concise-stat-value"></span>
+            <span class="stat-label concise-stat-label"></span>
+        </div>
+    </template>
+
+    <template id="tpl-milestone-level">
+        <span>Congratulations to <span class="milestone-highlight ms-char"></span> for reaching <span class="milestone-highlight">Level 70!</span> 🎉<span class="ms-time"></span></span>
+    </template>
+    
+    <template id="tpl-milestone-loot">
+        <span><span class="milestone-highlight ms-char"></span> just looted <a href="#" target="_blank" class="ms-loot-link"></a>!<span class="ms-time"></span></span>
+    </template>
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
