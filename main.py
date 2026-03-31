@@ -429,9 +429,12 @@ async def main_async():
             v_json, p_json = json.dumps(vanguards_list), json.dumps(participants_list)
             old = db_we_state.get(category, {})
             
-            # FIX: Never destructively overwrite existing DB vanguards with an empty array
+            # FIX: Never destructively overwrite existing DB vanguards OR participants with an empty array
             if old.get('vanguards') and old.get('vanguards') != '[]' and v_json == '[]':
                 v_json = old.get('vanguards')
+                
+            if old.get('participants') and old.get('participants') != '[]' and p_json == '[]':
+                p_json = old.get('participants')
 
             if old.get('vanguards') != v_json or old.get('participants') != p_json:
                 safe_v, safe_p = v_json.replace("'", "''"), p_json.replace("'", "''")
