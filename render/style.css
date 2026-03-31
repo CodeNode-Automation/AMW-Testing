@@ -114,6 +114,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-box.clickable:hover { transform: translateY(-6px) scale(1.02); border-top-color: rgba(255, 209, 0, 0.4); border-bottom-color: #fff; cursor: pointer !important; box-shadow: 0 15px 35px rgba(255, 209, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.6); }
 .stat-value { display: block; font-family: 'Cinzel'; font-size: 38px; color: #fff; font-weight: bold; text-shadow: 0 4px 20px rgba(255, 209, 0, 0.4); letter-spacing: 2px; }
 .stat-label { display: block; font-size: 10px; color: #999; text-transform: uppercase; margin-top: 8px; letter-spacing: 3px; font-weight: 600; }
+/* Layout */
+.analytics-kpi-wrapper { max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* Components */
+.stat-box-kpi-pve { border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1); }
+.kpi-val-pve { color: #ff8000; }
+.stat-box-kpi-loot { border-color: #a335ee; box-shadow: inset 0 0 15px rgba(163,53,238,0.1); }
+.kpi-val-loot { color: #a335ee; }
+.stat-box-kpi-pvp { border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1); }
+.kpi-val-pvp { color: #ff4400; }
 
 .sparkline-box { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
 .sparkline-canvas { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; z-index: 1; opacity: 0.4; pointer-events: none; }
@@ -315,6 +325,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ARCHITECTURE & PIPELINES                  */
 /* ========================================= */
 .arch-pipeline { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; width: 100%; gap: 15px; padding: 20px 10px 40px 10px; }
+/* Layout */
+.arch-view-wrapper { animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* Typography */
+.view-main-title { color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; font-size: 32px; }
+.arch-title { margin-bottom: 10px; }
+.analytics-title { margin-bottom: 20px; }
+.arch-subtitle { text-align: center; color: #2ecc71; font-family: 'Cinzel', serif; font-weight: bold; font-size: 18px; margin-bottom: 15px; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.arch-description { text-align: center; color: #bbb; max-width: 800px; margin: 0 auto 40px auto; font-size: 16px; line-height: 1.6; }
 .arch-card { flex: 1 1 260px; max-width: 340px; margin: 0; position: relative; display: flex; flex-direction: column; align-items: center; background: rgba(12, 12, 18, 0.85); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid #ffd100; padding: 25px 20px; transition: transform 0.3s ease, box-shadow 0.3s ease; animation: pulseArchBorder 4s infinite alternate; }
 .arch-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(255, 209, 0, 0.15), inset 0 0 20px rgba(255,255,255,0.02); }
 .arch-phase { font-family: 'Cinzel', serif; font-size: 10px; font-weight: bold; letter-spacing: 1.5px; padding: 4px 10px; border-radius: 20px; margin-bottom: 15px; border: 1px solid; text-shadow: none; text-align: center; }
@@ -470,6 +489,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 /* WAR EFFORT INCENTIVES                     */
 /* ========================================= */
+/* Layout */
+.weekly-challenges-container { width: 100%; max-width: 1000px; margin: 0 auto 40px auto; background: linear-gradient(135deg, rgba(20, 15, 25, 0.6) 0%, rgba(10, 8, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.4); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,209,0,0.05); animation: fadeInUp 0.5s forwards; }
+
+/* Typography */
+.weekly-challenges-title { font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(255, 209, 0, 0.3); letter-spacing: 2px; font-size: 24px; }
 .vanguard-aura { background: rgba(30, 35, 45, 0.95) !important; border-left-color: #00ffcc !important; box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; z-index: 5; position: relative; }
 .vanguard-badge { background: #111; color: #fff; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-left: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.8); display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
 .monuments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 15px; width: 100%; }
