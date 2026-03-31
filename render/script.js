@@ -697,8 +697,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
         });
-        const toggleBtn = topPve.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
-        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>' + toggleBtn;
+        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
+        if (topPve.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pveContainer.appendChild(btn);
+        }
     }
 
     const btnViewPve = document.getElementById('btn-view-pve');
@@ -779,8 +789,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
         });
-        const togglePvpBtn = topPvp.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
-        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>' + togglePvpBtn;
+        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>';
+        if (topPvp.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pvpContainer.appendChild(btn);
+        }
     }
     
     setupTooltips();
@@ -1759,32 +1779,32 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    statsHtml = `<span style="color:#ff4400; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                    statsHtml = `<span class="we-stat-hk">+${trendVal.toLocaleString()} HKs Contributed</span>`;
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
                     const contextData = window.warEffortContext[charKey];
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${contextData} Levels Contributed</span>`;
+                            statsHtml = `<span class="we-stat-xp">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 15px; flex-direction: column; align-items: flex-start; height: auto;';
                             innerWrapperStyle = 'display: flex; align-items: center; width: 100%; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;';
                             cStatsStyleOverride = 'display:flex; width: 100%; flex-direction: column; align-items: flex-start;';
 
-                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
+                            const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <span style="color:#888; font-size:11px; text-transform:uppercase; margin-bottom: 8px;">Epic Loot Acquired:</span>
-                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
+                                <span class="we-loot-header">Epic Loot Acquired:</span>
+                                <div class="we-loot-container">
                                     ${itemBadges}
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
-                                    <span style="color:#3FC7EB; font-weight:bold; font-size:16px; text-shadow: 1px 1px 2px #000; margin-top: 4px;">${contextData}</span>
+                                <div class="we-zenith-wrapper">
+                                    <span class="we-zenith-lbl">Reached Level 70 on:</span>
+                                    <span class="we-zenith-val">${contextData}</span>
                                 </div>
                             `;
                         }
