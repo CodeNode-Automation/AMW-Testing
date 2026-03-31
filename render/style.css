@@ -560,6 +560,39 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* WAR EFFORT INCENTIVES                     */
 /* ========================================= */
 /* Layout */
+.challenge-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.challenge-bar-bg { position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02); }
+.challenge-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+.challenge-glare { position: absolute; top: 0; left: 0; width: 100%; height: 45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0; }
+.challenge-tick { position: absolute; top: 0; width: 2px; height: 100%; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4; }
+.tick-25 { left: 25%; background: rgba(255,255,255,0.05); }
+.tick-50 { left: 50%; background: rgba(255,255,255,0.1); }
+.tick-75 { left: 75%; background: rgba(255,255,255,0.05); }
+.challenge-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.mvp-placeholder-card { display: flex; align-items: center; background: rgba(255, 209, 0, 0.02); border: 1px dashed rgba(255, 209, 0, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+.mvp-placeholder-icon { margin-right: 12px; }
+.mvp-placeholder-avatar { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 2px dashed #555; background: rgba(0,0,0,0.5); margin-right: 12px; }
+.mvp-placeholder-info { flex: 1; display: flex; flex-direction: column; }
+.mvp-placeholder-meta { display: flex; flex-direction: column; align-items: flex-end; }
+.char-card-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+
+/* Typography */
+.challenge-header { font-family: 'Cinzel'; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+.challenge-link { color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0; }
+.challenge-text { color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); letter-spacing: 1px; }
+.mvp-placeholder-icon { font-size: 22px; }
+.mvp-placeholder-avatar { font-size: 14px; color: #555; }
+.mvp-placeholder-title { color: #888; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.mvp-placeholder-status { color: #aaa; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; font-style: italic; }
+.mvp-placeholder-meta span { color: #888; font-size: 10px; }
+.char-card-name { font-family: 'Cinzel'; font-size: 38px; margin: 0; text-shadow: 0 2px 4px #000; }
+
+/* Components */
+.challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
+.challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
+.mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
+.mvp-placeholder-meta { opacity: 0.5; }
+/* Layout */
 .weekly-challenges-container { width: 100%; max-width: 1000px; margin: 0 auto 40px auto; background: linear-gradient(135deg, rgba(20, 15, 25, 0.6) 0%, rgba(10, 8, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.4); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,209,0,0.05); animation: fadeInUp 0.5s forwards; }
 
 /* Typography */

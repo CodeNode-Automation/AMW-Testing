@@ -1096,8 +1096,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
-    <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
-        <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
+    <div class="char-card-header">
+        <h2 class="char-card-name" style="color:${cHex};">${p.name || 'Unknown'}</h2>
         <div class="char-badges-container">
             <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             ${extraBadges}
@@ -3842,15 +3842,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             // If there is no previous MVP data, return a sleek placeholder
             if (!mvpData || !mvpData.name) {
                 return `
-                <div style="background: rgba(255, 209, 0, 0.02); border: 1px dashed rgba(255, 209, 0, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center;">
-                    <div style="margin-right: 12px; font-size: 22px; filter: grayscale(100%); opacity: 0.5;">👑</div>
-                    <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px dashed #555; background: rgba(0,0,0,0.5); margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555;">?</div>
-                    <div style="flex: 1; display: flex; flex-direction: column;">
-                        <span style="color: #888; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Reigning Champion</span>
-                        <span style="color: #aaa; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; font-style: italic;">Awaiting Data</span>
+                <div class="mvp-placeholder-card">
+                    <div class="mvp-placeholder-icon">👑</div>
+                    <div class="mvp-placeholder-avatar">?</div>
+                    <div class="mvp-placeholder-info">
+                        <span class="mvp-placeholder-title">Reigning Champion</span>
+                        <span class="mvp-placeholder-status">Awaiting Data</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; opacity: 0.5;">
-                        <span style="color: #888; font-size: 10px;">Last Week's ${label}</span>
+                    <div class="mvp-placeholder-meta">
+                        <span>Last Week's ${label}</span>
                     </div>
                 </div>`;
             }
