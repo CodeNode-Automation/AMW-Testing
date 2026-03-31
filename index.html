@@ -138,6 +138,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .kpi-val-loot { color: #a335ee; }
 .stat-box-kpi-pvp { border-color: #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1); }
 .kpi-val-pvp { color: #ff4400; }
+/* Layout */
+.analytics-charts-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto; }
+.analytics-chart-panel { flex: 1; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column; }
+.analytics-chart-panel-wide { flex: 2; min-width: 320px; max-width: 650px; margin: 0; }
+.chart-canvas-wrapper { position: relative; flex: 1; width: 100%; min-height: 250px; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+
+/* Typography */
+.chart-title-center { justify-content: center; }
+.chart-title-sub { color: #aaa; font-size: 11px; margin-left: 6px; }
 
 .sparkline-box { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
 .sparkline-canvas { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; z-index: 1; opacity: 0.4; pointer-events: none; }
@@ -522,6 +532,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .mon-time { font-size: 9px; color: #888; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-title { font-family: 'Cinzel'; font-size: 12px; color: #ffd100; font-weight: bold; line-height: 1.2; margin-bottom: 4px; }
 .mon-desc { font-size: 10px; color: #ccc; line-height: 1.3; }
+/* Layout */
+.monument-inner-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; }
+.monument-content { display: flex; flex-direction: column; flex: 1; }
+.monument-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+
+/* Typography */
+.mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+.mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
+
+/* Components */
+.monument-trophy { font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6)); }
 
 /* ========================================= */
 /* MVP 7-DAY PODIUMS                         */
@@ -537,6 +559,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .podium-step-2 .podium-rank { color: #e0e0e0 !important; opacity: 0.25 !important; text-shadow: 0 0 15px rgba(224,224,224,0.8), 2px 2px 5px rgba(0,0,0,0.8) !important; }
 .podium-step-3 .podium-rank { color: #cd7f32 !important; opacity: 0.25 !important; text-shadow: 0 0 15px rgba(205,127,50,0.8), 2px 2px 5px rgba(0,0,0,0.8) !important; }
 .podium-rank { font-family: 'Cinzel'; font-weight: bold; text-shadow: 1px 1px 2px #000; position: absolute; opacity: 0.15; bottom: -2px; left: 50%; transform: translateX(-50%); font-size: 45px; pointer-events: none; line-height: 1; }
+/* Layout */
+.weekly-mvps-wrapper { width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards; }
+.mvp-cards-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.mvp-card { flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border-radius: 8px; padding: 15px; }
+.mvp-list-wrap { display: flex; flex-direction: column; gap: 8px; }
+
+/* Typography */
+.weekly-mvps-main-title { font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-bottom: 20px; text-shadow: 0 2px 4px #000; letter-spacing: 1px; }
+.mvp-card-title { text-align: center; font-family: 'Cinzel'; margin-top: 0; margin-bottom: 15px; }
+
+/* Components */
+.mvp-card-pve { border: 1px solid #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1); }
+.mvp-card-title-pve { color: #ff8000; }
+.mvp-card-pvp { border: 1px solid #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1); }
+.mvp-card-title-pvp { color: #ff4400; }
 .lb-podium-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-top: 25px; margin-bottom: 15px; width: 100%; } .lb-list-wrap { display: flex; flex-direction: column; gap: 8px; width: 100%; } @media(max-width:600px){ .lb-podium-wrap { gap: 4px; } .podium-block { padding: 30px 2px 8px 2px; } }
 
 .home-dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%; max-width: 1200px; margin: 0 auto; } @media(min-width: 1024px) { .home-dashboard-grid { grid-template-columns: 1fr 1fr; grid-template-areas: "heatmap heatmap" "wareffort mvps" "leaderboards leaderboards"; align-items: stretch; gap: 40px; } .home-dashboard-grid > div:nth-child(1) { grid-area: heatmap; } .home-dashboard-grid > #guild-xp-container { grid-area: wareffort; margin: 0 !important; } .home-dashboard-grid > #weekly-mvps-container { grid-area: mvps; margin: 0 !important; } .home-dashboard-grid > #leaderboards-wrapper { grid-area: leaderboards; margin: 0 auto !important; } }
@@ -663,6 +700,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <div class="event-box event-box-gold">
             <span class="event-icon-star">⭐</span>
             <span class="tl-event-level-text"></span>
+        </div>
+    </template>
+
+    <template id="tpl-monument-card">
+        <div class="monument-inner-wrapper">
+            <span class="monument-trophy">🏆</span>
+            <div class="monument-content">
+                <div class="monument-header">
+                    <span class="mon-title-text"></span>
+                    <span class="mon-time-text"></span>
+                </div>
+                <div class="mon-desc-text"></div>
+            </div>
         </div>
     </template>
 
@@ -850,16 +900,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     </div>
                 </div>
 
-                <div id="weekly-mvps-container" style="display:none; width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards;">
-                    <h3 style="font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-bottom: 20px; text-shadow: 0 2px 4px #000; letter-spacing: 1px;">🏆 7-Day Guild MVPs 🏆</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-                        <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border: 1px solid #ff8000; border-radius: 8px; padding: 15px; box-shadow: inset 0 0 15px rgba(255,128,0,0.1);">
-                            <h4 style="color: #ff8000; text-align: center; font-family: 'Cinzel'; margin-top: 0; margin-bottom: 15px;">🛡️ Biggest Upgrades (iLvl)</h4>
-                            <div id="mvp-pve-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                <div id="weekly-mvps-container" class="weekly-mvps-wrapper" style="display:none;">
+                    <h3 class="weekly-mvps-main-title">🏆 7-Day Guild MVPs 🏆</h3>
+                    <div class="mvp-cards-container">
+                        <div class="mvp-card mvp-card-pve">
+                            <h4 class="mvp-card-title mvp-card-title-pve">🛡️ Biggest Upgrades (iLvl)</h4>
+                            <div id="mvp-pve-list" class="mvp-list-wrap"></div>
                         </div>
-                        <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border: 1px solid #ff4400; border-radius: 8px; padding: 15px; box-shadow: inset 0 0 15px rgba(255,68,0,0.1);">
-                            <h4 style="color: #ff4400; text-align: center; font-family: 'Cinzel'; margin-top: 0; margin-bottom: 15px;">⚔️ Deadliest (HKs)</h4>
-                            <div id="mvp-pvp-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        <div class="mvp-card mvp-card-pvp">
+                            <h4 class="mvp-card-title mvp-card-title-pvp">⚔️ Deadliest (HKs)</h4>
+                            <div id="mvp-pvp-list" class="mvp-list-wrap"></div>
                         </div>
                     </div>
                 </div>
@@ -896,17 +946,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     </div>
                 </div>
                 
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto 30px auto;">
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 300px; max-width: 480px; margin: 0; display: flex; flex-direction: column;">
-                        <h3 class="heatmap-title" style="justify-content: center;">🛡️ Raid Roles <span style="color:#aaa; font-size: 11px; margin-left:6px;">Known Specs</span></h3>
-                        <div style="position: relative; flex: 1; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 250px;">
+                <div class="analytics-charts-row">
+                    <div class="heatmap-wrapper analytics-chart-panel">
+                        <h3 class="heatmap-title chart-title-center">🛡️ Raid Roles <span class="chart-title-sub">Known Specs</span></h3>
+                        <div class="chart-canvas-wrapper flex-center">
                             <canvas id="roleDonutChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="heatmap-wrapper" style="flex: 2; min-width: 320px; max-width: 650px; margin: 0;">
+                    <div class="heatmap-wrapper analytics-chart-panel-wide">
                         <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days)</h3>
-                        <div style="position: relative; height: 250px; width: 100%;">
+                        <div class="chart-canvas-wrapper">
                             <canvas id="analyticsActivityChart"></canvas>
                         </div>
                     </div>
@@ -1099,10 +1149,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T10:17:26.834405Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T10:23:34.446427Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 154, "loot": 116, "levels": 38, "total_roster": 654, "active_roster": 413}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 157, "loot": 118, "levels": 39, "total_roster": 654, "active_roster": 413}]
     </script>
 
     <script>
@@ -5174,18 +5224,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                     eventEl.className = 'monument-card';
                     const dt = new Date(mon.timestamp);
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
-                    eventEl.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                            <span style="font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6));">🏆</span>
-                            <div style="display: flex; flex-direction: column; flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                    <span style="font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">${mon.title}</span>
-                                    <span style="font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${timeStr}</span>
-                                </div>
-                                <div style="font-size: 12px; color: #ddd; line-height: 1.3;">${mon.desc}</div>
-                            </div>
-                        </div>
-                    `;
+                    eventEl.textContent = '';
+                    const template = document.getElementById('tpl-monument-card');
+                    if (template) {
+                        const clone = template.content.cloneNode(true);
+                        
+                        clone.querySelector('.mon-title-text').textContent = mon.title;
+                        clone.querySelector('.mon-time-text').textContent = timeStr;
+                        clone.querySelector('.mon-desc-text').innerHTML = mon.desc;
+                        
+                        eventEl.appendChild(clone);
+                    }
                     monContainer.appendChild(eventEl);
                 });
             }
