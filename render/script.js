@@ -2368,10 +2368,24 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const kpiIlvl = document.getElementById('kpi-avg-ilvl');
         if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
-        
+
         const kpiEpic = document.getElementById('kpi-epic-loot');
         if (kpiEpic) kpiEpic.innerText = epicLootCount;
 
+        const kpiBoxLoot = document.getElementById('kpi-box-loot');
+        if (kpiBoxLoot) {
+            kpiBoxLoot.addEventListener('click', () => {
+                window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+            });
+        }
+
+        const kpiBoxPvp = document.getElementById('kpi-box-pvp');
+        if (kpiBoxPvp) {
+            kpiBoxPvp.addEventListener('click', () => {
+                window.location.hash = 'ladder-pvp';
+            });
+        }
+        
         const kpiHks = document.getElementById('kpi-total-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
@@ -3681,6 +3695,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                     itemLink.href = `https://www.wowhead.com/wotlk/item=${event.item_id}`;
                     itemLink.textContent = event.item_name;
                     itemLink.style.color = q_hex;
+
+                    itemLink.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
                     
                     eventEl.appendChild(clone);
                 }

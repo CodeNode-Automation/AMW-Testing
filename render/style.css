@@ -360,6 +360,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-btn.active { background: #333; color: #ffd100; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 .tl-select { background: transparent; border: none; color: #888; font-family: 'Cinzel'; font-weight: bold; font-size: 12px; padding: 6px 10px; outline: none; cursor: pointer; }
 .tl-select option { background: #111; color: #fff; }
+/* Components */
+.tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 .timeline-feed::before { content: ''; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(255, 209, 0, 0.8) 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.05) 100%); z-index: 1; box-shadow: 0 0 10px rgba(255, 209, 0, 0.5); }
 .concise-item { position: relative; display: flex; flex-wrap: wrap; align-items: center; background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 2; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-left: 3px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
