@@ -365,7 +365,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 @media (max-width: 1050px) {
     .dashboard-layout { flex-direction: column; align-items: center; padding: 0 10px; margin: 20px auto; }
     /* Components */
-.hall-of-heroes-btn { color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer; }
+    .hall-of-heroes-btn { color: #ffd100; font-weight: bold; text-align: left; width: 100%; }
     .timeline-container { width: 100%; max-width: 900px; position: static; max-height: none; overflow-y: visible; margin-top: 30px; }
 }
 
@@ -547,7 +547,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             </div>
         </div>
     </template>
-    
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -564,7 +564,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
-                <button id="nav-btn-hall-of-heroes" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</button>
+                <a href="#badges" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</a>
                 
                 <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
@@ -981,10 +981,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T09:03:04.824215Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T09:09:40.248467Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 129, "loot": 98, "levels": 31, "total_roster": 654, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 129, "loot": 98, "levels": 31, "total_roster": 654, "active_roster": 413}]
     </script>
 
     <script>
@@ -1180,12 +1180,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const architectureView = document.getElementById('architecture-view');
 
     const navbar = document.querySelector('.navbar');
-    const btnHallOfHeroes = document.getElementById('nav-btn-hall-of-heroes');
-    if (btnHallOfHeroes) {
-        btnHallOfHeroes.addEventListener('click', () => {
-            window.location.hash = 'badges';
-        });
-    }
+    
     
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
