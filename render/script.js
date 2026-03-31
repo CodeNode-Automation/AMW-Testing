@@ -3798,16 +3798,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const icon = isPvp ? '⚔️' : '🛡️';
                 const action = isPvp ? 'get some HKs' : 'equip some upgrades';
                 const template = document.getElementById('tpl-mvp-empty');
-                if (!template) return '';
+                if (!template) return document.createDocumentFragment();
                 const clone = template.content.cloneNode(true);
                 clone.querySelector('.mvp-empty-icon').textContent = icon;
                 clone.querySelector('.mvp-empty-desc').textContent = `Log in and ${action} to claim the #1 spot.`;
-                const tempDiv = document.createElement('div');
-                tempDiv.appendChild(clone);
-                return tempDiv.innerHTML;
+                return clone;
             }
             
-            const podiumBlocks = chars.map((char, index) => {
+            const container = document.createElement('div');
+            container.className = 'mvp-podium-container';
+
+            chars.forEach((char, index) => {
                 const p = char.profile;
                 const cClass = getCharClass(char);
                 const cHex = CLASS_COLORS[cClass] || '#fff';
@@ -3819,7 +3820,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
                 const template = document.getElementById('tpl-mvp-podium-block');
-                if (!template) return '';
+                if (!template) return;
                 const clone = template.content.cloneNode(true);
                 
                 const block = clone.querySelector('.podium-block');
@@ -3850,12 +3851,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 clone.querySelector('.podium-trend-val').textContent = `▲ ${trend.toLocaleString()}`;
                 clone.querySelector('.podium-trend-label').textContent = label;
                 
-                const tempDiv = document.createElement('div');
-                tempDiv.appendChild(clone);
-                return tempDiv.innerHTML;
-            }).join('');
+                container.appendChild(clone);
+            });
 
-            return `<div class="mvp-podium-container">${podiumBlocks}</div>`;
+            return container;
         }
 
         function generateGloatingHtml(mvpData, isPvp) {
@@ -3863,16 +3862,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (!mvpData || !mvpData.name) {
                 const template = document.getElementById('tpl-mvp-placeholder');
-                if (!template) return '';
+                if (!template) return document.createDocumentFragment();
                 const clone = template.content.cloneNode(true);
                 clone.querySelector('.mvp-placeholder-label').textContent = `Last Week's ${label}`;
-                const tempDiv = document.createElement('div');
-                tempDiv.appendChild(clone);
-                return tempDiv.innerHTML;
+                return clone;
             }
 
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === mvpData.name.toLowerCase());
-            if (!char) return ''; 
+            if (!char) return document.createDocumentFragment(); 
             
             const p = char.profile;
             const cClass = getCharClass(char);
@@ -3880,7 +3877,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const portraitURL = char.render_url || getClassIcon(cClass);
             
             const template = document.getElementById('tpl-mvp-gloat');
-            if (!template) return '';
+            if (!template) return document.createDocumentFragment();
             const clone = template.content.cloneNode(true);
             
             const img = clone.querySelector('.gloat-avatar');
@@ -3895,17 +3892,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             clone.querySelector('.gloat-score').textContent = `+${mvpData.score.toLocaleString()}`;
             clone.querySelector('.gloat-label').textContent = `Last Week's ${label}`;
             
-            const tempDiv = document.createElement('div');
-            tempDiv.appendChild(clone);
-            return tempDiv.innerHTML;
+            return clone;
         }
 
         const prevMvps = config.prev_mvps || {};
         const pveGloat = generateGloatingHtml(prevMvps.pve, false);
         const pvpGloat = generateGloatingHtml(prevMvps.pvp, true);
 
-        mvpPveList.innerHTML = pveGloat + generateMvpHtml(topTrendPve, false);
-        mvpPvpList.innerHTML = pvpGloat + generateMvpHtml(topTrendPvp, true);
+        mvpPveList.textContent = '';
+        mvpPveList.appendChild(pveGloat);
+        mvpPveList.appendChild(generateMvpHtml(topTrendPve, false));
+
+        mvpPvpList.textContent = '';
+        mvpPvpList.appendChild(pvpGloat);
+        mvpPvpList.appendChild(generateMvpHtml(topTrendPvp, true));
 
         // Re-bind tooltips to the newly injected MVP elements
         if (typeof setupTooltips === 'function') {
