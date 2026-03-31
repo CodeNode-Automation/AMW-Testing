@@ -220,6 +220,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
 /* Components */
 .dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
+.toggle-stats-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; outline: none; transition: 0.2s; padding: 0; }
+.toggle-stats-btn:hover { color: #ffd100; }
 .gear-slot-wrapper { background: rgba(20,20,20,0.9); }
 .gear-slot-icon-wrapper { position: relative; }
 .gear-slot-info { display: flex; flex-direction: column; justify-content: center; }
@@ -282,6 +284,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 #concise-view { display: none; width: 100%; max-width: 1100px; flex-direction: column; gap: 8px; }
 #concise-view-title { font-family: 'Cinzel'; font-size: 24px; color: #ffd100; text-align: center; margin-bottom: 20px; text-shadow: 0 2px 4px #000; }
 #concise-char-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+/* Layout */
+.concise-wrapper { display: flex; flex-wrap: wrap; gap: 25px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: flex-start; }
+.concise-sidebar { flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 20px; }
+.concise-donut-box { width: 100%; max-width: 100%; margin: 0; display: none; flex-direction: column; align-items: center; gap: 20px; }
+.concise-badges-box { width: 100%; display: flex; flex-direction: column; justify-content: center; }
+.concise-main-col { flex: 2; min-width: 300px; width: 100%; }
+.concise-class-stats { display: none; width: 100%; justify-content: center; margin-bottom: 0; }
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 .concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
 .c-main-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -374,6 +383,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 .timeline-feed::before { content: ''; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(255, 209, 0, 0.8) 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.05) 100%); z-index: 1; box-shadow: 0 0 10px rgba(255, 209, 0, 0.5); }
+.tl-empty-msg { color: #888; text-align: center; padding: 20px; font-style: italic; }
 .concise-item { position: relative; display: flex; flex-wrap: wrap; align-items: center; background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 2; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-left: 3px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
 .concise-item:hover { background: linear-gradient(90deg, rgba(35, 35, 45, 0.8) 0%, rgba(15, 15, 20, 0.9) 100%); border-color: rgba(255, 209, 0, 0.3); border-left-color: #ffd100; transform: translateX(5px); box-shadow: -4px 8px 15px rgba(0,0,0,0.6), 0 0 15px rgba(255, 209, 0, 0.1); }
 .timeline-node { position: absolute; left: -15px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; border-radius: 50%; border: 2px solid #ffd100; background: #050505; z-index: 3; box-shadow: 0 0 8px rgba(255, 209, 0, 0.6); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -1000,12 +1010,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" class="leaderboard-list"></div>
-                        <button onclick="window.location.hash='ladder-pve'" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
+                        <button id="btn-view-pve" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
                     <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" class="leaderboard-list"></div>
-                        <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
+                        <button id="btn-view-pvp" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
                     </div>
                 </div>
                 
@@ -1167,18 +1177,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
-                <div id="concise-content-wrapper" style="display: flex; flex-wrap: wrap; gap: 25px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: flex-start;">
+                <div id="concise-content-wrapper" class="concise-wrapper">
                     
-                    <div id="concise-left-col" style="flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 20px;">
-                        <div id="concise-donut-container" class="heatmap-wrapper" style="width: 100%; max-width: 100%; margin: 0; display: none; flex-direction: column;">
+                    <div id="concise-left-col" class="concise-sidebar">
+                        <div id="concise-donut-container" class="heatmap-wrapper concise-donut-box">
                         </div>
 
-                        <div id="concise-badges-wrapper" style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <div id="concise-class-badges" class="class-stat-container" style="display:none; width: 100%; justify-content: center; margin-bottom: 0;"></div>
+                        <div id="concise-badges-wrapper" class="concise-badges-box">
+                            <div id="concise-class-badges" class="class-stat-container concise-class-stats"></div>
                         </div>
                     </div>
 
-                    <div id="concise-center-col" style="flex: 2; min-width: 300px; width: 100%;">
+                    <div id="concise-center-col" class="concise-main-col">
                         <div id="concise-char-list"></div>
                     </div>
                     
@@ -1231,10 +1241,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T14:16:46.974979Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T14:25:05.712260Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 248, "loot": 184, "levels": 64, "total_roster": 656, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 256, "loot": 190, "levels": 66, "total_roster": 656, "active_roster": 414}]
     </script>
 
     <script>
@@ -1624,10 +1634,27 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    document.addEventListener('click', () => {
+    document.addEventListener('click', (e) => {
         if (customOptions) customOptions.classList.remove('show');
         if (customSelect) customSelect.classList.remove('active');
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
+
+        if (e.target && e.target.classList && e.target.classList.contains('toggle-stats-btn')) {
+            const btn = e.target;
+            const p = btn.closest('.info-box');
+            if (p) {
+                const p1 = p.querySelector('.stat-page-1');
+                const p2 = p.querySelector('.stat-page-2');
+                const title = p.querySelector('.stat-card-title');
+                if (p1 && p2 && title) {
+                    if (p1.style.display === 'none') {
+                        p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; btn.innerText = '▶';
+                    } else {
+                        p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; btn.innerText = '◀';
+                    }
+                }
+            }
+        }
     });
     
     function updateDropdownLabel(ignoreVal) {
@@ -1922,6 +1949,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         const toggleBtn = topPve.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
         pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>' + toggleBtn;
+    }
+
+    const btnViewPve = document.getElementById('btn-view-pve');
+    if (btnViewPve) {
+        btnViewPve.addEventListener('click', () => {
+            window.location.hash = 'ladder-pve';
+        });
+    }
+
+    const btnViewPvp = document.getElementById('btn-view-pvp');
+    if (btnViewPvp) {
+        btnViewPvp.addEventListener('click', () => {
+            window.location.hash = 'ladder-pvp';
+        });
     }
 
     const pvpContainer = document.getElementById('pvp-leaderboard');
@@ -2332,17 +2373,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
                     <h3 class="stat-card-title" style="color:${cHex}; font-family:Cinzel; font-size:18px; margin:0; text-shadow:1px 1px 2px #000;">Combat Stats</h3>
-                    <button onclick="
-                        const p = this.parentElement.parentElement;
-                        const p1 = p.querySelector('.stat-page-1');
-                        const p2 = p.querySelector('.stat-page-2');
-                        const title = p.querySelector('.stat-card-title');
-                        if(p1.style.display === 'none') {
-                            p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; this.innerText = '▶';
-                        } else {
-                            p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; this.innerText = '◀';
-                        }
-                    " style="background:none; border:none; color:#bbb; cursor:pointer; font-size:14px; outline:none; transition:0.2s; padding:0;" onmouseover="this.style.color='#ffd100'" onmouseout="this.style.color='#bbb'">▶</button>
+                    <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
                 </div>
                 <div class="stat-page-1">
                     <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
@@ -3322,10 +3353,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('div');
                 noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.style.color = '#888';
-                noResultsMsg.style.textAlign = 'center';
-                noResultsMsg.style.padding = '20px';
-                noResultsMsg.style.fontStyle = 'italic';
+                noResultsMsg.className = 'tl-empty-msg';
                 noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
                 document.getElementById('timeline').appendChild(noResultsMsg);
             } else {
