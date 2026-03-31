@@ -1103,7 +1103,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (isPveReigning) extraBadges += `<span class="badge char-badge badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
         if (isPvpReigning) extraBadges += `<span class="badge char-badge badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
         
-        if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
+        if (pveGold > 0) extraBadges += `<span class="badge char-badge badge-pve-gold" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
         if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
         if (pveBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${tPveBronze}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
         if (pvpGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPvpGold}">⚔️🥇 PvP Gold x${pvpGold}</span>`;
@@ -1739,8 +1739,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (isLadderView) {
                 podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
                 const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-                const rankSize = index < 3 ? '18px' : '15px';
-                rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
+                const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
+                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass}" style="color: ${rankColor};">#${index + 1}</div>`;
             }
 
             // --- NEW: Vanguard Aura Logic ---
@@ -1872,7 +1872,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 let pVanguard = '';
                 if (vanguardClass !== '') {
-                    pVanguard = `<div style="position:absolute; top:-10px; right:-10px; font-size:22px; filter:drop-shadow(0 0 5px #00ffcc); z-index:10;" title="Vanguard">🌟</div>`;
+                    pVanguard = `<div class="vanguard-floating-icon" title="Vanguard">🌟</div>`;
                 }
 
                 const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
@@ -4318,7 +4318,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             if (mon.prefixText) descContainer.appendChild(document.createTextNode(mon.prefixText));
                             const hlSpan = document.createElement('span');
                             hlSpan.style.color = mon.highlightColor;
-                            hlSpan.style.fontWeight = 'bold';
+                            hlSpan.classList.add('monument-highlight-span');
                             hlSpan.textContent = mon.highlightText;
                             descContainer.appendChild(hlSpan);
                             if (mon.suffixText) descContainer.appendChild(document.createTextNode(mon.suffixText));
