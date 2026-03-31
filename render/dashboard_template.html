@@ -7,7 +7,9 @@
     <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script data-goatcounter="https://nullbit5.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        {{ css_content | safe }}
+    </style>
 </head>
 <body>
     <div id="loading-overlay">
@@ -575,7 +577,9 @@
         {{ safe_heatmap_data | safe }}
     </script>
 
-    <script src="script.js"></script>
+    <script>
+        {{ js_content | safe }}
+    </script>
     
     <button id="backToTopBtn" title="Return to Top">⬆️ Top</button>
 </body>
