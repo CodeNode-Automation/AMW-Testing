@@ -65,6 +65,13 @@
         </div>
     </template>
 
+    <template id="tpl-award-badge">
+        <div class="stat-badge dynamic-award-badge">
+            <span class="stat-badge-cls"></span>
+            <span class="stat-badge-count"></span>
+        </div>
+    </template>
+    
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -137,12 +144,12 @@
                     <div class="hero-text-col">
                         <h2 class="hero-title">Azeroths Most Wanted Armory</h2>
                         
-                        <div class="search-container" style="position: relative; max-width: 450px; width: 100%;">
-                            <div class="search-box hero-search-box" style="box-sizing: border-box;">
-                                <span class="search-icon" style="font-size: 18px; padding-left: 15px;">🔍</span>
-                                <input type="text" id="heroCharSearch" autocomplete="off" placeholder="Search for a guild member..." style="width: 100%; height: 46px; font-size: 16px; padding: 0 15px; box-sizing: border-box;" />
+                        <div class="search-container hero-search-wrapper">
+                            <div class="search-box hero-search-box hero-search-box-inner">
+                                <span class="search-icon hero-search-icon">🔍</span>
+                                <input type="text" id="heroCharSearch" class="hero-search-input" autocomplete="off" placeholder="Search for a guild member..." />
                             </div>
-                            <div id="hero-search-autocomplete" class="search-autocomplete" style="width: 100%; top: calc(100% + 8px);"></div>
+                            <div id="hero-search-autocomplete" class="search-autocomplete hero-search-ac"></div>
                         </div>
                     </div>
                 </div>
@@ -486,14 +493,14 @@
 
     </div> 
     
-    <div class="dashboard-footer" style="text-align: center; padding: 40px 20px; color: #666; font-size: 13px; width: 100%; border-top: 1px solid #222; margin-top: 40px; clear: both; background: rgba(10, 10, 10, 0.8);">
-        <div class="footer-tech-stack" style="font-family: 'Cinzel', serif; color: #aaa; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px;">
-            <span style="color: #ffd100;">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
+    <div class="dashboard-footer">
+        <div class="footer-tech-stack">
+            <span class="tech-stack-highlight">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
         </div>
-        <div class="footer-update-info" style="margin-bottom: 25px; font-size: 13px; color: #888;">
-            Database Last Synced: <span id="update-time" style="color: #ffd100; font-weight: bold; margin-left: 5px;"></span>
+        <div class="footer-update-info">
+            Database Last Synced: <span id="update-time" class="update-time-highlight"></span>
         </div>
-        <div class="footer-disclaimer" style="max-width: 800px; margin: 0 auto; font-size: 11px; line-height: 1.6; color: #444; font-style: italic;">
+        <div class="footer-disclaimer">
             World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.<br>
             Azeroth's Most Wanted Armory is a community project and is not affiliated with, endorsed, or sponsored by Blizzard Entertainment.
         </div>

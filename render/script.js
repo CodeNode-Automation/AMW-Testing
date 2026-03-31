@@ -1183,7 +1183,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         container.style.display = 'flex';
-        
+
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
             badge.addEventListener('click', function() {
                 const targetClass = this.getAttribute('data-class');
@@ -1370,19 +1370,32 @@ window.addEventListener('DOMContentLoaded', async () => {
             'campaign': { label: 'Campaigns', icon: '🎖️', color: '#aaa' }
         };
 
-        let html = '';
+        container.textContent = '';
+        const badgeTemplate = document.getElementById('tpl-award-badge');
+
         Object.keys(AWARD_DEFS).forEach(key => {
             if (counts[key] > 0) {
                 const def = AWARD_DEFS[key];
-                html += `
-                <div class="stat-badge dynamic-award-badge" data-award="${key}" style="border-color: ${def.color}; cursor: pointer; padding: 8px 12px; min-width: 100px;" title="Filter ${def.label}">
-                  <span class="stat-badge-cls" style="color: ${def.color}; font-size: 11px;">${def.icon} ${def.label}</span>
-                  <span class="stat-badge-count" style="font-size: 16px;">${counts[key]}</span>
-                </div>`;
+                if (badgeTemplate) {
+                    const clone = badgeTemplate.content.cloneNode(true);
+                    const badgeDiv = clone.querySelector('.dynamic-award-badge');
+                    const clsSpan = clone.querySelector('.stat-badge-cls');
+                    const countSpan = clone.querySelector('.stat-badge-count');
+                    
+                    badgeDiv.setAttribute('data-award', key);
+                    badgeDiv.style.borderColor = def.color;
+                    badgeDiv.title = `Filter ${def.label}`;
+                    
+                    clsSpan.textContent = `${def.icon} ${def.label}`;
+                    clsSpan.style.color = def.color;
+                    
+                    countSpan.textContent = counts[key];
+                    
+                    container.appendChild(clone);
+                }
             }
         });
 
-        container.innerHTML = html;
         container.style.display = 'flex';
 
         document.querySelectorAll('.dynamic-award-badge').forEach(badge => {
