@@ -557,6 +557,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .hero-title { color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
+.we-tt-header { font-family: 'Cinzel'; color: #ffd100; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #555; padding-bottom: 4px; }
+.we-tt-empty { color: #aaa; font-style: italic; }
+.we-tt-footer { color: #888; font-style: italic; font-size: 11px; text-align: right; margin-top: 6px; border-top: 1px dashed #444; padding-top: 4px; }
+
+/* Layout */
+.we-tt-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; gap: 35px; }
+
+/* Components */
+.we-tt-score { color: #fff; font-weight: bold; }
 /* Layout */
 .tooltip-name-wrap { display: flex; align-items: center; }
 .tooltip-class-wrap { display: flex; align-items: center; }
@@ -630,6 +639,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .challenge-header { font-family: 'Cinzel'; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+.we-text-label { margin-right: 8px; text-transform: uppercase; }
+.we-text-crushed { color: #fff; margin-left: 8px; }
+.we-text-values { font-size: 15px; }
+.we-text-state-normal { font-size: 11px; color: #ccc; }
+.we-text-state-max { font-size: 15px; text-shadow: 0 0 8px rgba(0,0,0,0.8), 1px 1px 2px #000; }
 .challenge-link { color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0; }
 .challenge-text { color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); letter-spacing: 1px; }
 .mvp-placeholder-icon { font-size: 22px; }

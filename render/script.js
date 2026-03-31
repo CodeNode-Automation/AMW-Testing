@@ -4107,12 +4107,35 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             
             if (textEl) {
+                textEl.textContent = '';
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'we-text-label';
+                labelSpan.textContent = labelName + ':';
+                
+                const valSpan = document.createElement('span');
+                valSpan.className = 'we-text-values';
+                valSpan.textContent = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}`;
+                
                 if (pct >= 100) {
-                    textEl.innerHTML = `<span style="color:#ddd; margin-right:8px;">${labelName}:</span> ${currentVal.toLocaleString()} / ${maxVal.toLocaleString()} <span style="color:#fff; margin-left:8px; text-shadow: 0 0 10px ${colorMax};">🔥 CRUSHED!</span>`;
+                    textEl.className = 'challenge-text we-text-state-max';
                     textEl.style.color = colorMid;
-                    textEl.style.textShadow = `0 0 8px rgba(0,0,0,0.8), 1px 1px 2px #000`;
+                    labelSpan.style.color = '#ddd';
+                    
+                    const crushSpan = document.createElement('span');
+                    crushSpan.className = 'we-text-crushed';
+                    crushSpan.textContent = '🔥 CRUSHED!';
+                    crushSpan.style.textShadow = `0 0 10px ${colorMax}`;
+                    
+                    textEl.appendChild(labelSpan);
+                    textEl.appendChild(valSpan);
+                    textEl.appendChild(crushSpan);
                 } else {
-                    textEl.innerHTML = `<span style="color:#ccc; font-size:11px; margin-right:8px; text-transform:uppercase;">${labelName}:</span> <span style="font-size:15px;">${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}</span>`;
+                    textEl.className = 'challenge-text we-text-state-normal';
+                    textEl.style.color = '#fff';
+                    labelSpan.style.color = '#ccc';
+                    
+                    textEl.appendChild(labelSpan);
+                    textEl.appendChild(valSpan);
                 }
             }
         }
@@ -4143,7 +4166,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const topDyn = Object.entries(levelContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
             const sortedXP = timelineData.filter(e => e.type === 'level_up' && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedXP[749]) fallback = { title: "🛡️ Hero's Journey", desc: `<span style="color:#ffd100; font-weight:bold;">${sortedXP[749].character_name}</span> hit the 750th level!`, timestamp: sortedXP[749].timestamp };
+            if (sortedXP[749]) fallback = { title: "🛡️ Hero's Journey", highlightColor: "#ffd100", highlightText: sortedXP[749].character_name, suffixText: " hit the 750th level!", timestamp: sortedXP[749].timestamp };
             applyLockFallback('xp', fallback, topDyn);
         }
 
@@ -4151,7 +4174,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
             const topDyn = topPvpers.slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
-            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", desc: `<span style="color:#ff4400; font-weight:bold;">${topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1)}</span> led the 500 HK charge!`, timestamp: new Date().toISOString() };
+            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", highlightColor: "#ff4400", highlightText: topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1), suffixText: " led the 500 HK charge!", timestamp: new Date().toISOString() };
             applyLockFallback('hk', fallback, topDyn);
         }
 
@@ -4159,7 +4182,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const topDyn = Object.entries(lootContributors).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
             const sortedLoot = timelineData.filter(e => e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY') && new Date((e.timestamp || '').replace('Z', '+00:00')).getTime() >= lastResetMs).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            if (sortedLoot[49]) fallback = { title: "🐉 Dragon's Hoard", desc: `<span style="color:#a335ee; font-weight:bold;">${sortedLoot[49].character_name}</span> looted the 60th Epic!`, timestamp: sortedLoot[49].timestamp };
+            if (sortedLoot[49]) fallback = { title: "🐉 Dragon's Hoard", highlightColor: "#a335ee", highlightText: sortedLoot[49].character_name, suffixText: " looted the 60th Epic!", timestamp: sortedLoot[49].timestamp };
             applyLockFallback('loot', fallback, topDyn);
         }
 
@@ -4173,12 +4196,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const topDyn = uniqueZ.slice(0,3);
             let fallback = null;
-            if (uniqueZ[9]) fallback = { title: "⚡ The Zenith Cohort", desc: `<span style="color:#3FC7EB; font-weight:bold;">${uniqueZ[9].charAt(0).toUpperCase() + uniqueZ[9].slice(1)}</span> was the 10th Level 70!`, timestamp: new Date().toISOString() };
+            if (uniqueZ[9]) fallback = { title: "⚡ The Zenith Cohort", highlightColor: "#3FC7EB", highlightText: uniqueZ[9].charAt(0).toUpperCase() + uniqueZ[9].slice(1), suffixText: " was the 10th Level 70!", timestamp: new Date().toISOString() };
             applyLockFallback('zenith', fallback, topDyn);
         }
 
         if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 60 && totalZenith >= 10) {
-            // 1. Find the exact timestamp when the final challenge was completed
             const lockTimes = [
                 new Date(window.warEffortLockTimes.xp).getTime(),
                 new Date(window.warEffortLockTimes.hk).getTime(),
@@ -4187,13 +4209,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             ];
             const flawlessCompletionTime = new Date(Math.max(...lockTimes));
             
-            // 2. Format the start of the week (e.g., "Mar 24")
             const weekStart = new Date(lastResetMs).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
 
-            // 3. Push the monument with the dynamic week and accurate completion time
             window.warEffortMonuments.push({
                 title: "🌟 FLAWLESS VICTORY",
-                desc: `<span style="color:#ffd100; font-weight:bold;">The guild crushed ALL FOUR War Efforts for the week of ${weekStart}!</span> Glory to Azeroth's Most Wanted!`,
+                highlightColor: "#ffd100", highlightText: `The guild crushed ALL FOUR War Efforts for the week of ${weekStart}!`, suffixText: " Glory to Azeroth's Most Wanted!",
                 timestamp: flawlessCompletionTime.toISOString()
             });
         }
@@ -4225,7 +4245,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                         
                         clone.querySelector('.mon-title-text').textContent = mon.title;
                         clone.querySelector('.mon-time-text').textContent = timeStr;
-                        clone.querySelector('.mon-desc-text').innerHTML = mon.desc;
+                        const descContainer = clone.querySelector('.mon-desc-text');
+                        descContainer.textContent = '';
+                        if (mon.highlightText) {
+                            if (mon.prefixText) descContainer.appendChild(document.createTextNode(mon.prefixText));
+                            const hlSpan = document.createElement('span');
+                            hlSpan.style.color = mon.highlightColor;
+                            hlSpan.style.fontWeight = 'bold';
+                            hlSpan.textContent = mon.highlightText;
+                            descContainer.appendChild(hlSpan);
+                            if (mon.suffixText) descContainer.appendChild(document.createTextNode(mon.suffixText));
+                        } else {
+                            descContainer.innerHTML = mon.desc;
+                        }
                         
                         eventEl.appendChild(clone);
                     }
@@ -4240,36 +4272,56 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!tooltipTrigger) return;
             
             const sortedContributors = Object.entries(contributorsDict).sort((a, b) => b[1] - a[1]);
-            let tooltipHtml = `<div style="font-family:'Cinzel'; color:#ffd100; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #555; padding-bottom:4px;">${titleText}</div>`;
             
-            if (sortedContributors.length === 0) {
-                tooltipHtml += `<div style="color:#aaa; font-style:italic;">The challenges just began!</div>`;
-            } else {
-                const topList = sortedContributors.slice(0, 15);
-                topList.forEach(([name, count], index) => {
-                    const charData = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === name.toLowerCase());
-                    const cClass = charData ? getCharClass(charData) : 'Unknown';
-                    const cHex = CLASS_COLORS[cClass] || '#fff';
-                    const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-                    
-                    tooltipHtml += `
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size:13px; gap: 35px;">
-                        <span style="color:${cHex};">${index + 1}. ${formattedName}</span>
-                        <span style="color:#fff; font-weight:bold;">+${count.toLocaleString()}</span>
-                    </div>`;
-                });
-                
-                if (sortedContributors.length > 15) {
-                    const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
-                    tooltipHtml += `<div style="color:#888; font-style:italic; font-size:11px; text-align:right; margin-top:6px; border-top:1px dashed #444; padding-top:4px;">...and +${remaining.toLocaleString()} more ${labelText}!</div>`;
-                }
-            }
-
             const newTrigger = tooltipTrigger.cloneNode(true);
             tooltipTrigger.parentNode.replaceChild(newTrigger, tooltipTrigger);
             
             function displayTooltip(clientX, clientY) {
-                tooltip.innerHTML = tooltipHtml;
+                tooltip.textContent = '';
+                
+                const header = document.createElement('div');
+                header.className = 'we-tt-header';
+                header.textContent = titleText;
+                tooltip.appendChild(header);
+                
+                if (sortedContributors.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'we-tt-empty';
+                    empty.textContent = 'The challenges just began!';
+                    tooltip.appendChild(empty);
+                } else {
+                    const topList = sortedContributors.slice(0, 15);
+                    topList.forEach(([name, count], index) => {
+                        const charData = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === name.toLowerCase());
+                        const cClass = charData ? getCharClass(charData) : 'Unknown';
+                        const cHex = CLASS_COLORS[cClass] || '#fff';
+                        const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                        
+                        const row = document.createElement('div');
+                        row.className = 'we-tt-row';
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.style.color = cHex;
+                        nameSpan.textContent = `${index + 1}. ${formattedName}`;
+                        
+                        const scoreSpan = document.createElement('span');
+                        scoreSpan.className = 'we-tt-score';
+                        scoreSpan.textContent = `+${count.toLocaleString()}`;
+                        
+                        row.appendChild(nameSpan);
+                        row.appendChild(scoreSpan);
+                        tooltip.appendChild(row);
+                    });
+                    
+                    if (sortedContributors.length > 15) {
+                        const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
+                        const footer = document.createElement('div');
+                        footer.className = 'we-tt-footer';
+                        footer.textContent = `...and +${remaining.toLocaleString()} more ${labelText}!`;
+                        tooltip.appendChild(footer);
+                    }
+                }
+
                 tooltip.style.borderLeftColor = '#ffd100';
                 let x = clientX + 15;
                 let y = clientY + 15;
