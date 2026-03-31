@@ -1990,14 +1990,29 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tCampaign}">🎖️ ${cCount}</span>`;
                 cBadgesHtml += '</div>';
 
-                tooltip.innerHTML = `
-                    <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${cBadgesHtml}</div>
-                    <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val" style="color:#ffd100;">${guildRank}</span></div>
-                    <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val">${p.level || 0} / ${raceName}</span></div>
-                    <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val" style="color:${cHex}; display:flex; align-items:center;">${specIconHtml}${displaySpecClass}</span></div>
-                    <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val" style="color:#ff8000;">${p.equipped_item_level || 0}</span></div>
-                    <div class="tt-row"><span class="tt-label" style="border-bottom:none;">HP / ${powerName}</span><span class="tt-val" style="border-bottom:none;">${st.health || 0} / ${st.power || 0}</span></div>
-                `;
+                tooltip.innerHTML = '';
+                const template = document.getElementById('tpl-char-tooltip');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const nameWrap = clone.querySelector('.tooltip-name-wrap');
+                    nameWrap.style.color = cHex;
+                    clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
+                    clone.querySelector('.tooltip-badges-container').innerHTML = cBadgesHtml;
+                    
+                    clone.querySelector('.tooltip-guild-rank').textContent = guildRank;
+                    clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
+                    
+                    const classWrap = clone.querySelector('.tooltip-class-wrap');
+                    classWrap.style.color = cHex;
+                    classWrap.innerHTML = `${specIconHtml}${displaySpecClass}`;
+                    
+                    clone.querySelector('.tooltip-ilvl').textContent = p.equipped_item_level || 0;
+                    clone.querySelector('.tooltip-power-label').textContent = powerName;
+                    clone.querySelector('.tooltip-health-power').textContent = `${st.health || 0} / ${st.power || 0}`;
+                    
+                    tooltip.appendChild(clone);
+                }
                 tooltip.style.borderLeftColor = cHex;
                 
                 let x = e.clientX + 15;
@@ -3657,19 +3672,34 @@ window.addEventListener('DOMContentLoaded', async () => {
                 else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP 2nd'; }
                 else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP 3rd'; }
                 
-                eventEl.innerHTML = `
-                    <div class="timeline-node" style="background: ${badgeColor}; box-shadow: 0 0 8px ${badgeColor};"></div>
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; gap: 10px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:14px; text-shadow:1px 1px 2px #000;">${c_name}</span>
-                            <div style="display: inline-flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-left: 2px solid ${badgeColor}; border-radius: 4px; padding: 2px 6px; gap: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8);">
-                                <span style="font-size: 11px; filter: drop-shadow(0 0 2px ${badgeColor});">${badgeIcon}</span>
-                                <span style="color: ${badgeColor}; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">${badgeText} <span style="color: #888; font-weight: normal;">• ${event.category}</span></span>
-                            </div>
-                        </div>
-                        <span style="color:#888; font-size:10px;">${date_str}</span>
-                    </div>
-                `;
+                const template = document.getElementById('tpl-timeline-badge');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const node = clone.querySelector('.tl-badge-node');
+                    node.style.background = badgeColor;
+                    node.style.boxShadow = `0 0 8px ${badgeColor}`;
+                    
+                    const nameSpan = clone.querySelector('.tl-badge-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    const pill = clone.querySelector('.tl-badge-pill');
+                    pill.style.borderLeft = `2px solid ${badgeColor}`;
+                    
+                    const iconSpan = clone.querySelector('.tl-badge-icon');
+                    iconSpan.textContent = badgeIcon;
+                    iconSpan.style.filter = `drop-shadow(0 0 2px ${badgeColor})`;
+                    
+                    const textSpan = clone.querySelector('.tl-badge-text');
+                    textSpan.textContent = badgeText;
+                    textSpan.style.color = badgeColor;
+                    
+                    clone.querySelector('.tl-badge-category').textContent = `• ${event.category}`;
+                    clone.querySelector('.tl-badge-date').textContent = date_str;
+                    
+                    eventEl.appendChild(clone);
+                }
             } else if (event.type === 'level_up') {
                 eventEl.style.borderLeftColor = c_hex;
                 const template = document.getElementById('tpl-timeline-levelup');

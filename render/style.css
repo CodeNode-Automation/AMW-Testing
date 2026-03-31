@@ -375,6 +375,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Components */
 .tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+/* Layout */
+.tl-badge-wrapper { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tl-badge-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tl-badge-pill { display: inline-flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 2px 6px; gap: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8); }
+
+/* Typography */
+.tl-badge-name { font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; }
+.tl-badge-text-wrap { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+.tl-badge-category { color: #888; font-weight: normal; }
+.tl-badge-date { color: #888; font-size: 10px; }
+
+/* Components */
+.tl-badge-icon { font-size: 11px; }
 .timeline-feed::before { content: ''; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(255, 209, 0, 0.8) 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.05) 100%); z-index: 1; box-shadow: 0 0 10px rgba(255, 209, 0, 0.5); }
 .tl-empty-msg { color: #888; text-align: center; padding: 20px; font-style: italic; }
 .concise-item { position: relative; display: flex; flex-wrap: wrap; align-items: center; background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 2; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-left: 3px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
@@ -544,6 +557,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .hero-title { color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
+/* Layout */
+.tooltip-name-wrap { display: flex; align-items: center; }
+.tooltip-class-wrap { display: flex; align-items: center; }
+
+/* Components */
+.tt-no-border { border-bottom: none !important; }
+.tooltip-guild-rank { color: #ffd100; }
+.tooltip-ilvl { color: #ff8000; }
 .tooltip-date { color:#aaa; font-size:12px; }
 .tooltip-hint { color:#666; font-size:10px; margin-top:6px; font-style:italic; }
 
@@ -607,6 +628,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
+.challenge-header-loot { color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); }
+.challenge-header-zenith { color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); }
 .challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
 .mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
 .mvp-placeholder-meta { opacity: 0.5; }

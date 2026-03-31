@@ -51,6 +51,18 @@
         <div class="tooltip-hint">Click to filter timeline</div>
     </template>
 
+    <template id="tpl-char-tooltip">
+        <div class="tt-name tooltip-name-wrap">
+            <span class="tooltip-char-name"></span>
+            <span class="tooltip-badges-container"></span>
+        </div>
+        <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val tooltip-guild-rank"></span></div>
+        <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val tooltip-level-race"></span></div>
+        <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val tooltip-class-wrap"></span></div>
+        <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val tooltip-ilvl"></span></div>
+        <div class="tt-row"><span class="tt-label tt-no-border">HP / <span class="tooltip-power-label"></span></span><span class="tt-val tt-no-border tooltip-health-power"></span></div>
+    </template>
+    
     <template id="tpl-ac-empty-state">
         <div class="ac-empty-state">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
@@ -103,6 +115,23 @@
         </div>
     </template>
     
+    <template id="tpl-timeline-badge">
+        <div class="timeline-node tl-badge-node"></div>
+        <div class="tl-badge-wrapper">
+            <div class="tl-badge-inner">
+                <span class="tl-badge-name"></span>
+                <div class="tl-badge-pill">
+                    <span class="tl-badge-icon"></span>
+                    <span class="tl-badge-text-wrap">
+                        <span class="tl-badge-text"></span>
+                        <span class="tl-badge-category"></span>
+                    </span>
+                </div>
+            </div>
+            <span class="tl-badge-date"></span>
+        </div>
+    </template>
+
     <template id="tpl-sort-badges">
         <div class="sort-controls sort-controls-animated">
             <span class="sort-label">Sort By:</span>
@@ -333,17 +362,17 @@
                         </div>
                         
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-loot">
                                 <span>🐉 Dragon's Hoard (Epic Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-loot-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 60 Epics Looted</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-loot-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-loot-text" class="challenge-text">0 / 60 Epics Looted</div>
                             </div>
                         </div>
 
