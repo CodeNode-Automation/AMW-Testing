@@ -385,6 +385,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Components */
 .tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+/* Layout */
+.tl-badge-wrapper { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tl-badge-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tl-badge-pill { display: inline-flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 2px 6px; gap: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8); }
+
+/* Typography */
+.tl-badge-name { font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; }
+.tl-badge-text-wrap { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+.tl-badge-category { color: #888; font-weight: normal; }
+.tl-badge-date { color: #888; font-size: 10px; }
+
+/* Components */
+.tl-badge-icon { font-size: 11px; }
 .timeline-feed::before { content: ''; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(255, 209, 0, 0.8) 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.05) 100%); z-index: 1; box-shadow: 0 0 10px rgba(255, 209, 0, 0.5); }
 .tl-empty-msg { color: #888; text-align: center; padding: 20px; font-style: italic; }
 .concise-item { position: relative; display: flex; flex-wrap: wrap; align-items: center; background: linear-gradient(90deg, rgba(25, 25, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 2; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-left: 3px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
@@ -554,6 +567,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .hero-title { color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
+/* Layout */
+.tooltip-name-wrap { display: flex; align-items: center; }
+.tooltip-class-wrap { display: flex; align-items: center; }
+
+/* Components */
+.tt-no-border { border-bottom: none !important; }
+.tooltip-guild-rank { color: #ffd100; }
+.tooltip-ilvl { color: #ff8000; }
 .tooltip-date { color:#aaa; font-size:12px; }
 .tooltip-hint { color:#666; font-size:10px; margin-top:6px; font-style:italic; }
 
@@ -617,6 +638,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
+.challenge-header-loot { color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); }
+.challenge-header-zenith { color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); }
 .challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
 .mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
 .mvp-placeholder-meta { opacity: 0.5; }
@@ -801,6 +824,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <div class="tooltip-hint">Click to filter timeline</div>
     </template>
 
+    <template id="tpl-char-tooltip">
+        <div class="tt-name tooltip-name-wrap">
+            <span class="tooltip-char-name"></span>
+            <span class="tooltip-badges-container"></span>
+        </div>
+        <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val tooltip-guild-rank"></span></div>
+        <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val tooltip-level-race"></span></div>
+        <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val tooltip-class-wrap"></span></div>
+        <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val tooltip-ilvl"></span></div>
+        <div class="tt-row"><span class="tt-label tt-no-border">HP / <span class="tooltip-power-label"></span></span><span class="tt-val tt-no-border tooltip-health-power"></span></div>
+    </template>
+    
     <template id="tpl-ac-empty-state">
         <div class="ac-empty-state">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
@@ -853,6 +888,23 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
     
+    <template id="tpl-timeline-badge">
+        <div class="timeline-node tl-badge-node"></div>
+        <div class="tl-badge-wrapper">
+            <div class="tl-badge-inner">
+                <span class="tl-badge-name"></span>
+                <div class="tl-badge-pill">
+                    <span class="tl-badge-icon"></span>
+                    <span class="tl-badge-text-wrap">
+                        <span class="tl-badge-text"></span>
+                        <span class="tl-badge-category"></span>
+                    </span>
+                </div>
+            </div>
+            <span class="tl-badge-date"></span>
+        </div>
+    </template>
+
     <template id="tpl-sort-badges">
         <div class="sort-controls sort-controls-animated">
             <span class="sort-label">Sort By:</span>
@@ -1083,17 +1135,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                         </div>
                         
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-loot">
                                 <span>🐉 Dragon's Hoard (Epic Loot)</span>
-                                <span id="guild-loot-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-loot-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-loot-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-loot-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 60 Epics Looted</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-loot-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-loot-text" class="challenge-text">0 / 60 Epics Looted</div>
                             </div>
                         </div>
 
@@ -1371,10 +1423,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T15:14:46.315624Z", "active_14_days": 414, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T16:04:12.291171Z", "active_14_days": 415, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 281, "loot": 208, "levels": 73, "total_roster": 656, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 300, "loot": 221, "levels": 79, "total_roster": 656, "active_roster": 415}]
     </script>
 
     <script>
@@ -3370,14 +3422,29 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tCampaign}">🎖️ ${cCount}</span>`;
                 cBadgesHtml += '</div>';
 
-                tooltip.innerHTML = `
-                    <div class="tt-name" style="color:${cHex}; display:flex; align-items:center;">${p.name || 'Unknown'}${cBadgesHtml}</div>
-                    <div class="tt-row"><span class="tt-label">Guild Rank</span><span class="tt-val" style="color:#ffd100;">${guildRank}</span></div>
-                    <div class="tt-row"><span class="tt-label">Level / Race</span><span class="tt-val">${p.level || 0} / ${raceName}</span></div>
-                    <div class="tt-row"><span class="tt-label">Class</span><span class="tt-val" style="color:${cHex}; display:flex; align-items:center;">${specIconHtml}${displaySpecClass}</span></div>
-                    <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val" style="color:#ff8000;">${p.equipped_item_level || 0}</span></div>
-                    <div class="tt-row"><span class="tt-label" style="border-bottom:none;">HP / ${powerName}</span><span class="tt-val" style="border-bottom:none;">${st.health || 0} / ${st.power || 0}</span></div>
-                `;
+                tooltip.innerHTML = '';
+                const template = document.getElementById('tpl-char-tooltip');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const nameWrap = clone.querySelector('.tooltip-name-wrap');
+                    nameWrap.style.color = cHex;
+                    clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
+                    clone.querySelector('.tooltip-badges-container').innerHTML = cBadgesHtml;
+                    
+                    clone.querySelector('.tooltip-guild-rank').textContent = guildRank;
+                    clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
+                    
+                    const classWrap = clone.querySelector('.tooltip-class-wrap');
+                    classWrap.style.color = cHex;
+                    classWrap.innerHTML = `${specIconHtml}${displaySpecClass}`;
+                    
+                    clone.querySelector('.tooltip-ilvl').textContent = p.equipped_item_level || 0;
+                    clone.querySelector('.tooltip-power-label').textContent = powerName;
+                    clone.querySelector('.tooltip-health-power').textContent = `${st.health || 0} / ${st.power || 0}`;
+                    
+                    tooltip.appendChild(clone);
+                }
                 tooltip.style.borderLeftColor = cHex;
                 
                 let x = e.clientX + 15;
@@ -5037,19 +5104,34 @@ window.addEventListener('DOMContentLoaded', async () => {
                 else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP 2nd'; }
                 else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP 3rd'; }
                 
-                eventEl.innerHTML = `
-                    <div class="timeline-node" style="background: ${badgeColor}; box-shadow: 0 0 8px ${badgeColor};"></div>
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; gap: 10px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:14px; text-shadow:1px 1px 2px #000;">${c_name}</span>
-                            <div style="display: inline-flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-left: 2px solid ${badgeColor}; border-radius: 4px; padding: 2px 6px; gap: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,0.8);">
-                                <span style="font-size: 11px; filter: drop-shadow(0 0 2px ${badgeColor});">${badgeIcon}</span>
-                                <span style="color: ${badgeColor}; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">${badgeText} <span style="color: #888; font-weight: normal;">• ${event.category}</span></span>
-                            </div>
-                        </div>
-                        <span style="color:#888; font-size:10px;">${date_str}</span>
-                    </div>
-                `;
+                const template = document.getElementById('tpl-timeline-badge');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const node = clone.querySelector('.tl-badge-node');
+                    node.style.background = badgeColor;
+                    node.style.boxShadow = `0 0 8px ${badgeColor}`;
+                    
+                    const nameSpan = clone.querySelector('.tl-badge-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    const pill = clone.querySelector('.tl-badge-pill');
+                    pill.style.borderLeft = `2px solid ${badgeColor}`;
+                    
+                    const iconSpan = clone.querySelector('.tl-badge-icon');
+                    iconSpan.textContent = badgeIcon;
+                    iconSpan.style.filter = `drop-shadow(0 0 2px ${badgeColor})`;
+                    
+                    const textSpan = clone.querySelector('.tl-badge-text');
+                    textSpan.textContent = badgeText;
+                    textSpan.style.color = badgeColor;
+                    
+                    clone.querySelector('.tl-badge-category').textContent = `• ${event.category}`;
+                    clone.querySelector('.tl-badge-date').textContent = date_str;
+                    
+                    eventEl.appendChild(clone);
+                }
             } else if (event.type === 'level_up') {
                 eventEl.style.borderLeftColor = c_hex;
                 const template = document.getElementById('tpl-timeline-levelup');
