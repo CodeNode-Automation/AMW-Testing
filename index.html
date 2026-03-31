@@ -402,6 +402,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-select option { background: #111; color: #fff; }
 /* Components */
 .tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-btn-rare { color: #0070dd; border-color: rgba(0, 112, 221, 0.5); }
+.tl-btn-epic { color: #a335ee; border-color: rgba(163, 53, 238, 0.5); }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 /* Layout */
 .tl-badge-wrapper { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -609,6 +611,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .tt-no-border { border-bottom: none !important; }
+.spec-icon-card { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2); }
+.spec-icon-tt { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222; }
 /* Components */
 .qual-border-left-POOR { border-left-color: #9d9d9d; }
 .qual-border-POOR { border-color: #9d9d9d; }
@@ -739,11 +743,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .concise-chart-title { text-align: center; color: #ffd100; font-family: 'Cinzel'; margin-top: 0; }
+.trend-indicator-concise { font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block; }
 .monument-content { display: flex; flex-direction: column; flex: 1; }
 .monument-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
 
 /* Typography */
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
 
@@ -1503,8 +1509,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <div class="timeline-filters">
                 <div class="filter-group">
                     <button class="tl-btn" data-type="all">All</button>
-                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
-                    <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
                 </div>
                 <div class="filter-group">
@@ -1541,10 +1547,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T18:09:46.247433Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T18:22:14.181999Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 343, "loot": 250, "levels": 93, "total_roster": 656, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 346, "loot": 251, "levels": 95, "total_roster": 656, "active_roster": 415}]
     </script>
 
     <script>
@@ -2433,7 +2439,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const activeSpec = p.active_spec ? p.active_spec : '';
         const specIconUrl = getSpecIcon(cClass, activeSpec);
-        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2);">` : '';
+        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-card">` : '';
         const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
         const health = st.health || 0;
@@ -2530,7 +2536,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         let weaponStatsHtml = '';
         
         if (mhDps > 0) {
-            weaponStatsHtml += `<div style="color:#aaa; font-size:11px; text-transform:uppercase; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Main Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="weapon-stats-header">Main Hand Weapon</div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(mhMin)} - ${Math.round(mhMax)}</span></div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${mhSpeed.toFixed(2)}</span></div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${mhDps.toFixed(1)}</span></div>`;
@@ -3265,9 +3271,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
-                    if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▲ ${trend}</span>`;
-                    else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▼ ${Math.abs(trend)}</span>`;
-                    else trendHTML = `<span style="color: #555; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">-</span>`;
+                    if (trend > 0) trendHTML = `<span class="trend-indicator-concise trend-positive">▲ ${trend}</span>`;
+                    else if (trend < 0) trendHTML = `<span class="trend-indicator-concise trend-negative">▼ ${Math.abs(trend)}</span>`;
+                    else trendHTML = `<span class="trend-indicator-concise trend-neutral">-</span>`;
                 }
             } else {
                 baseName = char.name || 'Unknown';
@@ -3514,7 +3520,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
-                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222;">` : '';
+                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-tt">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 // --- NEW: Grab the Guild Rank & MVP Badges (Scope-Safe) ---
@@ -3752,8 +3758,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             filtersContainer.innerHTML = `
                 <div class="filter-group">
                     <button class="tl-btn" data-type="all">All</button>
-                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
-                    <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
                 </div>
                 <div class="filter-group">
