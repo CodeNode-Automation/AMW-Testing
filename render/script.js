@@ -1528,31 +1528,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             return 0;
         });
 
-        // Add Sorting Dropdown UI to the top of the list
-        let sortUI = '';
-        if (hashUrl === 'badges' || currentSortMethod === 'badges') {
-            sortUI = `
-                <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
-                    <span style="color: #888; font-size: 14px;">Sort By:</span>
-                    <select id="concise-sort-dropdown" class="sort-select">
-                        <option value="badges" ${currentSortMethod === 'badges' ? 'selected' : ''}>Total Badges</option>
-                        <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
-                    </select>
-                </div>
-            `;
-        } else if (!hashUrl.startsWith('war-effort-')) {
-            sortUI = `
-                <div class="sort-controls" style="animation: fadeIn 0.3s forwards;">
-                    <span style="color: #888; font-size: 14px;">Sort By:</span>
-                    <select id="concise-sort-dropdown" class="sort-select">
-                        <option value="ilvl" ${currentSortMethod === 'ilvl' ? 'selected' : ''}>Item Level</option>
-                        <option value="level" ${currentSortMethod === 'level' ? 'selected' : ''}>Character Level</option>
-                        <option value="hks" ${currentSortMethod === 'hks' ? 'selected' : ''}>Honorable Kills</option>
-                        <option value="name" ${currentSortMethod === 'name' ? 'selected' : ''}>Name (A-Z)</option>
-                    </select>
-                </div>
-            `;
-        }
+        
 
         // Generate the HTML for the list
         const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
@@ -1848,8 +1824,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             finalHTML += listItemsHTML;
         }
 
-        // Inject the sorting UI and the List HTML
-        conciseList.innerHTML = sortUI + finalHTML;
+        conciseList.innerHTML = finalHTML;
+        
+        let templateId = null;
+        if (hashUrl === 'badges' || currentSortMethod === 'badges') {
+            templateId = 'tpl-sort-badges';
+        } else if (!hashUrl.startsWith('war-effort-')) {
+            templateId = 'tpl-sort-default';
+        }
+        
+        if (templateId) {
+            const template = document.getElementById(templateId);
+            if (template) {
+                const clone = template.content.cloneNode(true);
+                const select = clone.querySelector('.concise-sort-dropdown');
+                if (select) {
+                    select.value = currentSortMethod;
+                    select.id = 'concise-sort-dropdown'; 
+                }
+                conciseList.insertBefore(clone, conciseList.firstChild);
+            }
+        }
 
         // Bind the event listener to the newly created dropdown if it exists
         const sortDropdown = document.getElementById('concise-sort-dropdown');
@@ -3616,17 +3611,32 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const q_hex = QUALITY_COLORS[q] || '#ffffff';
                 eventEl.style.borderLeftColor = q_hex;
                 
-                eventEl.innerHTML = `
-                    <div class="timeline-node" style="background: ${q_hex}; box-shadow: 0 0 8px ${q_hex};"></div>
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                        <span style="color: ${c_hex}; font-family:'Cinzel'; font-weight:bold; font-size:15px; text-shadow:1px 1px 2px #000;">${c_name}</span>
-                        <span style="color:#888; font-size:11px;">${date_str}</span>
-                    </div>
-                    <div class="event-box" style="border-left-color: ${q_hex};">
-                        <img src="${event.item_icon}" alt="icon">
-                        <a href="https://www.wowhead.com/wotlk/item=${event.item_id}" target="_blank" onclick="event.stopPropagation();" style="color: ${q_hex}; font-weight:bold; text-decoration: none;">${event.item_name}</a>
-                    </div>
-                `;
+                const template = document.getElementById('tpl-timeline-loot');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const node = clone.querySelector('.timeline-node');
+                    node.style.background = q_hex;
+                    node.style.boxShadow = `0 0 8px ${q_hex}`;
+                    
+                    const nameSpan = clone.querySelector('.tl-event-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    clone.querySelector('.tl-event-date').textContent = date_str;
+                    
+                    const eventBox = clone.querySelector('.event-box');
+                    eventBox.style.borderLeftColor = q_hex;
+                    
+                    clone.querySelector('.tl-event-icon').src = event.item_icon;
+                    
+                    const itemLink = clone.querySelector('.tl-event-item-link');
+                    itemLink.href = `https://www.wowhead.com/wotlk/item=${event.item_id}`;
+                    itemLink.textContent = event.item_name;
+                    itemLink.style.color = q_hex;
+                    
+                    eventEl.appendChild(clone);
+                }
             }
             
             container.appendChild(eventEl);

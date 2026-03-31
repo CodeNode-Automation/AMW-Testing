@@ -84,6 +84,40 @@
         </div>
     </template>
 
+    <template id="tpl-timeline-loot">
+        <div class="timeline-node"></div>
+        <div class="tl-event-header">
+            <span class="tl-event-name"></span>
+            <span class="tl-event-date"></span>
+        </div>
+        <div class="event-box">
+            <img class="tl-event-icon" src="" alt="icon">
+            <a class="tl-event-item-link" href="#" target="_blank" onclick="event.stopPropagation();"></a>
+        </div>
+    </template>
+    
+    <template id="tpl-sort-badges">
+        <div class="sort-controls sort-controls-animated">
+            <span class="sort-label">Sort By:</span>
+            <select class="sort-select concise-sort-dropdown">
+                <option value="badges">Total Badges</option>
+                <option value="name">Name (A-Z)</option>
+            </select>
+        </div>
+    </template>
+    
+    <template id="tpl-sort-default">
+        <div class="sort-controls sort-controls-animated">
+            <span class="sort-label">Sort By:</span>
+            <select class="sort-select concise-sort-dropdown">
+                <option value="ilvl">Item Level</option>
+                <option value="level">Character Level</option>
+                <option value="hks">Honorable Kills</option>
+                <option value="name">Name (A-Z)</option>
+            </select>
+        </div>
+    </template>
+
     <template id="tpl-monument-card">
         <div class="monument-inner-wrapper">
             <span class="monument-trophy">🏆</span>
@@ -343,32 +377,32 @@
                     </div>
                 </div>
 
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto;">
+                <div class="analytics-secondary-charts-row">
                     
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
-                        <h3 class="heatmap-title" style="justify-content: center;">📈 Level Distribution <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Entire Roster</span></h3>
-                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                    <div class="heatmap-wrapper analytics-chart-panel-secondary">
+                        <h3 class="heatmap-title chart-title-center">📈 Level Distribution <span class="chart-title-sub">Entire Roster</span></h3>
+                        <div class="chart-canvas-wrapper">
                             <canvas id="levelDistChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
-                        <h3 class="heatmap-title" style="justify-content: center;">⚔️ Max Level iLvl Spread <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Lvl 70s Only</span></h3>
-                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                    <div class="heatmap-wrapper analytics-chart-panel-secondary">
+                        <h3 class="heatmap-title chart-title-center">⚔️ Max Level iLvl Spread <span class="chart-title-sub">Lvl 70s Only</span></h3>
+                        <div class="chart-canvas-wrapper">
                             <canvas id="ilvlDistChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
-                        <h3 class="heatmap-title" style="justify-content: center;">🧬 Race Distribution <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Scanned Roster</span></h3>
-                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                    <div class="heatmap-wrapper analytics-chart-panel-secondary">
+                        <h3 class="heatmap-title chart-title-center">🧬 Race Distribution <span class="chart-title-sub">Scanned Roster</span></h3>
+                        <div class="chart-canvas-wrapper">
                             <canvas id="raceDistChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="heatmap-wrapper" style="flex: 1; min-width: 400px; max-width: 500px; display: flex; flex-direction: column;">
-                        <h3 class="heatmap-title" style="justify-content: center;">📊 Class Distribution <span style="color:#aaa; font-size: 11px; margin-left: 6px;">Scanned Roster</span></h3>
-                        <div style="position: relative; flex: 1; width: 100%; min-height: 250px;">
+                    <div class="heatmap-wrapper analytics-chart-panel-secondary">
+                        <h3 class="heatmap-title chart-title-center">📊 Class Distribution <span class="chart-title-sub">Scanned Roster</span></h3>
+                        <div class="chart-canvas-wrapper">
                             <canvas id="analyticsClassChart"></canvas>
                         </div>
                     </div>
