@@ -68,6 +68,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .nav-links-container { position: fixed; top: 0; left: -100%; height: 100vh; width: 250px; flex-direction: column; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(10px); border-right: 1px solid rgba(255, 255, 255, 0.05); padding-top: 80px; padding-left: 20px; padding-bottom: 20px; align-items: flex-start; transition: left 0.3s ease-in-out; z-index: 10005; box-shadow: 5px 0 25px rgba(0,0,0,0.9); display: flex; gap: 10px; overflow-y: auto; }
 .nav-links-container.open { left: 0; }
+/* Components */
+.nav-section-header { color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px; }
 
 .custom-select-wrapper { position: relative; user-select: none; font-family: 'Cinzel'; z-index: 105; }
 .custom-select { background: rgba(0, 0, 0, 0.6); border: 1px solid #444; color: #fff; font-size: 15px; padding: 8px 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; transition: 0.3s; min-width: 220px; }
@@ -126,7 +128,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .heatmap-wrapper { width: 100%; max-width: 550px; background: linear-gradient(135deg, rgba(20, 15, 25, 0.5) 0%, rgba(5, 5, 10, 0.7) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 20px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 2px 15px rgba(0, 0, 0, 0.8); }
 .heatmap-title { font-family: 'Cinzel'; color: #ffd100; text-align: left; margin-top: 0; margin-bottom: 15px; font-size: 14px; letter-spacing: 1px; text-shadow: 0 1px 2px #000; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; justify-content: center; width: 100%; }
-.heatmap-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* Layout */
+.heatmap-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+/* Components */
+.heatmap-cell.tt-heatmap { width: 100%; max-width: 60px; }
 .heatmap-label { color: #bbb; font-size: 12px; font-family: 'Cinzel'; font-weight: bold; text-transform: uppercase; }
 .heatmap-cell { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; background: #1a1a1a; transition: 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 .heatmap-cell:hover { transform: scale(1.1); border-color: #fff; z-index: 10; position: relative; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
@@ -548,6 +554,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-heatmap-col">
+        <div class="heatmap-col">
+            <span class="heatmap-label"></span>
+            <div class="heatmap-cell tt-heatmap"></div>
+        </div>
+    </template>
+
+
+    <template id="tpl-ac-empty-state">
+        <div class="ac-empty-state">
+            <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
+            <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
+        </div>
+    </template>
+    
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -559,19 +580,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <div class="nav-links-container">
                 <a href="#" class="nav-btn nav-btn-home"><span class="home-text">🏰 Home Dashboard</span></a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">WAR EFFORT</div>
+                <div class="nav-section-header">WAR EFFORT</div>
                 <a href="#war-effort-xp" class="nav-btn">🛡️ Hero's Journey</a>
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
                 <a href="#badges" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
+                <div class="nav-section-header">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
                 <a href="#ladder-pvp" class="nav-btn">⚔️ PvP Leaderboard</a>
                 <a href="#analytics" class="nav-btn">📊 Advanced Analytics</a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">COMMUNITY & INFO</div>
+                <div class="nav-section-header">COMMUNITY & INFO</div>
                 <a href="#architecture" class="nav-btn">⚙️ Architecture</a>
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
@@ -981,10 +1002,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T09:09:40.248467Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T09:39:26.111037Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 129, "loot": 98, "levels": 31, "total_roster": 654, "active_roster": 413}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 133, "loot": 101, "levels": 32, "total_roster": 654, "active_roster": 413}]
     </script>
 
     <script>
@@ -1334,13 +1355,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     `;
                 }).join('');
                 searchAutoComplete.classList.add('show');
-                if (customOptions) customOptions.classList.remove('show');
             } else {
-                searchAutoComplete.innerHTML = `
-                    <div class="ac-empty-state">
-                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
-                        <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
-                    </div>`;
+                searchAutoComplete.textContent = '';
+                const emptyTemplate = document.getElementById('tpl-ac-empty-state');
+                if (emptyTemplate) {
+                    searchAutoComplete.appendChild(emptyTemplate.content.cloneNode(true));
+                }
                 searchAutoComplete.classList.add('show');
             }
         });
@@ -1495,6 +1515,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        const heatmapTemplate = document.getElementById('tpl-heatmap-col');
+
         // --- Original Heatmap Grid ---
         let heatmapHtml = '';
         
@@ -1516,13 +1538,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             const dateObj = new Date(day.date + 'T00:00:00Z');
             const dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
             
-            heatmapHtml += `
-            <div class="heatmap-col" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                <span class="heatmap-label">${day.day_name}</span>
-                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}" style="width: 100%; max-width: 60px;"></div>
-            </div>`;
+            if (heatmapTemplate) {
+                const clone = heatmapTemplate.content.cloneNode(true);
+                const colDiv = clone.querySelector('.heatmap-col');
+                const labelSpan = clone.querySelector('.heatmap-label');
+                const cellDiv = clone.querySelector('.heatmap-cell');
+                
+                labelSpan.textContent = day.day_name;
+                cellDiv.setAttribute('data-lvl', lvl);
+                cellDiv.setAttribute('data-date', dateStr);
+                cellDiv.setAttribute('data-rawdate', day.date);
+                cellDiv.setAttribute('data-count', day.count);
+                
+                heatmapGrid.appendChild(clone);
+            }
+            
         });
-        heatmapGrid.innerHTML = heatmapHtml;
 
         document.querySelectorAll('.tt-heatmap').forEach(cell => {
             cell.addEventListener('click', function() {
