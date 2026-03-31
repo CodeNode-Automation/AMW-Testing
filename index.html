@@ -164,9 +164,30 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .heatmap-wrapper { width: 100%; max-width: 550px; background: linear-gradient(135deg, rgba(20, 15, 25, 0.5) 0%, rgba(5, 5, 10, 0.7) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 20px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 2px 15px rgba(0, 0, 0, 0.8); }
 .heatmap-title { font-family: 'Cinzel'; color: #ffd100; text-align: left; margin-top: 0; margin-bottom: 15px; font-size: 14px; letter-spacing: 1px; text-shadow: 0 1px 2px #000; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; justify-content: center; width: 100%; }
+/* Layout */
+.activity-chart-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin-bottom: 30px; }
+.activity-chart-wrapper { flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden; }
+.activity-chart-canvas-wrapper { position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px; }
+.activity-heatmap-grid { display: flex; width: 100%; max-width: 100%; justify-content: space-between; }
+
+/* Typography */
+.activity-chart-sub { color: #aaa; font-size: 11px; }
+
+/* Components */
+.activity-chart-canvas { width: 100% !important; height: 100% !important; }.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; justify-content: center; width: 100%; }
 /* Layout */
 .heatmap-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* Layout */
+.activity-chart-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin-bottom: 30px; }
+.activity-chart-wrapper { flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden; }
+.activity-chart-canvas-wrapper { position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px; }
+.activity-heatmap-grid { display: flex; width: 100%; max-width: 100%; justify-content: space-between; }
+
+/* Typography */
+.activity-chart-sub { color: #aaa; font-size: 11px; }
+
+/* Components */
+.activity-chart-canvas { width: 100% !important; height: 100% !important; }
 
 /* Components */
 .heatmap-cell.tt-heatmap { width: 100%; max-width: 60px; }
@@ -197,6 +218,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
 /* Components */
 .dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
+.gear-slot-wrapper { background: rgba(20,20,20,0.9); }
+.gear-slot-icon-wrapper { position: relative; }
+.gear-slot-info { display: flex; flex-direction: column; justify-content: center; }
+.gear-slot-link { text-decoration: none; }
+.enchant-badge { position: absolute; bottom: -4px; right: 8px; background: #000; border: 1px solid #1eff00; color: #1eff00; font-size: 9px; font-weight: bold; border-radius: 3px; padding: 0 4px; z-index: 5; }
+.missing-enchant-warning { box-shadow: inset 0 0 15px rgba(231, 76, 60, 0.4); border-left-color: #e74c3c !important; }
+.missing-enchant-text { color: #e74c3c; font-size: 10px; font-weight: bold; margin-top: 2px; text-shadow: 1px 1px 2px #000; }
 .dynamic-award-badge .stat-badge-cls { font-size: 11px; }
 .dynamic-award-badge .stat-badge-count { font-size: 16px; }
 .stat-badge-cls { font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }
@@ -215,6 +243,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .countdown-label { color: #c0c0c0; font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000; }
 .countdown-timer { color: #ff8000; font-family: 'Cinzel', serif; font-weight: bold; font-size: 20px; text-shadow: 0 0 12px rgba(255, 128, 0, 0.5), 1px 1px 2px #000; letter-spacing: 1px; }
 .spec-filter-wrapper { margin-bottom: 0; gap: 12px; justify-content: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+.spec-badge-wrapper { cursor: pointer; transform: scale(0.95); }
+.spec-badge-cls { display: flex; align-items: center; }
+.spec-badge-all { background: rgba(255,255,255,0.05); }
+.spec-badge-icon { width: 16px; height: 16px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 1px solid #222; }
 
 /* ========================================= */
 /* LISTS & LEADERBOARDS                      */
@@ -696,6 +728,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-spec-badge">
+        <div class="stat-badge spec-btn concise-spec-btn spec-badge-wrapper">
+            <span class="stat-badge-cls spec-badge-cls"></span>
+            <span class="stat-badge-count spec-badge-count"></span>
+        </div>
+    </template>
+
     <template id="tpl-timeline-levelup">
         <div class="timeline-node timeline-node-gold"></div>
         <div class="tl-event-header">
@@ -854,13 +893,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
                 <div class="home-dashboard-grid">
 
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; max-width: 1100px; margin-bottom: 30px;">
-                    <div class="heatmap-wrapper" style="flex: 1; width: 100%; max-width: 100%; margin: 0; overflow: hidden;">
-                        <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span style="color:#aaa; font-size: 11px;">Updates Daily</span></h3>
-                        <div style="position: relative; height: 180px; width: 100%; max-width: 100%; margin-bottom: 20px;">
-                            <canvas id="activityChart" style="width: 100% !important; height: 100% !important"></canvas>
+                <div class="activity-chart-container">
+                    <div class="heatmap-wrapper activity-chart-wrapper">
+                        <h3 class="heatmap-title">🔥 Guild Activity (Last 7 Days) <span class="activity-chart-sub">Updates Daily</span></h3>
+                        <div class="activity-chart-canvas-wrapper">
+                            <canvas id="activityChart" class="activity-chart-canvas"></canvas>
                         </div>
-                        <div id="heatmap-grid" class="heatmap-grid" style="display: flex; width: 100%; max-width: 100%; justify-content: space-between;"></div>
+                        <div id="heatmap-grid" class="heatmap-grid activity-heatmap-grid"></div>
                     </div>
                 </div>
 
@@ -1188,10 +1227,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T10:29:19.113766Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T13:40:32.900722Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 157, "loot": 118, "levels": 39, "total_roster": 654, "active_roster": 413}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 233, "loot": 173, "levels": 60, "total_roster": 656, "active_roster": 414}]
     </script>
 
     <script>
@@ -2180,21 +2219,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                 let warningText = '';
 
                 if (hasEnchant) {
-                    enchantBadge = `<div style="position:absolute; bottom:-4px; right:8px; background:#000; border:1px solid #1eff00; color:#1eff00; font-size:9px; font-weight:bold; border-radius:3px; padding:0 4px; z-index:5;">E</div>`;
+                    enchantBadge = `<div class="enchant-badge">E</div>`;
                 } else if (canBeEnchanted && (q === "EPIC" || q === "LEGENDARY")) {
-                    // 🔍 OFFICER X-RAY: Flag missing enchants on high-end gear
-                    warningStyle = `box-shadow: inset 0 0 15px rgba(231, 76, 60, 0.4); border-left-color: #e74c3c !important;`;
-                    warningText = `<div style="color: #e74c3c; font-size: 10px; font-weight: bold; margin-top: 2px; text-shadow: 1px 1px 2px #000;">⚠️ Missing Enchant</div>`;
+                    warningStyle = `missing-enchant-warning`;
+                    warningText = `<div class="missing-enchant-text">⚠️ Missing Enchant</div>`;
                 }
 
                 gearHtml += `
-                <div class="item-slot border-${q}" style="border-left-color:${qHex}; background:rgba(20,20,20,0.9); ${warningStyle}">
-                    <div style="position:relative;">
-                        <img src="${data.icon_data}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
+                <div class="item-slot border-${q} gear-slot-wrapper ${warningStyle}" style="border-left-color:${qHex};">
+                    <div class="gear-slot-icon-wrapper">
+                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : ''}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
                         ${enchantBadge}
                     </div>
-                    <div style="display:flex; flex-direction:column; justify-content:center;">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none;">${data.name}</a>
+                    <div class="gear-slot-info">
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link ${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex};">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -2453,34 +2491,65 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }
                     });
 
-                    let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
+                    specContainer.textContent = '';
+                    const wrapDiv = document.createElement('div');
+                    wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+                    
+                    const specTemplate = document.getElementById('tpl-spec-badge');
+                    if (specTemplate) {
+                        let clone = specTemplate.content.cloneNode(true);
+                        let badge = clone.querySelector('.spec-btn');
+                        badge.setAttribute('data-spec', 'all');
+                        badge.style.borderColor = cHex;
+                        badge.classList.add('spec-badge-all');
+                        badge.title = `View all ${formattedClass}s`;
+                        
+                        let clsSpan = clone.querySelector('.stat-badge-cls');
+                        clsSpan.style.color = cHex;
+                        clsSpan.textContent = `All ${formattedClass}s`;
+                        
+                        clone.querySelector('.stat-badge-count').textContent = classRoster.length;
+                        wrapDiv.appendChild(clone);
 
-                    specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="all" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: ${cHex};">All ${formattedClass}s</span>
-                            <span class="stat-badge-count">${classRoster.length}</span>
-                        </div>`;
+                        Object.keys(specCounts).sort().forEach(spec => {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', spec);
+                            badge.style.borderColor = cHex;
+                            badge.title = `View ${spec} ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = cHex;
+                            
+                            const iconUrl = getSpecIcon(formattedClass, spec);
+                            if (iconUrl) {
+                                const img = document.createElement('img');
+                                img.src = iconUrl;
+                                img.className = 'spec-badge-icon';
+                                clsSpan.appendChild(img);
+                            }
+                            clsSpan.appendChild(document.createTextNode(spec));
+                            
+                            clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
+                            wrapDiv.appendChild(clone);
+                        });
 
-                    Object.keys(specCounts).sort().forEach(spec => {
-                        const iconUrl = getSpecIcon(formattedClass, spec);
-                        const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:5px; border: 1px solid #222;">` : '';
-                        specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="${spec}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95);" title="View ${spec} ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: ${cHex}; display: flex; align-items: center;">${iconHtml}${spec}</span>
-                            <span class="stat-badge-count">${specCounts[spec]}</span>
-                        </div>`;
-                    });
-
-                    if (unspeccedCount > 0) {
-                         specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="unspecced" style="border-color: #888; cursor: pointer; transform: scale(0.95);" title="View Unspecced ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: #888;">Unspecced</span>
-                            <span class="stat-badge-count">${unspeccedCount}</span>
-                        </div>`;
+                        if (unspeccedCount > 0) {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', 'unspecced');
+                            badge.style.borderColor = '#888';
+                            badge.title = `View Unspecced ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = '#888';
+                            clsSpan.textContent = 'Unspecced';
+                            
+                            clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                            wrapDiv.appendChild(clone);
+                        }
                     }
-
-                    specHtml += `</div>`;
-                    specContainer.innerHTML = specHtml;
+                    specContainer.appendChild(wrapDiv);
                     specContainer.style.display = 'block';
 
                     document.querySelectorAll('.concise-spec-btn').forEach(specBtn => {
