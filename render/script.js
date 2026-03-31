@@ -384,10 +384,27 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    document.addEventListener('click', () => {
+    document.addEventListener('click', (e) => {
         if (customOptions) customOptions.classList.remove('show');
         if (customSelect) customSelect.classList.remove('active');
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
+
+        if (e.target && e.target.classList && e.target.classList.contains('toggle-stats-btn')) {
+            const btn = e.target;
+            const p = btn.closest('.info-box');
+            if (p) {
+                const p1 = p.querySelector('.stat-page-1');
+                const p2 = p.querySelector('.stat-page-2');
+                const title = p.querySelector('.stat-card-title');
+                if (p1 && p2 && title) {
+                    if (p1.style.display === 'none') {
+                        p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; btn.innerText = '▶';
+                    } else {
+                        p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; btn.innerText = '◀';
+                    }
+                }
+            }
+        }
     });
     
     function updateDropdownLabel(ignoreVal) {
@@ -682,6 +699,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         const toggleBtn = topPve.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
         pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>' + toggleBtn;
+    }
+
+    const btnViewPve = document.getElementById('btn-view-pve');
+    if (btnViewPve) {
+        btnViewPve.addEventListener('click', () => {
+            window.location.hash = 'ladder-pve';
+        });
+    }
+
+    const btnViewPvp = document.getElementById('btn-view-pvp');
+    if (btnViewPvp) {
+        btnViewPvp.addEventListener('click', () => {
+            window.location.hash = 'ladder-pvp';
+        });
     }
 
     const pvpContainer = document.getElementById('pvp-leaderboard');
@@ -1092,17 +1123,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
                     <h3 class="stat-card-title" style="color:${cHex}; font-family:Cinzel; font-size:18px; margin:0; text-shadow:1px 1px 2px #000;">Combat Stats</h3>
-                    <button onclick="
-                        const p = this.parentElement.parentElement;
-                        const p1 = p.querySelector('.stat-page-1');
-                        const p2 = p.querySelector('.stat-page-2');
-                        const title = p.querySelector('.stat-card-title');
-                        if(p1.style.display === 'none') {
-                            p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; this.innerText = '▶';
-                        } else {
-                            p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; this.innerText = '◀';
-                        }
-                    " style="background:none; border:none; color:#bbb; cursor:pointer; font-size:14px; outline:none; transition:0.2s; padding:0;" onmouseover="this.style.color='#ffd100'" onmouseout="this.style.color='#bbb'">▶</button>
+                    <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
                 </div>
                 <div class="stat-page-1">
                     <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
@@ -2082,10 +2103,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('div');
                 noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.style.color = '#888';
-                noResultsMsg.style.textAlign = 'center';
-                noResultsMsg.style.padding = '20px';
-                noResultsMsg.style.fontStyle = 'italic';
+                noResultsMsg.className = 'tl-empty-msg';
                 noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
                 document.getElementById('timeline').appendChild(noResultsMsg);
             } else {

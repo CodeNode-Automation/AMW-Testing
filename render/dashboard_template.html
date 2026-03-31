@@ -340,12 +340,12 @@
                     <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" class="leaderboard-list"></div>
-                        <button onclick="window.location.hash='ladder-pve'" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
+                        <button id="btn-view-pve" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
                     <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
                         <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" class="leaderboard-list"></div>
-                        <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
+                        <button id="btn-view-pvp" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
                     </div>
                 </div>
                 
@@ -507,18 +507,18 @@
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
                 
-                <div id="concise-content-wrapper" style="display: flex; flex-wrap: wrap; gap: 25px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: flex-start;">
+                <div id="concise-content-wrapper" class="concise-wrapper">
                     
-                    <div id="concise-left-col" style="flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 20px;">
-                        <div id="concise-donut-container" class="heatmap-wrapper" style="width: 100%; max-width: 100%; margin: 0; display: none; flex-direction: column;">
+                    <div id="concise-left-col" class="concise-sidebar">
+                        <div id="concise-donut-container" class="heatmap-wrapper concise-donut-box">
                         </div>
 
-                        <div id="concise-badges-wrapper" style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <div id="concise-class-badges" class="class-stat-container" style="display:none; width: 100%; justify-content: center; margin-bottom: 0;"></div>
+                        <div id="concise-badges-wrapper" class="concise-badges-box">
+                            <div id="concise-class-badges" class="class-stat-container concise-class-stats"></div>
                         </div>
                     </div>
 
-                    <div id="concise-center-col" style="flex: 2; min-width: 300px; width: 100%;">
+                    <div id="concise-center-col" class="concise-main-col">
                         <div id="concise-char-list"></div>
                     </div>
                     
