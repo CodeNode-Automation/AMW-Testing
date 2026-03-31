@@ -304,6 +304,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-badge-reigning { display: inline-flex; align-items: center; font-size: 10px; font-weight: bold; padding: 1px 6px; border-radius: 4px; border: 1px solid; }
 .c-badge-reigning-pve { background: rgba(255, 209, 0, 0.25); border-color: #ffd100; color: #ffd100; box-shadow: 0 0 8px rgba(255,209,0,0.6); }
 .c-badge-reigning-pvp { background: rgba(255, 68, 0, 0.25); border-color: #ff4400; color: #ff4400; box-shadow: 0 0 8px rgba(255,68,0,0.6); }
+.c-badge-pill { display: inline-flex; align-items: center; font-size: 10px; font-weight: bold; padding: 1px 4px; border-radius: 4px; border: 1px solid; }
+.c-badge-gold { background: rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.4); color: #ffd700; }
+.c-badge-silver { background: rgba(192, 192, 192, 0.15); border-color: rgba(192, 192, 192, 0.4); color: #c0c0c0; }
+.c-badge-bronze { background: rgba(205, 127, 50, 0.15); border-color: rgba(205, 127, 50, 0.4); color: #cd7f32; }
+.c-badge-pve { background: rgba(255, 128, 0, 0.15); border-color: rgba(255, 128, 0, 0.4); color: #ffad33; }
+.c-badge-pvp { background: rgba(255, 68, 0, 0.15); border-color: rgba(255, 68, 0, 0.4); color: #ff7733; }
+.c-badge-vanguard { background: rgba(0, 255, 204, 0.15); border-color: rgba(0, 255, 204, 0.4); color: #66ffeb; }
+.c-badge-campaign { background: rgba(170, 170, 170, 0.15); border-color: rgba(170, 170, 170, 0.4); color: #ddd; }
 .c-portrait { width: 36px; height: 36px; border-radius: 50%; border: 2px solid; background: #000; object-fit: cover; object-position: center; flex-shrink: 0; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; margin-top: 2px; }
@@ -629,6 +637,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tt-badge { padding: 1px 4px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid; }
 .tt-badge-gold { background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.5); color: #ffd700; }
 .badge-pve-gold { background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+.badge-silver { background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5); }
+.badge-bronze { background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5); }
+.badge-gold-alt { background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+.badge-pve-champ { background: rgba(255, 128, 0, 0.15); border-color: #ff8000; color: #ffad33; font-weight: bold; box-shadow: 0 0 10px rgba(255,128,0,0.5); }
+.badge-pvp-champ { background: rgba(255, 68, 0, 0.15); border-color: #ff4400; color: #ff7733; font-weight: bold; box-shadow: 0 0 10px rgba(255,68,0,0.5); }
+.badge-vanguard { background: rgba(0, 255, 204, 0.15); border-color: #00ffcc; color: #66ffeb; font-weight: bold; box-shadow: 0 0 10px rgba(0,255,204,0.5); }
+.badge-campaign { background: rgba(170, 170, 170, 0.15); border-color: #aaa; color: #ddd; font-weight: bold; box-shadow: 0 0 8px rgba(255,255,255,0.2); }
 .tt-badge-silver { background: rgba(192, 192, 192, 0.2); border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; }
 .tt-badge-bronze { background: rgba(205, 127, 50, 0.2); border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; }
 .tt-badge-pve { background: rgba(255, 128, 0, 0.2); border-color: rgba(255, 128, 0, 0.5); color: #ffad33; }
@@ -746,6 +761,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
 .monument-highlight-span { font-weight: bold; }
 .weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+.weapon-stats-header-secondary { margin-top: 12px; }
+.weapon-stats-header-mt16 { margin-top: 16px; }
+.weapon-stats-header-mt0 { margin-top: 0; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
 
@@ -792,6 +810,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .podium-name { font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium-stat-val { font-weight: bold; font-size: 13px; }
+.podium-stat-lbl { font-size: 9px; color: #888; text-transform: uppercase; }
+.podium-trend-container { font-size: 11px; margin-top: 2px; display: flex; justify-content: center; }
+.text-hk { color: #ff4400; }
+.text-xp { color: #ffd100; }
+.text-loot { color: #a335ee; }
+.text-zenith { color: #3FC7EB; font-weight: bold; font-size: 11px; }
+.text-ilvl { color: #ff8000; }
 .podium-trend-text { color: #2ecc71; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; }
 .podium-trend-label { font-size: 9px; color: #888; text-transform: uppercase; }
 .podium-trend-positive { color: #2ecc71; }
