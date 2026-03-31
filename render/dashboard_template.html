@@ -58,6 +58,13 @@
         </div>
     </template>
 
+    <template id="tpl-dynamic-badge">
+        <div class="stat-badge dynamic-badge">
+            <span class="stat-badge-cls"></span>
+            <span class="stat-badge-count"></span>
+        </div>
+    </template>
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -141,15 +148,17 @@
                 </div>
 
                 <div id="command-ribbon-container" class="command-ribbon-container">
+                    <div id="weekly-reset-module" class="ribbon-right">
+                        <div id="ribbon-countdown" class="countdown-wrapper">
+                            <span class="countdown-label">Next Weekly Reset</span>
+                            <span id="countdown-timer-text" class="countdown-timer">--d --h --m --s</span>
+                        </div>
+                    </div>
                     <div id="recent-milestones-container" class="ribbon-left" style="display:none;">
                         <div class="milestone-banner">
                             <span class="milestone-icon">🌟</span>
                             <div id="milestone-text" class="milestone-text"></div>
                         </div>
-                    </div>
-                    
-                    <div id="weekly-reset-module" class="ribbon-right">
-                        <div id="ribbon-countdown" style="width: 100%;"></div>
                     </div>
                 </div>
 
@@ -254,16 +263,16 @@
                     </div>
                 </div>
                 
-                <div id="leaderboards-wrapper" style="display:flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; justify-content: center;">
-                    <div id="pve-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff8000; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">🛡️ Top 25 Item Level 🛡️</h3>
-                        <div id="pve-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                        <button onclick="window.location.hash='ladder-pve'" class="view-all-btn" style="border-color: #ff8000; color: #ff8000;">View Full PvE Ladder ➔</button>
+                <div id="leaderboards-wrapper" class="leaderboards-wrapper">
+                    <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                        <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
+                        <div id="pve-leaderboard" class="leaderboard-list"></div>
+                        <button onclick="window.location.hash='ladder-pve'" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
-                    <div id="pvp-leaderboard-container" style="display:none; flex: 1; min-width: 320px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);">
-                        <h3 style="font-family: 'Cinzel'; color: #ff4400; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000;">⚔️ Top 25 Honorable Kills ⚔️</h3>
-                        <div id="pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                        <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn" style="border-color: #ff4400; color: #ff4400;">View Full PvP Ladder ➔</button>
+                    <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                        <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
+                        <div id="pvp-leaderboard" class="leaderboard-list"></div>
+                        <button onclick="window.location.hash='ladder-pvp'" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
                     </div>
                 </div>
                 

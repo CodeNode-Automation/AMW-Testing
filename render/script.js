@@ -590,7 +590,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     tooltip.appendChild(clone);
                 }
-                
+
                 tooltip.style.borderLeftColor = color;
                 
                 let x = e.clientX + 15;
@@ -1155,19 +1155,33 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         const sortedClasses = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        container.textContent = '';
+        const badgeTemplate = document.getElementById('tpl-dynamic-badge');
         
-        let html = '';
         sortedClasses.forEach(cls => {
             if (cls === 'Unknown') return;
             const color = CLASS_COLORS[cls] || '#fff';
-            html += `
-            <div class="stat-badge dynamic-badge" data-class="${cls}" style="border-color: ${color}; cursor: pointer;" title="Filter ${cls}s">
-              <span class="stat-badge-cls" style="color: ${color};">${cls}</span>
-              <span class="stat-badge-count">${counts[cls]}</span>
-            </div>`;
+            
+            if (badgeTemplate) {
+                const clone = badgeTemplate.content.cloneNode(true);
+                const badgeDiv = clone.querySelector('.dynamic-badge');
+                const clsSpan = clone.querySelector('.stat-badge-cls');
+                const countSpan = clone.querySelector('.stat-badge-count');
+                
+                badgeDiv.setAttribute('data-class', cls);
+                badgeDiv.style.borderColor = color;
+                badgeDiv.style.cursor = 'pointer';
+                badgeDiv.title = `Filter ${cls}s`;
+                
+                clsSpan.textContent = cls;
+                clsSpan.style.color = color;
+                
+                countSpan.textContent = counts[cls];
+                
+                container.appendChild(clone);
+            }
         });
         
-        container.innerHTML = html;
         container.style.display = 'flex';
         
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
@@ -3793,14 +3807,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-                const el = document.getElementById('ribbon-countdown');
-                if (el) {
-                    el.innerHTML = `
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <span style="color:#c0c0c0; font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000;">Next Weekly Reset</span>
-                            <span style="color:#ff8000; font-family: 'Cinzel', serif; font-weight:bold; font-size: 20px; text-shadow: 0 0 12px rgba(255, 128, 0, 0.5), 1px 1px 2px #000; letter-spacing: 1px;">
-                            ${d}d ${h}h ${m}m ${s}s</span>
-                        </div>`;
+                const timerEl = document.getElementById('countdown-timer-text');
+                if (timerEl) {
+                    timerEl.textContent = `${d}d ${h}h ${m}m ${s}s`;
                 }
             }
             setInterval(updateWarEffortCountdown, 1000);
