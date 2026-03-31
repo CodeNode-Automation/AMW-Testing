@@ -983,21 +983,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                 let warningText = '';
 
                 if (hasEnchant) {
-                    enchantBadge = `<div style="position:absolute; bottom:-4px; right:8px; background:#000; border:1px solid #1eff00; color:#1eff00; font-size:9px; font-weight:bold; border-radius:3px; padding:0 4px; z-index:5;">E</div>`;
+                    enchantBadge = `<div class="enchant-badge">E</div>`;
                 } else if (canBeEnchanted && (q === "EPIC" || q === "LEGENDARY")) {
-                    // 🔍 OFFICER X-RAY: Flag missing enchants on high-end gear
-                    warningStyle = `box-shadow: inset 0 0 15px rgba(231, 76, 60, 0.4); border-left-color: #e74c3c !important;`;
-                    warningText = `<div style="color: #e74c3c; font-size: 10px; font-weight: bold; margin-top: 2px; text-shadow: 1px 1px 2px #000;">⚠️ Missing Enchant</div>`;
+                    warningStyle = `missing-enchant-warning`;
+                    warningText = `<div class="missing-enchant-text">⚠️ Missing Enchant</div>`;
                 }
 
                 gearHtml += `
-                <div class="item-slot border-${q}" style="border-left-color:${qHex}; background:rgba(20,20,20,0.9); ${warningStyle}">
-                    <div style="position:relative;">
-                        <img src="${data.icon_data}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
+                <div class="item-slot border-${q} gear-slot-wrapper ${warningStyle}" style="border-left-color:${qHex};">
+                    <div class="gear-slot-icon-wrapper">
+                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : ''}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
                         ${enchantBadge}
                     </div>
-                    <div style="display:flex; flex-direction:column; justify-content:center;">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex}; text-decoration: none;">${data.name}</a>
+                    <div class="gear-slot-info">
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link ${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex};">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -1256,34 +1255,65 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }
                     });
 
-                    let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
+                    specContainer.textContent = '';
+                    const wrapDiv = document.createElement('div');
+                    wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+                    
+                    const specTemplate = document.getElementById('tpl-spec-badge');
+                    if (specTemplate) {
+                        let clone = specTemplate.content.cloneNode(true);
+                        let badge = clone.querySelector('.spec-btn');
+                        badge.setAttribute('data-spec', 'all');
+                        badge.style.borderColor = cHex;
+                        badge.classList.add('spec-badge-all');
+                        badge.title = `View all ${formattedClass}s`;
+                        
+                        let clsSpan = clone.querySelector('.stat-badge-cls');
+                        clsSpan.style.color = cHex;
+                        clsSpan.textContent = `All ${formattedClass}s`;
+                        
+                        clone.querySelector('.stat-badge-count').textContent = classRoster.length;
+                        wrapDiv.appendChild(clone);
 
-                    specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="all" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: ${cHex};">All ${formattedClass}s</span>
-                            <span class="stat-badge-count">${classRoster.length}</span>
-                        </div>`;
+                        Object.keys(specCounts).sort().forEach(spec => {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', spec);
+                            badge.style.borderColor = cHex;
+                            badge.title = `View ${spec} ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = cHex;
+                            
+                            const iconUrl = getSpecIcon(formattedClass, spec);
+                            if (iconUrl) {
+                                const img = document.createElement('img');
+                                img.src = iconUrl;
+                                img.className = 'spec-badge-icon';
+                                clsSpan.appendChild(img);
+                            }
+                            clsSpan.appendChild(document.createTextNode(spec));
+                            
+                            clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
+                            wrapDiv.appendChild(clone);
+                        });
 
-                    Object.keys(specCounts).sort().forEach(spec => {
-                        const iconUrl = getSpecIcon(formattedClass, spec);
-                        const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:5px; border: 1px solid #222;">` : '';
-                        specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="${spec}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95);" title="View ${spec} ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: ${cHex}; display: flex; align-items: center;">${iconHtml}${spec}</span>
-                            <span class="stat-badge-count">${specCounts[spec]}</span>
-                        </div>`;
-                    });
-
-                    if (unspeccedCount > 0) {
-                         specHtml += `
-                        <div class="stat-badge spec-btn concise-spec-btn" data-spec="unspecced" style="border-color: #888; cursor: pointer; transform: scale(0.95);" title="View Unspecced ${formattedClass}s">
-                            <span class="stat-badge-cls" style="color: #888;">Unspecced</span>
-                            <span class="stat-badge-count">${unspeccedCount}</span>
-                        </div>`;
+                        if (unspeccedCount > 0) {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', 'unspecced');
+                            badge.style.borderColor = '#888';
+                            badge.title = `View Unspecced ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = '#888';
+                            clsSpan.textContent = 'Unspecced';
+                            
+                            clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                            wrapDiv.appendChild(clone);
+                        }
                     }
-
-                    specHtml += `</div>`;
-                    specContainer.innerHTML = specHtml;
+                    specContainer.appendChild(wrapDiv);
                     specContainer.style.display = 'block';
 
                     document.querySelectorAll('.concise-spec-btn').forEach(specBtn => {
