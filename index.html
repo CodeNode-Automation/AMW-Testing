@@ -573,6 +573,34 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .tt-no-border { border-bottom: none !important; }
+/* Components */
+.qual-border-left-POOR { border-left-color: #9d9d9d; }
+.qual-border-POOR { border-color: #9d9d9d; }
+.qual-color-POOR { color: #9d9d9d; }
+.qual-border-left-COMMON { border-left-color: #ffffff; }
+.qual-border-COMMON { border-color: #ffffff; }
+.qual-color-COMMON { color: #ffffff; }
+.qual-border-left-UNCOMMON { border-left-color: #1eff00; }
+.qual-border-UNCOMMON { border-color: #1eff00; }
+.qual-color-UNCOMMON { color: #1eff00; }
+.qual-border-left-RARE { border-left-color: #0070dd; }
+.qual-border-RARE { border-color: #0070dd; }
+.qual-color-RARE { color: #0070dd; }
+.qual-border-left-EPIC { border-left-color: #a335ee; }
+.qual-border-EPIC { border-color: #a335ee; }
+.qual-color-EPIC { color: #a335ee; }
+.qual-border-left-LEGENDARY { border-left-color: #ff8000; }
+.qual-border-LEGENDARY { border-color: #ff8000; }
+.qual-color-LEGENDARY { color: #ff8000; }
+.tt-badge-container { display: inline-flex; gap: 4px; margin-left: 10px; vertical-align: middle; }
+.tt-badge { padding: 1px 4px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid; }
+.tt-badge-gold { background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.5); color: #ffd700; }
+.tt-badge-silver { background: rgba(192, 192, 192, 0.2); border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; }
+.tt-badge-bronze { background: rgba(205, 127, 50, 0.2); border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; }
+.tt-badge-pve { background: rgba(255, 128, 0, 0.2); border-color: rgba(255, 128, 0, 0.5); color: #ffad33; }
+.tt-badge-pvp { background: rgba(255, 68, 0, 0.2); border-color: rgba(255, 68, 0, 0.5); color: #ff7733; }
+.tt-badge-vanguard { background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.5); color: #66ffeb; }
+.tt-badge-campaign { background: rgba(170, 170, 170, 0.2); border-color: rgba(170, 170, 170, 0.5); color: #ddd; }
 .tooltip-guild-rank { color: #ffd100; }
 .tooltip-ilvl { color: #ff8000; }
 .tooltip-date { color:#aaa; font-size:12px; }
@@ -835,7 +863,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val tooltip-ilvl"></span></div>
         <div class="tt-row"><span class="tt-label tt-no-border">HP / <span class="tooltip-power-label"></span></span><span class="tt-val tt-no-border tooltip-health-power"></span></div>
     </template>
-    
+
     <template id="tpl-ac-empty-state">
         <div class="ac-empty-state">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
@@ -1150,17 +1178,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                         </div>
 
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-zenith">
                                 <span>⚡ The Zenith Cohort (Max Level Pushes)</span>
-                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-zenith-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-zenith-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 10 New Level 70s</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-zenith-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-zenith-text" class="challenge-text">0 / 10 New Level 70s</div>
                             </div>
                         </div>
                     </div>
@@ -1423,10 +1451,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T16:04:12.291171Z", "active_14_days": 415, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T16:25:04.505247Z", "active_14_days": 415, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 300, "loot": 221, "levels": 79, "total_roster": 656, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 310, "loot": 228, "levels": 82, "total_roster": 656, "active_roster": 415}]
     </script>
 
     <script>
@@ -2461,13 +2489,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 gearHtml += `
-                <div class="item-slot border-${q} gear-slot-wrapper ${warningStyle}" style="border-left-color:${qHex};">
+                <div class="item-slot gear-slot-wrapper qual-border-left-${q} ${warningStyle}">
                     <div class="gear-slot-icon-wrapper">
-                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : ''}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
+                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : `qual-border-${q}`}">
                         ${enchantBadge}
                     </div>
                     <div class="gear-slot-info">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link ${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex};">${data.name}</a>
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link qual-color-${q}" data-wowhead="${data.tooltip_params}" target="_blank">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -3409,19 +3437,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
                 const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
-                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
-                if (pveGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveGold}">🥇 ${pveGold}</span>`;
-                if (pveSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveSilver}">🥈 ${pveSilver}</span>`;
-                if (pveBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveBronze}">🥉 ${pveBronze}</span>`;
-                if (pvpGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpGold}">🥇 ${pvpGold}</span>`;
-                if (pvpSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpSilver}">🥈 ${pvpSilver}</span>`;
-                if (pvpBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpBronze}">🥉 ${pvpBronze}</span>`;
-                if (pveChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 128, 0, 0.2); border:1px solid rgba(255, 128, 0, 0.5); color:#ffad33; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveChamp}">👑 ${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 68, 0, 0.2); border:1px solid rgba(255, 68, 0, 0.5); color:#ff7733; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpChamp}">⚔️ ${pvpChamp}</span>`;
-                if (vCount > 0) cBadgesHtml += `<span style="background:rgba(0, 255, 204, 0.2); border:1px solid rgba(0, 255, 204, 0.5); color:#66ffeb; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tVanguard}">🌟 ${vCount}</span>`;
-                if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tCampaign}">🎖️ ${cCount}</span>`;
-                cBadgesHtml += '</div>';
-
                 tooltip.innerHTML = '';
                 const template = document.getElementById('tpl-char-tooltip');
                 if (template) {
@@ -3430,7 +3445,30 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const nameWrap = clone.querySelector('.tooltip-name-wrap');
                     nameWrap.style.color = cHex;
                     clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
-                    clone.querySelector('.tooltip-badges-container').innerHTML = cBadgesHtml;
+                    
+                    const badgesContainer = clone.querySelector('.tooltip-badges-container');
+                    badgesContainer.className = 'tt-badge-container';
+                    
+                    const addBadge = (count, title, cssClass, icon) => {
+                        if (count > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = `tt-badge ${cssClass}`;
+                            badge.title = title;
+                            badge.textContent = `${icon} ${count}`;
+                            badgesContainer.appendChild(badge);
+                        }
+                    };
+                    
+                    addBadge(pveGold, tPveGold, 'tt-badge-gold', '🥇');
+                    addBadge(pveSilver, tPveSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pveBronze, tPveBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pvpGold, tPvpGold, 'tt-badge-gold', '🥇');
+                    addBadge(pvpSilver, tPvpSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pvpBronze, tPvpBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pveChamp, tPveChamp, 'tt-badge-pve', '👑');
+                    addBadge(pvpChamp, tPvpChamp, 'tt-badge-pvp', '⚔️');
+                    addBadge(vCount, tVanguard, 'tt-badge-vanguard', '🌟');
+                    addBadge(cCount, tCampaign, 'tt-badge-campaign', '🎖️');
                     
                     clone.querySelector('.tooltip-guild-rank').textContent = guildRank;
                     clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
