@@ -81,6 +81,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .custom-option { padding: 10px 15px; display: flex; align-items: center; gap: 10px; transition: 0.2s; border-bottom: 1px solid #222; font-size: 14px; }
 .custom-option:hover { background: rgba(255, 209, 0, 0.15); color: #ffd100; padding-left: 20px; }
 .opt-icon { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
+/* Typography */
+.custom-select-arrow { font-size: 12px; color: #aaa; }
+.opt-icon-emoji { font-size: 16px; }
+.opt-hall-of-heroes { color: #ffd100; font-weight: bold; }
 
 .search-container { position: relative; z-index: 104; }
 .search-box { display: flex; align-items: center; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.1); border-top: 1px solid rgba(0, 0, 0, 0.5); border-radius: 20px; transition: all 0.3s ease; padding: 0 12px; height: 38px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6); }
@@ -330,6 +334,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-event-header { display: flex; justify-content: space-between; width: 100%; align-items: center; }
 .tl-event-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .tl-event-date { color: #888; font-size: 11px; }
+/* Components */
+.timeline-node-gold { background: #ffd100; box-shadow: 0 0 8px #ffd100; }
+.event-box-gold { border-left-color: #ffd100; }
+.event-icon-star { font-size: 14px; }
+.tl-event-level-text { color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
 
 /* ========================================= */
 /* ARCHITECTURE & PIPELINES                  */
@@ -645,6 +654,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-timeline-levelup">
+        <div class="timeline-node timeline-node-gold"></div>
+        <div class="tl-event-header">
+            <span class="tl-event-name"></span>
+            <span class="tl-event-date"></span>
+        </div>
+        <div class="event-box event-box-gold">
+            <span class="event-icon-star">⭐</span>
+            <span class="tl-event-level-text"></span>
+        </div>
+    </template>
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -676,20 +697,20 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
                 <div class="custom-select" id="customCharSelect" tabindex="0">
                     <span class="selected-value">Select View...</span>
-                    <span style="font-size: 12px; color: #aaa;">▼</span>
+                    <span class="custom-select-arrow">▼</span>
                 </div>
                 <div class="custom-select-options" id="customCharOptions" role="listbox">
                     <div class="custom-option" data-value="total" role="option">
-                        <span style="font-size:16px;">🌍</span> View Entire Guild
+                        <span class="opt-icon-emoji">🌍</span> View Entire Guild
                     </div>
                     <div class="custom-option" data-value="active" role="option">
-                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
+                        <span class="opt-icon-emoji">🔥</span> Active Roster (14 Days)
                     </div>
                     <div class="custom-option" data-value="raidready" role="option">
-                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                        <span class="opt-icon-emoji">⚔️</span> Raid Ready (Lvl 70)
                     </div>
-                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
-                        <span style="font-size:16px;">🌟</span> Hall of Heroes
+                    <div class="custom-option opt-hall-of-heroes" data-value="badges" role="option">
+                        <span class="opt-icon-emoji">🌟</span> Hall of Heroes
                     </div>
                 </div>
             </div>
@@ -1078,10 +1099,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T10:12:39.479724Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T10:17:26.834405Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 153, "loot": 116, "levels": 37, "total_roster": 654, "active_roster": 413}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 154, "loot": 116, "levels": 38, "total_roster": 654, "active_roster": 413}]
     </script>
 
     <script>
@@ -3651,9 +3672,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const el = document.getElementById(elementId);
                 if (!el || yestVal == null) return;
                 const diff = todayVal - yestVal;
-                if (diff > 0) el.innerHTML = `<span style="color:#2ecc71;">▲ ${diff}</span>`;
-                else if (diff < 0) el.innerHTML = `<span style="color:#e74c3c;">▼ ${Math.abs(diff)}</span>`;
-                else el.innerHTML = `<span style="color:#555;">-</span>`;
+                
+                el.textContent = '';
+                const span = document.createElement('span');
+                
+                if (diff > 0) {
+                    span.textContent = `▲ ${diff}`;
+                    span.classList.add('trend-positive');
+                } else if (diff < 0) {
+                    span.textContent = `▼ ${Math.abs(diff)}`;
+                    span.classList.add('trend-negative');
+                } else {
+                    span.textContent = `-`;
+                    span.classList.add('trend-neutral');
+                }
+                
+                el.appendChild(span);
             }
 
             applyTrend('trend-total', today.total_roster, yesterday.total_roster);
@@ -4672,17 +4706,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 `;
             } else if (event.type === 'level_up') {
                 eventEl.style.borderLeftColor = c_hex;
-                eventEl.innerHTML = `
-                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
-                    <div class="tl-event-header">
-                        <span class="tl-event-name" style="color: ${c_hex};">${c_name}</span>
-                        <span class="tl-event-date">${date_str}</span>
-                    </div>
-                    <div class="event-box" style="border-left-color: #ffd100;">
-                        <span style="font-size: 14px;">⭐</span>
-                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level ${event.level}</span>
-                    </div>
-                `;
+                const template = document.getElementById('tpl-timeline-levelup');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const nameSpan = clone.querySelector('.tl-event-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    clone.querySelector('.tl-event-date').textContent = date_str;
+                    clone.querySelector('.tl-event-level-text').textContent = `Reached Level ${event.level}`;
+                    
+                    eventEl.appendChild(clone);
+                }
             } else {
                 const q = event.item_quality || 'COMMON';
                 const q_hex = QUALITY_COLORS[q] || '#ffffff';
