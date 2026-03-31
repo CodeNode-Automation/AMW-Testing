@@ -28,6 +28,42 @@ const TBC_XP = {
     60: 494000, 61: 517000, 62: 550000, 63: 587000, 64: 632000, 65: 684000, 66: 745000, 67: 815000, 68: 895000, 69: 985000
 };
 
+function killIntro() {
+    sessionStorage.setItem('amwIntroPlayed', 'true');
+    const intro = document.getElementById('intro-container');
+    const dash = document.querySelector('.dashboard-layout');
+    
+    if (intro && !intro.classList.contains('fade-out')) {
+        intro.classList.add('fade-out');
+        if (dash) {
+            dash.classList.add('dashboard-visible');
+        }
+        setTimeout(() => { if (intro) intro.remove(); }, 1000);
+    }
+}
+
+if (sessionStorage.getItem('amwIntroPlayed') === 'true') {
+    const intro = document.getElementById('intro-container');
+    if (intro) intro.remove();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const dash = document.querySelector('.dashboard-layout');
+        if (dash) {
+            dash.classList.add('dashboard-instant-visible');
+        }
+    });
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        const vid = document.getElementById('intro-video');
+        if (vid) {
+            vid.playbackRate = 1.75; 
+            vid.addEventListener('ended', killIntro); 
+            vid.addEventListener('error', killIntro); 
+        }
+        setTimeout(killIntro, 6000);
+    });
+}
+
 // --- Helper: Safely Parse Arrays ---
 function safeParseArray(val) {
     if (!val) return [];
@@ -85,6 +121,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
     const heatmapData = JSON.parse(document.getElementById('heatmap-data').textContent);
     
+    const introContainerEl = document.getElementById('intro-container');
+    if (introContainerEl) {
+        introContainerEl.addEventListener('click', killIntro);
+    }
+
     // NEW: Download the heavy roster files silently in the background with error handling
     let rosterData = [];
     let rawGuildRoster = [];
@@ -102,8 +143,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
         if (loaderText) {
-            loaderText.style.color = '#e74c3c';
-            loaderText.innerHTML = 'Failed to load data. Please refresh.';
+            loaderText.classList.add('error-text');
+            loaderText.textContent = 'Failed to load data. Please refresh.';
         }
         return; // Stop executing to prevent cascading errors
     }
@@ -149,6 +190,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const architectureView = document.getElementById('architecture-view');
 
     const navbar = document.querySelector('.navbar');
+    const btnHallOfHeroes = document.getElementById('nav-btn-hall-of-heroes');
+    if (btnHallOfHeroes) {
+        btnHallOfHeroes.addEventListener('click', () => {
+            window.location.hash = 'badges';
+        });
+    }
+    
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
     const conciseViewTitle = document.getElementById('concise-view-title');
@@ -209,15 +257,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
             const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
             if (results.length > 0) {
-                heroSearchAutoComplete.innerHTML = results.map(c => {
+                heroSearchAutoComplete.textContent = '';
+                const template = document.getElementById('tpl-hero-search-result');
+                results.forEach(c => {
                     const cClass = getCharClass(c);
                     const cHex = CLASS_COLORS[cClass] || '#fff';
-                    return `
-                        <div class="autocomplete-item hero-ac-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left-color: ${cHex};">
-                            <img src="${c.render_url || getClassIcon(cClass)}" class="ac-icon hero-ac-icon" style="border-color: ${cHex};">
-                            <div class="ac-info"><span class="ac-name hero-ac-name" style="color: ${cHex};">${c.profile.name}</span><span class="ac-meta">Level ${c.profile.level} ${cClass}</span></div>
-                        </div>`;
-                }).join('');
+                    const clone = template.content.cloneNode(true);
+                    const itemDiv = clone.querySelector('.hero-ac-item');
+                    
+                    itemDiv.style.borderLeftColor = cHex;
+                    itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
+                    
+                    const img = clone.querySelector('.hero-ac-icon');
+                    img.src = c.render_url || getClassIcon(cClass);
+                    img.style.borderColor = cHex;
+                    
+                    const nameSpan = clone.querySelector('.hero-ac-name');
+                    nameSpan.textContent = c.profile.name;
+                    nameSpan.style.color = cHex;
+                    
+                    const metaSpan = clone.querySelector('.ac-meta');
+                    metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
+                    
+                    heroSearchAutoComplete.appendChild(clone);
+                });
                 heroSearchAutoComplete.classList.add('show');
             } else {
                 heroSearchAutoComplete.classList.remove('show');

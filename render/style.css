@@ -29,6 +29,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 #intro-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease-in-out; }
 #intro-container.fade-out { opacity: 0 !important; pointer-events: none !important; }
+/* Components */
+.intro-clickable { cursor: pointer; }
 #intro-video { width: 90%; height: 90%; object-fit: contain; max-width: 100vw; max-height: 100vh; }
 
 .embers-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
@@ -89,6 +91,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* DASHBOARD, STATS & LAYOUT                 */
 /* ========================================= */
 .dashboard-layout { display: flex; gap: 30px; max-width: 1400px; width: 100%; margin: 40px auto; padding: 0 20px; align-items: flex-start; }
+/* Layout */
+.dashboard-hidden { opacity: 0; transition: opacity 1.5s ease-in-out; }
+.dashboard-visible { opacity: 1; transition: opacity 2s ease-in-out; }
+.dashboard-instant-visible { opacity: 1; transition: none; }
 .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; width: 100%; }
 #empty-state { text-align: center; width: 100%; display: block; }
 
@@ -348,6 +354,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 @media (max-width: 1050px) {
     .dashboard-layout { flex-direction: column; align-items: center; padding: 0 10px; margin: 20px auto; }
+    /* Components */
+.hall-of-heroes-btn { color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer; }
     .timeline-container { width: 100%; max-width: 900px; position: static; max-height: none; overflow-y: visible; margin-top: 30px; }
 }
 
@@ -401,6 +409,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* TYPOGRAPHY */
 .loader-text { font-family: 'Cinzel', serif; color: #ffd100; font-size: 18px; margin-top: 15px; text-shadow: 0 2px 4px #000; }
+/* Typography */
+.error-text { color: #e74c3c !important; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
 .tooltip-date { color:#aaa; font-size:12px; }

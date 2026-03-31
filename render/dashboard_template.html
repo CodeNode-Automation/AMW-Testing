@@ -18,7 +18,7 @@
             <div class="loader-text">Fetching Armory Data...</div>
         </div>
     </div>
-    <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
+    <div id="intro-container" class="intro-clickable">
         <video id="intro-video" autoplay muted playsinline>
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -27,51 +27,18 @@
             Click anywhere to skip ⏭️
         </div>
     </div>
-    <script>
-        function killIntro() {
-            // Set a flag in the browser's session storage so it doesn't play on reload
-            sessionStorage.setItem('amwIntroPlayed', 'true');
-            
-            var intro = document.getElementById('intro-container');
-            var dash = document.querySelector('.dashboard-layout');
-            
-            if (intro && !intro.classList.contains('fade-out')) {
-                intro.classList.add('fade-out'); // Fade it to black
-                if (dash) {
-                    dash.style.opacity = '1';
-                    dash.style.transition = 'opacity 2s ease-in-out';
-                }
-                setTimeout(function() { if (intro) intro.remove(); }, 1000);
-            }
-        }
-
-        // Check if the intro has already been played this session
-        if (sessionStorage.getItem('amwIntroPlayed') === 'true') {
-            // Remove the video container immediately
-            var intro = document.getElementById('intro-container');
-            if (intro) intro.remove();
-            
-            // Wait for the DOM to load, then instantly show the dashboard without the fade-in
-            document.addEventListener('DOMContentLoaded', function() {
-                var dash = document.querySelector('.dashboard-layout');
-                if (dash) {
-                    dash.style.opacity = '1';
-                    dash.style.transition = 'none';
-                }
-            });
-        } else {
-            // If it hasn't played, run the normal video logic
-            var vid = document.getElementById('intro-video');
-            if (vid) {
-                vid.playbackRate = 1.75; 
-                vid.addEventListener('ended', killIntro); 
-                vid.addEventListener('error', killIntro); 
-            }
-            // Failsafe to kill intro after 6 seconds
-            setTimeout(killIntro, 6000);
-        }
-    </script>
-    <div class="embers-container"></div>
+    
+    <template id="tpl-hero-search-result">
+        <div class="autocomplete-item hero-ac-item">
+            <img src="" class="ac-icon hero-ac-icon">
+            <div class="ac-info">
+                <span class="ac-name hero-ac-name"></span>
+                <span class="ac-meta"></span>
+            </div>
+        </div>
+    </template>
+    
+    <div class="embers-container"></div> 
 
     <div class="navbar">
         <div class="controls-wrapper">
@@ -87,7 +54,7 @@
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
-                <button class="nav-btn" onclick="window.location.hash='badges'" style="color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer;">🌟 Hall of Heroes</button>
+                <button id="nav-btn-hall-of-heroes" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</button>
                 
                 <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
@@ -132,7 +99,7 @@
     
     <div id="custom-tooltip" class="custom-tooltip"></div>
     
-    <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
+    <div id="main-dashboard" class="dashboard-layout dashboard-hidden">
         <div class="main-content">
             <div id="empty-state">
                 
