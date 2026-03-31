@@ -190,12 +190,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const architectureView = document.getElementById('architecture-view');
 
     const navbar = document.querySelector('.navbar');
-    const btnHallOfHeroes = document.getElementById('nav-btn-hall-of-heroes');
-    if (btnHallOfHeroes) {
-        btnHallOfHeroes.addEventListener('click', () => {
-            window.location.hash = 'badges';
-        });
-    }
+    
     
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
