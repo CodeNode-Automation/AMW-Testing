@@ -1117,23 +1117,23 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     <div class="card-content-split">
         <div class="card-left-col">
-            <div style="text-align:center;">
-                <img src="${char.render_url || getClassIcon(cClass)}" style="max-width:180px; width:100%; border-radius:8px; border:2px solid ${cHex}; background:#000; box-shadow:0 6px 12px rgba(0,0,0,0.8); display:block; margin: 0 auto;">
+            <div class="char-card-portrait-wrapper">
+                <img src="${char.render_url || getClassIcon(cClass)}" class="char-card-portrait" style="border-color:${cHex};">
             </div>
-            <div class="info-box" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:18px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
-                    <h3 class="stat-card-title" style="color:${cHex}; font-family:Cinzel; font-size:18px; margin:0; text-shadow:1px 1px 2px #000;">Combat Stats</h3>
+            <div class="info-box char-card-stats-box">
+                <div class="char-card-stats-header">
+                    <h3 class="stat-card-title char-card-stats-title" style="color:${cHex};">Combat Stats</h3>
                     <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
                 </div>
                 <div class="stat-page-1">
                     <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
                     <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
-                    <div style="height:15px;"></div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">⚔️ Strength</span><span style="color:#ff4d4d; font-weight:bold;">${strVal}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🏹 Agility</span><span style="color:#2ecc71; font-weight:bold;">${agiVal}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🛡️ Stamina</span><span style="color:#f1c40f; font-weight:bold;">${staVal}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">🧠 Intellect</span><span style="color:#3498db; font-weight:bold;">${intVal}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;"><span style="color:#bbb;">✨ Spirit</span><span style="color:#9b59b6; font-weight:bold;">${spiVal}</span></div>
+                    <div class="stat-spacer"></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str">${strVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi">${agiVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta">${staVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int">${intVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi">${spiVal}</span></div>
                     ${advancedStatsHtml}
                 </div>
                 <div class="stat-page-2" style="display:none; animation: fadeIn 0.3s;">
@@ -3798,10 +3798,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const icon = isPvp ? '⚔️' : '🛡️';
                 const action = isPvp ? 'get some HKs' : 'equip some upgrades';
                 return `
-                <div style="text-align:center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px;">
-                    <div style="font-size: 28px; margin-bottom: 12px; filter: grayscale(50%);">${icon}</div>
-                    <div style="color:#ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000;">The Week Just Started!</div>
-                    <div style="color:#aaa; font-style:italic; font-size: 13px;">Log in and ${action} to claim the #1 spot.</div>
+                <div class="mvp-empty-state">
+                    <div class="mvp-empty-icon">${icon}</div>
+                    <div class="mvp-empty-title">The Week Just Started!</div>
+                    <div class="mvp-empty-desc">Log in and ${action} to claim the #1 spot.</div>
                 </div>`;
             }
             

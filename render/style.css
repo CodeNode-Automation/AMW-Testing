@@ -619,6 +619,29 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Components */
 .monument-trophy { font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6)); }
 
+/* Typography */
+.experimental-note { text-align: center; margin-top: 25px; font-size: 12px; color: #888; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; letter-spacing: 0.5px; }
+
+/* Components */
+.stat-base-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+.stat-base-lbl { color: #bbb; }
+.stat-base-val { font-weight: bold; }
+.val-str { color: #ff4d4d; }
+.val-agi { color: #2ecc71; }
+.val-sta { color: #f1c40f; }
+.val-int { color: #3498db; }
+.val-spi { color: #9b59b6; }
+.stat-spacer { height: 15px; }
+.char-card-portrait-wrapper { text-align: center; }
+.char-card-portrait { max-width: 180px; width: 100%; border-radius: 8px; border: 2px solid; background: #000; box-shadow: 0 6px 12px rgba(0,0,0,0.8); display: block; margin: 0 auto; }
+.char-card-stats-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 18px; }
+.char-card-stats-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; }
+.char-card-stats-title { font-family: 'Cinzel'; font-size: 18px; margin: 0; text-shadow: 1px 1px 2px #000; }
+.mvp-empty-state { text-align: center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px; }
+.mvp-empty-icon { font-size: 28px; margin-bottom: 12px; filter: grayscale(50%); }
+.mvp-empty-title { color: #ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000; }
+.mvp-empty-desc { color: #aaa; font-style: italic; font-size: 13px; }
+
 /* ========================================= */
 /* MVP 7-DAY PODIUMS                         */
 /* ========================================= */
