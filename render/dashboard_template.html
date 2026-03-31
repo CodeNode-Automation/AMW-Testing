@@ -45,6 +45,11 @@
         </div>
     </template>
 
+    <template id="tpl-heatmap-tooltip">
+        <div class="tooltip-activity"></div>
+        <div class="tooltip-date"></div>
+        <div class="tooltip-hint">Click to filter timeline</div>
+    </template>
 
     <template id="tpl-ac-empty-state">
         <div class="ac-empty-state">
@@ -52,7 +57,7 @@
             <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
         </div>
     </template>
-    
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -78,7 +83,7 @@
                 
                 <div class="nav-section-header">COMMUNITY & INFO</div>
                 <a href="#architecture" class="nav-btn">⚙️ Architecture</a>
-                <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
+                <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn nav-btn-discord">💬 Join Discord</a>
             </div>
 
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
@@ -123,7 +128,7 @@
                         <img src="asset/amw.webp" alt="Azeroths Most Wanted Logo" class="main-logo">
                     </div>
                     <div class="hero-text-col">
-                        <h2 style="color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px;">Azeroths Most Wanted Armory</h2>
+                        <h2 class="hero-title">Azeroths Most Wanted Armory</h2>
                         
                         <div class="search-container" style="position: relative; max-width: 450px; width: 100%;">
                             <div class="search-box hero-search-box" style="box-sizing: border-box;">

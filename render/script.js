@@ -329,20 +329,33 @@ window.addEventListener('DOMContentLoaded', async () => {
             const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 8);
             
             if (results.length > 0) {
-                searchAutoComplete.innerHTML = results.map(c => {
-                    const cClass = getCharClass(c);
-                    const cHex = CLASS_COLORS[cClass] || '#fff';
-                    const iconUrl = c.render_url || getClassIcon(cClass);
-                    return `
-                        <div class="autocomplete-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left: 3px solid ${cHex}">
-                            <img src="${iconUrl}" class="ac-icon" style="border-color: ${cHex}; object-fit: cover;">
-                            <div class="ac-info">
-                                <span class="ac-name" style="color: ${cHex};">${c.profile.name}</span>
-                                <span class="ac-meta">Level ${c.profile.level} ${cClass}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                searchAutoComplete.textContent = '';
+                const template = document.getElementById('tpl-hero-search-result');
+                if (template) {
+                    results.forEach(c => {
+                        const cClass = getCharClass(c);
+                        const cHex = CLASS_COLORS[cClass] || '#fff';
+                        const clone = template.content.cloneNode(true);
+                        
+                        const itemDiv = clone.querySelector('.hero-ac-item');
+                        itemDiv.style.borderLeftColor = cHex;
+                        itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
+                        
+                        const img = clone.querySelector('.hero-ac-icon');
+                        img.src = c.render_url || getClassIcon(cClass);
+                        img.style.borderColor = cHex;
+                        img.style.objectFit = 'cover';
+                        
+                        const nameSpan = clone.querySelector('.hero-ac-name');
+                        nameSpan.textContent = c.profile.name;
+                        nameSpan.style.color = cHex;
+                        
+                        const metaSpan = clone.querySelector('.ac-meta');
+                        metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
+                        
+                        searchAutoComplete.appendChild(clone);
+                    });
+                }
                 searchAutoComplete.classList.add('show');
             } else {
                 searchAutoComplete.textContent = '';
@@ -563,11 +576,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const dateStr = cell.getAttribute('data-date');
                 const color = count > 0 ? '#ffd100' : '#888';
                 
-                tooltip.innerHTML = `
-                    <div class="tooltip-activity" style="color:${color};">${count} Activities</div>
-                    <div class="tooltip-date">${dateStr}</div>
-                    <div class="tooltip-hint">Click to filter timeline</div>
-                `;
+                tooltip.textContent = '';
+                const tooltipTemplate = document.getElementById('tpl-heatmap-tooltip');
+                if (tooltipTemplate) {
+                    const clone = tooltipTemplate.content.cloneNode(true);
+                    
+                    const activityDiv = clone.querySelector('.tooltip-activity');
+                    activityDiv.textContent = `${count} Activities`;
+                    activityDiv.style.color = color;
+                    
+                    const dateDiv = clone.querySelector('.tooltip-date');
+                    dateDiv.textContent = dateStr;
+                    
+                    tooltip.appendChild(clone);
+                }
+                
                 tooltip.style.borderLeftColor = color;
                 
                 let x = e.clientX + 15;

@@ -48,6 +48,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .search-box:focus-visible, .search-box input:focus-visible, .hero-search-box:focus-visible, .hero-search-box input:focus-visible, .search-icon:focus-visible { outline: none !important; }
 .nav-btn-home { background: repeating-linear-gradient(45deg, rgba(0,0,0,0.3), rgba(0,0,0,0.3) 2px, transparent 2px, transparent 4px), linear-gradient(135deg, #1f1f1f, #0a0a0a); border: 1px solid #444; color: #ffd100; font-family: 'Cinzel'; margin-left: 0 !important; width: 90%; justify-content: flex-start; }
 .nav-btn-home:hover { border-color: #ffd100; box-shadow: 0 0 10px rgba(255,209,0,0.3); transform: translateY(-1px); }
+/* Components */
+.nav-btn-discord { color: #5865F2; }
 .home-text { display: inline; }
 
 .mobile-menu-toggle { display: flex; flex-direction: column; justify-content: space-around; width: 28px; height: 22px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 10006; position: relative; }
@@ -417,6 +419,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .loader-text { font-family: 'Cinzel', serif; color: #ffd100; font-size: 18px; margin-top: 15px; text-shadow: 0 2px 4px #000; }
 /* Typography */
 .error-text { color: #e74c3c !important; }
+.hero-title { color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
 .tooltip-date { color:#aaa; font-size:12px; }
