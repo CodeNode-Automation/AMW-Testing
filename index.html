@@ -39,6 +39,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 #intro-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease-in-out; }
 #intro-container.fade-out { opacity: 0 !important; pointer-events: none !important; }
+/* Components */
+.intro-clickable { cursor: pointer; }
 #intro-video { width: 90%; height: 90%; object-fit: contain; max-width: 100vw; max-height: 100vh; }
 
 .embers-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
@@ -99,6 +101,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* DASHBOARD, STATS & LAYOUT                 */
 /* ========================================= */
 .dashboard-layout { display: flex; gap: 30px; max-width: 1400px; width: 100%; margin: 40px auto; padding: 0 20px; align-items: flex-start; }
+/* Layout */
+.dashboard-hidden { opacity: 0; transition: opacity 1.5s ease-in-out; }
+.dashboard-visible { opacity: 1; transition: opacity 2s ease-in-out; }
+.dashboard-instant-visible { opacity: 1; transition: none; }
 .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; width: 100%; }
 #empty-state { text-align: center; width: 100%; display: block; }
 
@@ -358,6 +364,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 @media (max-width: 1050px) {
     .dashboard-layout { flex-direction: column; align-items: center; padding: 0 10px; margin: 20px auto; }
+    /* Components */
+.hall-of-heroes-btn { color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer; }
     .timeline-container { width: 100%; max-width: 900px; position: static; max-height: none; overflow-y: visible; margin-top: 30px; }
 }
 
@@ -411,6 +419,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* TYPOGRAPHY */
 .loader-text { font-family: 'Cinzel', serif; color: #ffd100; font-size: 18px; margin-top: 15px; text-shadow: 0 2px 4px #000; }
+/* Typography */
+.error-text { color: #e74c3c !important; }
 
 .tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
 .tooltip-date { color:#aaa; font-size:12px; }
@@ -518,7 +528,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             <div class="loader-text">Fetching Armory Data...</div>
         </div>
     </div>
-    <div id="intro-container" onclick="killIntro()" style="cursor: pointer;">
+    <div id="intro-container" class="intro-clickable">
         <video id="intro-video" autoplay muted playsinline>
             <source src="asset/Amw.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -527,51 +537,18 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
             Click anywhere to skip ⏭️
         </div>
     </div>
-    <script>
-        function killIntro() {
-            // Set a flag in the browser's session storage so it doesn't play on reload
-            sessionStorage.setItem('amwIntroPlayed', 'true');
-            
-            var intro = document.getElementById('intro-container');
-            var dash = document.querySelector('.dashboard-layout');
-            
-            if (intro && !intro.classList.contains('fade-out')) {
-                intro.classList.add('fade-out'); // Fade it to black
-                if (dash) {
-                    dash.style.opacity = '1';
-                    dash.style.transition = 'opacity 2s ease-in-out';
-                }
-                setTimeout(function() { if (intro) intro.remove(); }, 1000);
-            }
-        }
-
-        // Check if the intro has already been played this session
-        if (sessionStorage.getItem('amwIntroPlayed') === 'true') {
-            // Remove the video container immediately
-            var intro = document.getElementById('intro-container');
-            if (intro) intro.remove();
-            
-            // Wait for the DOM to load, then instantly show the dashboard without the fade-in
-            document.addEventListener('DOMContentLoaded', function() {
-                var dash = document.querySelector('.dashboard-layout');
-                if (dash) {
-                    dash.style.opacity = '1';
-                    dash.style.transition = 'none';
-                }
-            });
-        } else {
-            // If it hasn't played, run the normal video logic
-            var vid = document.getElementById('intro-video');
-            if (vid) {
-                vid.playbackRate = 1.75; 
-                vid.addEventListener('ended', killIntro); 
-                vid.addEventListener('error', killIntro); 
-            }
-            // Failsafe to kill intro after 6 seconds
-            setTimeout(killIntro, 6000);
-        }
-    </script>
-    <div class="embers-container"></div>
+    
+    <template id="tpl-hero-search-result">
+        <div class="autocomplete-item hero-ac-item">
+            <img src="" class="ac-icon hero-ac-icon">
+            <div class="ac-info">
+                <span class="ac-name hero-ac-name"></span>
+                <span class="ac-meta"></span>
+            </div>
+        </div>
+    </template>
+    
+    <div class="embers-container"></div> 
 
     <div class="navbar">
         <div class="controls-wrapper">
@@ -587,7 +564,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
-                <button class="nav-btn" onclick="window.location.hash='badges'" style="color: #ffd100; font-weight: bold; background: transparent; border: none; text-align: left; width: 100%; cursor: pointer;">🌟 Hall of Heroes</button>
+                <button id="nav-btn-hall-of-heroes" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</button>
                 
                 <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
@@ -632,7 +609,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     
     <div id="custom-tooltip" class="custom-tooltip"></div>
     
-    <div id="main-dashboard" class="dashboard-layout" style="opacity: 0; transition: opacity 1.5s ease-in-out;">
+    <div id="main-dashboard" class="dashboard-layout dashboard-hidden">
         <div class="main-content">
             <div id="empty-state">
                 
@@ -1004,10 +981,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T00:42:09.930619Z", "active_14_days": 415, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T09:03:04.824215Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 98, "loot": 75, "levels": 23, "total_roster": 654, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 129, "loot": 98, "levels": 31, "total_roster": 654, "active_roster": 414}]
     </script>
 
     <script>
@@ -1040,6 +1017,42 @@ const TBC_XP = {
     51: 153900, 52: 160400, 53: 167100, 54: 173900, 55: 180800, 56: 187900, 57: 195000, 58: 202300, 59: 209800,
     60: 494000, 61: 517000, 62: 550000, 63: 587000, 64: 632000, 65: 684000, 66: 745000, 67: 815000, 68: 895000, 69: 985000
 };
+
+function killIntro() {
+    sessionStorage.setItem('amwIntroPlayed', 'true');
+    const intro = document.getElementById('intro-container');
+    const dash = document.querySelector('.dashboard-layout');
+    
+    if (intro && !intro.classList.contains('fade-out')) {
+        intro.classList.add('fade-out');
+        if (dash) {
+            dash.classList.add('dashboard-visible');
+        }
+        setTimeout(() => { if (intro) intro.remove(); }, 1000);
+    }
+}
+
+if (sessionStorage.getItem('amwIntroPlayed') === 'true') {
+    const intro = document.getElementById('intro-container');
+    if (intro) intro.remove();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const dash = document.querySelector('.dashboard-layout');
+        if (dash) {
+            dash.classList.add('dashboard-instant-visible');
+        }
+    });
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        const vid = document.getElementById('intro-video');
+        if (vid) {
+            vid.playbackRate = 1.75; 
+            vid.addEventListener('ended', killIntro); 
+            vid.addEventListener('error', killIntro); 
+        }
+        setTimeout(killIntro, 6000);
+    });
+}
 
 // --- Helper: Safely Parse Arrays ---
 function safeParseArray(val) {
@@ -1098,6 +1111,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
     const heatmapData = JSON.parse(document.getElementById('heatmap-data').textContent);
     
+    const introContainerEl = document.getElementById('intro-container');
+    if (introContainerEl) {
+        introContainerEl.addEventListener('click', killIntro);
+    }
+
     // NEW: Download the heavy roster files silently in the background with error handling
     let rosterData = [];
     let rawGuildRoster = [];
@@ -1115,8 +1133,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
         if (loaderText) {
-            loaderText.style.color = '#e74c3c';
-            loaderText.innerHTML = 'Failed to load data. Please refresh.';
+            loaderText.classList.add('error-text');
+            loaderText.textContent = 'Failed to load data. Please refresh.';
         }
         return; // Stop executing to prevent cascading errors
     }
@@ -1162,6 +1180,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const architectureView = document.getElementById('architecture-view');
 
     const navbar = document.querySelector('.navbar');
+    const btnHallOfHeroes = document.getElementById('nav-btn-hall-of-heroes');
+    if (btnHallOfHeroes) {
+        btnHallOfHeroes.addEventListener('click', () => {
+            window.location.hash = 'badges';
+        });
+    }
+    
     const emptyState = document.getElementById('empty-state');
     const conciseView = document.getElementById('concise-view');
     const conciseViewTitle = document.getElementById('concise-view-title');
@@ -1222,15 +1247,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
             const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
             if (results.length > 0) {
-                heroSearchAutoComplete.innerHTML = results.map(c => {
+                heroSearchAutoComplete.textContent = '';
+                const template = document.getElementById('tpl-hero-search-result');
+                results.forEach(c => {
                     const cClass = getCharClass(c);
                     const cHex = CLASS_COLORS[cClass] || '#fff';
-                    return `
-                        <div class="autocomplete-item hero-ac-item" onclick="selectCharacter('${c.profile.name.toLowerCase()}')" style="border-left-color: ${cHex};">
-                            <img src="${c.render_url || getClassIcon(cClass)}" class="ac-icon hero-ac-icon" style="border-color: ${cHex};">
-                            <div class="ac-info"><span class="ac-name hero-ac-name" style="color: ${cHex};">${c.profile.name}</span><span class="ac-meta">Level ${c.profile.level} ${cClass}</span></div>
-                        </div>`;
-                }).join('');
+                    const clone = template.content.cloneNode(true);
+                    const itemDiv = clone.querySelector('.hero-ac-item');
+                    
+                    itemDiv.style.borderLeftColor = cHex;
+                    itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
+                    
+                    const img = clone.querySelector('.hero-ac-icon');
+                    img.src = c.render_url || getClassIcon(cClass);
+                    img.style.borderColor = cHex;
+                    
+                    const nameSpan = clone.querySelector('.hero-ac-name');
+                    nameSpan.textContent = c.profile.name;
+                    nameSpan.style.color = cHex;
+                    
+                    const metaSpan = clone.querySelector('.ac-meta');
+                    metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
+                    
+                    heroSearchAutoComplete.appendChild(clone);
+                });
                 heroSearchAutoComplete.classList.add('show');
             } else {
                 heroSearchAutoComplete.classList.remove('show');
