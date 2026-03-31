@@ -601,6 +601,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-card-name { font-family: 'Cinzel'; font-size: 38px; margin: 0; text-shadow: 0 2px 4px #000; }
 
 /* Components */
+.mvp-gloat-card { background: rgba(255, 209, 0, 0.05); border: 1px solid rgba(255, 209, 0, 0.5); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 0 10px rgba(255, 209, 0, 0.1); }
+.gloat-icon { margin-right: 12px; font-size: 22px; filter: drop-shadow(0 0 5px #ffd100); }
+.gloat-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ffd100; object-fit: cover; margin-right: 12px; cursor: pointer; }
+
+/* Layout */
+.gloat-info { flex: 1; display: flex; flex-direction: column; }
+.gloat-meta { display: flex; flex-direction: column; align-items: flex-end; }
+
+/* Typography */
+.gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.gloat-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
+.gloat-score { color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
+.gloat-label { font-size: 10px; color: #aaa; }
+
+/* Components */
 .challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
 .challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
 .mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
@@ -669,6 +684,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .podium-step-2 .podium-rank { color: #e0e0e0 !important; opacity: 0.25 !important; text-shadow: 0 0 15px rgba(224,224,224,0.8), 2px 2px 5px rgba(0,0,0,0.8) !important; }
 .podium-step-3 .podium-rank { color: #cd7f32 !important; opacity: 0.25 !important; text-shadow: 0 0 15px rgba(205,127,50,0.8), 2px 2px 5px rgba(0,0,0,0.8) !important; }
 .podium-rank { font-family: 'Cinzel'; font-weight: bold; text-shadow: 1px 1px 2px #000; position: absolute; opacity: 0.15; bottom: -2px; left: 50%; transform: translateX(-50%); font-size: 45px; pointer-events: none; line-height: 1; }
+
+/* Typography */
+.podium-name { font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium-trend-text { color: #2ecc71; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; }
+.podium-trend-label { font-size: 9px; color: #888; text-transform: uppercase; }
+
 /* Layout */
 .weekly-mvps-wrapper { width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards; }
 .mvp-cards-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
@@ -867,6 +888,56 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-mvp-placeholder">
+        <div class="mvp-placeholder-card">
+            <div class="mvp-placeholder-icon">👑</div>
+            <div class="mvp-placeholder-avatar">?</div>
+            <div class="mvp-placeholder-info">
+                <span class="mvp-placeholder-title">Reigning Champion</span>
+                <span class="mvp-placeholder-status">Awaiting Data</span>
+            </div>
+            <div class="mvp-placeholder-meta">
+                <span class="mvp-placeholder-label"></span>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-mvp-gloat">
+        <div class="mvp-gloat-card">
+            <div class="gloat-icon">👑</div>
+            <img src="" class="gloat-avatar">
+            <div class="gloat-info">
+                <span class="gloat-title">Reigning Champion</span>
+                <span class="gloat-name"></span>
+            </div>
+            <div class="gloat-meta">
+                <span class="gloat-score"></span>
+                <span class="gloat-label"></span>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-mvp-empty">
+        <div class="mvp-empty-state">
+            <div class="mvp-empty-icon"></div>
+            <div class="mvp-empty-title">The Week Just Started!</div>
+            <div class="mvp-empty-desc"></div>
+        </div>
+    </template>
+
+    <template id="tpl-mvp-podium-block">
+        <div class="podium-block tt-char" data-char="" onclick="">
+            <img src="" class="podium-avatar">
+            <div class="podium-rank"></div>
+            <div class="podium-name"></div>
+            <div class="podium-pill">
+                <div class="podium-trend-text">
+                    <span class="podium-trend-val"></span> <span class="podium-trend-label"></span>
+                </div>
+            </div>
+        </div>
+    </template>
+    
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -1300,10 +1371,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T14:53:26.199794Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T15:06:07.237386Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 270, "loot": 201, "levels": 69, "total_roster": 656, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 280, "loot": 207, "levels": 73, "total_roster": 656, "active_roster": 414}]
     </script>
 
     <script>
@@ -5106,12 +5177,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (chars.length === 0) {
                 const icon = isPvp ? '⚔️' : '🛡️';
                 const action = isPvp ? 'get some HKs' : 'equip some upgrades';
-                return `
-                <div class="mvp-empty-state">
-                    <div class="mvp-empty-icon">${icon}</div>
-                    <div class="mvp-empty-title">The Week Just Started!</div>
-                    <div class="mvp-empty-desc">Log in and ${action} to claim the #1 spot.</div>
-                </div>`;
+                const template = document.getElementById('tpl-mvp-empty');
+                if (!template) return '';
+                const clone = template.content.cloneNode(true);
+                clone.querySelector('.mvp-empty-icon').textContent = icon;
+                clone.querySelector('.mvp-empty-desc').textContent = `Log in and ${action} to claim the #1 spot.`;
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(clone);
+                return tempDiv.innerHTML;
             }
             
             const podiumBlocks = chars.map((char, index) => {
@@ -5121,25 +5194,45 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const portraitURL = char.render_url || getClassIcon(cClass);
                 const trend = isPvp ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
                 const label = isPvp ? 'HKs' : 'iLvl';
-                
                 const rank = index + 1;
-                // Assign unique step heights & flex-orders based on rank
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
-                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
                 
-                return `
-                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
-                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div class="podium-pill">
-                        <div style="color: #2ecc71; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000;">
-                            ▲ ${trend.toLocaleString()} <span style="font-size:9px; color:#888; text-transform:uppercase;">${label}</span>
-                        </div>
-                    </div>
-                </div>`;
+                const template = document.getElementById('tpl-mvp-podium-block');
+                if (!template) return '';
+                const clone = template.content.cloneNode(true);
+                
+                const block = clone.querySelector('.podium-block');
+                block.classList.add(stepClass);
+                block.setAttribute('data-char', (p.name || '').toLowerCase());
+                block.onclick = () => selectCharacter((p.name || '').toLowerCase());
+                block.style.borderTop = `3px solid ${cHex}`;
+                
+                if (rank === 1) {
+                    const crown = document.createElement('div');
+                    crown.className = 'podium-crown';
+                    crown.textContent = '👑';
+                    block.insertBefore(crown, block.firstChild);
+                }
+                
+                const avatar = clone.querySelector('.podium-avatar');
+                avatar.src = portraitURL;
+                avatar.style.borderColor = cHex;
+                
+                const rankDiv = clone.querySelector('.podium-rank');
+                rankDiv.style.color = rankColor;
+                rankDiv.textContent = `#${rank}`;
+                
+                const nameDiv = clone.querySelector('.podium-name');
+                nameDiv.style.color = cHex;
+                nameDiv.textContent = p.name;
+                
+                clone.querySelector('.podium-trend-val').textContent = `▲ ${trend.toLocaleString()}`;
+                clone.querySelector('.podium-trend-label').textContent = label;
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(clone);
+                return tempDiv.innerHTML;
             }).join('');
 
             return `<div class="mvp-podium-container">${podiumBlocks}</div>`;
@@ -5148,26 +5241,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         function generateGloatingHtml(mvpData, isPvp) {
             const label = isPvp ? 'HKs' : 'iLvl';
             
-            // If there is no previous MVP data, return a sleek placeholder
             if (!mvpData || !mvpData.name) {
-                return `
-                <div class="mvp-placeholder-card">
-                    <div class="mvp-placeholder-icon">👑</div>
-                    <div class="mvp-placeholder-avatar">?</div>
-                    <div class="mvp-placeholder-info">
-                        <span class="mvp-placeholder-title">Reigning Champion</span>
-                        <span class="mvp-placeholder-status">Awaiting Data</span>
-                    </div>
-                    <div class="mvp-placeholder-meta">
-                        <span>Last Week's ${label}</span>
-                    </div>
-                </div>`;
+                const template = document.getElementById('tpl-mvp-placeholder');
+                if (!template) return '';
+                const clone = template.content.cloneNode(true);
+                clone.querySelector('.mvp-placeholder-label').textContent = `Last Week's ${label}`;
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(clone);
+                return tempDiv.innerHTML;
             }
 
-            // If we have a champion, render their actual banner
             const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === mvpData.name.toLowerCase());
-            
-            // Fallback in case the winning character left the guild
             if (!char) return ''; 
             
             const p = char.profile;
@@ -5175,19 +5259,25 @@ window.addEventListener('DOMContentLoaded', async () => {
             const cHex = CLASS_COLORS[cClass] || '#fff';
             const portraitURL = char.render_url || getClassIcon(cClass);
             
-            return `
-            <div style="background: rgba(255, 209, 0, 0.05); border: 1px solid rgba(255, 209, 0, 0.5); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 0 10px rgba(255, 209, 0, 0.1);">
-                <div style="margin-right: 12px; font-size: 22px; filter: drop-shadow(0 0 5px #ffd100);">👑</div>
-                <img src="${portraitURL}" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ffd100; object-fit: cover; margin-right: 12px; cursor: pointer;" onclick="selectCharacter('${p.name.toLowerCase()}')">
-                <div style="flex: 1; display: flex; flex-direction: column;">
-                    <span style="color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Reigning Champion</span>
-                    <span style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer;" onclick="selectCharacter('${p.name.toLowerCase()}')">${p.name}</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                    <span style="color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000;">+${mvpData.score.toLocaleString()}</span>
-                    <span style="font-size: 10px; color: #aaa;">Last Week's ${label}</span>
-                </div>
-            </div>`;
+            const template = document.getElementById('tpl-mvp-gloat');
+            if (!template) return '';
+            const clone = template.content.cloneNode(true);
+            
+            const img = clone.querySelector('.gloat-avatar');
+            img.src = portraitURL;
+            img.onclick = () => selectCharacter(p.name.toLowerCase());
+            
+            const nameSpan = clone.querySelector('.gloat-name');
+            nameSpan.textContent = p.name;
+            nameSpan.style.color = cHex;
+            nameSpan.onclick = () => selectCharacter(p.name.toLowerCase());
+            
+            clone.querySelector('.gloat-score').textContent = `+${mvpData.score.toLocaleString()}`;
+            clone.querySelector('.gloat-label').textContent = `Last Week's ${label}`;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.appendChild(clone);
+            return tempDiv.innerHTML;
         }
 
         const prevMvps = config.prev_mvps || {};
