@@ -62,7 +62,7 @@
         <div class="tt-row"><span class="tt-label">Equipped iLvl</span><span class="tt-val tooltip-ilvl"></span></div>
         <div class="tt-row"><span class="tt-label tt-no-border">HP / <span class="tooltip-power-label"></span></span><span class="tt-val tt-no-border tooltip-health-power"></span></div>
     </template>
-    
+
     <template id="tpl-ac-empty-state">
         <div class="ac-empty-state">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
@@ -377,17 +377,17 @@
                         </div>
 
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-zenith">
                                 <span>⚡ The Zenith Cohort (Max Level Pushes)</span>
-                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-zenith-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-zenith-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-zenith-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 10 New Level 70s</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-zenith-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-zenith-text" class="challenge-text">0 / 10 New Level 70s</div>
                             </div>
                         </div>
                     </div>

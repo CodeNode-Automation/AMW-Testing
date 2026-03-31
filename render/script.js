@@ -1029,13 +1029,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 gearHtml += `
-                <div class="item-slot border-${q} gear-slot-wrapper ${warningStyle}" style="border-left-color:${qHex};">
+                <div class="item-slot gear-slot-wrapper qual-border-left-${q} ${warningStyle}">
                     <div class="gear-slot-icon-wrapper">
-                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : ''}" style="border-color:${warningStyle ? '#e74c3c' : qHex};">
+                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : `qual-border-${q}`}">
                         ${enchantBadge}
                     </div>
                     <div class="gear-slot-info">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link ${q}" data-wowhead="${data.tooltip_params}" target="_blank" style="color:${qHex};">${data.name}</a>
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link qual-color-${q}" data-wowhead="${data.tooltip_params}" target="_blank">${data.name}</a>
                         ${warningText}
                     </div>
                 </div>`;
@@ -1977,19 +1977,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
                 const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
-                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle;">';
-                if (pveGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveGold}">🥇 ${pveGold}</span>`;
-                if (pveSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveSilver}">🥈 ${pveSilver}</span>`;
-                if (pveBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveBronze}">🥉 ${pveBronze}</span>`;
-                if (pvpGold > 0) cBadgesHtml += `<span style="background:rgba(255, 215, 0, 0.2); border:1px solid rgba(255, 215, 0, 0.5); color:#ffd700; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpGold}">🥇 ${pvpGold}</span>`;
-                if (pvpSilver > 0) cBadgesHtml += `<span style="background:rgba(192, 192, 192, 0.2); border:1px solid rgba(192, 192, 192, 0.5); color:#c0c0c0; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpSilver}">🥈 ${pvpSilver}</span>`;
-                if (pvpBronze > 0) cBadgesHtml += `<span style="background:rgba(205, 127, 50, 0.2); border:1px solid rgba(205, 127, 50, 0.5); color:#cd7f32; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpBronze}">🥉 ${pvpBronze}</span>`;
-                if (pveChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 128, 0, 0.2); border:1px solid rgba(255, 128, 0, 0.5); color:#ffad33; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPveChamp}">👑 ${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span style="background:rgba(255, 68, 0, 0.2); border:1px solid rgba(255, 68, 0, 0.5); color:#ff7733; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tPvpChamp}">⚔️ ${pvpChamp}</span>`;
-                if (vCount > 0) cBadgesHtml += `<span style="background:rgba(0, 255, 204, 0.2); border:1px solid rgba(0, 255, 204, 0.5); color:#66ffeb; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tVanguard}">🌟 ${vCount}</span>`;
-                if (cCount > 0) cBadgesHtml += `<span style="background:rgba(170, 170, 170, 0.2); border:1px solid rgba(170, 170, 170, 0.5); color:#ddd; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:bold;" title="${tCampaign}">🎖️ ${cCount}</span>`;
-                cBadgesHtml += '</div>';
-
                 tooltip.innerHTML = '';
                 const template = document.getElementById('tpl-char-tooltip');
                 if (template) {
@@ -1998,7 +1985,30 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const nameWrap = clone.querySelector('.tooltip-name-wrap');
                     nameWrap.style.color = cHex;
                     clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
-                    clone.querySelector('.tooltip-badges-container').innerHTML = cBadgesHtml;
+                    
+                    const badgesContainer = clone.querySelector('.tooltip-badges-container');
+                    badgesContainer.className = 'tt-badge-container';
+                    
+                    const addBadge = (count, title, cssClass, icon) => {
+                        if (count > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = `tt-badge ${cssClass}`;
+                            badge.title = title;
+                            badge.textContent = `${icon} ${count}`;
+                            badgesContainer.appendChild(badge);
+                        }
+                    };
+                    
+                    addBadge(pveGold, tPveGold, 'tt-badge-gold', '🥇');
+                    addBadge(pveSilver, tPveSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pveBronze, tPveBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pvpGold, tPvpGold, 'tt-badge-gold', '🥇');
+                    addBadge(pvpSilver, tPvpSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pvpBronze, tPvpBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pveChamp, tPveChamp, 'tt-badge-pve', '👑');
+                    addBadge(pvpChamp, tPvpChamp, 'tt-badge-pvp', '⚔️');
+                    addBadge(vCount, tVanguard, 'tt-badge-vanguard', '🌟');
+                    addBadge(cCount, tCampaign, 'tt-badge-campaign', '🎖️');
                     
                     clone.querySelector('.tooltip-guild-rank').textContent = guildRank;
                     clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
