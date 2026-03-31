@@ -58,6 +58,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 .nav-links-container { position: fixed; top: 0; left: -100%; height: 100vh; width: 250px; flex-direction: column; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(10px); border-right: 1px solid rgba(255, 255, 255, 0.05); padding-top: 80px; padding-left: 20px; padding-bottom: 20px; align-items: flex-start; transition: left 0.3s ease-in-out; z-index: 10005; box-shadow: 5px 0 25px rgba(0,0,0,0.9); display: flex; gap: 10px; overflow-y: auto; }
 .nav-links-container.open { left: 0; }
+/* Components */
+.nav-section-header { color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px; }
 
 .custom-select-wrapper { position: relative; user-select: none; font-family: 'Cinzel'; z-index: 105; }
 .custom-select { background: rgba(0, 0, 0, 0.6); border: 1px solid #444; color: #fff; font-size: 15px; padding: 8px 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; transition: 0.3s; min-width: 220px; }
@@ -116,7 +118,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .heatmap-wrapper { width: 100%; max-width: 550px; background: linear-gradient(135deg, rgba(20, 15, 25, 0.5) 0%, rgba(5, 5, 10, 0.7) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 20px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 2px 15px rgba(0, 0, 0, 0.8); }
 .heatmap-title { font-family: 'Cinzel'; color: #ffd100; text-align: left; margin-top: 0; margin-bottom: 15px; font-size: 14px; letter-spacing: 1px; text-shadow: 0 1px 2px #000; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; justify-content: center; width: 100%; }
-.heatmap-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* Layout */
+.heatmap-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+/* Components */
+.heatmap-cell.tt-heatmap { width: 100%; max-width: 60px; }
 .heatmap-label { color: #bbb; font-size: 12px; font-family: 'Cinzel'; font-weight: bold; text-transform: uppercase; }
 .heatmap-cell { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; background: #1a1a1a; transition: 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 .heatmap-cell:hover { transform: scale(1.1); border-color: #fff; z-index: 10; position: relative; box-shadow: 0 0 12px rgba(255,255,255,0.6); }

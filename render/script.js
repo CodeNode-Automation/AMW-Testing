@@ -344,13 +344,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                     `;
                 }).join('');
                 searchAutoComplete.classList.add('show');
-                if (customOptions) customOptions.classList.remove('show');
             } else {
-                searchAutoComplete.innerHTML = `
-                    <div class="ac-empty-state">
-                        <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
-                        <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
-                    </div>`;
+                searchAutoComplete.textContent = '';
+                const emptyTemplate = document.getElementById('tpl-ac-empty-state');
+                if (emptyTemplate) {
+                    searchAutoComplete.appendChild(emptyTemplate.content.cloneNode(true));
+                }
                 searchAutoComplete.classList.add('show');
             }
         });
@@ -505,6 +504,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        const heatmapTemplate = document.getElementById('tpl-heatmap-col');
+
         // --- Original Heatmap Grid ---
         let heatmapHtml = '';
         
@@ -526,13 +527,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             const dateObj = new Date(day.date + 'T00:00:00Z');
             const dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
             
-            heatmapHtml += `
-            <div class="heatmap-col" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                <span class="heatmap-label">${day.day_name}</span>
-                <div class="heatmap-cell tt-heatmap" data-lvl="${lvl}" data-date="${dateStr}" data-rawdate="${day.date}" data-count="${day.count}" style="width: 100%; max-width: 60px;"></div>
-            </div>`;
+            if (heatmapTemplate) {
+                const clone = heatmapTemplate.content.cloneNode(true);
+                const colDiv = clone.querySelector('.heatmap-col');
+                const labelSpan = clone.querySelector('.heatmap-label');
+                const cellDiv = clone.querySelector('.heatmap-cell');
+                
+                labelSpan.textContent = day.day_name;
+                cellDiv.setAttribute('data-lvl', lvl);
+                cellDiv.setAttribute('data-date', dateStr);
+                cellDiv.setAttribute('data-rawdate', day.date);
+                cellDiv.setAttribute('data-count', day.count);
+                
+                heatmapGrid.appendChild(clone);
+            }
+            
         });
-        heatmapGrid.innerHTML = heatmapHtml;
 
         document.querySelectorAll('.tt-heatmap').forEach(cell => {
             cell.addEventListener('click', function() {

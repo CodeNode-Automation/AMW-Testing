@@ -38,6 +38,21 @@
         </div>
     </template>
 
+    <template id="tpl-heatmap-col">
+        <div class="heatmap-col">
+            <span class="heatmap-label"></span>
+            <div class="heatmap-cell tt-heatmap"></div>
+        </div>
+    </template>
+
+
+    <template id="tpl-ac-empty-state">
+        <div class="ac-empty-state">
+            <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_murloc_01.jpg" loading="lazy" class="ac-empty-icon">
+            <span class="ac-empty-text">No heroes found... Mrgrlrl!</span>
+        </div>
+    </template>
+    
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -49,19 +64,19 @@
             <div class="nav-links-container">
                 <a href="#" class="nav-btn nav-btn-home"><span class="home-text">🏰 Home Dashboard</span></a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">WAR EFFORT</div>
+                <div class="nav-section-header">WAR EFFORT</div>
                 <a href="#war-effort-xp" class="nav-btn">🛡️ Hero's Journey</a>
                 <a href="#war-effort-hk" class="nav-btn">🩸 Blood of the Enemy</a>
                 <a href="#war-effort-loot" class="nav-btn">🐉 Dragon's Hoard</a>
                 <a href="#war-effort-zenith" class="nav-btn">⚡ The Zenith Cohort</a>
                 <a href="#badges" class="nav-btn hall-of-heroes-btn">🌟 Hall of Heroes</a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">GUILD DATA</div>
+                <div class="nav-section-header">GUILD DATA</div>
                 <a href="#ladder-pve" class="nav-btn">👑 PvE Leaderboard</a>
                 <a href="#ladder-pvp" class="nav-btn">⚔️ PvP Leaderboard</a>
                 <a href="#analytics" class="nav-btn">📊 Advanced Analytics</a>
                 
-                <div style="color: #888; font-size: 11px; font-family: 'Cinzel'; font-weight: bold; padding: 15px 15px 5px 15px; border-bottom: 1px solid #333; width: 85%; margin-bottom: 5px;">COMMUNITY & INFO</div>
+                <div class="nav-section-header">COMMUNITY & INFO</div>
                 <a href="#architecture" class="nav-btn">⚙️ Architecture</a>
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn" style="color: #5865F2;">💬 Join Discord</a>
             </div>
