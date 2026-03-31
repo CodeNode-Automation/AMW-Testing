@@ -369,7 +369,7 @@ async def main_async():
 
 
         print("🌐 Fetching updated timeline for War Efforts...")
-        dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 5000")
+        dashboard_feed = await fetch_turso(session, "SELECT * FROM timeline ORDER BY timestamp DESC LIMIT 10000")
 
         # --- DECOUPLED WAR EFFORT TIME-LOCKING & TURSO HISTORY LOGIC ---
         we_file = "asset/war_effort.json"
@@ -408,6 +408,14 @@ async def main_async():
                     p = r.get('participants') if isinstance(r, dict) else r[2]
                     db_we_state[cat] = {'vanguards': v, 'participants': p}
                     
+                    # FIX: Restore locks directly from the database to survive JSON file loss or timeline limits!
+                    try:
+                        # Add "or '[]'" so it parses an empty array instead of crashing on None
+                        parsed_v = json.loads(v or '[]') 
+                        if parsed_v and len(parsed_v) > 0 and cat not in we_data["locks"]:
+                            we_data["locks"][cat] = {"vanguards": parsed_v}
+                    except: pass
+                    
             mvp_rows = await fetch_turso(session, f"SELECT category, champion, score FROM reigning_champs_history WHERE week_anchor='{week_anchor}'")
             if mvp_rows:
                 for r in mvp_rows:
@@ -420,6 +428,11 @@ async def main_async():
         async def smart_update_we(category, vanguards_list, participants_list):
             v_json, p_json = json.dumps(vanguards_list), json.dumps(participants_list)
             old = db_we_state.get(category, {})
+            
+            # FIX: Never destructively overwrite existing DB vanguards with an empty array
+            if old.get('vanguards') and old.get('vanguards') != '[]' and v_json == '[]':
+                v_json = old.get('vanguards')
+
             if old.get('vanguards') != v_json or old.get('participants') != p_json:
                 safe_v, safe_p = v_json.replace("'", "''"), p_json.replace("'", "''")
                 try: await fetch_turso(session, f"INSERT OR REPLACE INTO war_effort_history (week_anchor, category, vanguards, participants) VALUES ('{week_anchor}', '{category}', '{safe_v}', '{safe_p}')")
@@ -529,7 +542,8 @@ async def main_async():
 
         async def smart_update_prev_mvp(category, champ, score):
             try: 
-                await fetch_turso(session, f"INSERT OR REPLACE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{prev_week_anchor}', '{category}', '{champ}', {score})")
+                # FIX: Changed from REPLACE to IGNORE. This permanently locks the first confirmed winner!
+                await fetch_turso(session, f"INSERT OR IGNORE INTO reigning_champs_history (week_anchor, category, champion, score) VALUES ('{prev_week_anchor}', '{category}', '{champ}', {score})")
             except Exception: 
                 pass
 
