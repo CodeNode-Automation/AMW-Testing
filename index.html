@@ -319,6 +319,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; margin-top: 2px; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.concise-rank-indicator { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center; }
+.rank-size-large { font-size: 18px; }
+.rank-size-small { font-size: 15px; }
 .c-val-ilvl { color: #ff8000; font-size: 15px; text-shadow: 0 1px 2px #000; }
 
 .custom-tooltip { position: fixed; background: linear-gradient(135deg, rgba(15, 15, 25, 0.85) 0%, rgba(5, 5, 10, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.2); border-top: 1px solid rgba(255, 209, 0, 0.6); color: #eee; padding: 18px; border-radius: 12px; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 20px rgba(255, 209, 0, 0.1); visibility: hidden; opacity: 0; transition: opacity 0.2s, visibility 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 200px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); pointer-events: none; transform: translateY(10px) scale(0.95); }
@@ -635,6 +638,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tt-badge-container { display: inline-flex; gap: 4px; margin-left: 10px; vertical-align: middle; }
 .tt-badge { padding: 1px 4px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid; }
 .tt-badge-gold { background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.5); color: #ffd700; }
+.badge-pve-gold { background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
 .tt-badge-silver { background: rgba(192, 192, 192, 0.2); border-color: rgba(192, 192, 192, 0.5); color: #c0c0c0; }
 .tt-badge-bronze { background: rgba(205, 127, 50, 0.2); border-color: rgba(205, 127, 50, 0.5); color: #cd7f32; }
 .tt-badge-pve { background: rgba(255, 128, 0, 0.2); border-color: rgba(255, 128, 0, 0.5); color: #ffad33; }
@@ -728,6 +732,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .weekly-challenges-title { font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(255, 209, 0, 0.3); letter-spacing: 2px; font-size: 24px; }
 .vanguard-aura { background: rgba(30, 35, 45, 0.95) !important; border-left-color: #00ffcc !important; box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; z-index: 5; position: relative; }
 .vanguard-badge { background: #111; color: #fff; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-left: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.8); display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.vanguard-floating-icon { position: absolute; top: -10px; right: -10px; font-size: 22px; filter: drop-shadow(0 0 5px #00ffcc); z-index: 10; }
 .monuments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 15px; width: 100%; }
 .monument-card { background: linear-gradient(135deg, rgba(25, 25, 30, 0.9) 0%, rgba(10, 10, 15, 0.95) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #ffd100; padding: 8px 10px; display: flex; flex-direction: column; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 .mon-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -749,6 +754,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.monument-highlight-span { font-weight: bold; }
 .weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
@@ -1547,10 +1553,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T18:22:14.181999Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T18:39:09.009998Z", "active_14_days": 414, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 346, "loot": 251, "levels": 95, "total_roster": 656, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 374, "loot": 273, "levels": 101, "total_roster": 656, "active_roster": 414}]
     </script>
 
     <script>
@@ -2659,7 +2665,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (isPveReigning) extraBadges += `<span class="badge char-badge badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
         if (isPvpReigning) extraBadges += `<span class="badge char-badge badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
         
-        if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
+        if (pveGold > 0) extraBadges += `<span class="badge char-badge badge-pve-gold" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
         if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
         if (pveBronze > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(205, 127, 50, 0.15); border-color: #cd7f32; color: #cd7f32; font-weight: bold; box-shadow: 0 0 10px rgba(205,127,50,0.5);" title="${tPveBronze}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
         if (pvpGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPvpGold}">⚔️🥇 PvP Gold x${pvpGold}</span>`;
@@ -3295,8 +3301,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (isLadderView) {
                 podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
                 const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
-                const rankSize = index < 3 ? '18px' : '15px';
-                rankHtml = `<div style="color: ${rankColor}; font-family: 'Cinzel'; font-weight: bold; font-size: ${rankSize}; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center;">#${index + 1}</div>`;
+                const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
+                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass}" style="color: ${rankColor};">#${index + 1}</div>`;
             }
 
             // --- NEW: Vanguard Aura Logic ---
@@ -3428,7 +3434,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 let pVanguard = '';
                 if (vanguardClass !== '') {
-                    pVanguard = `<div style="position:absolute; top:-10px; right:-10px; font-size:22px; filter:drop-shadow(0 0 5px #00ffcc); z-index:10;" title="Vanguard">🌟</div>`;
+                    pVanguard = `<div class="vanguard-floating-icon" title="Vanguard">🌟</div>`;
                 }
 
                 const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
@@ -5874,7 +5880,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             if (mon.prefixText) descContainer.appendChild(document.createTextNode(mon.prefixText));
                             const hlSpan = document.createElement('span');
                             hlSpan.style.color = mon.highlightColor;
-                            hlSpan.style.fontWeight = 'bold';
+                            hlSpan.classList.add('monument-highlight-span');
                             hlSpan.textContent = mon.highlightText;
                             descContainer.appendChild(hlSpan);
                             if (mon.suffixText) descContainer.appendChild(document.createTextNode(mon.suffixText));
