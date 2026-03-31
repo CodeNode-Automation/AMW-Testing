@@ -83,6 +83,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .opt-icon { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
 /* Typography */
 .custom-select-arrow { font-size: 12px; color: #aaa; }
+.char-selected-text { text-shadow: 1px 1px 2px #000; }
 .opt-icon-emoji { font-size: 16px; }
 .opt-hall-of-heroes { color: #ffd100; font-weight: bold; }
 
@@ -118,6 +119,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .dashboard-layout { display: flex; gap: 30px; max-width: 1400px; width: 100%; margin: 40px auto; padding: 0 20px; align-items: flex-start; }
 /* Layout */
 .dashboard-hidden { opacity: 0; transition: opacity 1.5s ease-in-out; }
+.weekly-challenges-flex-container { display: flex; flex-direction: column; gap: 20px; }
 .dashboard-visible { opacity: 1; transition: opacity 2s ease-in-out; }
 .dashboard-instant-visible { opacity: 1; transition: none; }
 .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -906,7 +908,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <div id="guild-xp-container" class="weekly-challenges-container" style="display:none;">
                     <h3 class="weekly-challenges-title">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="weekly-challenges-flex-container">
                         
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); letter-spacing: 1px;">
@@ -969,7 +971,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                         </div>
                     </div>
                     
-                    <button onclick="window.location.hash='badges'" class="view-heroes-btn">
+                    <button id="btn-view-heroes" class="view-heroes-btn">
                         🌟 View Hall of Heroes
                     </button>
                     
@@ -1010,7 +1012,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 <h2 class="view-main-title analytics-title">Guild Analytics</h2>
                 
                 <div class="stat-box-container analytics-kpi-wrapper">
-                    <div class="stat-box clickable stat-box-kpi-pve" onclick="window.location.hash='ladder-pve'" title="View Full PvE Ladder">
+                    <div class="stat-box clickable stat-box-kpi-pve" id="kpi-box-pve" title="View Full PvE Ladder">
                         <span id="kpi-avg-ilvl" class="stat-value kpi-val-pve">0</span>
                         <span class="stat-label">Avg Level 70 iLvl</span>
                     </div>
@@ -1227,10 +1229,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T13:40:32.900722Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T14:06:52.579322Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 233, "loot": 173, "levels": 60, "total_roster": 656, "active_roster": 414}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 246, "loot": 183, "levels": 63, "total_roster": 656, "active_roster": 414}]
     </script>
 
     <script>
@@ -1402,6 +1404,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loader) loader.classList.add('hidden');
     
     const active14Days = config.active_14_days;
+    const btnViewHeroes = document.getElementById('btn-view-heroes');
+    if (btnViewHeroes) {
+        btnViewHeroes.addEventListener('click', () => {
+            window.location.hash = 'badges';
+        });
+    }
     const raidReadyCount = config.raid_ready_count;
 
     const rawDate = new Date(config.last_updated);
@@ -1648,7 +1656,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (char) {
                 const cClass = getCharClass(char);
                 const cHex = CLASS_COLORS[cClass] || '#fff';
-                selectValueText.innerHTML = `<span style="color: ${cHex}; text-shadow: 1px 1px 2px #000;">${char.profile.name}</span>`;
+                selectValueText.textContent = char.profile.name;
+                selectValueText.className = 'selected-value char-selected-text';
+                selectValueText.style.color = cHex;
             } else {
                 selectValueText.innerHTML = "Select View...";
             }
@@ -3596,10 +3606,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const kpiIlvl = document.getElementById('kpi-avg-ilvl');
         if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
+        
         const kpiEpic = document.getElementById('kpi-epic-loot');
         if (kpiEpic) kpiEpic.innerText = epicLootCount;
+
         const kpiHks = document.getElementById('kpi-total-hks');
         if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+
+        const kpiBoxPve = document.getElementById('kpi-box-pve');
+        if (kpiBoxPve) {
+            kpiBoxPve.addEventListener('click', () => {
+                window.location.hash = 'ladder-pve';
+            });
+        }
 
         if(window.roleChartInstance) window.roleChartInstance.destroy();
         window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
