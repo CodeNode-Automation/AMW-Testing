@@ -600,6 +600,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .we-tt-score { color: #fff; font-weight: bold; }
+.we-loot-badge { background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap; }
+.we-loot-header { display: block; color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; }
+.we-loot-container { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; font-size: 13px; line-height: 1.2; }
 /* Layout */
 .tooltip-name-wrap { display: flex; align-items: center; }
 .tooltip-class-wrap { display: flex; align-items: center; }
@@ -673,6 +676,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .challenge-header { font-family: 'Cinzel'; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+.we-stat-hk { color: #ff4400; font-weight: bold; font-size: 18px; text-shadow: 1px 1px 2px #000; }
+.we-stat-xp { color: #ffd100; font-weight: bold; font-size: 18px; text-shadow: 1px 1px 2px #000; }
+.we-zenith-wrapper { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+.we-zenith-lbl { color: #888; font-size: 11px; text-transform: uppercase; }
+.we-zenith-val { color: #3FC7EB; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000; margin-top: 4px; }
 .we-text-label { margin-right: 8px; text-transform: uppercase; }
 .we-text-crushed { color: #fff; margin-left: 8px; }
 .we-text-values { font-size: 15px; }
@@ -1533,10 +1541,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T17:37:34.615037Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T18:09:46.247433Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 327, "loot": 238, "levels": 89, "total_roster": 656, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 343, "loot": 250, "levels": 93, "total_roster": 656, "active_roster": 415}]
     </script>
 
     <script>
@@ -2239,8 +2247,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
         });
-        const toggleBtn = topPve.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
-        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>' + toggleBtn;
+        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
+        if (topPve.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pveContainer.appendChild(btn);
+        }
     }
 
     const btnViewPve = document.getElementById('btn-view-pve');
@@ -2321,8 +2339,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             }
         });
-        const togglePvpBtn = topPvp.length > 5 ? `<button class="expand-lb-btn" onclick="this.previousElementSibling.classList.toggle('collapsed-list'); this.innerText = this.innerText.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';">Show Top 25 ▼</button>` : '';
-        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>' + togglePvpBtn;
+        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>';
+        if (topPvp.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pvpContainer.appendChild(btn);
+        }
     }
     
     setupTooltips();
@@ -3301,32 +3329,32 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    statsHtml = `<span style="color:#ff4400; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                    statsHtml = `<span class="we-stat-hk">+${trendVal.toLocaleString()} HKs Contributed</span>`;
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
                     const contextData = window.warEffortContext[charKey];
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span style="color:#ffd100; font-weight:bold; font-size:18px; text-shadow: 1px 1px 2px #000;">+${contextData} Levels Contributed</span>`;
+                            statsHtml = `<span class="we-stat-xp">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 15px; flex-direction: column; align-items: flex-start; height: auto;';
                             innerWrapperStyle = 'display: flex; align-items: center; width: 100%; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;';
                             cStatsStyleOverride = 'display:flex; width: 100%; flex-direction: column; align-items: flex-start;';
 
-                            const itemBadges = contextData.map(itemHtml => `<div style="background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap;">${itemHtml}</div>`).join('');
+                            const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
                             statsHtml = `
-                                <span style="color:#888; font-size:11px; text-transform:uppercase; margin-bottom: 8px;">Epic Loot Acquired:</span>
-                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-start; gap:8px; font-size:13px; line-height:1.2;">
+                                <span class="we-loot-header">Epic Loot Acquired:</span>
+                                <div class="we-loot-container">
                                     ${itemBadges}
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
                             statsHtml = `
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content: center;">
-                                    <span style="color:#888; font-size:11px; text-transform:uppercase;">Reached Level 70 on:</span>
-                                    <span style="color:#3FC7EB; font-weight:bold; font-size:16px; text-shadow: 1px 1px 2px #000; margin-top: 4px;">${contextData}</span>
+                                <div class="we-zenith-wrapper">
+                                    <span class="we-zenith-lbl">Reached Level 70 on:</span>
+                                    <span class="we-zenith-val">${contextData}</span>
                                 </div>
                             `;
                         }
