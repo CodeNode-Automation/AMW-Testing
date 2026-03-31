@@ -664,9 +664,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
-                let podiumTrend = '<span style="color: #555;">-</span>';
-                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
-                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+                let podiumTrend = '<span class="podium-trend-neutral">-</span>';
+                if (trend > 0) podiumTrend = `<span class="podium-trend-positive">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span class="podium-trend-negative">▼ ${Math.abs(trend)}</span>`;
                 
                 const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
 
@@ -738,17 +738,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             const hkCount = (p.honorable_kills || 0).toLocaleString();
             const portraitURL = char.render_url || getClassIcon(cClass);
             const trend = p.trend_pvp || 0; 
-            let trendHTML = '<span style="color: #555; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">-</span>';
-            if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 12px; width: 30px; text-align: right;">▼ ${Math.abs(trend)}</span>`;
+            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
+            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
             if (index < 3) {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
-                let podiumTrend = '<span style="color: #555;">-</span>';
-                if (trend > 0) podiumTrend = `<span style="color: #2ecc71;">▲ ${trend}</span>`;
-                else if (trend < 0) podiumTrend = `<span style="color: #e74c3c;">▼ ${Math.abs(trend)}</span>`;
+                let podiumTrend = '<span class="podium-trend-neutral">-</span>';
+                if (trend > 0) podiumTrend = `<span class="podium-trend-positive">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span class="podium-trend-negative">▼ ${Math.abs(trend)}</span>`;
 
                 const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
 
@@ -938,7 +938,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         const hks = p.honorable_kills || 0;
-        const hkBadge = hks > 0 ? `<span class="badge" style="background:rgba(0,0,0,0.7); border:1px solid #ff4400; padding:5px 14px; border-radius:20px; font-size:14px; color:#ff4400; box-shadow:0 0 5px rgba(255,68,0,0.5);">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
+        const hkBadge = hks > 0 ? `<span class="badge hk-card-badge">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
         
         // --- NEW: Page 2 Weapon & Gear Breakdown ---
         const mhMin = st.main_hand_damage_min || st.main_hand_min || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.min) || 0);
@@ -1080,8 +1080,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
         
         let extraBadges = '';
-        if (isPveReigning) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 209, 0, 0.2); border-color: #ffd100; color: #ffd100; font-weight: bold; box-shadow: 0 0 15px rgba(255, 209, 0, 0.8); animation: pulseGlow 2s infinite alternate;" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
-        if (isPvpReigning) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 68, 0, 0.2); border-color: #ff4400; color: #ff4400; font-weight: bold; box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); animation: pulseGlow 2s infinite alternate;" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
+        if (isPveReigning) extraBadges += `<span class="badge char-badge badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
+        if (isPvpReigning) extraBadges += `<span class="badge char-badge badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
         
         if (pveGold > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(255, 215, 0, 0.15); border-color: #ffd700; color: #ffd700; font-weight: bold; box-shadow: 0 0 10px rgba(255,215,0,0.5);" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
         if (pveSilver > 0) extraBadges += `<span class="badge char-badge" style="background: rgba(192, 192, 192, 0.15); border-color: #c0c0c0; color: #c0c0c0; font-weight: bold; box-shadow: 0 0 10px rgba(192,192,192,0.5);" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
@@ -1657,10 +1657,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
                 // 3. Inject them into the HTML
-                let cBadgesHtml = '<div style="display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle;">';
+                let cBadgesHtml = '<div class="c-badges-wrapper">';
                 
-                if (isPveReigning) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 209, 0, 0.25); border:1px solid #ffd100; color:#ffd100; font-size:10px; font-weight:bold; padding:1px 6px; border-radius:4px; box-shadow: 0 0 8px rgba(255,209,0,0.6);" title="Current Reigning PvE Champion!">👑 Reigning MVP</span>`;
-                if (isPvpReigning) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 68, 0, 0.25); border:1px solid #ff4400; color:#ff4400; font-size:10px; font-weight:bold; padding:1px 6px; border-radius:4px; box-shadow: 0 0 8px rgba(255,68,0,0.6);" title="Current Reigning PvP Champion!">⚔️ Reigning MVP</span>`;
+                if (isPveReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning MVP</span>`;
+                if (isPvpReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning MVP</span>`;
                 
                 if (pveGold > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(255, 215, 0, 0.15); border:1px solid rgba(255, 215, 0, 0.4); color:#ffd700; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${tPveGold}">🛡️🥇 ${pveGold}</span>`;
                 if (pveSilver > 0) cBadgesHtml += `<span style="display:inline-flex; align-items:center; background:rgba(192, 192, 192, 0.15); border:1px solid rgba(192, 192, 192, 0.4); color:#c0c0c0; font-size:10px; font-weight:bold; padding:1px 4px; border-radius:4px;" title="${tPveSilver}">🛡️🥈 ${pveSilver}</span>`;

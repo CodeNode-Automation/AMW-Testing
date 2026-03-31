@@ -295,6 +295,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 .concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
 .c-main-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.badge-reigning-pve { background: rgba(255, 209, 0, 0.2); border-color: #ffd100; color: #ffd100; font-weight: bold; box-shadow: 0 0 15px rgba(255, 209, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
+.badge-reigning-pvp { background: rgba(255, 68, 0, 0.2); border-color: #ff4400; color: #ff4400; font-weight: bold; box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
+.c-badges-wrapper { display: inline-flex; gap: 4px; margin-left: 8px; vertical-align: middle; }
+.c-badge-reigning { display: inline-flex; align-items: center; font-size: 10px; font-weight: bold; padding: 1px 6px; border-radius: 4px; border: 1px solid; }
+.c-badge-reigning-pve { background: rgba(255, 209, 0, 0.25); border-color: #ffd100; color: #ffd100; box-shadow: 0 0 8px rgba(255,209,0,0.6); }
+.c-badge-reigning-pvp { background: rgba(255, 68, 0, 0.25); border-color: #ff4400; color: #ff4400; box-shadow: 0 0 8px rgba(255,68,0,0.6); }
 .c-portrait { width: 36px; height: 36px; border-radius: 50%; border: 2px solid; background: #000; object-fit: cover; object-position: center; flex-shrink: 0; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; margin-top: 2px; }
@@ -350,6 +356,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-badges-container { display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .char-badge { background: rgba(0,0,0,0.7); padding: 5px 14px; border-radius: 20px; font-size: 14px; border-width: 1px; border-style: solid; display: inline-flex; align-items: center; }
 .default-badge { border-color: rgba(255,255,255,0.2); color: #ddd; }
+.hk-card-badge { background: rgba(0,0,0,0.7); border: 1px solid #ff4400; padding: 5px 14px; border-radius: 20px; font-size: 14px; color: #ff4400; box-shadow: 0 0 5px rgba(255,68,0,0.5); }
 .stat-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0; padding-top: 15px; }
 .stat-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
 .stat-lbl { color: #bbb; }
@@ -761,6 +768,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .podium-name { font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .podium-trend-text { color: #2ecc71; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; }
 .podium-trend-label { font-size: 9px; color: #888; text-transform: uppercase; }
+.podium-trend-positive { color: #2ecc71; }
+.podium-trend-negative { color: #e74c3c; }
+.podium-trend-neutral { color: #555; }
 
 /* Layout */
 .weekly-mvps-wrapper { width: 100%; max-width: 1000px; margin: 0 auto 30px auto; animation: fadeInUp 0.5s forwards; }
