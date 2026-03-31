@@ -262,6 +262,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .spec-badge-cls { display: flex; align-items: center; }
 .spec-badge-all { background: rgba(255,255,255,0.05); }
 .spec-badge-icon { width: 16px; height: 16px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 1px solid #222; }
+.home-spec-badge-btn { cursor: pointer; transform: scale(0.95); }
+.home-spec-badge-cls { display: flex; align-items: center; }
+.home-spec-badge-all { background: rgba(255, 255, 255, 0.05); }
 
 /* ========================================= */
 /* LISTS & LEADERBOARDS                      */
@@ -451,6 +454,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Components */
 .arch-phase-extraction { color: #3498db; border-color: #3498db; background: rgba(52, 152, 219, 0.1); }
 .arch-phase-storage { color: #1abc9c; border-color: #1abc9c; background: rgba(26, 188, 156, 0.1); }
+.arch-phase-automation { color: #9b59b6; border-color: #9b59b6; background: rgba(155, 89, 182, 0.1); }
+.arch-phase-compilation { color: #e67e22; border-color: #e67e22; background: rgba(230, 126, 34, 0.1); }
+.arch-phase-visualization { color: #f1c40f; border-color: #f1c40f; background: rgba(241, 196, 15, 0.1); }
 .arch-logo-pill { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; background: rgba(235, 235, 235, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 10px 18px; border-radius: 30px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.5); min-height: 60px; max-width: 100%; }
 .arch-logo-pill img { height: 32px; max-width: 100%; width: auto; object-fit: contain; margin: 0; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); }
 .arch-card h3 { color: #fff; font-family: 'Cinzel', serif; margin-top: 0; margin-bottom: 12px; text-shadow: 1px 1px 2px #000; text-align: center; }
@@ -933,6 +939,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-home-spec-badge">
+        <div class="stat-badge spec-btn home-spec-badge-btn">
+            <span class="stat-badge-cls home-spec-badge-cls"></span>
+            <span class="stat-badge-count home-spec-badge-count"></span>
+        </div>
+    </template>
+    
     <template id="tpl-timeline-levelup">
         <div class="timeline-node timeline-node-gold"></div>
         <div class="tl-event-header">
@@ -1413,7 +1426,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                             <img src="asset/software_logo/github.png" alt="GitHub">
                             <img src="asset/software_logo/cron.png" alt="Cron">
                         </div>
-                        <div class="arch-phase" style="color: #9b59b6; border-color: #9b59b6; background: rgba(155, 89, 182, 0.1);">STEP 3: AUTOMATION</div>
+                        <div class="arch-phase arch-phase-automation">STEP 3: AUTOMATION</div>
                         <h3>CI/CD Pipeline</h3>
                         <p>GitHub Actions acts as our server. A strict <strong>Cron</strong> schedule triggers the pipeline to update the database and rebuild the website without human intervention.</p>
                     </div>
@@ -1430,7 +1443,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                             <img src="asset/software_logo/jinga.png" alt="Jinja2">
                             <img src="asset/software_logo/html5.png" alt="HTML5">
                         </div>
-                        <div class="arch-phase" style="color: #e67e22; border-color: #e67e22; background: rgba(230, 126, 34, 0.1);">STEP 4: COMPILATION</div>
+                        <div class="arch-phase arch-phase-compilation">STEP 4: COMPILATION</div>
                         <h3>Static Generation</h3>
                         <p><strong>Jinja2</strong> templates inject the latest database queries into raw HTML. The result is a lightning-fast, ultra-secure static frontend powered by HTML5 and modern CSS.</p>
                     </div>
@@ -1446,7 +1459,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                         <div class="arch-logo-pill">
                             <img src="asset/software_logo/json.png" alt="JSON">
                         </div>
-                        <div class="arch-phase" style="color: #f1c40f; border-color: #f1c40f; background: rgba(241, 196, 15, 0.1);">STEP 5: VISUALIZATION</div>
+                        <div class="arch-phase arch-phase-visualization">STEP 5: VISUALIZATION</div>
                         <h3>Client-Side Rendering</h3>
                         <p>Heavy payloads are pre-compiled into static <strong>JSON</strong> files. The frontend consumes this data natively, using <strong>Chart.js</strong> to render analytics with zero database latency.</p>
                     </div>
@@ -1520,10 +1533,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T17:28:03.927724Z", "active_14_days": 415, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T17:37:34.615037Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 323, "loot": 235, "levels": 88, "total_roster": 656, "active_roster": 415}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 327, "loot": 238, "levels": 89, "total_roster": 656, "active_roster": 415}]
     </script>
 
     <script>
@@ -4823,34 +4836,70 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
 
             const specContainer = document.getElementById('home-spec-container');
-            let specHtml = `<div class="class-stat-container spec-filter-wrapper">`;
-
-            specHtml += `
-                <div class="stat-badge spec-btn" data-hash="class-${className}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95); background: rgba(255,255,255,0.05);" title="View all ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: ${cHex};">All ${formattedClass}s</span>
-                    <span class="stat-badge-count">${classRosterRaw.length}</span>
-                </div>`;
+            specContainer.textContent = '';
+            
+            const wrapDiv = document.createElement('div');
+            wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+            
+            const template = document.getElementById('tpl-home-spec-badge');
+            if (template) {
+                // All Class Badge
+                let clone = template.content.cloneNode(true);
+                let badge = clone.querySelector('.spec-btn');
+                badge.setAttribute('data-hash', `class-${className}`);
+                badge.style.borderColor = cHex;
+                badge.classList.add('home-spec-badge-all');
+                badge.title = `View all ${formattedClass}s`;
                 
-            Object.keys(specCounts).sort().forEach(spec => {
-                const iconUrl = getSpecIcon(formattedClass, spec);
-                const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:5px; border: 1px solid #222;">` : '';
-                specHtml += `
-                <div class="stat-badge spec-btn" data-hash="spec-${className}-${spec.toLowerCase().replace(/\s+/g, '')}" style="border-color: ${cHex}; cursor: pointer; transform: scale(0.95);" title="View ${spec} ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: ${cHex}; display: flex; align-items: center;">${iconHtml}${spec}</span>
-                    <span class="stat-badge-count">${specCounts[spec]}</span>
-                </div>`;
-            });
-
-            if (unspeccedCount > 0) {
-                 specHtml += `
-                <div class="stat-badge spec-btn" data-hash="spec-${className}-unspecced" style="border-color: #888; cursor: pointer; transform: scale(0.95);" title="View Unspecced ${formattedClass}s">
-                    <span class="stat-badge-cls" style="color: #888;">Unspecced</span>
-                    <span class="stat-badge-count">${unspeccedCount}</span>
-                </div>`;
+                let clsSpan = clone.querySelector('.stat-badge-cls');
+                clsSpan.style.color = cHex;
+                clsSpan.textContent = `All ${formattedClass}s`;
+                
+                clone.querySelector('.stat-badge-count').textContent = classRosterRaw.length;
+                wrapDiv.appendChild(clone);
+                
+                // Individual Spec Badges
+                Object.keys(specCounts).sort().forEach(spec => {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-${spec.toLowerCase().replace(/\\s+/g, '')}`);
+                    badge.style.borderColor = cHex;
+                    badge.title = `View ${spec} ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = cHex;
+                    
+                    const iconUrl = getSpecIcon(formattedClass, spec);
+                    if (iconUrl) {
+                        const img = document.createElement('img');
+                        img.src = iconUrl;
+                        img.className = 'spec-badge-icon';
+                        clsSpan.appendChild(img);
+                    }
+                    clsSpan.appendChild(document.createTextNode(spec));
+                    
+                    clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
+                    wrapDiv.appendChild(clone);
+                });
+                
+                // Unspecced Badge
+                if (unspeccedCount > 0) {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-unspecced`);
+                    badge.style.borderColor = '#888';
+                    badge.title = `View Unspecced ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = '#888';
+                    clsSpan.textContent = 'Unspecced';
+                    
+                    clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                    wrapDiv.appendChild(clone);
+                }
             }
-
-            specHtml += `</div>`;
-            specContainer.innerHTML = specHtml;
+            
+            specContainer.appendChild(wrapDiv);
             specContainer.style.display = 'block';
 
             document.querySelectorAll('.spec-btn').forEach(btn => {
