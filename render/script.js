@@ -2182,11 +2182,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     function hideAllViews() {
-        emptyState.classList.add('d-none');
-        conciseView.classList.add('d-none');
-        fullCardContainer.classList.add('d-none');
-        if (analyticsView) analyticsView.classList.add('d-none');
-        if (architectureView) architectureView.classList.add('d-none');
+        emptyState.style.display = 'none';
+        conciseView.style.display = 'none';
+        fullCardContainer.style.display = 'none';
+        if (analyticsView) analyticsView.style.display = 'none';
+        if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         
@@ -2200,12 +2200,22 @@ window.addEventListener('DOMContentLoaded', async () => {
         // --- RESTORE DEFAULT TIMELINE HTML ---
         const filtersContainer = document.querySelector('.timeline-filters');
         if (filtersContainer) {
-            filtersContainer.textContent = '';
-            const tpl = document.getElementById('tpl-timeline-filters-default');
-            if (tpl) {
-                filtersContainer.appendChild(tpl.content.cloneNode(true));
-            }
-            
+            filtersContainer.innerHTML = `
+                <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
+                    <button class="tl-btn" data-type="level_up">Levels</button>
+                </div>
+                <div class="filter-group">
+                    <select id="tl-date-filter" class="tl-select">
+                        <option value="12">Last 12 Hours</option>
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="all" selected>All Available</option>
+                    </select>
+                </div>
+            `;
             // Re-bind standard events
             document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -2620,7 +2630,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showHomeView() {
         hideAllViews();
-        emptyState.classList.remove('d-none');
+        emptyState.style.display = 'block';
         if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         updateDropdownLabel('all');
 
