@@ -4066,18 +4066,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                     eventEl.className = 'monument-card';
                     const dt = new Date(mon.timestamp);
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
-                    eventEl.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                            <span style="font-size: 20px; filter: drop-shadow(0 0 4px rgba(255,209,0,0.6));">🏆</span>
-                            <div style="display: flex; flex-direction: column; flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                    <span style="font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">${mon.title}</span>
-                                    <span style="font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${timeStr}</span>
-                                </div>
-                                <div style="font-size: 12px; color: #ddd; line-height: 1.3;">${mon.desc}</div>
-                            </div>
-                        </div>
-                    `;
+                    eventEl.textContent = '';
+                    const template = document.getElementById('tpl-monument-card');
+                    if (template) {
+                        const clone = template.content.cloneNode(true);
+                        
+                        clone.querySelector('.mon-title-text').textContent = mon.title;
+                        clone.querySelector('.mon-time-text').textContent = timeStr;
+                        clone.querySelector('.mon-desc-text').innerHTML = mon.desc;
+                        
+                        eventEl.appendChild(clone);
+                    }
                     monContainer.appendChild(eventEl);
                 });
             }
