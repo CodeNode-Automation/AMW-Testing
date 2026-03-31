@@ -2564,9 +2564,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const el = document.getElementById(elementId);
                 if (!el || yestVal == null) return;
                 const diff = todayVal - yestVal;
-                if (diff > 0) el.innerHTML = `<span style="color:#2ecc71;">▲ ${diff}</span>`;
-                else if (diff < 0) el.innerHTML = `<span style="color:#e74c3c;">▼ ${Math.abs(diff)}</span>`;
-                else el.innerHTML = `<span style="color:#555;">-</span>`;
+                
+                el.textContent = '';
+                const span = document.createElement('span');
+                
+                if (diff > 0) {
+                    span.textContent = `▲ ${diff}`;
+                    span.classList.add('trend-positive');
+                } else if (diff < 0) {
+                    span.textContent = `▼ ${Math.abs(diff)}`;
+                    span.classList.add('trend-negative');
+                } else {
+                    span.textContent = `-`;
+                    span.classList.add('trend-neutral');
+                }
+                
+                el.appendChild(span);
             }
 
             applyTrend('trend-total', today.total_roster, yesterday.total_roster);
@@ -3585,17 +3598,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 `;
             } else if (event.type === 'level_up') {
                 eventEl.style.borderLeftColor = c_hex;
-                eventEl.innerHTML = `
-                    <div class="timeline-node" style="background: #ffd100; box-shadow: 0 0 8px #ffd100;"></div>
-                    <div class="tl-event-header">
-                        <span class="tl-event-name" style="color: ${c_hex};">${c_name}</span>
-                        <span class="tl-event-date">${date_str}</span>
-                    </div>
-                    <div class="event-box" style="border-left-color: #ffd100;">
-                        <span style="font-size: 14px;">⭐</span>
-                        <span style="color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000;">Reached Level ${event.level}</span>
-                    </div>
-                `;
+                const template = document.getElementById('tpl-timeline-levelup');
+                if (template) {
+                    const clone = template.content.cloneNode(true);
+                    
+                    const nameSpan = clone.querySelector('.tl-event-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    clone.querySelector('.tl-event-date').textContent = date_str;
+                    clone.querySelector('.tl-event-level-text').textContent = `Reached Level ${event.level}`;
+                    
+                    eventEl.appendChild(clone);
+                }
             } else {
                 const q = event.item_quality || 'COMMON';
                 const q_hex = QUALITY_COLORS[q] || '#ffffff';

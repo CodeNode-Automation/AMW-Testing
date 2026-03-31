@@ -72,6 +72,18 @@
         </div>
     </template>
 
+    <template id="tpl-timeline-levelup">
+        <div class="timeline-node timeline-node-gold"></div>
+        <div class="tl-event-header">
+            <span class="tl-event-name"></span>
+            <span class="tl-event-date"></span>
+        </div>
+        <div class="event-box event-box-gold">
+            <span class="event-icon-star">⭐</span>
+            <span class="tl-event-level-text"></span>
+        </div>
+    </template>
+
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -103,20 +115,20 @@
             <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
                 <div class="custom-select" id="customCharSelect" tabindex="0">
                     <span class="selected-value">Select View...</span>
-                    <span style="font-size: 12px; color: #aaa;">▼</span>
+                    <span class="custom-select-arrow">▼</span>
                 </div>
                 <div class="custom-select-options" id="customCharOptions" role="listbox">
                     <div class="custom-option" data-value="total" role="option">
-                        <span style="font-size:16px;">🌍</span> View Entire Guild
+                        <span class="opt-icon-emoji">🌍</span> View Entire Guild
                     </div>
                     <div class="custom-option" data-value="active" role="option">
-                        <span style="font-size:16px;">🔥</span> Active Roster (14 Days)
+                        <span class="opt-icon-emoji">🔥</span> Active Roster (14 Days)
                     </div>
                     <div class="custom-option" data-value="raidready" role="option">
-                        <span style="font-size:16px;">⚔️</span> Raid Ready (Lvl 70)
+                        <span class="opt-icon-emoji">⚔️</span> Raid Ready (Lvl 70)
                     </div>
-                    <div class="custom-option" data-value="badges" role="option" style="color: #ffd100; font-weight: bold;">
-                        <span style="font-size:16px;">🌟</span> Hall of Heroes
+                    <div class="custom-option opt-hall-of-heroes" data-value="badges" role="option">
+                        <span class="opt-icon-emoji">🌟</span> Hall of Heroes
                     </div>
                 </div>
             </div>
