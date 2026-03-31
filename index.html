@@ -570,6 +570,39 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* WAR EFFORT INCENTIVES                     */
 /* ========================================= */
 /* Layout */
+.challenge-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.challenge-bar-bg { position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02); }
+.challenge-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+.challenge-glare { position: absolute; top: 0; left: 0; width: 100%; height: 45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0; }
+.challenge-tick { position: absolute; top: 0; width: 2px; height: 100%; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4; }
+.tick-25 { left: 25%; background: rgba(255,255,255,0.05); }
+.tick-50 { left: 50%; background: rgba(255,255,255,0.1); }
+.tick-75 { left: 75%; background: rgba(255,255,255,0.05); }
+.challenge-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.mvp-placeholder-card { display: flex; align-items: center; background: rgba(255, 209, 0, 0.02); border: 1px dashed rgba(255, 209, 0, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+.mvp-placeholder-icon { margin-right: 12px; }
+.mvp-placeholder-avatar { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 2px dashed #555; background: rgba(0,0,0,0.5); margin-right: 12px; }
+.mvp-placeholder-info { flex: 1; display: flex; flex-direction: column; }
+.mvp-placeholder-meta { display: flex; flex-direction: column; align-items: flex-end; }
+.char-card-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+
+/* Typography */
+.challenge-header { font-family: 'Cinzel'; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+.challenge-link { color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0; }
+.challenge-text { color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); letter-spacing: 1px; }
+.mvp-placeholder-icon { font-size: 22px; }
+.mvp-placeholder-avatar { font-size: 14px; color: #555; }
+.mvp-placeholder-title { color: #888; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.mvp-placeholder-status { color: #aaa; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; font-style: italic; }
+.mvp-placeholder-meta span { color: #888; font-size: 10px; }
+.char-card-name { font-family: 'Cinzel'; font-size: 38px; margin: 0; text-shadow: 0 2px 4px #000; }
+
+/* Components */
+.challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
+.challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
+.mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
+.mvp-placeholder-meta { opacity: 0.5; }
+/* Layout */
 .weekly-challenges-container { width: 100%; max-width: 1000px; margin: 0 auto 40px auto; background: linear-gradient(135deg, rgba(20, 15, 25, 0.6) 0%, rgba(10, 8, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 209, 0, 0.15); border-top: 1px solid rgba(255, 209, 0, 0.4); border-radius: 20px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,209,0,0.05); animation: fadeInUp 0.5s forwards; }
 
 /* Typography */
@@ -923,32 +956,32 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     <div class="weekly-challenges-flex-container">
                         
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-xp">
                                 <span>🛡️ Hero's Journey (XP Gained)</span>
-                                <span id="guild-xp-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-xp-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-xp-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-xp-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 750 Levels Gained</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-xp-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-xp-text" class="challenge-text">0 / 750 Levels Gained</div>
                             </div>
                         </div>
 
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; font-family: 'Cinzel'; font-size: 15px; font-weight: bold; color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); letter-spacing: 1px;">
+                            <div class="challenge-header challenge-header-hk">
                                 <span>🩸 Blood of the Enemy (HKs)</span>
-                                <span id="guild-hk-tooltip-trigger" class="war-effort-link" style="color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0;">View Contributors ➔</span>
+                                <span id="guild-hk-tooltip-trigger" class="war-effort-link challenge-link">View Contributors ➔</span>
                             </div>
-                            <div style="position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02);">
-                                <div id="guild-hk-fill" class="progress-bar-glow" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5);"></div>
-                                <div style="position:absolute; top:0; left:0; width:100%; height:45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0;"></div>
-                                <div style="position:absolute; top:0; left:25%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:rgba(255,255,255,0.1); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div style="position:absolute; top:0; left:75%; width:2px; height:100%; background:rgba(255,255,255,0.05); box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4;"></div>
-                                <div id="guild-hk-text" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); z-index: 5; letter-spacing: 1px;">0 / 500 HKs Gained</div>
+                            <div class="challenge-bar-bg">
+                                <div id="guild-hk-fill" class="progress-bar-glow challenge-fill"></div>
+                                <div class="challenge-glare"></div>
+                                <div class="challenge-tick tick-25"></div>
+                                <div class="challenge-tick tick-50"></div>
+                                <div class="challenge-tick tick-75"></div>
+                                <div id="guild-hk-text" class="challenge-text">0 / 500 HKs Gained</div>
                             </div>
                         </div>
                         
@@ -1241,7 +1274,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T14:32:55.512811Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T14:37:09.992828Z", "active_14_days": 414, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 256, "loot": 190, "levels": 66, "total_roster": 656, "active_roster": 414}]
@@ -2346,8 +2379,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         return `
 <div class="char-card ${factionCls}" style="border-top-color:${cHex};">
-    <div style="text-align:center; margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
-        <h2 style="color:${cHex}; font-family:Cinzel; font-size:38px; margin:0; text-shadow:0 2px 4px #000;">${p.name || 'Unknown'}</h2>
+    <div class="char-card-header">
+        <h2 class="char-card-name" style="color:${cHex};">${p.name || 'Unknown'}</h2>
         <div class="char-badges-container">
             <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             ${extraBadges}
@@ -5092,15 +5125,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             // If there is no previous MVP data, return a sleek placeholder
             if (!mvpData || !mvpData.name) {
                 return `
-                <div style="background: rgba(255, 209, 0, 0.02); border: 1px dashed rgba(255, 209, 0, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center;">
-                    <div style="margin-right: 12px; font-size: 22px; filter: grayscale(100%); opacity: 0.5;">👑</div>
-                    <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px dashed #555; background: rgba(0,0,0,0.5); margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555;">?</div>
-                    <div style="flex: 1; display: flex; flex-direction: column;">
-                        <span style="color: #888; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Reigning Champion</span>
-                        <span style="color: #aaa; font-family: 'Cinzel'; font-weight: bold; font-size: 15px; font-style: italic;">Awaiting Data</span>
+                <div class="mvp-placeholder-card">
+                    <div class="mvp-placeholder-icon">👑</div>
+                    <div class="mvp-placeholder-avatar">?</div>
+                    <div class="mvp-placeholder-info">
+                        <span class="mvp-placeholder-title">Reigning Champion</span>
+                        <span class="mvp-placeholder-status">Awaiting Data</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; opacity: 0.5;">
-                        <span style="color: #888; font-size: 10px;">Last Week's ${label}</span>
+                    <div class="mvp-placeholder-meta">
+                        <span>Last Week's ${label}</span>
                     </div>
                 </div>`;
             }
