@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 
+/* Layout */
+.load-more-container { text-align: center; margin-top: 20px; margin-bottom: 40px; }
+
 /* ========================================= */
 /* BASE & GLOBALS                            */
 /* ========================================= */
