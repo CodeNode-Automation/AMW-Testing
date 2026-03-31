@@ -883,7 +883,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const activeSpec = p.active_spec ? p.active_spec : '';
         const specIconUrl = getSpecIcon(cClass, activeSpec);
-        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2);">` : '';
+        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-card">` : '';
         const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
         const health = st.health || 0;
@@ -980,7 +980,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         let weaponStatsHtml = '';
         
         if (mhDps > 0) {
-            weaponStatsHtml += `<div style="color:#aaa; font-size:11px; text-transform:uppercase; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Main Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="weapon-stats-header">Main Hand Weapon</div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(mhMin)} - ${Math.round(mhMax)}</span></div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${mhSpeed.toFixed(2)}</span></div>`;
             weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${mhDps.toFixed(1)}</span></div>`;
@@ -1715,9 +1715,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
-                    if (trend > 0) trendHTML = `<span style="color: #2ecc71; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▲ ${trend}</span>`;
-                    else if (trend < 0) trendHTML = `<span style="color: #e74c3c; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">▼ ${Math.abs(trend)}</span>`;
-                    else trendHTML = `<span style="color: #555; font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block;">-</span>`;
+                    if (trend > 0) trendHTML = `<span class="trend-indicator-concise trend-positive">▲ ${trend}</span>`;
+                    else if (trend < 0) trendHTML = `<span class="trend-indicator-concise trend-negative">▼ ${Math.abs(trend)}</span>`;
+                    else trendHTML = `<span class="trend-indicator-concise trend-neutral">-</span>`;
                 }
             } else {
                 baseName = char.name || 'Unknown';
@@ -1964,7 +1964,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
-                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222;">` : '';
+                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-tt">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 // --- NEW: Grab the Guild Rank & MVP Badges (Scope-Safe) ---
@@ -2202,8 +2202,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             filtersContainer.innerHTML = `
                 <div class="filter-group">
                     <button class="tl-btn" data-type="all">All</button>
-                    <button class="tl-btn active" style="color: #0070dd; border-color: rgba(0, 112, 221, 0.5);" data-type="rare_plus">Rare+</button>
-                    <button class="tl-btn" style="color: #a335ee; border-color: rgba(163, 53, 238, 0.5);" data-type="epic">Epics+</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
                     <button class="tl-btn" data-type="level_up">Levels</button>
                 </div>
                 <div class="filter-group">

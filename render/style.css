@@ -392,6 +392,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-select option { background: #111; color: #fff; }
 /* Components */
 .tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-btn-rare { color: #0070dd; border-color: rgba(0, 112, 221, 0.5); }
+.tl-btn-epic { color: #a335ee; border-color: rgba(163, 53, 238, 0.5); }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 /* Layout */
 .tl-badge-wrapper { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -599,6 +601,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .tt-no-border { border-bottom: none !important; }
+.spec-icon-card { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2); }
+.spec-icon-tt { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid #222; }
 /* Components */
 .qual-border-left-POOR { border-left-color: #9d9d9d; }
 .qual-border-POOR { border-color: #9d9d9d; }
@@ -729,11 +733,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .concise-chart-title { text-align: center; color: #ffd100; font-family: 'Cinzel'; margin-top: 0; }
+.trend-indicator-concise { font-size: 12px; margin-left: 10px; width: 30px; text-align: right; display: inline-block; }
 .monument-content { display: flex; flex-direction: column; flex: 1; }
 .monument-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
 
 /* Typography */
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
 
