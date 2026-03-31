@@ -100,7 +100,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .hero-search-box:focus-within { border-color: rgba(255, 209, 0, 0.8); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 209, 0, 0.25); background: linear-gradient(135deg, rgba(25, 25, 35, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%); transform: none; }
 .hero-search-box input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; outline: none; transition: 0.3s; }
 .hero-search-box input::placeholder { color: #888; }
+/* Layout */
+.hero-search-wrapper { position: relative; max-width: 450px; width: 100%; }
 
+/* Components */
+.hero-search-box-inner { box-sizing: border-box; }
+.hero-search-icon { font-size: 18px; padding-left: 15px; }
+.hero-search-input { width: 100%; height: 46px; font-size: 16px; padding: 0 15px; box-sizing: border-box; }
+.hero-search-ac { width: 100%; top: calc(100% + 8px); }
 /* ========================================= */
 /* DASHBOARD, STATS & LAYOUT                 */
 /* ========================================= */
@@ -160,6 +167,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-badge { display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, rgba(30, 30, 35, 0.6) 0%, rgba(10, 10, 15, 0.9) 100%); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); padding: 10px 18px; border-radius: 12px; min-width: 105px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); user-select: none; border-left: 3px solid; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 .stat-badge:hover { transform: translateY(-5px) scale(1.03); background: linear-gradient(180deg, rgba(45, 45, 50, 0.8) 0%, rgba(15, 15, 20, 0.9) 100%); border-right-color: rgba(255, 209, 0, 0.3); border-top-color: rgba(255, 209, 0, 0.5); border-bottom-color: rgba(255, 209, 0, 0.3); box-shadow: 0 12px 24px rgba(0,0,0,0.8), 0 0 20px rgba(255, 209, 0, 0.15); }
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
+/* Components */
+.dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
+.dynamic-award-badge .stat-badge-cls { font-size: 11px; }
+.dynamic-award-badge .stat-badge-count { font-size: 16px; }
 .stat-badge-cls { font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }
 .stat-badge-count { font-family: 'Cinzel'; font-size: 20px; color: white; font-weight: bold; text-shadow: 0 2px 4px #000; }
 .spec-btn:hover { background: rgba(255,255,255,0.1) !important; border-color: #fff !important; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: scale(1) !important; }
@@ -332,6 +343,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .footer-tech-stack { font-family: 'Cinzel', serif; color: #aaa; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px; }
 .footer-update-info { margin-bottom: 25px; font-size: 13px; color: #888; }
 .footer-disclaimer { max-width: 800px; margin: 0 auto; font-size: 11px; line-height: 1.6; color: #444; font-style: italic; }
+/* Typography */
+.tech-stack-highlight { color: #ffd100; }
+.update-time-highlight { color: #ffd100; font-weight: bold; margin-left: 5px; }
 
 /* ========================================= */
 /* ANIMATIONS & KEYFRAMES                    */
@@ -600,6 +614,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-award-badge">
+        <div class="stat-badge dynamic-award-badge">
+            <span class="stat-badge-cls"></span>
+            <span class="stat-badge-count"></span>
+        </div>
+    </template>
+    
     <div class="embers-container"></div> 
 
     <div class="navbar">
@@ -672,12 +693,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     <div class="hero-text-col">
                         <h2 class="hero-title">Azeroths Most Wanted Armory</h2>
                         
-                        <div class="search-container" style="position: relative; max-width: 450px; width: 100%;">
-                            <div class="search-box hero-search-box" style="box-sizing: border-box;">
-                                <span class="search-icon" style="font-size: 18px; padding-left: 15px;">🔍</span>
-                                <input type="text" id="heroCharSearch" autocomplete="off" placeholder="Search for a guild member..." style="width: 100%; height: 46px; font-size: 16px; padding: 0 15px; box-sizing: border-box;" />
+                        <div class="search-container hero-search-wrapper">
+                            <div class="search-box hero-search-box hero-search-box-inner">
+                                <span class="search-icon hero-search-icon">🔍</span>
+                                <input type="text" id="heroCharSearch" class="hero-search-input" autocomplete="off" placeholder="Search for a guild member..." />
                             </div>
-                            <div id="hero-search-autocomplete" class="search-autocomplete" style="width: 100%; top: calc(100% + 8px);"></div>
+                            <div id="hero-search-autocomplete" class="search-autocomplete hero-search-ac"></div>
                         </div>
                     </div>
                 </div>
@@ -1021,24 +1042,24 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
     </div> 
     
-    <div class="dashboard-footer" style="text-align: center; padding: 40px 20px; color: #666; font-size: 13px; width: 100%; border-top: 1px solid #222; margin-top: 40px; clear: both; background: rgba(10, 10, 10, 0.8);">
-        <div class="footer-tech-stack" style="font-family: 'Cinzel', serif; color: #aaa; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px;">
-            <span style="color: #ffd100;">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
+    <div class="dashboard-footer">
+        <div class="footer-tech-stack">
+            <span class="tech-stack-highlight">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
         </div>
-        <div class="footer-update-info" style="margin-bottom: 25px; font-size: 13px; color: #888;">
-            Database Last Synced: <span id="update-time" style="color: #ffd100; font-weight: bold; margin-left: 5px;"></span>
+        <div class="footer-update-info">
+            Database Last Synced: <span id="update-time" class="update-time-highlight"></span>
         </div>
-        <div class="footer-disclaimer" style="max-width: 800px; margin: 0 auto; font-size: 11px; line-height: 1.6; color: #444; font-style: italic;">
+        <div class="footer-disclaimer">
             World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.<br>
             Azeroth's Most Wanted Armory is a community project and is not affiliated with, endorsed, or sponsored by Blizzard Entertainment.
         </div>
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-03-31T09:58:35.451243Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-03-31T10:07:42.219915Z", "active_14_days": 413, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 147, "loot": 112, "levels": 35, "total_roster": 654, "active_roster": 413}]
+        [{"date": "2026-03-25", "day_name": "Wed", "count": 550, "loot": 423, "levels": 127, "total_roster": 624, "active_roster": 388}, {"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 152, "loot": 115, "levels": 37, "total_roster": 654, "active_roster": 413}]
     </script>
 
     <script>
@@ -2227,7 +2248,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         container.style.display = 'flex';
-        
+
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
             badge.addEventListener('click', function() {
                 const targetClass = this.getAttribute('data-class');
@@ -2414,19 +2435,32 @@ window.addEventListener('DOMContentLoaded', async () => {
             'campaign': { label: 'Campaigns', icon: '🎖️', color: '#aaa' }
         };
 
-        let html = '';
+        container.textContent = '';
+        const badgeTemplate = document.getElementById('tpl-award-badge');
+
         Object.keys(AWARD_DEFS).forEach(key => {
             if (counts[key] > 0) {
                 const def = AWARD_DEFS[key];
-                html += `
-                <div class="stat-badge dynamic-award-badge" data-award="${key}" style="border-color: ${def.color}; cursor: pointer; padding: 8px 12px; min-width: 100px;" title="Filter ${def.label}">
-                  <span class="stat-badge-cls" style="color: ${def.color}; font-size: 11px;">${def.icon} ${def.label}</span>
-                  <span class="stat-badge-count" style="font-size: 16px;">${counts[key]}</span>
-                </div>`;
+                if (badgeTemplate) {
+                    const clone = badgeTemplate.content.cloneNode(true);
+                    const badgeDiv = clone.querySelector('.dynamic-award-badge');
+                    const clsSpan = clone.querySelector('.stat-badge-cls');
+                    const countSpan = clone.querySelector('.stat-badge-count');
+                    
+                    badgeDiv.setAttribute('data-award', key);
+                    badgeDiv.style.borderColor = def.color;
+                    badgeDiv.title = `Filter ${def.label}`;
+                    
+                    clsSpan.textContent = `${def.icon} ${def.label}`;
+                    clsSpan.style.color = def.color;
+                    
+                    countSpan.textContent = counts[key];
+                    
+                    container.appendChild(clone);
+                }
             }
         });
 
-        container.innerHTML = html;
         container.style.display = 'flex';
 
         document.querySelectorAll('.dynamic-award-badge').forEach(badge => {
