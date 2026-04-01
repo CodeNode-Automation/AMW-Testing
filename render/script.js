@@ -1291,15 +1291,39 @@ window.addEventListener('DOMContentLoaded', async () => {
         nameEl.style.color = cHex;
 
         const badgesEl = clone.querySelector('.char-badges-container');
-        badgesEl.innerHTML = `
-            <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
-            ${extraBadges}
-            <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
-            <span class="badge char-badge" style="border-color: #ff8000; color: #ff8000;">iLvl ${p.equipped_item_level || 0}</span>
-            <span class="badge char-badge default-badge">${raceName}</span>
-            <span class="badge char-badge" style="border-color: ${cHex}; color: ${cHex};">${specIconHtml}${displaySpecClass}</span>
-            ${hkBadge}
-        `;
+        badgesEl.textContent = '';
+
+        appendFullCardBadge(badgesEl, {
+            text: `🛡️ ${guildRank}`,
+            classNames: ['char-badge-guild-rank']
+        });
+
+        appendFullCardBadgeHtml(badgesEl, extraBadges);
+
+        appendFullCardBadge(badgesEl, {
+            text: `Level ${p.level || 0}`,
+            classNames: ['default-badge']
+        });
+
+        appendFullCardBadge(badgesEl, {
+            text: `iLvl ${p.equipped_item_level || 0}`,
+            classNames: ['char-badge-ilvl']
+        });
+
+        appendFullCardBadge(badgesEl, {
+            text: raceName,
+            classNames: ['default-badge']
+        });
+
+        appendFullCardBadge(badgesEl, {
+            text: displaySpecClass,
+            textColor: cHex,
+            borderColor: cHex,
+            iconSrc: specIconUrl || '',
+            iconAlt: ''
+        });
+
+        appendFullCardBadgeHtml(badgesEl, hkBadge);
 
         const restedBar = clone.querySelector('.xp-bar-rested');
         restedBar.style.width = `${restedPercent}%`;
@@ -1349,6 +1373,45 @@ window.addEventListener('DOMContentLoaded', async () => {
         gearGridEl.innerHTML = gearHtml;
 
         return clone.firstElementChild.outerHTML;
+    }
+
+    function appendFullCardBadge(container, {
+        text,
+        title = '',
+        classNames = [],
+        textColor = '',
+        borderColor = '',
+        iconSrc = '',
+        iconAlt = ''
+    }) {
+        const template = document.getElementById('tpl-full-card-badge');
+        if (!template || !container) return;
+
+        const clone = template.content.cloneNode(true);
+        const badge = clone.querySelector('.full-card-badge');
+        const content = clone.querySelector('.full-card-badge-content');
+
+        classNames.forEach(cls => badge.classList.add(cls));
+        if (title) badge.title = title;
+        if (textColor) badge.style.color = textColor;
+        if (borderColor) badge.style.borderColor = borderColor;
+
+        if (iconSrc) {
+            const img = document.createElement('img');
+            img.src = iconSrc;
+            img.alt = iconAlt;
+            img.className = 'full-card-badge-icon';
+            content.appendChild(img);
+        }
+
+        content.appendChild(document.createTextNode(text));
+        container.appendChild(clone);
+    }
+
+    function appendFullCardBadgeHtml(container, html) {
+        if (!container || !html || html.trim() === '') return;
+        const fragment = document.createRange().createContextualFragment(html);
+        container.appendChild(fragment);
     }
 
     function renderDynamicBadges(characters, isRawMode) {
