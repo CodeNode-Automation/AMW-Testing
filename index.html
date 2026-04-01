@@ -334,7 +334,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; margin-top: 2px; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
+.concise-stat-line { display: flex; align-items: center; justify-content: flex-end; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.c-val-ilvl { margin-left: 4px; }
+.c-val-ilvl-hks { color: #ff4400; }
 .concise-rank-indicator { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center; }
 .concise-rank-gold { color: #ffd100; }
 .concise-rank-silver { color: #c0c0c0; }
@@ -1767,10 +1770,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T21:00:22.575666Z", "active_14_days": 414, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T21:07:05.965487Z", "active_14_days": 414, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 469, "loot": 362, "levels": 107, "total_roster": 661, "active_roster": 414}]
+        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 476, "loot": 367, "levels": 109, "total_roster": 661, "active_roster": 414}]
     </script>
 
     <script>
@@ -3826,7 +3829,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let specIconHtml = '';
             let displaySpecClass = '';
             let statValue = '???';
-            let statColor = 'color:#666;';
+            let statValueClass = '';
             let trendHTML = '';
             let awardsAttr = [];
 
@@ -3911,7 +3914,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
-                statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
+                statValueClass = currentSortMethod === 'hks' ? ' c-val-ilvl-hks' : '';
 
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
@@ -3968,7 +3971,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             // --- NEW: Custom War Effort Stats Overrides ---
             let statsHtml = `
                 <span>Level <span class="c-val-lvl">${level}</span></span>
-                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                <span class="concise-stat-line">${statLabel} <span class="c-val-ilvl${statValueClass}">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
             let innerWrapperStyle = 'display: flex; align-items: center; width: 100%;';
