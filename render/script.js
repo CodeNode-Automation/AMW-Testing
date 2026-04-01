@@ -635,6 +635,38 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+        function createTrendSpan(trend, variant = 'default') {
+        const span = document.createElement('span');
+
+        if (variant === 'podium') {
+            if (trend > 0) {
+                span.className = 'podium-trend-positive';
+                span.textContent = `▲ ${trend}`;
+            } else if (trend < 0) {
+                span.className = 'podium-trend-negative';
+                span.textContent = `▼ ${Math.abs(trend)}`;
+            } else {
+                span.className = 'podium-trend-neutral';
+                span.textContent = '-';
+            }
+        } else {
+            span.classList.add('trend-indicator');
+
+            if (trend > 0) {
+                span.classList.add('trend-positive');
+                span.textContent = `▲ ${trend}`;
+            } else if (trend < 0) {
+                span.classList.add('trend-negative');
+                span.textContent = `▼ ${Math.abs(trend)}`;
+            } else {
+                span.classList.add('trend-neutral');
+                span.textContent = '-';
+            }
+        }
+
+        return span;
+    }
+
     const pveContainer = document.getElementById('pve-leaderboard');
     const pveWrapper = document.getElementById('pve-leaderboard-container');
 
@@ -645,67 +677,122 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (topPve.length > 0 && pveContainer) {
         pveWrapper.style.display = 'block';
-        let pveHTML = '<div class="lb-podium-wrap">';
-        let pveListHTML = '<div class="lb-list-wrap collapsed-list">';
+        pveContainer.textContent = '';
+
+        const podiumWrap = document.createElement('div');
+        podiumWrap.className = 'lb-podium-wrap';
+
+        const listWrap = document.createElement('div');
+        listWrap.className = 'lb-list-wrap collapsed-list';
+
+        const podiumTemplate = document.getElementById('tpl-home-leaderboard-podium');
+        const rowTemplate = document.getElementById('tpl-home-leaderboard-row');
+
         topPve.forEach((char, index) => {
             const p = char.profile;
             const cClass = getCharClass(char);
             const cHex = CLASS_COLORS[cClass] || '#fff';
             const activeSpec = p.active_spec ? p.active_spec : '';
             const specIconUrl = getSpecIcon(cClass, activeSpec);
-            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
             const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
             const portraitURL = char.render_url || getClassIcon(cClass);
-            const trend = p.trend_pve || p.trend_ilvl || 0; 
-            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
-            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
-            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
+            const trend = p.trend_pve || p.trend_ilvl || 0;
+            const cleanName = (p.name || '').toLowerCase();
 
-            if (index < 3) {
+            if (index < 3 && podiumTemplate) {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
-                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
-                let podiumTrend = '<span class="podium-trend-neutral">-</span>';
-                if (trend > 0) podiumTrend = `<span class="podium-trend-positive">▲ ${trend}</span>`;
-                else if (trend < 0) podiumTrend = `<span class="podium-trend-negative">▼ ${Math.abs(trend)}</span>`;
-                
-                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
+                const clone = podiumTemplate.content.cloneNode(true);
 
-                pveHTML += `
-                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
-                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
-                    <div class="podium-pill">
-                        <div style="color: #ff8000; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
-                        <div style="text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
-                    </div>
-                </div>`;
-            } else {
-                pveListHTML += `
-                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
-                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
-                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
-                    <div class="lb-info">
-                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
-                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
-                    </div>
-                    <div class="lb-score pve-score">
-                        ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
-                        ${trendHTML}
-                    </div>
-                </div>`;
+                const block = clone.querySelector('.podium-block');
+                block.classList.add(stepClass);
+                block.setAttribute('data-char', cleanName);
+                block.addEventListener('click', () => selectCharacter(cleanName));
+                block.style.borderTopColor = cHex;
+
+                const crown = clone.querySelector('.podium-crown');
+                if (rank !== 1) {
+                    crown.hidden = true;
+                }
+
+                const avatar = clone.querySelector('.podium-avatar');
+                avatar.src = portraitURL;
+                avatar.alt = p.name || 'Character portrait';
+                avatar.style.borderColor = cHex;
+
+                const rankEl = clone.querySelector('.podium-rank');
+                rankEl.textContent = `#${rank}`;
+
+                const nameEl = clone.querySelector('.podium-name');
+                nameEl.textContent = p.name;
+                nameEl.style.color = cHex;
+
+                const statValEl = clone.querySelector('.podium-stat-val');
+                statValEl.textContent = p.equipped_item_level || 0;
+                statValEl.classList.add('text-ilvl');
+
+                const statLabelEl = clone.querySelector('.podium-stat-lbl');
+                statLabelEl.textContent = 'iLvl';
+
+                const trendContainer = clone.querySelector('.podium-trend-container');
+                trendContainer.appendChild(createTrendSpan(trend, 'podium'));
+
+                podiumWrap.appendChild(clone);
+            } else if (rowTemplate) {
+                const clone = rowTemplate.content.cloneNode(true);
+
+                const row = clone.querySelector('.leaderboard-row');
+                row.setAttribute('data-char', cleanName);
+                row.addEventListener('click', () => selectCharacter(cleanName));
+                row.style.borderLeftColor = cHex;
+
+                const rankEl = clone.querySelector('.lb-rank');
+                rankEl.textContent = `#${index + 1}`;
+
+                const portraitEl = clone.querySelector('.lb-portrait');
+                portraitEl.src = portraitURL;
+                portraitEl.alt = p.name || 'Character portrait';
+                portraitEl.style.borderColor = cHex;
+
+                const nameEl = clone.querySelector('.lb-name');
+                nameEl.textContent = p.name;
+                nameEl.style.color = cHex;
+
+                const specEl = clone.querySelector('.lb-spec');
+                specEl.textContent = displaySpecClass;
+                if (specIconUrl) {
+                    const specIconEl = document.createElement('img');
+                    specIconEl.src = specIconUrl;
+                    specIconEl.className = 'spec-icon-sm';
+                    specIconEl.alt = '';
+                    specEl.prepend(specIconEl);
+                }
+
+                const scoreEl = clone.querySelector('.lb-score');
+                scoreEl.classList.add('pve-score');
+
+                const scoreValueEl = clone.querySelector('.lb-score-value');
+                scoreValueEl.textContent = p.equipped_item_level || 0;
+
+                const scoreLabelEl = clone.querySelector('.lb-score-label');
+                scoreLabelEl.textContent = 'iLvl';
+
+                scoreEl.appendChild(createTrendSpan(trend));
+
+                listWrap.appendChild(clone);
             }
         });
-        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
+
+        pveContainer.appendChild(podiumWrap);
+        pveContainer.appendChild(listWrap);
+
         if (topPve.length > 5) {
             const btn = document.createElement('button');
             btn.className = 'expand-lb-btn';
             btn.textContent = 'Show Top 25 ▼';
             btn.addEventListener('click', function() {
-                const listWrap = this.previousElementSibling;
-                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                const listWrapEl = this.previousElementSibling;
+                if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
                 this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
             });
             pveContainer.appendChild(btn);

@@ -330,7 +330,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .custom-tooltip .tt-val { color: white; font-weight: bold; display: flex; align-items: center; }
 
 .leaderboard-row { border-left-width: 4px; border-left-style: solid; padding: 8px 12px; }
-.lb-rank { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; }
+.lb-rank { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; color: #777; font-size: 15px; }
 .lb-portrait { width: 28px; height: 28px; border-radius: 50%; border-width: 1px; border-style: solid; object-fit: cover; margin-right: 12px; }
 .lb-info { flex: 1; display: flex; flex-direction: column; }
 .lb-name { font-family: 'Cinzel'; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px #000; }
@@ -815,6 +815,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .podium-name { font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium-stat-line { margin-bottom: 2px; text-shadow: 1px 1px 2px #000; }
 .podium-stat-val { font-weight: bold; font-size: 13px; }
 .podium-stat-lbl { font-size: 9px; color: #888; text-transform: uppercase; }
 .podium-trend-container { font-size: 11px; margin-top: 2px; display: flex; justify-content: center; }
