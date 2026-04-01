@@ -893,3 +893,72 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     50% { transform: translate(-50%, -8px) rotate(5deg); filter: drop-shadow(0 0 15px rgba(255, 209, 0, 1)); }
     100% { transform: translate(-50%, 0px) rotate(-5deg); filter: drop-shadow(0 0 8px rgba(255, 209, 0, 0.6)); }
 }
+
+/* --- Separation of concerns refactor support --- */
+[hidden] { display: none !important; }
+.display-block { display: block !important; }
+.display-flex { display: flex !important; }
+.display-inline-block { display: inline-block !important; }
+.chart-clickable { cursor: pointer !important; }
+.ember-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+.navbar.navbar-home { background: rgba(15, 15, 15, 0.85); }
+.navbar.navbar-subpage { background: #111; }
+.tt-anchor { position: relative; }
+.tt-inline-host { position: absolute; top: 100%; left: 0; margin-top: 8px; z-index: 1000; min-width: 240px; }
+.war-effort-tooltip { border-left: 3px solid #ffd100; }
+.milestone-text-rotator.is-fading { opacity: 0; }
+.milestone-text-rotator.is-visible { opacity: 1; }
+.concise-layout-column { flex-direction: column !important; }
+.concise-left-col-wide { max-width: 100% !important; width: 100% !important; }
+.badges-mode-default { flex-wrap: wrap; justify-content: center; max-width: 900px; overflow-x: visible; padding: 0; margin-top: 0; }
+.badges-mode-awards { flex-wrap: nowrap; justify-content: flex-start; max-width: 100%; overflow-x: auto; padding: 15px 10px 25px 10px; margin-top: -10px; }
+.timeline-awards-mode { width: 100%; max-width: 440px; }
+.donut-dashboard-mode { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.concise-kpi-box { min-width: 200px; margin-bottom: 5px; }
+.theme-text { color: var(--theme-color, inherit) !important; }
+.theme-border { border-color: var(--theme-color, currentColor) !important; }
+.theme-border-left { border-left-color: var(--theme-color, currentColor) !important; }
+.theme-border-top { border-top-color: var(--theme-color, currentColor) !important; }
+.class-theme-druid { --theme-color: #FF7C0A; }
+.class-theme-hunter { --theme-color: #ABD473; }
+.class-theme-mage { --theme-color: #3FC7EB; }
+.class-theme-paladin { --theme-color: #F48CBA; }
+.class-theme-priest { --theme-color: #FFFFFF; }
+.class-theme-rogue { --theme-color: #FFF468; }
+.class-theme-shaman { --theme-color: #0070DE; }
+.class-theme-warlock { --theme-color: #8788EE; }
+.class-theme-warrior { --theme-color: #C69B6D; }
+.class-theme-death-knight { --theme-color: #C41E3A; }
+.class-theme-unknown { --theme-color: #888888; }
+.rank-theme-1 { color: #ffd100 !important; }
+.rank-theme-2 { color: #c0c0c0 !important; }
+.rank-theme-3 { color: #cd7f32 !important; }
+.quality-theme-poor { --quality-color: #9d9d9d; }
+.quality-theme-common { --quality-color: #ffffff; }
+.quality-theme-uncommon { --quality-color: #1eff00; }
+.quality-theme-rare { --quality-color: #0070dd; }
+.quality-theme-epic { --quality-color: #a335ee; }
+.quality-theme-legendary { --quality-color: #ff8000; }
+.theme-quality-text { color: var(--quality-color, inherit) !important; }
+.theme-quality-border-left { border-left-color: var(--quality-color, currentColor) !important; }
+.theme-quality-node { background: var(--quality-color, currentColor) !important; box-shadow: 0 0 8px var(--quality-color, currentColor) !important; }
+.award-mvp-pve { --award-color: #ff8000; }
+.award-mvp-pvp { --award-color: #ff4400; }
+.award-pve-gold, .award-pvp-gold { --award-color: #ffd700; }
+.award-pve-silver, .award-pvp-silver { --award-color: #c0c0c0; }
+.award-pve-bronze, .award-pvp-bronze { --award-color: #cd7f32; }
+.award-vanguard { --award-color: #00ffcc; }
+.award-campaign { --award-color: #aaaaaa; }
+.theme-award-text { color: var(--award-color, inherit) !important; }
+.theme-award-node { background: var(--award-color, currentColor) !important; box-shadow: 0 0 8px var(--award-color, currentColor) !important; }
+.theme-award-pill { border-left: 2px solid var(--award-color, currentColor) !important; }
+.theme-award-icon { filter: drop-shadow(0 0 2px var(--award-color, currentColor)); }
+.accent-gold { --accent-color: #ffd100; }
+.accent-red { --accent-color: #ff4400; }
+.accent-purple { --accent-color: #a335ee; }
+.accent-cyan { --accent-color: #3FC7EB; }
+.accent-orange { --accent-color: #ff8000; }
+.theme-accent-text { color: var(--accent-color, inherit) !important; }
+.theme-accent-border { border-color: var(--accent-color, currentColor) !important; }
+.theme-accent-shadow { text-shadow: 0 0 10px var(--accent-color, currentColor); }
+.timeline-feed-item { cursor: pointer; }

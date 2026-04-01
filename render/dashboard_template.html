@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>&lt;Azeroths Most Wanted&gt; Guild Armory</title>
-    <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false};</script>
+        <script src="tooltip-config.js"></script>
     <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script data-goatcounter="https://nullbit5.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-    <style>
-        {{ css_content | safe }}
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="loading-overlay">
@@ -342,7 +340,7 @@
                             <span id="countdown-timer-text" class="countdown-timer">--d --h --m --s</span>
                         </div>
                     </div>
-                    <div id="recent-milestones-container" class="ribbon-left" style="display:none;">
+                    <div id="recent-milestones-container" class="ribbon-left" hidden>
                         <div class="milestone-banner">
                             <span class="milestone-icon">🌟</span>
                             <div id="milestone-text" class="milestone-text"></div>
@@ -362,7 +360,7 @@
                     </div>
                 </div>
 
-                <div id="guild-xp-container" class="weekly-challenges-container" style="display:none;">
+                <div id="guild-xp-container" class="weekly-challenges-container" hidden>
                     <h3 class="weekly-challenges-title">⚔️ Weekly Guild Challenges ⚔️</h3>
                     
                     <div class="weekly-challenges-flex-container">
@@ -437,7 +435,7 @@
                     </div>
                 </div>
 
-                <div id="weekly-mvps-container" class="weekly-mvps-wrapper" style="display:none;">
+                <div id="weekly-mvps-container" class="weekly-mvps-wrapper" hidden>
                     <h3 class="weekly-mvps-main-title">🏆 7-Day Guild MVPs 🏆</h3>
                     <div class="mvp-cards-container">
                         <div class="mvp-card mvp-card-pve">
@@ -452,12 +450,12 @@
                 </div>
                 
                 <div id="leaderboards-wrapper" class="leaderboards-wrapper">
-                    <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                    <div id="pve-leaderboard-container" class="leaderboard-panel" hidden>
                         <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pve" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
-                    <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                    <div id="pvp-leaderboard-container" class="leaderboard-panel" hidden>
                         <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pvp" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
@@ -530,7 +528,7 @@
                 </div>
             </div>
 
-            <div id="architecture-view" class="arch-view-wrapper" style="display: none;">
+            <div id="architecture-view" class="arch-view-wrapper" hidden>
                 <h2 class="view-main-title arch-title">System Architecture</h2>
                 
                 <p class="arch-subtitle">⚡ 100% FREE & SERVERLESS ⚡</p>
@@ -691,10 +689,36 @@
         {{ safe_heatmap_data | safe }}
     </script>
 
-    <script>
-        {{ js_content | safe }}
-    </script>
+    <script type="module" src="script.js"></script>
     
+
+    <template id="tpl-timeline-filters-default">
+        <div class="filter-group">
+            <button class="tl-btn" data-type="all">All</button>
+            <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+            <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
+            <button class="tl-btn" data-type="level_up">Levels</button>
+        </div>
+        <div class="filter-group">
+            <select id="tl-date-filter" class="tl-select">
+                <option value="12">Last 12 Hours</option>
+                <option value="24">Last 24 Hours</option>
+                <option value="48">Last 48 Hours</option>
+                <option value="all" selected>All Available</option>
+            </select>
+        </div>
+    </template>
+
+    <template id="tpl-timeline-filters-awards">
+        <div class="filter-group timeline-awards-filter-group">
+            <button class="tl-btn tl-btn-award tl-btn-award-all active" data-type="badge_all">All Awards</button>
+            <button class="tl-btn tl-btn-award tl-btn-award-ladder" data-type="badge_ladder">Medals</button>
+            <button class="tl-btn tl-btn-award tl-btn-award-mvp" data-type="badge_mvp">MVP</button>
+            <button class="tl-btn tl-btn-award tl-btn-award-vanguard" data-type="badge_vanguard">Vanguards</button>
+            <button class="tl-btn tl-btn-award tl-btn-award-campaign" data-type="badge_campaign">Campaigns</button>
+        </div>
+    </template>
+
     <button id="backToTopBtn" title="Return to Top">⬆️ Top</button>
 </body>
 </html>
