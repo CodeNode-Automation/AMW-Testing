@@ -28,267 +28,6 @@ const TBC_XP = {
     60: 494000, 61: 517000, 62: 550000, 63: 587000, 64: 632000, 65: 684000, 66: 745000, 67: 815000, 68: 895000, 69: 985000
 };
 
-const AWARD_THEME_MAP = {
-    "mvp_pve": "award-mvp-pve",
-    "mvp_pvp": "award-mvp-pvp",
-    "pve_gold": "award-pve-gold",
-    "pvp_gold": "award-pvp-gold",
-    "pve_silver": "award-pve-silver",
-    "pvp_silver": "award-pvp-silver",
-    "pve_bronze": "award-pve-bronze",
-    "pvp_bronze": "award-pvp-bronze",
-    "vanguard": "award-vanguard",
-    "campaign": "award-campaign"
-};
-
-function slugifyToken(value) {
-    return String(value || '')
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-}
-
-function setHidden(el, hidden = true) {
-    if (el) el.hidden = !!hidden;
-}
-
-function showElement(el) {
-    setHidden(el, false);
-}
-
-function clearNode(el) {
-    if (el) el.replaceChildren();
-}
-
-function createElement(tagName, className = '', text = '') {
-    const el = document.createElement(tagName);
-    if (className) el.className = className;
-    if (text !== '') el.textContent = text;
-    return el;
-}
-
-function appendChildren(parent, ...children) {
-    children.flat().forEach(child => {
-        if (child !== null && child !== undefined) parent.appendChild(child);
-    });
-    return parent;
-}
-
-function applyClassTheme(el, className) {
-    if (!el) return;
-    const slug = slugifyToken(className || 'unknown');
-    el.classList.add(`class-theme-${slug}`);
-}
-
-function applyQualityTheme(el, quality) {
-    if (!el) return;
-    const slug = slugifyToken(quality || 'common');
-    el.classList.add(`quality-theme-${slug}`);
-}
-
-function applyAwardTheme(el, awardKey) {
-    if (!el) return;
-    const cls = AWARD_THEME_MAP[awardKey] || `award-${slugifyToken(awardKey)}`;
-    el.classList.add(cls);
-}
-
-function applyRankTheme(el, rank) {
-    if (!el) return;
-    el.classList.add(`rank-theme-${rank}`);
-}
-
-function bindCharacterSelect(el, charName) {
-    if (!el || !charName) return;
-    el.classList.add('is-character-link');
-    el.setAttribute('data-char', charName);
-    el.addEventListener('click', () => selectCharacter(charName));
-}
-
-function createSpecInline(className, specName, variant = 'default') {
-    const fragment = document.createDocumentFragment();
-    const activeSpec = specName ? specName : '';
-    const iconUrl = activeSpec ? getSpecIcon(className, activeSpec) : null;
-    if (iconUrl) {
-        const iconClass = variant === 'tooltip' ? 'spec-icon-tt'
-            : variant === 'small' ? 'spec-icon-sm'
-            : variant === 'card' ? 'spec-icon-card'
-            : 'spec-badge-icon';
-        const img = createElement('img', iconClass);
-        img.src = iconUrl;
-        img.alt = `${activeSpec} icon`;
-        fragment.appendChild(img);
-    }
-    fragment.appendChild(document.createTextNode(activeSpec ? `${activeSpec} ${className}` : className));
-    return fragment;
-}
-
-function createTrendIndicator(value, baseClass = 'trend-indicator') {
-    const span = createElement('span', baseClass);
-    if (value > 0) {
-        span.classList.add(baseClass + '-positive');
-        span.textContent = `▲ ${value}`;
-    } else if (value < 0) {
-        span.classList.add(baseClass + '-negative');
-        span.textContent = `▼ ${Math.abs(value)}`;
-    } else {
-        span.classList.add(baseClass + '-neutral');
-        span.textContent = '-';
-    }
-    return span;
-}
-
-function createAwardDefinitionMap() {
-    return {
-        'mvp_pve': { label: 'PvE MVP', icon: '👑' },
-        'mvp_pvp': { label: 'PvP MVP', icon: '⚔️' },
-        'pve_gold': { label: 'PvE Gold', icon: '🥇' },
-        'pvp_gold': { label: 'PvP Gold', icon: '🥇' },
-        'pve_silver': { label: 'PvE Silver', icon: '🥈' },
-        'pvp_silver': { label: 'PvP Silver', icon: '🥈' },
-        'pve_bronze': { label: 'PvE Bronze', icon: '🥉' },
-        'pvp_bronze': { label: 'PvP Bronze', icon: '🥉' },
-        'vanguard': { label: 'Vanguards', icon: '🌟' },
-        'campaign': { label: 'Campaigns', icon: '🎖️' }
-    };
-}
-
-function restoreTimelineFilters(mode = 'default') {
-    const filtersContainer = document.querySelector('.timeline-filters');
-    if (!filtersContainer) return;
-
-    clearNode(filtersContainer);
-    const templateId = mode === 'awards' ? 'tpl-timeline-filters-awards' : 'tpl-timeline-filters-default';
-    const template = document.getElementById(templateId);
-    if (template) {
-        filtersContainer.appendChild(template.content.cloneNode(true));
-    }
-
-    document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
-        btn.addEventListener('click', event => {
-            document.querySelectorAll('.timeline-filters .tl-btn').forEach(item => item.classList.remove('active'));
-            const target = event.currentTarget;
-            target.classList.add('active');
-            tlTypeFilter = target.getAttribute('data-type');
-            applyTimelineFilters();
-        });
-    });
-
-    const dateSelectEl = document.getElementById('tl-date-filter');
-    if (dateSelectEl) {
-        dateSelectEl.addEventListener('change', event => {
-            tlDateFilter = event.target.value;
-            if (tlSpecificDate) {
-                tlSpecificDate = null;
-                document.querySelectorAll('.tt-heatmap').forEach(cell => cell.classList.remove('selected-date'));
-            }
-            applyTimelineFilters();
-        });
-    }
-}
-
-function setNavbarSubpageState(navbar, isSubpage) {
-    if (!navbar) return;
-    navbar.classList.toggle('navbar-subpage', !!isSubpage);
-    navbar.classList.toggle('navbar-home', !isSubpage);
-}
-
-function setDisplayVariant(el, variant = '') {
-    if (!el) return;
-    el.classList.remove('display-block', 'display-flex', 'display-inline-block');
-    if (!variant || variant === 'none') {
-        el.hidden = true;
-        return;
-    }
-    el.hidden = false;
-    el.classList.add(`display-${slugifyToken(variant)}`);
-}
-
-function isElementVisible(el) {
-    return !!el && !el.hidden;
-}
-
-function setChartPointerState(event, isClickable) {
-    const target = event && event.native ? event.native.target : null;
-    if (target) target.classList.toggle('chart-clickable', !!isClickable);
-}
-
-function clearAccentThemes(el) {
-    if (!el) return;
-    [...el.classList].forEach(cls => {
-        if (cls.startsWith('accent-')) el.classList.remove(cls);
-    });
-}
-
-function applyAccentTheme(el, themeKey) {
-    if (!el) return;
-    clearAccentThemes(el);
-    el.classList.add(`accent-${slugifyToken(themeKey || 'default')}`);
-}
-
-function applyMonumentHighlightTheme(el, colorValue) {
-    if (!el) return;
-    const normalized = String(colorValue || '').toLowerCase();
-    if (normalized === '#ffd100') applyAccentTheme(el, 'gold');
-    else if (normalized === '#ff4400') applyAccentTheme(el, 'red');
-    else if (normalized === '#a335ee') applyAccentTheme(el, 'purple');
-    else if (normalized === '#3fc7eb') applyAccentTheme(el, 'cyan');
-    else applyAccentTheme(el, 'gold');
-}
-
-function createSvgProgressBar(primaryPercent, secondaryPercent = 0) {
-    const svg = createElement('svg', 'xp-bar-svg');
-    svg.setAttribute('viewBox', '0 0 100 10');
-    svg.setAttribute('preserveAspectRatio', 'none');
-
-    const restedRect = createElement('rect', 'xp-bar-rested-svg');
-    restedRect.setAttribute('x', '0');
-    restedRect.setAttribute('y', '0');
-    restedRect.setAttribute('height', '10');
-    restedRect.setAttribute('width', String(Math.max(0, Math.min(100, secondaryPercent))));
-
-    const earnedRect = createElement('rect', 'xp-bar-earned-svg');
-    earnedRect.setAttribute('x', '0');
-    earnedRect.setAttribute('y', '0');
-    earnedRect.setAttribute('height', '10');
-    earnedRect.setAttribute('width', String(Math.max(0, Math.min(100, primaryPercent))));
-
-    appendChildren(svg, restedRect, earnedRect);
-    return svg;
-}
-
-function createProgressFill(percent, type) {
-    const svg = createElement('svg', `challenge-fill-svg challenge-fill-svg-${slugifyToken(type)}`);
-    svg.setAttribute('viewBox', '0 0 100 10');
-    svg.setAttribute('preserveAspectRatio', 'none');
-    svg.setAttribute('data-progress-tier', percent >= 100 ? 'max' : percent >= 75 ? 'high' : percent >= 30 ? 'mid' : 'low');
-
-    const rect = createElement('rect', 'challenge-fill-rect');
-    rect.setAttribute('x', '0');
-    rect.setAttribute('y', '0');
-    rect.setAttribute('height', '10');
-    rect.setAttribute('width', String(Math.max(0, Math.min(100, percent))));
-
-    svg.appendChild(rect);
-    return svg;
-}
-
-function createInlineTooltipHost(trigger, tooltipEl) {
-    if (!trigger || !tooltipEl) return;
-    trigger.classList.add('tt-anchor');
-    const existing = trigger.querySelector('.tt-inline-host');
-    if (existing) existing.remove();
-    const host = createElement('div', 'tt-inline-host');
-    host.appendChild(tooltipEl);
-    trigger.appendChild(host);
-}
-
-function removeInlineTooltipHost(trigger) {
-    if (!trigger) return;
-    const existing = trigger.querySelector('.tt-inline-host');
-    if (existing) existing.remove();
-}
-
 function killIntro() {
     sessionStorage.setItem('amwIntroPlayed', 'true');
     const intro = document.getElementById('intro-container');
@@ -513,81 +252,65 @@ window.addEventListener('DOMContentLoaded', async () => {
     const heroSearchInput = document.getElementById('heroCharSearch');
     const heroSearchAutoComplete = document.getElementById('hero-search-autocomplete');
     
-    
-    function buildAutocompleteResults(query, targetContainer, limit, includeEmptyState) {
-        if (!targetContainer) return;
-        const results = rosterData
-            .filter(char => char.profile && char.profile.name && char.profile.name.toLowerCase().includes(query))
-            .slice(0, limit);
-
-        clearNode(targetContainer);
-
-        if (results.length === 0) {
-            if (includeEmptyState) {
-                const emptyTemplate = document.getElementById('tpl-ac-empty-state');
-                if (emptyTemplate) targetContainer.appendChild(emptyTemplate.content.cloneNode(true));
-                targetContainer.classList.add('show');
-            } else {
-                targetContainer.classList.remove('show');
-            }
-            return;
-        }
-
-        const template = document.getElementById('tpl-hero-search-result');
-        results.forEach(char => {
-            if (!template) return;
-            const clone = template.content.cloneNode(true);
-            const cClass = getCharClass(char);
-            const itemDiv = clone.querySelector('.hero-ac-item');
-            const img = clone.querySelector('.hero-ac-icon');
-            const nameSpan = clone.querySelector('.hero-ac-name');
-            const metaSpan = clone.querySelector('.ac-meta');
-
-            applyClassTheme(itemDiv, cClass);
-            bindCharacterSelect(itemDiv, char.profile.name.toLowerCase());
-
-            img.src = char.render_url || getClassIcon(cClass);
-            img.alt = char.profile.name;
-
-            nameSpan.textContent = char.profile.name;
-            metaSpan.textContent = `Level ${char.profile.level} ${cClass}`;
-
-            targetContainer.appendChild(clone);
-        });
-
-        targetContainer.classList.add('show');
-    }
-
     if (heroSearchInput) {
-        heroSearchInput.addEventListener('input', event => {
-            const query = event.target.value.toLowerCase().trim();
-            if (query === '') {
+        heroSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
+            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
+            if (results.length > 0) {
+                heroSearchAutoComplete.textContent = '';
+                const template = document.getElementById('tpl-hero-search-result');
+                results.forEach(c => {
+                    const cClass = getCharClass(c);
+                    const cHex = CLASS_COLORS[cClass] || '#fff';
+                    const clone = template.content.cloneNode(true);
+                    const itemDiv = clone.querySelector('.hero-ac-item');
+                    
+                    itemDiv.style.borderLeftColor = cHex;
+                    itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
+                    
+                    const img = clone.querySelector('.hero-ac-icon');
+                    img.src = c.render_url || getClassIcon(cClass);
+                    img.style.borderColor = cHex;
+                    
+                    const nameSpan = clone.querySelector('.hero-ac-name');
+                    nameSpan.textContent = c.profile.name;
+                    nameSpan.style.color = cHex;
+                    
+                    const metaSpan = clone.querySelector('.ac-meta');
+                    metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
+                    
+                    heroSearchAutoComplete.appendChild(clone);
+                });
+                heroSearchAutoComplete.classList.add('show');
+            } else {
                 heroSearchAutoComplete.classList.remove('show');
-                return;
             }
-            buildAutocompleteResults(query, heroSearchAutoComplete, 6, false);
         });
-
-        heroSearchInput.addEventListener('keypress', event => {
-            if (event.key !== 'Enter') return;
-            const query = event.target.value.toLowerCase().trim();
-            const result = rosterData.find(char => char.profile && char.profile.name && char.profile.name.toLowerCase().includes(query));
-            if (result) window.location.hash = result.profile.name.toLowerCase();
+        heroSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.toLowerCase().trim();
+                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
+            }
         });
     }
 
+    // NEW: Force mobile keyboards to open when tapping the collapsed search icon
     const searchBox = document.querySelector('.search-box');
     if (searchBox && searchInput) {
-        searchBox.addEventListener('click', () => searchInput.focus());
+        searchBox.addEventListener('click', () => {
+            searchInput.focus();
+        });
     }
-
+    
     const customSelect = document.getElementById('customCharSelect');
     const customOptions = document.getElementById('customCharOptions');
     const selectValueText = customSelect ? customSelect.querySelector('.selected-value') : null;
 
     if (customSelect) {
-        customSelect.addEventListener('click', event => {
-            event.stopPropagation();
+        customSelect.addEventListener('click', (e) => {
+            e.stopPropagation();
             customOptions.classList.toggle('show');
             customSelect.classList.toggle('active');
             if (searchAutoComplete) searchAutoComplete.classList.remove('show');
@@ -596,104 +319,132 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     document.querySelectorAll('.custom-option').forEach(opt => {
         opt.addEventListener('click', () => {
-            window.location.hash = opt.getAttribute('data-value');
+            const val = opt.getAttribute('data-value');
+            window.location.hash = val;
         });
     });
 
     if (searchInput) {
-        searchInput.addEventListener('input', event => {
-            const query = event.target.value.toLowerCase().trim();
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
             if (query === '') {
                 searchAutoComplete.classList.remove('show');
                 return;
             }
-            buildAutocompleteResults(query, searchAutoComplete, 8, true);
+            
+            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 8);
+            
+            if (results.length > 0) {
+                searchAutoComplete.textContent = '';
+                const template = document.getElementById('tpl-hero-search-result');
+                if (template) {
+                    results.forEach(c => {
+                        const cClass = getCharClass(c);
+                        const cHex = CLASS_COLORS[cClass] || '#fff';
+                        const clone = template.content.cloneNode(true);
+                        
+                        const itemDiv = clone.querySelector('.hero-ac-item');
+                        itemDiv.style.borderLeftColor = cHex;
+                        itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
+                        
+                        const img = clone.querySelector('.hero-ac-icon');
+                        img.src = c.render_url || getClassIcon(cClass);
+                        img.style.borderColor = cHex;
+                        img.style.objectFit = 'cover';
+                        
+                        const nameSpan = clone.querySelector('.hero-ac-name');
+                        nameSpan.textContent = c.profile.name;
+                        nameSpan.style.color = cHex;
+                        
+                        const metaSpan = clone.querySelector('.ac-meta');
+                        metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
+                        
+                        searchAutoComplete.appendChild(clone);
+                    });
+                }
+                searchAutoComplete.classList.add('show');
+            } else {
+                searchAutoComplete.textContent = '';
+                const emptyTemplate = document.getElementById('tpl-ac-empty-state');
+                if (emptyTemplate) {
+                    searchAutoComplete.appendChild(emptyTemplate.content.cloneNode(true));
+                }
+                searchAutoComplete.classList.add('show');
+            }
         });
 
-        searchInput.addEventListener('keypress', event => {
-            if (event.key !== 'Enter') return;
-            const query = event.target.value.toLowerCase().trim();
-            const result = rosterData.find(char => char.profile && char.profile.name && char.profile.name.toLowerCase().includes(query));
-            if (result) window.location.hash = result.profile.name.toLowerCase();
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.toLowerCase().trim();
+                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                if (results.length > 0) {
+                    window.location.hash = results[0].profile.name.toLowerCase();
+                }
+            }
         });
     }
 
-    document.addEventListener('click', event => {
+    document.addEventListener('click', (e) => {
         if (customOptions) customOptions.classList.remove('show');
         if (customSelect) customSelect.classList.remove('active');
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
 
-        const button = event.target && event.target.closest ? event.target.closest('.toggle-stats-btn') : null;
-        if (!button) return;
-
-        const card = button.closest('.info-box');
-        if (!card) return;
-
-        const pageOne = card.querySelector('.stat-page-1');
-        const pageTwo = card.querySelector('.stat-page-2');
-        const title = card.querySelector('.stat-card-title');
-        if (!pageOne || !pageTwo || !title) return;
-
-        const showingGear = !pageTwo.hidden;
-        setHidden(pageOne, !showingGear);
-        setHidden(pageTwo, showingGear);
-        title.textContent = showingGear ? 'Combat Stats' : 'Weapon & Gear';
-        button.textContent = showingGear ? '▶' : '◀';
+        if (e.target && e.target.classList && e.target.classList.contains('toggle-stats-btn')) {
+            const btn = e.target;
+            const p = btn.closest('.info-box');
+            if (p) {
+                const p1 = p.querySelector('.stat-page-1');
+                const p2 = p.querySelector('.stat-page-2');
+                const title = p.querySelector('.stat-card-title');
+                if (p1 && p2 && title) {
+                    if (p1.style.display === 'none') {
+                        p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; btn.innerText = '▶';
+                    } else {
+                        p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; btn.innerText = '◀';
+                    }
+                }
+            }
+        }
     });
-
-    function updateDropdownLabel() {
+    
+    function updateDropdownLabel(ignoreVal) {
         if (!selectValueText) return;
-
-        const hash = window.location.hash.substring(1);
-        selectValueText.className = 'selected-value';
-        selectValueText.removeAttribute('data-label-theme');
-
+        
+        // Smarter logic: Read the actual active URL hash to determine the label
+        const hash = window.location.hash.substring(1); 
+        
         if (hash === '') {
-            selectValueText.textContent = 'Select View...';
-            return;
+            selectValueText.innerHTML = "Select View...";
+        } else if (hash === 'all' || hash === 'total') {
+            selectValueText.innerHTML = "🌍 Entire Guild";
+        } else if (hash === 'active') {
+            selectValueText.innerHTML = "🔥 Active Roster";
+        } else if (hash === 'raidready') {
+            selectValueText.innerHTML = "⚔️ Raid Ready";
+        } else if (hash === 'analytics') {
+            selectValueText.innerHTML = "📊 Analytics";
+        } else if (hash === 'architecture') {
+            selectValueText.innerHTML = "⚙️ Architecture";
+        } else if (hash === 'badges') {
+            selectValueText.innerHTML = "🌟 Hall of Heroes";
+        } else if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
+            selectValueText.innerHTML = "⚡ Filter Active";
+        } else {
+            // It's a specific character
+            const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === hash);
+            if (char) {
+                const cClass = getCharClass(char);
+                const cHex = CLASS_COLORS[cClass] || '#fff';
+                selectValueText.textContent = char.profile.name;
+                selectValueText.className = 'selected-value char-selected-text';
+                selectValueText.style.color = cHex;
+            } else {
+                selectValueText.innerHTML = "Select View...";
+            }
         }
-        if (hash === 'all' || hash === 'total') {
-            selectValueText.textContent = '🌍 Entire Guild';
-            return;
-        }
-        if (hash === 'active') {
-            selectValueText.textContent = '🔥 Active Roster';
-            return;
-        }
-        if (hash === 'raidready') {
-            selectValueText.textContent = '⚔️ Raid Ready';
-            return;
-        }
-        if (hash === 'analytics') {
-            selectValueText.textContent = '📊 Analytics';
-            return;
-        }
-        if (hash === 'architecture') {
-            selectValueText.textContent = '⚙️ Architecture';
-            return;
-        }
-        if (hash === 'badges') {
-            selectValueText.textContent = '🌟 Hall of Heroes';
-            return;
-        }
-        if (hash.startsWith('class-') || hash.startsWith('spec-') || hash.startsWith('filter-')) {
-            selectValueText.textContent = '⚡ Filter Active';
-            return;
-        }
-
-        const char = rosterData.find(item => item.profile && item.profile.name && item.profile.name.toLowerCase() === hash);
-        if (!char) {
-            selectValueText.textContent = 'Select View...';
-            return;
-        }
-
-        const cClass = getCharClass(char);
-        selectValueText.textContent = char.profile.name;
-        selectValueText.classList.add('char-selected-text', `class-theme-${slugifyToken(cClass)}`);
     }
 
     const heatmapGrid = document.getElementById('heatmap-grid');
-
     if (heatmapGrid && heatmapData && heatmapData.length > 0) {
 
         // --- NEW: Chart.js Line Graph ---
@@ -831,148 +582,56 @@ window.addEventListener('DOMContentLoaded', async () => {
             
         });
 
-        
         document.querySelectorAll('.tt-heatmap').forEach(cell => {
-            cell.addEventListener('click', function () {
+            cell.addEventListener('click', function() {
                 const rawDate = this.getAttribute('data-rawdate');
                 if (tlSpecificDate === rawDate) {
                     tlSpecificDate = null;
                     this.classList.remove('selected-date');
                 } else {
                     tlSpecificDate = rawDate;
-                    document.querySelectorAll('.tt-heatmap').forEach(item => item.classList.remove('selected-date'));
+                    document.querySelectorAll('.tt-heatmap').forEach(c => c.classList.remove('selected-date'));
                     this.classList.add('selected-date');
                 }
                 applyTimelineFilters();
             });
 
-            cell.addEventListener('mouseenter', () => {
+            cell.addEventListener('mousemove', e => {
                 const count = cell.getAttribute('data-count');
                 const dateStr = cell.getAttribute('data-date');
+                const color = count > 0 ? '#ffd100' : '#888';
+                
+                tooltip.textContent = '';
                 const tooltipTemplate = document.getElementById('tpl-heatmap-tooltip');
-                if (!tooltipTemplate) return;
+                if (tooltipTemplate) {
+                    const clone = tooltipTemplate.content.cloneNode(true);
+                    
+                    const activityDiv = clone.querySelector('.tooltip-activity');
+                    activityDiv.textContent = `${count} Activities`;
+                    activityDiv.style.color = color;
+                    
+                    const dateDiv = clone.querySelector('.tooltip-date');
+                    dateDiv.textContent = dateStr;
+                    
+                    tooltip.appendChild(clone);
+                }
 
-                const tooltipRoot = createElement('div', 'custom-tooltip visible');
-                tooltipRoot.classList.add(count > 0 ? 'heatmap-has-activity' : 'heatmap-no-activity');
-                const clone = tooltipTemplate.content.cloneNode(true);
-                clone.querySelector('.tooltip-activity').textContent = `${count} Activities`;
-                clone.querySelector('.tooltip-date').textContent = dateStr;
-                tooltipRoot.appendChild(clone);
-                createInlineTooltipHost(cell, tooltipRoot);
+                tooltip.style.borderLeftColor = color;
+                
+                let x = e.clientX + 15;
+                let y = e.clientY + 15;
+                
+                if (x + 200 > window.innerWidth) {
+                    x = window.innerWidth - 210;
+                }
+                
+                tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+                tooltip.classList.add('visible');
             });
-
             cell.addEventListener('mouseleave', () => {
-                removeInlineTooltipHost(cell);
+                tooltip.classList.remove('visible');
             });
         });
-
-    }
-
-    
-    function createLeaderboardPodium(char, index, type) {
-        const p = char.profile || {};
-        const cClass = getCharClass(char);
-        const portraitURL = char.render_url || getClassIcon(cClass);
-        const activeSpec = p.active_spec ? p.active_spec : '';
-        const trend = type === 'pve' ? (p.trend_pve || p.trend_ilvl || 0) : (p.trend_pvp || p.trend_hks || 0);
-        const rank = index + 1;
-
-        const block = createElement('div', `podium-block tt-char podium-step-${rank}`);
-        bindCharacterSelect(block, (p.name || '').toLowerCase());
-        applyClassTheme(block, cClass);
-        applyRankTheme(block, rank);
-
-        if (rank === 1) {
-            block.appendChild(createElement('div', 'podium-crown', '👑'));
-        }
-
-        const avatar = createElement('img', 'podium-avatar');
-        avatar.src = portraitURL;
-        avatar.alt = p.name || 'Character portrait';
-        avatar.classList.add('theme-border');
-
-        const rankDiv = createElement('div', 'podium-rank', `#${rank}`);
-        rankDiv.classList.add('rank-text');
-
-        const nameDiv = createElement('div', 'podium-name theme-text', p.name || 'Unknown');
-
-        const pill = createElement('div', 'podium-pill');
-        const statDiv = createElement('div', 'podium-stat-val');
-        statDiv.classList.add(type === 'pve' ? 'text-ilvl' : 'text-hk');
-        statDiv.appendChild(document.createTextNode(type === 'pve' ? String(p.equipped_item_level || 0) : (p.honorable_kills || 0).toLocaleString()));
-        statDiv.appendChild(document.createTextNode(' '));
-        statDiv.appendChild(createElement('span', 'podium-stat-lbl', type === 'pve' ? 'iLvl' : 'HKs'));
-
-        const trendWrap = createElement('div', 'podium-trend-container');
-        trendWrap.appendChild(createTrendIndicator(trend, 'podium-trend'));
-
-        appendChildren(pill, statDiv, trendWrap);
-        appendChildren(block, avatar, rankDiv, nameDiv, pill);
-        return block;
-    }
-
-    function createLeaderboardRow(char, index, type) {
-        const p = char.profile || {};
-        const cClass = getCharClass(char);
-        const portraitURL = char.render_url || getClassIcon(cClass);
-        const activeSpec = p.active_spec ? p.active_spec : '';
-        const trend = type === 'pve' ? (p.trend_pve || p.trend_ilvl || 0) : (p.trend_pvp || p.trend_hks || 0);
-
-        const row = createElement('div', 'pvp-row tt-char leaderboard-row');
-        bindCharacterSelect(row, (p.name || '').toLowerCase());
-        applyClassTheme(row, cClass);
-        row.classList.add('theme-border-left');
-
-        const rankDiv = createElement('div', 'lb-rank', `#${index + 1}`);
-        const portrait = createElement('img', 'lb-portrait');
-        portrait.src = portraitURL;
-        portrait.alt = p.name || 'Character portrait';
-        portrait.classList.add('theme-border');
-
-        const info = createElement('div', 'lb-info');
-        const name = createElement('span', 'lb-name theme-text', p.name || 'Unknown');
-        const spec = createElement('span', 'lb-spec');
-        spec.appendChild(createSpecInline(cClass, activeSpec, 'small'));
-
-        const score = createElement('div', `lb-score ${type === 'pve' ? 'pve-score' : 'pvp-score'}`);
-        score.appendChild(document.createTextNode(type === 'pve' ? String(p.equipped_item_level || 0) : (p.honorable_kills || 0).toLocaleString()));
-        score.appendChild(document.createTextNode(' '));
-        score.appendChild(createElement('span', 'lb-score-label', type === 'pve' ? 'iLvl' : 'HKs'));
-        score.appendChild(createTrendIndicator(trend));
-
-        appendChildren(info, name, spec);
-        appendChildren(row, rankDiv, portrait, info, score);
-        return row;
-    }
-
-    function renderHomeLeaderboard(containerEl, wrapperEl, characters, type) {
-        if (!containerEl || !wrapperEl || characters.length === 0) return;
-
-        showElement(wrapperEl);
-        clearNode(containerEl);
-
-        const podiumWrap = createElement('div', 'lb-podium-wrap');
-        const listWrap = createElement('div', 'lb-list-wrap collapsed-list');
-
-        characters.forEach((char, index) => {
-            if (index < 3) {
-                podiumWrap.appendChild(createLeaderboardPodium(char, index, type));
-            } else {
-                listWrap.appendChild(createLeaderboardRow(char, index, type));
-            }
-        });
-
-        containerEl.appendChild(podiumWrap);
-        containerEl.appendChild(listWrap);
-
-        if (characters.length > 5) {
-            const btn = createElement('button', 'expand-lb-btn', 'Show Top 25 ▼');
-            btn.addEventListener('click', function () {
-                listWrap.classList.toggle('collapsed-list');
-                btn.textContent = btn.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
-            });
-            containerEl.appendChild(btn);
-        }
     }
 
     const pveContainer = document.getElementById('pve-leaderboard');
@@ -983,7 +642,74 @@ window.addEventListener('DOMContentLoaded', async () => {
         .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0))
         .slice(0, 25);
 
-    renderHomeLeaderboard(pveContainer, pveWrapper, topPve, 'pve');
+    if (topPve.length > 0 && pveContainer) {
+        pveWrapper.style.display = 'block';
+        let pveHTML = '<div class="lb-podium-wrap">';
+        let pveListHTML = '<div class="lb-list-wrap collapsed-list">';
+        topPve.forEach((char, index) => {
+            const p = char.profile;
+            const cClass = getCharClass(char);
+            const cHex = CLASS_COLORS[cClass] || '#fff';
+            const activeSpec = p.active_spec ? p.active_spec : '';
+            const specIconUrl = getSpecIcon(cClass, activeSpec);
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
+            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+            const portraitURL = char.render_url || getClassIcon(cClass);
+            const trend = p.trend_pve || p.trend_ilvl || 0; 
+            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
+            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
+
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span class="podium-trend-neutral">-</span>';
+                if (trend > 0) podiumTrend = `<span class="podium-trend-positive">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span class="podium-trend-negative">▼ ${Math.abs(trend)}</span>`;
+                
+                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
+
+                pveHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    ${crownHtml}
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div class="podium-pill">
+                        <div style="color: #ff8000; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; margin-bottom: 2px;">${p.equipped_item_level || 0} <span style="font-size:9px; color:#888; text-transform:uppercase;">iLvl</span></div>
+                        <div style="text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    </div>
+                </div>`;
+            } else {
+                pveListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pve-score">
+                        ${p.equipped_item_level || 0} <span class="lb-score-label">iLvl</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
+        });
+        pveContainer.innerHTML = pveHTML + '</div>' + pveListHTML + '</div>';
+        if (topPve.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pveContainer.appendChild(btn);
+        }
+    }
 
     const btnViewPve = document.getElementById('btn-view-pve');
     if (btnViewPve) {
@@ -1005,12 +731,79 @@ window.addEventListener('DOMContentLoaded', async () => {
     const topPvp = rosterData
         .filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
         .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0))
-        .slice(0, 25);
+        .slice(0, 25); // Changed to Top 25
 
-    renderHomeLeaderboard(pvpContainer, pvpWrapper, topPvp, 'pvp');
+    if (topPvp.length > 0 && pvpContainer) {
+        pvpWrapper.style.display = 'block';
+        let pvpHTML = '<div class="lb-podium-wrap">';
+        let pvpListHTML = '<div class="lb-list-wrap collapsed-list">';
+        topPvp.forEach((char, index) => {
+            const p = char.profile;
+            const cClass = getCharClass(char);
+            const cHex = CLASS_COLORS[cClass] || '#fff';
+            const activeSpec = p.active_spec ? p.active_spec : '';
+            const specIconUrl = getSpecIcon(cClass, activeSpec);
+            const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-sm">` : '';
+            const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+            const hkCount = (p.honorable_kills || 0).toLocaleString();
+            const portraitURL = char.render_url || getClassIcon(cClass);
+            const trend = p.trend_pvp || 0; 
+            let trendHTML = '<span class="trend-indicator trend-neutral">-</span>';
+            if (trend > 0) trendHTML = `<span class="trend-indicator trend-positive">▲ ${trend}</span>`;
+            else if (trend < 0) trendHTML = `<span class="trend-indicator trend-negative">▼ ${Math.abs(trend)}</span>`;
 
+            if (index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                let podiumTrend = '<span class="podium-trend-neutral">-</span>';
+                if (trend > 0) podiumTrend = `<span class="podium-trend-positive">▲ ${trend}</span>`;
+                else if (trend < 0) podiumTrend = `<span class="podium-trend-negative">▼ ${Math.abs(trend)}</span>`;
+
+                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
+
+                pvpHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-top: 3px solid ${cHex};">
+                    ${crownHtml}
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                    <div class="podium-pill">
+                        <div style="color: #ff4400; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; margin-bottom: 2px;">${hkCount} <span style="font-size:9px; color:#888; text-transform:uppercase;">HKs</span></div>
+                        <div style="text-align: center; font-size: 12px; font-weight: bold;">${podiumTrend}</div>
+                    </div>
+                </div>`;
+            } else {
+                pvpListHTML += `
+                <div class="pvp-row tt-char leaderboard-row" data-char="${(p.name || '').toLowerCase()}" onclick="selectCharacter('${(p.name || '').toLowerCase()}')" style="border-left-color: ${cHex};">
+                    <div class="lb-rank" style="color: #777; font-size: 15px;">#${index + 1}</div>
+                    <img src="${portraitURL}" class="lb-portrait" style="border-color: ${cHex};">
+                    <div class="lb-info">
+                        <span class="lb-name" style="color: ${cHex};">${p.name}</span>
+                        <span class="lb-spec">${specIconHtml}${displaySpecClass}</span>
+                    </div>
+                    <div class="lb-score pvp-score">
+                        ${hkCount} <span class="lb-score-label">HKs</span>
+                        ${trendHTML}
+                    </div>
+                </div>`;
+            }
+        });
+        pvpContainer.innerHTML = pvpHTML + '</div>' + pvpListHTML + '</div>';
+        if (topPvp.length > 5) {
+            const btn = document.createElement('button');
+            btn.className = 'expand-lb-btn';
+            btn.textContent = 'Show Top 25 ▼';
+            btn.addEventListener('click', function() {
+                const listWrap = this.previousElementSibling;
+                if (listWrap) listWrap.classList.toggle('collapsed-list');
+                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+            });
+            pvpContainer.appendChild(btn);
+        }
+    }
+    
     setupTooltips();
-
 
     // --- Helper: Get Detailed Badge History from Timeline ---
     function getDetailedBadgeTooltip(charName, badgeTypes, baseTitle, actualCount) {
@@ -1073,21 +866,24 @@ window.addEventListener('DOMContentLoaded', async () => {
         return tooltip.replace(/"/g, '&quot;');
     }
 
-    
     function renderFullCard(charName) {
         const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
-        if (!char) return null;
-
+        if (!char) return "";
+        
         const p = char.profile || {};
         const eq = char.equipped || {};
         const st = char.stats || {};
-
+        
         const cClass = getCharClass(char);
-        const factionType = p.faction && p.faction.type ? p.faction.type : 'ALLIANCE';
-        const factionCls = factionType === 'HORDE' ? 'faction-horde' : 'faction-alliance';
+        const cHex = CLASS_COLORS[cClass] || "#ffd100";
+        const factionType = p.faction && p.faction.type ? p.faction.type : "ALLIANCE";
+        const factionCls = factionType === "HORDE" ? "faction-horde" : "faction-alliance";
+        const powerCol = cClass === "Warrior" ? "#e74c3c" : "#3498db";
         const powerName = getPowerName(cClass);
-
+        
         const activeSpec = p.active_spec ? p.active_spec : '';
+        const specIconUrl = getSpecIcon(cClass, activeSpec);
+        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-card">` : '';
         const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
         const health = st.health || 0;
@@ -1097,70 +893,1165 @@ window.addEventListener('DOMContentLoaded', async () => {
         const staVal = st.stamina_effective || ((st.stamina && st.stamina.effective) || 0);
         const intVal = st.intellect_effective || ((st.intellect && st.intellect.effective) || 0);
         const spiVal = st.spirit_effective || ((st.spirit && st.spirit.effective) || 0);
+        const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
+        
+        // Safely extract stats supporting both the old nested JSON and the new flat Turso schema
+        const armor = st.armor_effective || ((st.armor && st.armor.effective) || 0);
+        const defense = st.defense_effective || ((st.defense && st.defense.effective) || 0);
+        const dodge = st.dodge || ((st.dodge && st.dodge.value) || 0);
+        const parry = st.parry || 0;
+        const block = st.block || 0;
+        
+        const ap = st.attack_power || 0;
+        const meleeCrit = st.melee_crit_value || ((st.melee_crit && st.melee_crit.value) || 0);
+        const meleeHaste = st.melee_haste_value || 0;
+        
+        const rangedCrit = st.ranged_crit || 0;
+        const rangedHaste = st.ranged_haste || 0;
+        
+        const spellPower = st.spell_power || 0;
+        const spellCrit = st.spell_crit_value || ((st.spell_crit && st.spell_crit.value) || 0);
+        const spellHaste = st.spell_haste || 0;
+        const spellPen = st.spell_penetration || 0;
+        
+        const manaRegen = st.mana_regen || 0;
+        const mp5 = st.mana_regen_combat || 0;
 
-    function setupTooltips() {
-        const ttChars = document.querySelectorAll('.tt-char:not(.tt-bound)');
-        ttChars.forEach(trigger => {
+        // Determine logical roles to prevent stat bloat
+        const isTank = ["Protection", "Blood"].includes(activeSpec) || (cClass === "Druid" && activeSpec === "Feral Combat") || cClass === "Warrior";
+        const isHunter = cClass === "Hunter";
+        const isMelee = ["Rogue", "Warrior", "Death Knight"].includes(cClass) || ["Retribution", "Enhancement", "Feral Combat"].includes(activeSpec);
+        const isCaster = ["Mage", "Warlock", "Priest"].includes(cClass) || ["Balance", "Elemental", "Restoration", "Holy"].includes(activeSpec) || (cClass === "Paladin" && ["Holy", "Protection"].includes(activeSpec)) || (cClass === "Shaman" && activeSpec !== "Enhancement") || (cClass === "Druid" && activeSpec !== "Feral Combat");
+
+        let advancedStatsHtml = `<div class="stat-divider"></div>`;
+        advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Armor</span><span class="stat-val val-wht">${armor.toLocaleString()}</span></div>`;
+        
+        // 1. Defenses (Gated to Tanks or High-Defense Off-Tanks)
+        if (isTank || defense > 350) {
+            if (defense > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧱 Defense</span><span class="stat-val val-wht">${defense}</span></div>`;
+            if (dodge > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🤸 Dodge</span><span class="stat-val val-wht">${dodge.toFixed(2)}%</span></div>`;
+            if (parry > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Parry</span><span class="stat-val val-wht">${parry.toFixed(2)}%</span></div>`;
+            if (block > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Block</span><span class="stat-val val-wht">${block.toFixed(2)}%</span></div>`;
+        }
+
+        // 2. Physical Offense (Melee & Ranged)
+        if (isMelee || isHunter) {
+            if (ap > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Attack Power</span><span class="stat-val val-org">${ap}</span></div>`;
+        }
+        if (isMelee) {
+            if (meleeCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🩸 Melee Crit</span><span class="stat-val val-red">${meleeCrit.toFixed(2)}%</span></div>`;
+            if (meleeHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Melee Haste</span><span class="stat-val val-red">${meleeHaste.toFixed(2)}%</span></div>`;
+        }
+        if (isHunter) {
+            if (rangedCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Ranged Crit</span><span class="stat-val val-grn">${rangedCrit.toFixed(2)}%</span></div>`;
+            if (rangedHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Ranged Haste</span><span class="stat-val val-grn">${rangedHaste.toFixed(2)}%</span></div>`;
+        }
+
+        // 3. Spellcasting & Healing
+        if (isCaster) {
+            if (spellPower > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spell Power</span><span class="stat-val val-blu">${spellPower}</span></div>`;
+            if (spellCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🔥 Spell Crit</span><span class="stat-val val-ylw">${spellCrit.toFixed(2)}%</span></div>`;
+            if (spellHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Spell Haste</span><span class="stat-val val-ylw">${spellHaste.toFixed(2)}%</span></div>`;
+            if (spellPen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🌀 Spell Pen</span><span class="stat-val val-blu">${spellPen}</span></div>`;
+            if (mp5 > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana/5 (Combat)</span><span class="stat-val val-grn">${Math.round(mp5)}</span></div>`;
+            else if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${Math.round(manaRegen)}</span></div>`;
+        }
+
+        const hks = p.honorable_kills || 0;
+        const hkBadge = hks > 0 ? `<span class="badge hk-card-badge">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
+        
+        // --- NEW: Page 2 Weapon & Gear Breakdown ---
+        const mhMin = st.main_hand_damage_min || st.main_hand_min || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.min) || 0);
+        const mhMax = st.main_hand_damage_max || st.main_hand_max || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.max) || 0);
+        const mhSpeed = st.main_hand_speed || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.speed) || 0);
+        const mhDps = st.main_hand_dps || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.dps) || 0);
+
+        const ohMin = st.off_hand_damage_min || st.off_hand_min || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.min) || 0);
+        const ohMax = st.off_hand_damage_max || st.off_hand_max || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.max) || 0);
+        const ohSpeed = st.off_hand_speed || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.speed) || 0);
+        const ohDps = st.off_hand_dps || ((st.off_hand_weapon_damage && st.off_hand_weapon_damage.dps) || 0);
+
+        const strBase = st.strength_base || ((st.strength && st.strength.base) || 0);
+        const agiBase = st.agility_base || ((st.agility && st.agility.base) || 0);
+        const staBase = st.stamina_base || ((st.stamina && st.stamina.base) || 0);
+        const intBase = st.intellect_base || ((st.intellect && st.intellect.base) || 0);
+        const spiBase = st.spirit_base || ((st.spirit && st.spirit.base) || 0);
+
+        let weaponStatsHtml = '';
+        
+        if (mhDps > 0) {
+            weaponStatsHtml += `<div class="weapon-stats-header">Main Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(mhMin)} - ${Math.round(mhMax)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${mhSpeed.toFixed(2)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${mhDps.toFixed(1)}</span></div>`;
+        }
+
+        if (ohDps > 0) {
+            weaponStatsHtml += `<div class="weapon-stats-header weapon-stats-header-secondary">Off Hand Weapon</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(ohMin)} - ${Math.round(ohMax)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${ohSpeed.toFixed(2)}</span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${ohDps.toFixed(1)}</span></div>`;
+        }
+
+        // Show Gear Contribution for Casters or characters lacking weapon API data
+        if (mhDps === 0 || isCaster || isTank) {
+            const marginClass = mhDps > 0 ? 'weapon-stats-header-mt16' : 'weapon-stats-header-mt0';
+            weaponStatsHtml += `<div class="weapon-stats-header ${marginClass}">Gear Contribution</div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${staBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${staVal - staBase}</span></span></div>`;
+            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${intBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${intVal - intBase}</span></span></div>`;
+            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${spiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${spiVal - spiBase}</span></span></div>`;
+            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${strBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${strVal - strBase}</span></span></div>`;
+            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${agiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${agiVal - agiBase}</span></span></div>`;
+        }
+
+        const xp = p.experience || 0;
+        const restedXp = p.rested_experience || 0;
+        let maxXp = p.next_level_experience || p.experience_max || 0;
+        
+        if (maxXp <= 0 && p.level < 70) {
+            maxXp = TBC_XP[p.level] || 0;
+        }
+        
+        let xpPercent = 100;
+        let restedPercent = 0;
+        let xpLabel = "Max Level";
+        
+        if (p.level < 70 && maxXp > 0) {
+            xpPercent = Math.min((xp / maxXp) * 100, 100);
+            restedPercent = Math.min(((xp + restedXp) / maxXp) * 100, 100);
+            if (restedXp > 0) {
+                xpLabel = `${xp.toLocaleString()} / ${maxXp.toLocaleString()} XP (+${restedXp.toLocaleString()} Rested)`;
+            } else {
+                xpLabel = `${xp.toLocaleString()} / ${maxXp.toLocaleString()} XP`;
+            }
+        }
+
+        let gearHtml = "";
+        
+        // Items that cannot be traditionally enchanted (ignoring rings to prevent false positives for non-enchanters)
+        const UNENCHANTABLE_SLOTS = ['NECK', 'SHIRT', 'TABARD', 'FINGER_1', 'FINGER_2', 'TRINKET_1', 'TRINKET_2'];
+
+        SLOTS.forEach(slot => {
+            const data = eq[slot];
+            if (data && data.item_id) {
+                const q = data.quality || "COMMON", qHex = QUALITY_COLORS[q];
+                const hasEnchant = data.tooltip_params && data.tooltip_params.includes('ench=');
+                const canBeEnchanted = !UNENCHANTABLE_SLOTS.includes(slot);
+                
+                let enchantBadge = '';
+                let warningStyle = '';
+                let warningText = '';
+
+                if (hasEnchant) {
+                    enchantBadge = `<div class="enchant-badge">E</div>`;
+                } else if (canBeEnchanted && (q === "EPIC" || q === "LEGENDARY")) {
+                    warningStyle = `missing-enchant-warning`;
+                    warningText = `<div class="missing-enchant-text">⚠️ Missing Enchant</div>`;
+                }
+
+                gearHtml += `
+                <div class="item-slot gear-slot-wrapper qual-border-left-${q} ${warningStyle}">
+                    <div class="gear-slot-icon-wrapper">
+                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : `qual-border-${q}`}">
+                        ${enchantBadge}
+                    </div>
+                    <div class="gear-slot-info">
+                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link qual-color-${q}" data-wowhead="${data.tooltip_params}" target="_blank">${data.name}</a>
+                        ${warningText}
+                    </div>
+                </div>`;
+            } else {
+                const emptyIcon = EMPTY_ICONS[slot] || 'inv_misc_questionmark';
+                gearHtml += `
+                <div class="item-slot empty-slot">
+                    <img src="https://wow.zamimg.com/images/wow/icons/large/${emptyIcon}.jpg" class="empty-slot-icon">
+                    <span class="empty-slot-text">Empty Slot</span>
+                </div>`;
+            }
+        });
+
+        // --- NEW: Grab the Guild Rank & Badges (Scope-Safe) ---
+        const guildRank = p.guild_rank || 'Member';
+        const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges);
+        const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges);
+        const prevMvps = config.prev_mvps || {};
+        const isPveReigning = prevMvps.pve && prevMvps.pve.name && prevMvps.pve.name.toLowerCase() === charName.toLowerCase();
+        const isPvpReigning = prevMvps.pvp && prevMvps.pvp.name && prevMvps.pvp.name.toLowerCase() === charName.toLowerCase();
+
+        const vCount = vBadges.length;
+        const cCount = cBadges.length;
+        const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count) || 0;
+        const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count) || 0;
+        const pveGold = parseInt(p.pve_gold || char.pve_gold) || 0;
+        const pveSilver = parseInt(p.pve_silver || char.pve_silver) || 0;
+        const pveBronze = parseInt(p.pve_bronze || char.pve_bronze) || 0;
+        const pvpGold = parseInt(p.pvp_gold || char.pvp_gold) || 0;
+        const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
+        const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
+
+        const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+        const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+        const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+        const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+        const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+        const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+        const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+        const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+        const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+        const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
+        
+        let extraBadges = '';
+        if (isPveReigning) extraBadges += `<span class="badge char-badge badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
+        if (isPvpReigning) extraBadges += `<span class="badge char-badge badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
+        
+        if (pveGold > 0) extraBadges += `<span class="badge char-badge badge-pve-gold" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
+        if (pveSilver > 0) extraBadges += `<span class="badge char-badge badge-silver" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
+        if (pveBronze > 0) extraBadges += `<span class="badge char-badge badge-bronze" title="${tPveBronze}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
+        if (pvpGold > 0) extraBadges += `<span class="badge char-badge badge-gold-alt" title="${tPvpGold}">⚔️🥇 PvP Gold x${pvpGold}</span>`;
+        if (pvpSilver > 0) extraBadges += `<span class="badge char-badge badge-silver" title="${tPvpSilver}">⚔️🥈 PvP Silver x${pvpSilver}</span>`;
+        if (pvpBronze > 0) extraBadges += `<span class="badge char-badge badge-bronze" title="${tPvpBronze}">⚔️🥉 PvP Bronze x${pvpBronze}</span>`;
+        if (pveChamp > 0) extraBadges += `<span class="badge char-badge badge-pve-champ" title="${tPveChamp}">👑 PvE Champ x${pveChamp}</span>`;
+        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge badge-pvp-champ" title="${tPvpChamp}">⚔️ PvP Champ x${pvpChamp}</span>`;
+        if (vCount > 0) extraBadges += `<span class="badge char-badge badge-vanguard" title="${tVanguard}">🌟 Vanguard x${vCount}</span>`;
+        if (cCount > 0) extraBadges += `<span class="badge char-badge badge-campaign" title="${tCampaign}">🎖️ Campaigns x${cCount}</span>`;
+
+        return `
+<div class="char-card ${factionCls}" style="border-top-color:${cHex};">
+    <div class="char-card-header">
+        <h2 class="char-card-name" style="color:${cHex};">${p.name || 'Unknown'}</h2>
+        <div class="char-badges-container">
+            <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
+            ${extraBadges}
+            <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
+            <span class="badge char-badge" style="border-color: #ff8000; color: #ff8000;">iLvl ${p.equipped_item_level || 0}</span>
+            <span class="badge char-badge default-badge">${raceName}</span>
+            <span class="badge char-badge" style="border-color: ${cHex}; color: ${cHex};">${specIconHtml}${displaySpecClass}</span>
+            ${hkBadge}
+        </div>
+        
+        <div class="xp-bar-wrapper">
+            <div class="xp-bar-rested" style="width: ${restedPercent}%;"></div>
+            <div class="xp-bar-earned" style="width: ${xpPercent}%;"></div>
+            <div class="xp-bar-label">${xpLabel}</div>
+        </div>
+    </div>
+    
+    <div class="card-content-split">
+        <div class="card-left-col">
+            <div class="char-card-portrait-wrapper">
+                <img src="${char.render_url || getClassIcon(cClass)}" class="char-card-portrait" style="border-color:${cHex};">
+            </div>
+            <div class="info-box char-card-stats-box">
+                <div class="char-card-stats-header">
+                    <h3 class="stat-card-title char-card-stats-title" style="color:${cHex};">Combat Stats</h3>
+                    <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
+                </div>
+                <div class="stat-page-1">
+                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
+                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
+                    <div class="stat-spacer"></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str">${strVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi">${agiVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta">${staVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int">${intVal}</span></div>
+                    <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi">${spiVal}</span></div>
+                    ${advancedStatsHtml}
+                </div>
+                <div class="stat-page-2" style="display:none; animation: fadeIn 0.3s;">
+                    ${weaponStatsHtml}
+                </div>
+            </div>
+        </div>
+        <div class="gear-grid-container">
+            ${gearHtml}
+        </div>
+    </div>
+</div>`;
+    }
+
+    function renderDynamicBadges(characters, isRawMode) {
+        const container = document.getElementById('concise-class-badges');
+        
+        let specContainer = document.getElementById('concise-spec-container');
+        if (!specContainer) {
+            specContainer = document.createElement('div');
+            specContainer.id = 'concise-spec-container';
+            specContainer.className = 'concise-spec-container-default';
+            container.parentNode.appendChild(specContainer); 
+        } else {
+            specContainer.style.display = 'none';
+        }
+
+        if (!characters || characters.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        const counts = {};
+        characters.forEach(char => {
+            let cClass = 'Unknown';
+            if (isRawMode) {
+                const deepChar = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === char.name.toLowerCase());
+                if (deepChar) cClass = getCharClass(deepChar);
+                else cClass = char.class || 'Unknown';
+            } else {
+                cClass = getCharClass(char);
+            }
+            counts[cClass] = (counts[cClass] || 0) + 1;
+        });
+        
+        const sortedClasses = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        container.textContent = '';
+        const badgeTemplate = document.getElementById('tpl-dynamic-badge');
+        
+        sortedClasses.forEach(cls => {
+            if (cls === 'Unknown') return;
+            const color = CLASS_COLORS[cls] || '#fff';
+            
+            if (badgeTemplate) {
+                const clone = badgeTemplate.content.cloneNode(true);
+                const badgeDiv = clone.querySelector('.dynamic-badge');
+                const clsSpan = clone.querySelector('.stat-badge-cls');
+                const countSpan = clone.querySelector('.stat-badge-count');
+                
+                badgeDiv.setAttribute('data-class', cls);
+                badgeDiv.style.borderColor = color;
+                badgeDiv.title = `Filter ${cls}s`;
+                
+                clsSpan.textContent = cls;
+                clsSpan.style.color = color;
+                
+                countSpan.textContent = counts[cls];
+                
+                container.appendChild(clone);
+            }
+        });
+        
+        container.style.display = 'flex';
+
+        document.querySelectorAll('.dynamic-badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const targetClass = this.getAttribute('data-class');
+                const isActive = this.classList.contains('active-filter');
+                
+                document.querySelectorAll('.dynamic-badge').forEach(b => {
+                    b.classList.remove('active-filter');
+                    b.style.opacity = '0.4';
+                    b.style.transform = 'scale(1)';
+                });
+                
+                // Trigger smooth fade-in animation
+                const charList = document.getElementById('concise-char-list');
+                if (charList) {
+                    charList.classList.remove('animate-list-update');
+                    void charList.offsetWidth; // Force a browser reflow
+                    charList.classList.add('animate-list-update');
+                }
+
+                if (isActive) {
+                    document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
+                    document.querySelectorAll('.dynamic-badge').forEach(b => b.style.opacity = '1');
+                    specContainer.style.display = 'none';
+                    
+                    window.currentFilteredChars = characters.map(c => (c.profile && c.profile.name ? c.profile.name.toLowerCase() : (c.name ? c.name.toLowerCase() : '')));
+                    applyTimelineFilters();
+                } else {
+                    this.classList.add('active-filter');
+                    this.style.opacity = '1';
+                    this.style.transform = 'scale(1.05)';
+                    
+                    const visibleChars = [];
+                    document.querySelectorAll('.concise-char-bar').forEach(el => {
+                        const charName = el.getAttribute('data-char');
+                        if (el.getAttribute('data-class') === targetClass) {
+                            el.style.display = 'flex';
+                            if(charName) visibleChars.push(charName);
+                        } else {
+                            el.style.display = 'none';
+                        }
+                    });
+                    
+                    window.currentFilteredChars = visibleChars;
+                    applyTimelineFilters();
+
+                    const formattedClass = targetClass.charAt(0).toUpperCase() + targetClass.slice(1);
+                    const cHex = CLASS_COLORS[formattedClass] || '#fff';
+
+                    const classRoster = characters.filter(c => {
+                        let cClass = isRawMode ? (rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === c.name.toLowerCase()) ? getCharClass(rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === c.name.toLowerCase())) : c.class) : getCharClass(c);
+                        return cClass === targetClass;
+                    });
+
+                    const specCounts = {};
+                    let unspeccedCount = 0;
+
+                    classRoster.forEach(char => {
+                        let spec = null;
+                        if (isRawMode) {
+                            const deepChar = rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === char.name.toLowerCase());
+                            if (deepChar && deepChar.profile) spec = deepChar.profile.active_spec;
+                        } else {
+                            spec = char.profile.active_spec;
+                        }
+
+                        if (spec) {
+                            specCounts[spec] = (specCounts[spec] || 0) + 1;
+                        } else {
+                            unspeccedCount++;
+                        }
+                    });
+
+                    specContainer.textContent = '';
+                    const wrapDiv = document.createElement('div');
+                    wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+                    
+                    const specTemplate = document.getElementById('tpl-spec-badge');
+                    if (specTemplate) {
+                        let clone = specTemplate.content.cloneNode(true);
+                        let badge = clone.querySelector('.spec-btn');
+                        badge.setAttribute('data-spec', 'all');
+                        badge.style.borderColor = cHex;
+                        badge.classList.add('spec-badge-all');
+                        badge.title = `View all ${formattedClass}s`;
+                        
+                        let clsSpan = clone.querySelector('.stat-badge-cls');
+                        clsSpan.style.color = cHex;
+                        clsSpan.textContent = `All ${formattedClass}s`;
+                        
+                        clone.querySelector('.stat-badge-count').textContent = classRoster.length;
+                        wrapDiv.appendChild(clone);
+
+                        Object.keys(specCounts).sort().forEach(spec => {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', spec);
+                            badge.style.borderColor = cHex;
+                            badge.title = `View ${spec} ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = cHex;
+                            
+                            const iconUrl = getSpecIcon(formattedClass, spec);
+                            if (iconUrl) {
+                                const img = document.createElement('img');
+                                img.src = iconUrl;
+                                img.className = 'spec-badge-icon';
+                                clsSpan.appendChild(img);
+                            }
+                            clsSpan.appendChild(document.createTextNode(spec));
+                            
+                            clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
+                            wrapDiv.appendChild(clone);
+                        });
+
+                        if (unspeccedCount > 0) {
+                            clone = specTemplate.content.cloneNode(true);
+                            badge = clone.querySelector('.spec-btn');
+                            badge.setAttribute('data-spec', 'unspecced');
+                            badge.style.borderColor = '#888';
+                            badge.title = `View Unspecced ${formattedClass}s`;
+                            
+                            clsSpan = clone.querySelector('.stat-badge-cls');
+                            clsSpan.style.color = '#888';
+                            clsSpan.textContent = 'Unspecced';
+                            
+                            clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                            wrapDiv.appendChild(clone);
+                        }
+                    }
+                    specContainer.appendChild(wrapDiv);
+                    specContainer.style.display = 'block';
+
+                    document.querySelectorAll('.concise-spec-btn').forEach(specBtn => {
+                        specBtn.addEventListener('click', function() {
+                            const targetSpec = this.getAttribute('data-spec');
+                            const subVisibleChars = []; 
+                            
+                            // Trigger smooth fade-in animation for spec clicks
+                            const charList = document.getElementById('concise-char-list');
+                            if (charList) {
+                                charList.classList.remove('animate-list-update');
+                                void charList.offsetWidth; // Force a browser reflow
+                                charList.classList.add('animate-list-update');
+                            }
+                            
+                            document.querySelectorAll('.concise-char-bar').forEach(el => {
+                                const charName = el.getAttribute('data-char');
+                                if (el.getAttribute('data-class') === targetClass) {
+                                    if (targetSpec === 'all') {
+                                        el.style.display = 'flex';
+                                        if(charName) subVisibleChars.push(charName);
+                                    } else {
+                                        const elSpec = el.getAttribute('data-spec') || 'unspecced';
+                                        if (elSpec === targetSpec) {
+                                            el.style.display = 'flex';
+                                            if(charName) subVisibleChars.push(charName);
+                                        } else {
+                                            el.style.display = 'none';
+                                        }
+                                    }
+                                } else {
+                                    el.style.display = 'none';
+                                }
+                            });
+                            
+                            window.currentFilteredChars = subVisibleChars;
+                            applyTimelineFilters();
+                        });
+                    });
+
+                }
+            });
+        });
+    }
+
+    function renderAwardFilterBadges(characters, isRawMode) {
+        const container = document.getElementById('concise-class-badges');
+        const specContainer = document.getElementById('concise-spec-container');
+        if (specContainer) specContainer.style.display = 'none';
+
+        if (!characters || characters.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        const counts = { 'mvp_pve': 0, 'mvp_pvp': 0, 'vanguard': 0, 'campaign': 0, 'pve_gold': 0, 'pve_silver': 0, 'pve_bronze': 0, 'pvp_gold': 0, 'pvp_silver': 0, 'pvp_bronze': 0 };
+        characters.forEach(char => {
+            const p = isRawMode ? (rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === char.name.toLowerCase())?.profile) : char.profile;
+            const c = isRawMode ? (rosterData.find(deep => deep.profile && deep.profile.name && deep.profile.name.toLowerCase() === char.name.toLowerCase()) || char) : char;
+            if (!p && !c) return;
+
+            if (parseInt(p?.pve_champ_count || c?.pve_champ_count) > 0) counts['mvp_pve']++;
+            if (parseInt(p?.pvp_champ_count || c?.pvp_champ_count) > 0) counts['mvp_pvp']++;
+            if (safeParseArray(p?.vanguard_badges || c?.vanguard_badges).length > 0) counts['vanguard']++;
+            if (safeParseArray(p?.campaign_badges || c?.campaign_badges).length > 0) counts['campaign']++;
+            if (parseInt(p?.pve_gold || c?.pve_gold) > 0) counts['pve_gold']++;
+            if (parseInt(p?.pve_silver || c?.pve_silver) > 0) counts['pve_silver']++;
+            if (parseInt(p?.pve_bronze || c?.pve_bronze) > 0) counts['pve_bronze']++;
+            if (parseInt(p?.pvp_gold || c?.pvp_gold) > 0) counts['pvp_gold']++;
+            if (parseInt(p?.pvp_silver || c?.pvp_silver) > 0) counts['pvp_silver']++;
+            if (parseInt(p?.pvp_bronze || c?.pvp_bronze) > 0) counts['pvp_bronze']++;
+        });
+
+        const AWARD_DEFS = {
+            'mvp_pve': { label: 'PvE MVP', icon: '👑', color: '#ff8000' },
+            'mvp_pvp': { label: 'PvP MVP', icon: '⚔️', color: '#ff4400' },
+            'pve_gold': { label: 'PvE Gold', icon: '🥇', color: '#ffd700' },
+            'pvp_gold': { label: 'PvP Gold', icon: '🥇', color: '#ffd700' },
+            'pve_silver': { label: 'PvE Silver', icon: '🥈', color: '#c0c0c0' },
+            'pvp_silver': { label: 'PvP Silver', icon: '🥈', color: '#c0c0c0' },
+            'pve_bronze': { label: 'PvE Bronze', icon: '🥉', color: '#cd7f32' },
+            'pvp_bronze': { label: 'PvP Bronze', icon: '🥉', color: '#cd7f32' },
+            'vanguard': { label: 'Vanguards', icon: '🌟', color: '#00ffcc' },
+            'campaign': { label: 'Campaigns', icon: '🎖️', color: '#aaa' }
+        };
+
+        container.textContent = '';
+        const badgeTemplate = document.getElementById('tpl-award-badge');
+
+        Object.keys(AWARD_DEFS).forEach(key => {
+            if (counts[key] > 0) {
+                const def = AWARD_DEFS[key];
+                if (badgeTemplate) {
+                    const clone = badgeTemplate.content.cloneNode(true);
+                    const badgeDiv = clone.querySelector('.dynamic-award-badge');
+                    const clsSpan = clone.querySelector('.stat-badge-cls');
+                    const countSpan = clone.querySelector('.stat-badge-count');
+                    
+                    badgeDiv.setAttribute('data-award', key);
+                    badgeDiv.style.borderColor = def.color;
+                    badgeDiv.title = `Filter ${def.label}`;
+                    
+                    clsSpan.textContent = `${def.icon} ${def.label}`;
+                    clsSpan.style.color = def.color;
+                    
+                    countSpan.textContent = counts[key];
+                    
+                    container.appendChild(clone);
+                }
+            }
+        });
+
+        container.style.display = 'flex';
+
+        document.querySelectorAll('.dynamic-award-badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const targetAward = this.getAttribute('data-award');
+                const isActive = this.classList.contains('active-filter');
+                
+                document.querySelectorAll('.dynamic-award-badge').forEach(b => {
+                    b.classList.remove('active-filter');
+                    b.style.opacity = '0.4';
+                    b.style.transform = 'scale(1)';
+                });
+                
+                const charList = document.getElementById('concise-char-list');
+                if (charList) {
+                    charList.classList.remove('animate-list-update');
+                    void charList.offsetWidth; 
+                    charList.classList.add('animate-list-update');
+                }
+
+                if (isActive) {
+                    document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
+                    document.querySelectorAll('.dynamic-award-badge').forEach(b => b.style.opacity = '1');
+                    window.currentFilteredChars = null; 
+                    applyTimelineFilters();
+                } else {
+                    this.classList.add('active-filter');
+                    this.style.opacity = '1';
+                    this.style.transform = 'scale(1.05)';
+                    
+                    const visibleChars = [];
+                    document.querySelectorAll('.concise-char-bar').forEach(el => {
+                        const awards = el.getAttribute('data-awards') || '';
+                        if (awards.includes(targetAward)) {
+                            el.style.display = 'flex';
+                            const charName = el.getAttribute('data-char');
+                            if(charName) visibleChars.push(charName);
+                        } else {
+                            el.style.display = 'none';
+                        }
+                    });
+                    window.currentFilteredChars = visibleChars;
+                    applyTimelineFilters();
+                }
+            });
+        });
+    }
+
+    // Variable to track current sort method
+    let currentSortMethod = 'level';
+
+    function renderConciseList(title, characters, isRawMode = false) {
+        conciseViewTitle.textContent = title;
+
+        // Apply Sorting before mapping HTML
+        let sortedCharacters = [...characters];
+        const hashUrl = window.location.hash.substring(1);
+
+        sortedCharacters.sort((a, b) => {
+            let valA, valB;
+            
+            // Handle Raw vs Full data structures
+            const profA = isRawMode ? (rosterData.find(c => c.profile && c.profile.name === a.name)?.profile || a) : (a.profile || a);
+            const profB = isRawMode ? (rosterData.find(c => c.profile && c.profile.name === b.name)?.profile || b) : (b.profile || b);
+            const nameA = (profA.name || '').toLowerCase();
+            const nameB = (profB.name || '').toLowerCase();
+
+            // Override sorting for ALL War Effort challenges
+            if (hashUrl.startsWith('war-effort-')) {
+                const type = hashUrl.replace('war-effort-', '');
+                
+                // --- NEW: FORCE VANGUARDS TO HOLD TOP 3 RANKS ---
+                if (window.warEffortVanguards && window.warEffortVanguards[type]) {
+                    const vanguards = window.warEffortVanguards[type];
+                    const idxA = vanguards.indexOf(nameA);
+                    const idxB = vanguards.indexOf(nameB);
+                    
+                    // If both are Vanguards, keep their locked 1st/2nd/3rd order
+                    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                    // If only A is a Vanguard, A wins
+                    if (idxA !== -1) return -1;
+                    // If only B is a Vanguard, B wins
+                    if (idxB !== -1) return 1;
+                }
+                
+                if (hashUrl === 'war-effort-xp' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] || 0;
+                    valB = window.warEffortContext[nameB] || 0;
+                    return valB - valA; // High to Low Contributions
+                } else if (hashUrl === 'war-effort-zenith' && window.warEffortContextRaw) {
+                    valA = window.warEffortContextRaw[nameA] || Infinity;
+                    valB = window.warEffortContextRaw[nameB] || Infinity;
+                    return valA - valB; // Low to High (Earliest to hit 70 wins!)
+                } else if (hashUrl === 'war-effort-loot' && window.warEffortContext) {
+                    valA = window.warEffortContext[nameA] ? window.warEffortContext[nameA].length : 0;
+                    valB = window.warEffortContext[nameB] ? window.warEffortContext[nameB].length : 0;
+                    return valB - valA; // High to Low Contributions (Array length)
+                } else if (hashUrl === 'war-effort-hk') {
+                    valA = profA.trend_pvp || profA.trend_hks || 0;
+                    valB = profB.trend_pvp || profB.trend_hks || 0;
+                    return valB - valA; // High to Low Contributions
+                }
+            }
+
+            if (currentSortMethod === 'ilvl') {
+                valA = profA.equipped_item_level || 0;
+                valB = profB.equipped_item_level || 0;
+                return valB - valA; // High to Low
+            } else if (currentSortMethod === 'level') {
+                valA = profA.level || 0;
+                valB = profB.level || 0;
+                return valB - valA; // High to Low
+            } else if (currentSortMethod === 'hks') {
+                valA = profA.honorable_kills || 0;
+                valB = profB.honorable_kills || 0;
+                return valB - valA; // High to Low
+            } else if (currentSortMethod === 'name') {
+                return nameA.localeCompare(nameB); // A to Z
+            } else if (currentSortMethod === 'badges') {
+                // --- NEW: Sort by Total Badge Count ---
+                const getScore = (prof) => {
+                    const vCount = safeParseArray(prof.vanguard_badges).length;
+                    const cCount = safeParseArray(prof.campaign_badges).length;
+                    const pve = parseInt(prof.pve_champ_count) || 0;
+                    const pvp = parseInt(prof.pvp_champ_count) || 0;
+                    return vCount + cCount + pve + pvp;
+                };
+                return getScore(profB) - getScore(profA); // High to Low
+            }
+            return 0;
+        });
+
+        
+
+        // Generate the HTML for the list
+        const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
+        let podiumsHTML = '';
+        let listItemsHTML = '';
+
+        sortedCharacters.forEach((char, index) => {
+            let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
+            
+            // 1. Identify if we have a deep profile
+            let deepChar = isRawMode ? rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === char.name.toLowerCase()) : char;
+            
+            // 2. Setup Variables
+            let isClickable = false;
+            let cleanName = ''; // <--- NEW: Strict logic name
+            let baseName = '';
+            let displayName, cClass, raceName, cHex, portraitURL, level;
+            let activeSpecAttr = 'unspecced';
+            let specIconHtml = '';
+            let displaySpecClass = '';
+            let statValue = '???';
+            let statColor = 'color:#666;';
+            let trendHTML = '';
+            let awardsAttr = [];
+
+            // 3. Populate Variables
+            if (deepChar && deepChar.profile) {
+                const p = deepChar.profile;
+                isClickable = true;
+                
+                const guildRank = p.guild_rank || 'Member';
+                const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges || deepChar.vanguard_badges);
+                const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges || deepChar.campaign_badges);
+                const vCount = vBadges.length;
+                const cCount = cBadges.length;
+                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count || deepChar.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count || deepChar.pvp_champ_count) || 0;
+                const pveGold = parseInt(p.pve_gold || char.pve_gold || deepChar.pve_gold) || 0;
+                const pveSilver = parseInt(p.pve_silver || char.pve_silver || deepChar.pve_silver) || 0;
+                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze || deepChar.pve_bronze) || 0;
+                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold || deepChar.pvp_gold) || 0;
+                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver || deepChar.pvp_silver) || 0;
+                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze || deepChar.pvp_bronze) || 0;
+
+                const prevMvps = config.prev_mvps || {};
+                const isPveReigning = prevMvps.pve && prevMvps.pve.name && prevMvps.pve.name.toLowerCase() === (p.name || '').toLowerCase();
+                const isPvpReigning = prevMvps.pvp && prevMvps.pvp.name && prevMvps.pvp.name.toLowerCase() === (p.name || '').toLowerCase();
+
+                // 1. Build the data-awards attribute for the Bubbles
+                if (pveGold > 0) awardsAttr.push('pve_gold');
+                if (pveSilver > 0) awardsAttr.push('pve_silver');
+                if (pveBronze > 0) awardsAttr.push('pve_bronze');
+                if (pvpGold > 0) awardsAttr.push('pvp_gold');
+                if (pvpSilver > 0) awardsAttr.push('pvp_silver');
+                if (pvpBronze > 0) awardsAttr.push('pvp_bronze');
+                if (pveChamp > 0) awardsAttr.push('mvp_pve');
+                if (pvpChamp > 0) awardsAttr.push('mvp_pvp');
+                if (vCount > 0) awardsAttr.push('vanguard');
+                if (cCount > 0) awardsAttr.push('campaign');
+
+                // 2. Generate the dynamic date tooltips
+                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
+
+                // 3. Inject them into the HTML
+                let cBadgesHtml = '<div class="c-badges-wrapper">';
+                
+                if (isPveReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning MVP</span>`;
+                if (isPvpReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning MVP</span>`;
+                
+                if (pveGold > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-gold" title="${tPveGold}">🛡️🥇 ${pveGold}</span>`;
+                if (pveSilver > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-silver" title="${tPveSilver}">🛡️🥈 ${pveSilver}</span>`;
+                if (pveBronze > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-bronze" title="${tPveBronze}">🛡️🥉 ${pveBronze}</span>`;
+                if (pvpGold > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-gold" title="${tPvpGold}">⚔️🥇 ${pvpGold}</span>`;
+                if (pvpSilver > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-silver" title="${tPvpSilver}">⚔️🥈 ${pvpSilver}</span>`;
+                if (pvpBronze > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-bronze" title="${tPvpBronze}">⚔️🥉 ${pvpBronze}</span>`;
+                if (pveChamp > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-pve" title="${tPveChamp}">👑 ${pveChamp}</span>`;
+                if (pvpChamp > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-pvp" title="${tPvpChamp}">⚔️ ${pvpChamp}</span>`;
+                if (vCount > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-vanguard" title="${tVanguard}">🌟 ${vCount}</span>`;
+                if (cCount > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-campaign" title="${tCampaign}">🎖️ ${cCount}</span>`;
+                cBadgesHtml += '</div>';
+
+                baseName = p.name || 'Unknown';
+                cleanName = (p.name || 'Unknown').toLowerCase();
+                displayName = (p.name || 'Unknown') + cBadgesHtml;
+                cClass = getCharClass(deepChar);
+                raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
+                cHex = CLASS_COLORS[cClass] || "#fff";
+                portraitURL = deepChar.render_url || getClassIcon(cClass);
+                level = p.level || 0;
+                
+                const activeSpec = p.active_spec ? p.active_spec : '';
+                activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
+                const specIconUrl = getSpecIcon(cClass, activeSpec);
+                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+                displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+                
+                statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
+                statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
+
+                // Calculate Trend based on the current ladder view
+                if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
+                    const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
+                    if (trend > 0) trendHTML = `<span class="trend-indicator-concise trend-positive">▲ ${trend}</span>`;
+                    else if (trend < 0) trendHTML = `<span class="trend-indicator-concise trend-negative">▼ ${Math.abs(trend)}</span>`;
+                    else trendHTML = `<span class="trend-indicator-concise trend-neutral">-</span>`;
+                }
+            } else {
+                baseName = char.name || 'Unknown';
+                cleanName = (char.name || 'Unknown').toLowerCase();
+                displayName = char.name || 'Unknown';
+                cClass = char.class || 'Unknown';
+                raceName = char.race || 'Unknown';
+                cHex = CLASS_COLORS[cClass] || "#fff";
+                portraitURL = getClassIcon(cClass);
+                level = char.level || 0;
+                displaySpecClass = cClass;
+            }
+
+            // Inject Podium Classes & Rank Number if we are on a Ladder View
+            const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+            let podiumClass = '';
+            let rankHtml = '';
+            
+            if (isLadderView) {
+                podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
+                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+                const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
+                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass}" style="color: ${rankColor};">#${index + 1}</div>`;
+            }
+
+            // --- NEW: Vanguard Aura Logic ---
+            let vanguardClass = '';
+            let vanguardBadgeHtml = '';
+            if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
+                const type = hashUrl.replace('war-effort-', '');
+                if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(cleanName)) {
+                    vanguardClass = 'vanguard-aura';
+                    let timeText = '';
+                    
+                    // Grab the locked timestamp and format it nicely (24-Hour)
+                    if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
+                        const dt = new Date(window.warEffortLockTimes[type]);
+                        if (!isNaN(dt)) {
+                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
+                        }
+                    }
+                    
+                    vanguardBadgeHtml = `<span class="vanguard-badge">🌟 VANGUARD${timeText}</span>`;
+                }
+            }
+
+            // --- NEW: Custom War Effort Stats Overrides ---
+            let statsHtml = `
+                <span>Level <span class="c-val-lvl">${level}</span></span>
+                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+            `;
+            let barStyleOverride = '';
+            let innerWrapperStyle = 'display: flex; align-items: center; width: 100%;';
+            let cStatsStyleOverride = 'display:flex; align-items:center; justify-content:flex-end; flex:1;';
+
+            if (hashUrl.startsWith('war-effort-')) {
+                // By default, stretch the bars
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px;';
+                
+                if (hashUrl === 'war-effort-hk') {
+                    const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+                    statsHtml = `<span class="we-stat-hk">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                } else if (window.warEffortContext) {
+                    const charKey = cleanName; // FIXED: Using cleanName
+                    const contextData = window.warEffortContext[charKey];
+                    
+                    if (contextData) {
+                        if (hashUrl === 'war-effort-xp') {
+                            statsHtml = `<span class="we-stat-xp">+${contextData} Levels Contributed</span>`;
+                        } else if (hashUrl === 'war-effort-loot') {
+                            // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
+                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 15px; flex-direction: column; align-items: flex-start; height: auto;';
+                            innerWrapperStyle = 'display: flex; align-items: center; width: 100%; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;';
+                            cStatsStyleOverride = 'display:flex; width: 100%; flex-direction: column; align-items: flex-start;';
+
+                            const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
+                            statsHtml = `
+                                <span class="we-loot-header">Epic Loot Acquired:</span>
+                                <div class="we-loot-container">
+                                    ${itemBadges}
+                                </div>
+                            `;
+                        } else if (hashUrl === 'war-effort-zenith') {
+                            statsHtml = `
+                                <div class="we-zenith-wrapper">
+                                    <span class="we-zenith-lbl">Reached Level 70 on:</span>
+                                    <span class="we-zenith-val">${contextData}</span>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            }
+
+            // 4. Render the HTML Row (or intercept for Podium)
+            let rowHTML = '';
+            if (!isClickable) {
+                rowHTML = `
+                <div class="concise-char-bar ${podiumClass} ${vanguardClass}" data-class="${cClass}" data-spec="unspecced" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
+                    <div style="${innerWrapperStyle}">
+                        <div style="display: flex; align-items: center;">
+                            ${rankHtml}
+                            <div class="c-main-info">
+                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
+                                <span class="c-meta">${raceName} ${displaySpecClass}</span>
+                            </div>
+                        </div>
+                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
+                    </div>
+                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
+                </div>`;
+            } else {
+                rowHTML = `
+                <div onclick="selectCharacter('${cleanName}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; ${barStyleOverride}">
+                    <div style="${innerWrapperStyle}">
+                        <div style="display: flex; align-items: center;">
+                            ${rankHtml}
+                            <div class="c-main-info">
+                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
+                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
+                                <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
+                            </div>
+                        </div>
+                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
+                    </div>
+                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
+                </div>`;
+            }
+
+            // Intercept and Build Podium Block for Top 3
+            if (usePodium && index < 3) {
+                const rank = index + 1;
+                const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
+                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                
+                let podiumStatText = '';
+                if (hashUrl === 'war-effort-hk') {
+                    const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+                    podiumStatText = `<div class="podium-stat-val text-hk">+${trendVal.toLocaleString()} <span class="podium-stat-lbl">HKs</span></div>`;
+                } else if (hashUrl === 'war-effort-xp' && window.warEffortContext && window.warEffortContext[cleanName]) {
+                    podiumStatText = `<div class="podium-stat-val text-xp">+${window.warEffortContext[cleanName]} <span class="podium-stat-lbl">Levels</span></div>`;
+                } else if (hashUrl === 'war-effort-loot' && window.warEffortContext && window.warEffortContext[cleanName]) {
+                    podiumStatText = `<div class="podium-stat-val text-loot">${window.warEffortContext[cleanName].length} <span class="podium-stat-lbl">Epics</span></div>`;
+                } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
+                    podiumStatText = `<div class="text-zenith">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
+                } else if (hashUrl === 'ladder-pve') {
+                    podiumStatText = `<div class="podium-stat-val text-ilvl">${statValue} <span class="podium-stat-lbl">iLvl</span></div><div class="podium-trend-container">${trendHTML}</div>`;
+                } else if (hashUrl === 'ladder-pvp') {
+                    podiumStatText = `<div class="podium-stat-val text-hk">${statValue} <span class="podium-stat-lbl">HKs</span></div><div class="podium-trend-container">${trendHTML}</div>`;
+                }
+
+                let pVanguard = '';
+                if (vanguardClass !== '') {
+                    pVanguard = `<div class="vanguard-floating-icon" title="Vanguard">🌟</div>`;
+                }
+
+                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
+
+                podiumsHTML += `
+                <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
+                    ${crownHtml}
+                    ${pVanguard}
+                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
+                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
+                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
+                    <div class="podium-pill">${podiumStatText}</div>
+                </div>`;
+            } else {
+                listItemsHTML += rowHTML;
+            }
+        });
+        
+        let finalHTML = '';
+        if (usePodium && podiumsHTML !== '') {
+            finalHTML += `<div class="lb-podium-wrap">${podiumsHTML}</div>`;
+            finalHTML += `<div class="lb-list-wrap">${listItemsHTML}</div>`;
+        } else {
+            finalHTML += listItemsHTML;
+        }
+
+        conciseList.innerHTML = finalHTML;
+        
+        let templateId = null;
+        if (hashUrl === 'badges' || currentSortMethod === 'badges') {
+            templateId = 'tpl-sort-badges';
+        } else if (!hashUrl.startsWith('war-effort-')) {
+            templateId = 'tpl-sort-default';
+        }
+        
+        if (templateId) {
+            const template = document.getElementById(templateId);
+            if (template) {
+                const clone = template.content.cloneNode(true);
+                const select = clone.querySelector('.concise-sort-dropdown');
+                if (select) {
+                    select.value = currentSortMethod;
+                    select.id = 'concise-sort-dropdown'; 
+                }
+                conciseList.insertBefore(clone, conciseList.firstChild);
+            }
+        }
+
+        // Bind the event listener to the newly created dropdown if it exists
+        const sortDropdown = document.getElementById('concise-sort-dropdown');
+        if (sortDropdown) {
+            sortDropdown.addEventListener('change', function(e) {
+                currentSortMethod = e.target.value;
+                // Re-render the list with the exact same parameters but new sort
+                renderConciseList(title, characters, isRawMode);
+                
+                // Re-apply any active spec filters to the newly rendered HTML
+                if (typeof applyTimelineFilters === 'function') {
+                     // Trigger a click on the active badge to re-filter the DOM elements
+                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
+                     if (activeBadge) {
+                         // Briefly remove the class so the click handler re-applies it correctly
+                         activeBadge.classList.remove('active-filter'); 
+                         activeBadge.click();
+                     }
+                }
+            });
+        } 
+
+        setupTooltips();
+    }
+
+    function setupTooltips() {
+        const tt_chars = document.querySelectorAll('.tt-char:not(.tt-bound)');
+        tt_chars.forEach(trigger => {
             trigger.classList.add('tt-bound');
-            trigger.addEventListener('mouseenter', () => {
-                const charName = (trigger.getAttribute('data-char') || '').toLowerCase();
+            
+            trigger.addEventListener('mousemove', e => {
+                const charName = trigger.getAttribute('data-char');
                 const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
                 if (!char) return;
+                
                 const p = char.profile || {};
                 const st = char.stats || {};
                 const cClass = getCharClass(char);
                 const powerName = getPowerName(cClass);
                 const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
-                const activeSpec = p.active_spec || '';
+                const cHex = CLASS_COLORS[cClass] || "#ffd100";
+                
+                const activeSpec = p.active_spec ? p.active_spec : '';
+                const specIconUrl = getSpecIcon(cClass, activeSpec);
+                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-tt">` : '';
+                const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
+                
+                // --- NEW: Grab the Guild Rank & MVP Badges (Scope-Safe) ---
                 const guildRank = p.guild_rank || 'Member';
                 const vBadges = safeParseArray(p.vanguard_badges || char.vanguard_badges);
                 const cBadges = safeParseArray(p.campaign_badges || char.campaign_badges);
-                const counts = {
-                    pveGold: parseInt(p.pve_gold || char.pve_gold) || 0,
-                    pveSilver: parseInt(p.pve_silver || char.pve_silver) || 0,
-                    pveBronze: parseInt(p.pve_bronze || char.pve_bronze) || 0,
-                    pvpGold: parseInt(p.pvp_gold || char.pvp_gold) || 0,
-                    pvpSilver: parseInt(p.pvp_silver || char.pvp_silver) || 0,
-                    pvpBronze: parseInt(p.pvp_bronze || char.pvp_bronze) || 0,
-                    pveChamp: parseInt(p.pve_champ_count || char.pve_champ_count) || 0,
-                    pvpChamp: parseInt(p.pvp_champ_count || char.pvp_champ_count) || 0,
-                    vanguard: vBadges.length,
-                    campaign: cBadges.length
-                };
-                const tooltipRoot = createElement('div', 'custom-tooltip visible');
+                const vCount = vBadges.length;
+                const cCount = cBadges.length;
+                const pveChamp = parseInt(p.pve_champ_count || char.pve_champ_count) || 0;
+                const pvpChamp = parseInt(p.pvp_champ_count || char.pvp_champ_count) || 0;
+                const pveGold = parseInt(p.pve_gold || char.pve_gold) || 0;
+                const pveSilver = parseInt(p.pve_silver || char.pve_silver) || 0;
+                const pveBronze = parseInt(p.pve_bronze || char.pve_bronze) || 0;
+                const pvpGold = parseInt(p.pvp_gold || char.pvp_gold) || 0;
+                const pvpSilver = parseInt(p.pvp_silver || char.pvp_silver) || 0;
+                const pvpBronze = parseInt(p.pvp_bronze || char.pvp_bronze) || 0;
+
+                const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
+                const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
+                const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
+                const tPvpGold = getDetailedBadgeTooltip(p.name, ['pvp_gold'], `${pvpGold}x PvP Gold Medal`, pvpGold);
+                const tPvpSilver = getDetailedBadgeTooltip(p.name, ['pvp_silver'], `${pvpSilver}x PvP Silver Medal`, pvpSilver);
+                const tPvpBronze = getDetailedBadgeTooltip(p.name, ['pvp_bronze'], `${pvpBronze}x PvP Bronze Medal`, pvpBronze);
+                const tPveChamp = getDetailedBadgeTooltip(p.name, ['mvp_pve'], `${pveChamp}x PvE Champion`, pveChamp);
+                const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
+                const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
+                const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
+
+                tooltip.innerHTML = '';
                 const template = document.getElementById('tpl-char-tooltip');
                 if (template) {
                     const clone = template.content.cloneNode(true);
+                    
                     const nameWrap = clone.querySelector('.tooltip-name-wrap');
-                    nameWrap.classList.add('theme-text');
-                    applyClassTheme(nameWrap, cClass);
+                    nameWrap.style.color = cHex;
                     clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
+                    
                     const badgesContainer = clone.querySelector('.tooltip-badges-container');
-                    const addBadge = (count, cssClass, icon) => { if (count > 0) badgesContainer.appendChild(createElement('span', `tt-badge ${cssClass}`, `${icon} ${count}`)); };
-                    addBadge(counts.pveGold, 'tt-badge-gold', '🥇');
-                    addBadge(counts.pveSilver, 'tt-badge-silver', '🥈');
-                    addBadge(counts.pveBronze, 'tt-badge-bronze', '🥉');
-                    addBadge(counts.pvpGold, 'tt-badge-gold', '🥇');
-                    addBadge(counts.pvpSilver, 'tt-badge-silver', '🥈');
-                    addBadge(counts.pvpBronze, 'tt-badge-bronze', '🥉');
-                    addBadge(counts.pveChamp, 'tt-badge-pve', '👑');
-                    addBadge(counts.pvpChamp, 'tt-badge-pvp', '⚔️');
-                    addBadge(counts.vanguard, 'tt-badge-vanguard', '🌟');
-                    addBadge(counts.campaign, 'tt-badge-campaign', '🎖️');
+                    badgesContainer.className = 'tt-badge-container';
+                    
+                    const addBadge = (count, title, cssClass, icon) => {
+                        if (count > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = `tt-badge ${cssClass}`;
+                            badge.title = title;
+                            badge.textContent = `${icon} ${count}`;
+                            badgesContainer.appendChild(badge);
+                        }
+                    };
+                    
+                    addBadge(pveGold, tPveGold, 'tt-badge-gold', '🥇');
+                    addBadge(pveSilver, tPveSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pveBronze, tPveBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pvpGold, tPvpGold, 'tt-badge-gold', '🥇');
+                    addBadge(pvpSilver, tPvpSilver, 'tt-badge-silver', '🥈');
+                    addBadge(pvpBronze, tPvpBronze, 'tt-badge-bronze', '🥉');
+                    addBadge(pveChamp, tPveChamp, 'tt-badge-pve', '👑');
+                    addBadge(pvpChamp, tPvpChamp, 'tt-badge-pvp', '⚔️');
+                    addBadge(vCount, tVanguard, 'tt-badge-vanguard', '🌟');
+                    addBadge(cCount, tCampaign, 'tt-badge-campaign', '🎖️');
+                    
                     clone.querySelector('.tooltip-guild-rank').textContent = guildRank;
                     clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
+                    
                     const classWrap = clone.querySelector('.tooltip-class-wrap');
-                    classWrap.classList.add('theme-text');
-                    applyClassTheme(classWrap, cClass);
-                    classWrap.appendChild(createSpecInline(cClass, activeSpec, 'tooltip'));
+                    classWrap.style.color = cHex;
+                    classWrap.innerHTML = `${specIconHtml}${displaySpecClass}`;
+                    
                     clone.querySelector('.tooltip-ilvl').textContent = p.equipped_item_level || 0;
                     clone.querySelector('.tooltip-power-label').textContent = powerName;
                     clone.querySelector('.tooltip-health-power').textContent = `${st.health || 0} / ${st.power || 0}`;
-                    tooltipRoot.appendChild(clone);
+                    
+                    tooltip.appendChild(clone);
                 }
-                createInlineTooltipHost(trigger, tooltipRoot);
+                tooltip.style.borderLeftColor = cHex;
+                
+                let x = e.clientX + 15;
+                let y = e.clientY + 15;
+                if (x + 200 > window.innerWidth) x = window.innerWidth - 210;
+                
+                tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+                tooltip.classList.add('visible');
             });
-            trigger.addEventListener('mouseleave', () => removeInlineTooltipHost(trigger));
+            trigger.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
         });
     }
 
@@ -1168,37 +2059,46 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (!timeline) return;
 
         const now = Date.now();
+        
+        // 1. Filter the raw data array directly instead of the DOM elements
         let tempFilteredData = timelineData.filter(event => {
             const charName = (event.character_name || '').toLowerCase();
             const eventType = event.type;
             const timestampStr = event.timestamp || '';
             const itemQuality = event.item_quality || 'COMMON';
 
+            // Filter by Character
             if (window.currentFilteredChars && !window.currentFilteredChars.includes(charName)) return false;
 
+            // --- NEW: Badge Filter Logic ---
             if (tlTypeFilter.startsWith('badge_')) {
-                if (eventType !== 'badge') return false;
+                if (eventType !== 'badge') return false; // Show ONLY badges
                 if (tlTypeFilter === 'badge_mvp' && event.badge_type !== 'mvp_pve' && event.badge_type !== 'mvp_pvp') return false;
                 if (tlTypeFilter === 'badge_vanguard' && event.badge_type !== 'vanguard') return false;
                 if (tlTypeFilter === 'badge_campaign' && event.badge_type !== 'campaign') return false;
+                
+                // FIX: Add the missing logic to evaluate the Medals button
                 if (tlTypeFilter === 'badge_ladder' && !['pve_gold','pve_silver','pve_bronze','pvp_gold','pvp_silver','pvp_bronze'].includes(event.badge_type)) return false;
             } else {
-                if (eventType === 'badge') return false;
+                if (eventType === 'badge') return false; // NEVER show badges in normal feeds
+                
+                // Normal Rarity/Type filters
                 if (tlTypeFilter === 'rare_plus') {
                     if (eventType !== 'item') return false;
-                    if (['POOR', 'COMMON', 'UNCOMMON'].includes(itemQuality)) return false;
+                    if (itemQuality === 'POOR' || itemQuality === 'COMMON' || itemQuality === 'UNCOMMON') return false;
                 } else if (tlTypeFilter === 'epic') {
-                    if (eventType !== 'item' || (itemQuality != 'EPIC' && itemQuality != 'LEGENDARY')) return false;
-                } else if (tlTypeFilter == 'legendary') {
-                    if (eventType != 'item' || itemQuality != 'LEGENDARY') return false;
-                } else if (tlTypeFilter != 'all' && eventType != tlTypeFilter) {
+                    if (eventType !== 'item' || (itemQuality !== 'EPIC' && itemQuality !== 'LEGENDARY')) return false;
+                } else if (tlTypeFilter === 'legendary') {
+                    if (eventType !== 'item' || itemQuality !== 'LEGENDARY') return false;
+                } else if (tlTypeFilter !== 'all' && eventType !== tlTypeFilter) {
                     return false;
                 }
             }
 
+            // Filter by Date (Hours)
             if (tlSpecificDate && timestampStr) {
                 if (!timestampStr.startsWith(tlSpecificDate)) return false;
-            } else if (tlDateFilter != 'all' && timestampStr) {
+            } else if (tlDateFilter !== 'all' && timestampStr) {
                 let cleanTs = timestampStr.replace('Z', '+00:00');
                 if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
                 const eventDate = new Date(cleanTs).getTime();
@@ -1211,45 +2111,54 @@ window.addEventListener('DOMContentLoaded', async () => {
             return true;
         });
 
+        // --- NEW: Deduplicate identical badge events in the feed ---
         const uniqueEvents = [];
         const seenKeys = new Set();
-        tempFilteredData.forEach(event => {
-            if (event.type === 'badge') {
-                const dayString = (event.timestamp || '').substring(0, 10);
-                const charName = (event.character_name || '').toLowerCase();
-                const key = `badge_${charName}_${event.badge_type}_${event.category || ''}_${dayString}`;
+        
+        tempFilteredData.forEach(e => {
+            if (e.type === 'badge') {
+                // Ensure a character only gets one timeline row per specific badge category per day
+                let dStr = (e.timestamp || '').substring(0, 10);
+                const charName = (e.character_name || '').toLowerCase();
+                const key = `badge_${charName}_${e.badge_type}_${e.category || ''}_${dStr}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
-                    uniqueEvents.push(event);
+                    uniqueEvents.push(e);
                 }
             } else {
-                uniqueEvents.push(event);
+                // Let items and level-ups pass through normally
+                uniqueEvents.push(e);
             }
         });
-
+        
         filteredTimelineData = uniqueEvents;
+
+        // 2. Clear the old feed and reset the counter
         const container = document.getElementById('timeline-feed-container');
-        if (container) clearNode(container);
+        if (container) container.innerHTML = '';
         currentTimelineIndex = 0;
 
+        // 3. Handle empty states or render the first batch
         let noResultsMsg = document.getElementById('tl-no-results');
         if (filteredTimelineData.length === 0) {
-            setHidden(container, true);
+            if (container) container.style.display = 'none';
             if (!noResultsMsg) {
-                noResultsMsg = createElement('div', 'tl-empty-msg', 'No activity found for these filters yet... keep raiding!');
+                noResultsMsg = document.createElement('div');
                 noResultsMsg.id = 'tl-no-results';
+                noResultsMsg.className = 'tl-empty-msg';
+                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
                 document.getElementById('timeline').appendChild(noResultsMsg);
+            } else {
+                noResultsMsg.style.display = 'block';
             }
-            showElement(noResultsMsg);
-            setHidden(document.getElementById('load-more-btn'), true);
-            return;
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            if (container) container.style.display = 'flex';
+            if (noResultsMsg) noResultsMsg.style.display = 'none';
+            renderTimelineBatch();
         }
-
-        showElement(container);
-        if (noResultsMsg) setHidden(noResultsMsg, true);
-        renderTimelineBatch();
     }
-
 
     document.querySelectorAll('.tl-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -1272,30 +2181,74 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    
     function hideAllViews() {
-        setHidden(emptyState, true);
-        setHidden(conciseView, true);
-        setHidden(fullCardContainer, true);
-        if (analyticsView) setHidden(analyticsView, true);
-        if (architectureView) setHidden(architectureView, true);
+        emptyState.style.display = 'none';
+        conciseView.style.display = 'none';
+        fullCardContainer.style.display = 'none';
+        if (analyticsView) analyticsView.style.display = 'none';
+        if (architectureView) architectureView.style.display = 'none';
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
-
+        
+        // Show nav search by default on sub-pages
         const navSearch = document.querySelector('.navbar .search-container');
-        showElement(navSearch);
-        showElement(timeline);
+        if (navSearch) navSearch.style.display = 'block';
+
+        if (timeline) timeline.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        restoreTimelineFilters('default');
+        // --- RESTORE DEFAULT TIMELINE HTML ---
+        const filtersContainer = document.querySelector('.timeline-filters');
+        if (filtersContainer) {
+            filtersContainer.innerHTML = `
+                <div class="filter-group">
+                    <button class="tl-btn" data-type="all">All</button>
+                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
+                    <button class="tl-btn" data-type="level_up">Levels</button>
+                </div>
+                <div class="filter-group">
+                    <select id="tl-date-filter" class="tl-select">
+                        <option value="12">Last 12 Hours</option>
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="all" selected>All Available</option>
+                    </select>
+                </div>
+            `;
+            // Re-bind standard events
+            document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    tlTypeFilter = e.target.getAttribute('data-type');
+                    applyTimelineFilters();
+                });
+            });
+            const dateSelect = document.getElementById('tl-date-filter');
+            if (dateSelect) {
+                dateSelect.addEventListener('change', (e) => {
+                    tlDateFilter = e.target.value;
+                    if (tlSpecificDate) {
+                        tlSpecificDate = null;
+                        document.querySelectorAll('.tt-heatmap').forEach(c => c.classList.remove('selected-date'));
+                    }
+                    applyTimelineFilters();
+                });
+            }
+        }
+
         tlTypeFilter = 'rare_plus';
         tlDateFilter = 'all';
         tlSpecificDate = null;
 
-        setHidden(document.getElementById('guild-xp-container'), true);
-        document.querySelectorAll('.tt-heatmap').forEach(cell => cell.classList.remove('selected-date'));
-    }
+        const xpCont = document.getElementById('guild-xp-container');
+        if (xpCont) xpCont.style.display = 'none';
 
+        document.querySelectorAll('.tt-heatmap').forEach(c => {
+            c.classList.remove('selected-date');
+        });
+    }
 
     // --- AESTHETIC CHART DRAWING PLUGINS ---
     function createPieOverlayPlugin() {
@@ -1402,7 +2355,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                 },
                 onHover: (event, elements) => {
-                    setChartPointerState(event, elements.length > 0);
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                 }
             },
             plugins: [createPieOverlayPlugin()]
@@ -1433,7 +2386,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (elements.length > 0) {
                         const clickedClass = chart.data.labels[elements[0].index];
                         const dynamicBadge = document.querySelector(`.dynamic-badge[data-class="${clickedClass}"]`);
-                        if (dynamicBadge && isElementVisible(document.getElementById('concise-view'))) {
+                        if (dynamicBadge && document.getElementById('concise-view').style.display !== 'none') {
                             dynamicBadge.click(); 
                         } else {
                             window.location.hash = 'class-' + clickedClass.toLowerCase();
@@ -1441,7 +2394,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                 },
                 onHover: (event, elements) => {
-                    setChartPointerState(event, elements.length > 0);
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                 },
                 plugins: { legend: { display: false } }
             },
@@ -1451,9 +2404,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showAnalyticsView() {
         hideAllViews();
-        setDisplayVariant(analyticsView, 'block');
-        setNavbarSubpageState(navbar, true);
-        setHidden(timeline, true);
+        if (analyticsView) analyticsView.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        if (timeline) timeline.style.display = 'none'; 
 
         // --- CALCULATE KPIs ---
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -1506,6 +2459,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if(window.roleChartInstance) window.roleChartInstance.destroy();
         window.roleChartInstance = drawRoleChart('roleDonutChart', rosterData, false);
 
+        // --- LEVEL DISTRIBUTION ---
         const levelLabels = ["1-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70"];
         const levelData = [0, 0, 0, 0, 0, 0, 0, 0];
         rawGuildRoster.forEach(c => {
@@ -1545,12 +2499,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                             window.location.hash = 'filter-level-' + chart.data.labels[elements[0].index];
                         }
                     },
-                    onHover: (event, elements) => { setChartPointerState(event, elements.length > 0); }
+                    onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
                 },
                 plugins: [barLabelPlugin]
             });
         }
 
+        // --- ILVL DISTRIBUTION ---
         const ilvlLabels = ["<100", "100-109", "110-119", "120-129", "130+"];
         const ilvlData = [0, 0, 0, 0, 0];
         rosterData.forEach(c => {
@@ -1588,12 +2543,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                     onClick: (event, elements, chart) => {
                         if (elements.length > 0) window.location.hash = 'filter-ilvl-' + chart.data.labels[elements[0].index];
                     },
-                    onHover: (event, elements) => { setChartPointerState(event, elements.length > 0); }
+                    onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
                 },
                 plugins: [barLabelPlugin]
             });
         }
 
+        // --- RACE DISTRIBUTION ---
         const raceCounts = {};
         rosterData.forEach(c => {
             const p = c.profile;
@@ -1622,14 +2578,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 onClick: (event, elements, chart) => {
                     if (elements.length > 0) window.location.hash = 'filter-race-' + chart.data.labels[elements[0].index].toLowerCase();
                 },
-                onHover: (event, elements) => { setChartPointerState(event, elements.length > 0); }
+                onHover: (event, elements) => { event.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
             },
             plugins: [createPieOverlayPlugin()]
         });
 
+        // --- NEW: CLASS DISTRIBUTION FOR ANALYTICS ---
         if(analyticsClassChartInst) analyticsClassChartInst.destroy();
         analyticsClassChartInst = createDonutChart('analyticsClassChart', rosterData, false);
 
+        // --- ACTIVITY CHART ---
         const actCtx = document.getElementById('analyticsActivityChart');
         if (actCtx && heatmapData && heatmapData.length > 0) {
             if(analyticsActivityChartInst) analyticsActivityChartInst.destroy();
@@ -1660,9 +2618,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showArchitectureView() {
         hideAllViews();
-        setDisplayVariant(architectureView, 'block');
-        setNavbarSubpageState(navbar, true);
-        setHidden(timeline, true);
+        if (architectureView) architectureView.style.display = 'block';
+        if (navbar) navbar.style.background = '#111';
+        if (timeline) timeline.style.display = 'none'; 
     }
 
     window.returnToHome = function() {
@@ -1672,25 +2630,29 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showHomeView() {
         hideAllViews();
-        setDisplayVariant(emptyState, 'block');
-        setNavbarSubpageState(navbar, false);
+        emptyState.style.display = 'block';
+        if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
         updateDropdownLabel('all');
 
+        // Hide nav search purely on the homepage
         const navSearch = document.querySelector('.navbar .search-container');
-        setHidden(navSearch, true);
+        if (navSearch) navSearch.style.display = 'none';
 
         const xpCont = document.getElementById('guild-xp-container');
-        setDisplayVariant(xpCont, 'block');
+        if (xpCont) xpCont.style.display = 'block';
         
+        // Calculate the War Effort data AND monuments first
         if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
 
+        // Now that monuments exist, apply timeline filters to render them at the top
         if (timeline) { 
-            setDisplayVariant(timeline, 'block'); 
-            timelineTitle.textContent = '📜 Guild Recent Activity'; 
+            timeline.style.display = 'block'; 
+            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
             window.currentFilteredChars = null; 
             applyTimelineFilters(); 
         }
 
+        // Populate New KPIs
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
         rosterData.forEach(c => {
             if (c.profile) {
@@ -1701,86 +2663,138 @@ window.addEventListener('DOMContentLoaded', async () => {
         const kpiIlvl = document.getElementById('home-kpi-ilvl');
         if (kpiIlvl) kpiIlvl.innerText = lvl70Count > 0 ? Math.round(totalIlvl / lvl70Count) : 0;
         const kpiHks = document.getElementById('home-kpi-hks');
-        if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks / 1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+        if (kpiHks) kpiHks.innerText = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
 
-        const recentKpi = document.getElementById('recent-milestones-container');
-        const milestoneText = document.getElementById('milestone-text');
-        if (timelineData && timelineData.length > 0 && recentKpi && milestoneText) {
-            const recentEvents = timelineData.filter(e => 
-                (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) || 
-                (e.type === 'level_up' && e.level === 70)
-            ).slice(0, 5);
+        const statAvgIlvl = document.getElementById('stat-avgilvl');
+        if (statAvgIlvl) statAvgIlvl.onclick = () => { window.location.hash = 'ladder-pve'; };
+        
+        const statHks = document.getElementById('stat-hks');
+        if (statHks) statHks.onclick = () => { window.location.hash = 'ladder-pvp'; };
 
-            if (recentEvents.length > 0) {
-                setDisplayVariant(recentKpi, 'flex');
-                milestoneText.classList.add('milestone-text-rotator');
-
-                const slideElements = recentEvents.map(recent => {
-                    let timeStr = '';
-                    try {
-                        let cleanTs = (recent.timestamp || '').replace('Z', '+00:00');
-                        if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
-                        const dt = new Date(cleanTs);
-                        if (!isNaN(dt.getTime())) timeStr = ` (${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})`;
-                    } catch(e) {}
-                    let clone;
-                    if (recent.type === 'level_up') {
-                        const tpl = document.getElementById('tpl-milestone-level');
-                        clone = tpl.content.cloneNode(true);
-                        clone.querySelector('.ms-char').textContent = recent.character_name;
-                        clone.querySelector('.ms-time').textContent = timeStr;
-                    } else {
-                        const tpl = document.getElementById('tpl-milestone-loot');
-                        clone = tpl.content.cloneNode(true);
-                        clone.querySelector('.ms-char').textContent = recent.character_name;
-                        clone.querySelector('.ms-time').textContent = timeStr;
-                        const link = clone.querySelector('.ms-loot-link');
-                        link.href = `https://www.wowhead.com/wotlk/item=${recent.item_id}`;
-                        link.textContent = `[${recent.item_name}]`;
-                        link.classList.add(recent.item_quality === 'LEGENDARY' ? 'ms-loot-link-legendary' : 'ms-loot-link-epic');
-                    }
-                    const wrapper = document.createElement('span');
-                    wrapper.appendChild(clone);
-                    return wrapper;
-                });
-
-                clearNode(milestoneText);
-                milestoneText.appendChild(slideElements[0].cloneNode(true));
-                milestoneText.classList.remove('is-fading');
-                milestoneText.classList.add('is-visible');
-
-                if (slideElements.length > 1) {
-                    let currentSlide = 0;
-                    if (window.milestoneInterval) clearInterval(window.milestoneInterval);
-                    window.milestoneInterval = setInterval(() => {
-                        milestoneText.classList.remove('is-visible');
-                        milestoneText.classList.add('is-fading');
-                        setTimeout(() => {
-                            currentSlide = (currentSlide + 1) % slideElements.length;
-                            clearNode(milestoneText);
-                            milestoneText.appendChild(slideElements[currentSlide].cloneNode(true));
-                            milestoneText.classList.remove('is-fading');
-                            milestoneText.classList.add('is-visible');
-                        }, 500);
-                    }, 4500);
+        // "Yesterday" Sparklines & Math
+        if (heatmapData && heatmapData.length >= 2) {
+            const today = heatmapData[heatmapData.length - 1];
+            const yesterday = heatmapData[heatmapData.length - 2];
+            
+            function applyTrend(elementId, todayVal, yestVal) {
+                const el = document.getElementById(elementId);
+                if (!el || yestVal == null) return;
+                const diff = todayVal - yestVal;
+                
+                el.textContent = '';
+                const span = document.createElement('span');
+                
+                if (diff > 0) {
+                    span.textContent = `▲ ${diff}`;
+                    span.classList.add('trend-positive');
+                } else if (diff < 0) {
+                    span.textContent = `▼ ${Math.abs(diff)}`;
+                    span.classList.add('trend-negative');
+                } else {
+                    span.textContent = `-`;
+                    span.classList.add('trend-neutral');
                 }
-            } else {
-                setHidden(recentKpi, true);
+                
+                el.appendChild(span);
+            }
+
+            applyTrend('trend-total', today.total_roster, yesterday.total_roster);
+            applyTrend('trend-active', today.active_roster, yesterday.active_roster);
+            // Raid Ready math isn't stored historically in heatmapData, so we leave it static or estimate it
+
+            // Draw Sparklines
+            function drawSpark(canvasId, dataKey, colorStr) {
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) return;
+                const dataPoints = heatmapData.map(d => d[dataKey] || 0);
+                new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: heatmapData.map(d => d.day_name), datasets: [{ data: dataPoints, borderColor: colorStr, borderWidth: 2, tension: 0.4, pointRadius: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false, min: Math.min(...dataPoints) * 0.95 } } }
+                });
+            }
+            drawSpark('spark-total', 'total_roster', 'rgba(255, 209, 0, 0.5)');
+            drawSpark('spark-active', 'active_roster', 'rgba(46, 204, 113, 0.5)');
+        }
+
+        // Recent Milestones logic (Fading Rotator)
+        if (timelineData && timelineData.length > 0) {
+            const milestoneCont = document.getElementById('recent-milestones-container');
+            const milestoneText = document.getElementById('milestone-text');
+
+            if (milestoneCont && milestoneText) {
+                // 1. Grab the top 5 most recent milestones
+                const recentEvents = timelineData.filter(e => 
+                    (e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) || 
+                    (e.type === 'level_up' && e.level === 70)
+                ).slice(0, 5);
+
+                if (recentEvents.length > 0) {
+                    milestoneCont.style.display = 'flex';
+                    milestoneText.classList.add('milestone-text-rotator');
+
+                    // 2. Pre-build the DOM elements for all 5 events
+                    const slideElements = recentEvents.map(recent => {
+                        let timeStr = '';
+                        try {
+                            let cleanTs = (recent.timestamp || '').replace('Z', '+00:00');
+                            if (!cleanTs.includes('+') && !cleanTs.includes('Z')) cleanTs += 'Z';
+                            const dt = new Date(cleanTs);
+                            if (!isNaN(dt.getTime())) timeStr = ` (${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})`;
+                        } catch(e) {}
+
+                        let clone;
+                        if (recent.type === 'level_up') {
+                            const tpl = document.getElementById('tpl-milestone-level');
+                            clone = tpl.content.cloneNode(true);
+                            clone.querySelector('.ms-char').textContent = recent.character_name;
+                            clone.querySelector('.ms-time').textContent = timeStr;
+                        } else {
+                            const tpl = document.getElementById('tpl-milestone-loot');
+                            clone = tpl.content.cloneNode(true);
+                            clone.querySelector('.ms-char').textContent = recent.character_name;
+                            clone.querySelector('.ms-time').textContent = timeStr;
+                            const link = clone.querySelector('.ms-loot-link');
+                            link.href = `https://www.wowhead.com/wotlk/item=${recent.item_id}`;
+                            link.textContent = `[${recent.item_name}]`;
+                            link.classList.add(recent.item_quality === 'LEGENDARY' ? 'ms-loot-link-legendary' : 'ms-loot-link-epic');
+                        }
+                        
+                        const wrapper = document.createElement('span');
+                        wrapper.appendChild(clone);
+                        return wrapper;
+                    });
+
+                    // 3. Initialize the first slide
+                    milestoneText.textContent = '';
+                    milestoneText.appendChild(slideElements[0].cloneNode(true));
+
+                    // 4. Start the rotating carousel if there is more than 1 event
+                    if (slideElements.length > 1) {
+                        let currentSlide = 0;
+
+                        if (window.milestoneInterval) clearInterval(window.milestoneInterval);
+
+                        window.milestoneInterval = setInterval(() => {
+                            milestoneText.style.opacity = '0';
+
+                            setTimeout(() => {
+                                currentSlide = (currentSlide + 1) % slideElements.length;
+                                milestoneText.textContent = '';
+                                milestoneText.appendChild(slideElements[currentSlide].cloneNode(true));
+                                milestoneText.style.opacity = '1';
+                            }, 500);
+
+                        }, 4500);
+                    }
+                } else {
+                    milestoneCont.style.display = 'none';
+                }
             }
         }
-
-        const statAvgIlvl = document.getElementById('stat-avg-ilvl');
-        if (statAvgIlvl && !statAvgIlvl.dataset.boundClick) {
-            statAvgIlvl.dataset.boundClick = 'true';
-            statAvgIlvl.addEventListener('click', () => { window.location.hash = 'ladder-pve'; });
-        }
-        const statHks = document.getElementById('stat-hks');
-        if (statHks && !statHks.dataset.boundClick) {
-            statHks.dataset.boundClick = 'true';
-            statHks.addEventListener('click', () => { window.location.hash = 'ladder-pvp'; });
-        }
 		
-		if (typeof renderMVPs === 'function') renderMVPs();
+		// Trigger the MVP render
+        if (typeof renderMVPs === 'function') renderMVPs();
     }
 
     window.selectCharacter = function(charName) {
@@ -1790,121 +2804,189 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Added defaultSort parameter to override the standard "level" start
     function showConciseView(title, characters, isRawRoster = false, showBadges = true, defaultSort = 'level') {
         hideAllViews();
-        setDisplayVariant(conciseView, 'flex');
-        setNavbarSubpageState(navbar, true);
-        currentSortMethod = defaultSort;
+        conciseView.style.display = 'flex';
+        if (navbar) navbar.style.background = '#111';
+        
+        currentSortMethod = defaultSort; // Apply the requested sort method immediately
         renderConciseList(title, characters, isRawRoster);
-        window.currentFilteredChars = characters.map(c => isRawRoster ? (c.name ? c.name.toLowerCase() : '') : (c.profile && c.profile.name ? c.profile.name.toLowerCase() : ''));
+        
+        window.currentFilteredChars = characters.map(c => {
+            if (isRawRoster) return c.name ? c.name.toLowerCase() : '';
+            return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
+        });
+        
         const hash = window.location.hash.substring(1);
         const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
+
         const wrapper = document.getElementById('concise-content-wrapper');
         const leftCol = document.getElementById('concise-left-col');
         const badgesContainer = document.getElementById('concise-class-badges');
-        const specContainer = document.getElementById('concise-spec-container');
-        const donutContainer = document.getElementById('concise-donut-container');
-        const isChartView = chartViews.includes(hash);
-        const isAwardsMode = showBadges === 'awards';
-        const showLeftCol = showBadges === true || isAwardsMode || isChartView;
 
-        if (wrapper) wrapper.classList.toggle('concise-layout-column', isAwardsMode);
-        if (leftCol) {
-            setDisplayVariant(leftCol, showLeftCol ? 'flex' : 'none');
-            leftCol.classList.toggle('concise-left-col-wide', isAwardsMode);
-        }
-        if (badgesContainer) {
-            setDisplayVariant(badgesContainer, showBadges === false ? 'none' : 'flex');
-            badgesContainer.classList.toggle('badges-mode-default', showBadges === true);
-            badgesContainer.classList.toggle('badges-mode-awards', isAwardsMode);
-        }
-        if (specContainer && showBadges === false) setHidden(specContainer, true);
-        if (timeline) timeline.classList.toggle('timeline-awards-mode', isAwardsMode);
-
-        if (showBadges === true) renderDynamicBadges(characters, isRawRoster);
-        else if (isAwardsMode) renderAwardFilterBadges(characters, isRawRoster);
-
-        if (isChartView && donutContainer) {
-            setDisplayVariant(donutContainer, 'flex');
-            donutContainer.classList.add('donut-dashboard-mode');
-            clearNode(donutContainer);
-            const template = document.getElementById('tpl-concise-dashboard-widgets');
-            if (template) donutContainer.appendChild(template.content.cloneNode(true));
-            const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
-            const addKpi = (val, label, theme) => {
-                const kpiTpl = document.getElementById('tpl-concise-kpi-box');
-                if (kpiTpl && kpiContainer) {
-                    const clone = kpiTpl.content.cloneNode(true);
-                    const box = clone.querySelector('.concise-stat-box');
-                    const valSpan = clone.querySelector('.concise-stat-value');
-                    box.classList.add('concise-kpi-box', 'theme-accent-border');
-                    applyAccentTheme(box, theme);
-                    valSpan.classList.add('theme-accent-text');
-                    applyAccentTheme(valSpan, theme);
-                    valSpan.textContent = val;
-                    clone.querySelector('.concise-stat-label').textContent = label;
-                    kpiContainer.appendChild(clone);
-                }
-            };
-            if (hash === 'raidready') {
-                const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                addKpi(avgIlvl, 'Average iLvl', 'orange');
-            } else if (hash === 'ladder-pve') {
-                const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                const lvl70s = characters.filter(c => {
-                    const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                    return p && p.level === 70;
-                });
-                const avgLvl70Ilvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
-                    const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                    return sum + ((p && p.equipped_item_level) || 0);
-                }, 0) / lvl70s.length) : 0;
-                addKpi(avgIlvl, 'Avg iLvl', 'orange');
-                addKpi(avgLvl70Ilvl, 'Avg Lvl 70 iLvl', 'purple');
-            } else if (hash === 'ladder-pvp') {
-                const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
-                const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
-                addKpi(displayHks, 'Total HKs', 'red');
-            } else if (hash === 'active' || hash === 'total') {
-                const avgLvl = Math.round(characters.reduce((sum, c) => {
-                    const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                    return sum + ((p && p.level) || c.level || 0);
-                }, 0) / characters.length) || 0;
-                const lvl70s = characters.filter(c => {
-                    const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                    return p && p.level === 70;
-                });
-                const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
-                    const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                    return sum + ((p && p.equipped_item_level) || 0);
-                }, 0) / lvl70s.length) : 0;
-                addKpi(avgLvl, 'Avg Level', 'gold');
-                addKpi(avgIlvl, 'Avg Lvl 70 iLvl', 'orange');
+        if (showBadges === true) {
+            renderDynamicBadges(characters, isRawRoster);
+            leftCol.style.display = 'flex';
+            
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            badgesContainer.style.flexWrap = 'wrap';
+            badgesContainer.style.justifyContent = 'center';
+            badgesContainer.style.maxWidth = '900px';
+            
+            // FIX: Reset inline padding/margins when leaving the Hall of Heroes
+            badgesContainer.style.overflowX = 'visible'; 
+            badgesContainer.style.padding = ''; 
+            badgesContainer.style.marginTop = '';
+            
+            if (timeline) {
+                timeline.style.width = ''; 
+                timeline.style.maxWidth = ''; // Reset timeline width
             }
-            if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
-            if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
-            window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
-            window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
-        } else if (donutContainer) {
-            setHidden(donutContainer, true);
+            
+        } else if (showBadges === 'awards') {
+            renderAwardFilterBadges(characters, isRawRoster);
+            leftCol.style.display = 'flex';
+            
+            // Stack layout: Bubbles single-file on top, character list stretched wide below
+            wrapper.style.flexDirection = 'column';
+            leftCol.style.maxWidth = '100%';
+            leftCol.style.width = '100%';
+            badgesContainer.style.flexWrap = 'nowrap';
+            badgesContainer.style.justifyContent = 'flex-start';
+            badgesContainer.style.maxWidth = '100%';
+            badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
+            
+            // FIX: Generous internal padding gives the bubbles room to grow without getting severed
+            badgesContainer.style.padding = '15px 10px 25px 10px';
+            badgesContainer.style.marginTop = '-10px';
+            
+            // Stretch the activity feed slightly, but keep it responsive for mobile!
+            if (timeline) {
+                timeline.style.width = '100%'; 
+                timeline.style.maxWidth = '440px'; 
+            }
+            
+        } else {
+            badgesContainer.style.display = 'none';
+            const specContainer = document.getElementById('concise-spec-container');
+            if (specContainer) specContainer.style.display = 'none';
+            
+            // Restore default column layout
+            wrapper.style.flexDirection = 'row';
+            leftCol.style.maxWidth = '350px';
+            leftCol.style.width = 'auto';
+            if (timeline) {
+                timeline.style.width = ''; 
+                timeline.style.maxWidth = ''; // Reset timeline width
+            }
+            
+            if (!chartViews.includes(hash)) {
+                leftCol.style.display = 'none';
+            } else {
+                leftCol.style.display = 'flex';
+            }
         }
+
+       // Draw the dynamic charts & KPIs
+        const donutContainer = document.getElementById('concise-donut-container');
+
+        if (chartViews.includes(hash)) {
+            if (donutContainer) {
+                donutContainer.style.display = 'flex';
+                donutContainer.style.flexDirection = 'column';
+                donutContainer.style.alignItems = 'center';
+                donutContainer.style.gap = '20px';
+                
+               donutContainer.textContent = '';
+                const template = document.getElementById('tpl-concise-dashboard-widgets');
+                if (template) {
+                    donutContainer.appendChild(template.content.cloneNode(true));
+                }
+                const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
+                
+                const addKpi = (val, label, colorHex) => {
+                    const kpiTpl = document.getElementById('tpl-concise-kpi-box');
+                    if (kpiTpl && kpiContainer) {
+                        const clone = kpiTpl.content.cloneNode(true);
+                        const box = clone.querySelector('.concise-stat-box');
+                        box.style.borderColor = colorHex;
+                        box.style.minWidth = '200px';
+                        box.style.marginBottom = '5px';
+                        const valSpan = clone.querySelector('.concise-stat-value');
+                        valSpan.style.color = colorHex;
+                        valSpan.textContent = val;
+                        clone.querySelector('.concise-stat-label').textContent = label;
+                        kpiContainer.appendChild(clone);
+                    }
+                };
+
+                if (hash === 'raidready') {
+                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
+                    addKpi(avgIlvl, 'Average iLvl', '#ff8000');
+                } else if (hash === 'ladder-pve') {
+                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
+                    const lvl70s = characters.filter(c => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return p && p.level === 70;
+                    });
+                    const avgLvl70Ilvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length) : 0;
+                    
+                    addKpi(avgIlvl, 'Avg iLvl', '#ff8000');
+                    addKpi(avgLvl70Ilvl, 'Avg Lvl 70 iLvl', '#a335ee');
+                } else if (hash === 'ladder-pvp') {
+                    const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
+                    const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+                    addKpi(displayHks, 'Total HKs', '#ff4400');
+                } else if (hash === 'active' || hash === 'total') {
+                    const avgLvl = Math.round(characters.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.level) || c.level || 0);
+                    }, 0) / characters.length) || 0;
+                    const lvl70s = characters.filter(c => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return p && p.level === 70;
+                    });
+                    const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length) : 0;
+                    
+                    addKpi(avgLvl, 'Avg Level', '#ffd100');
+                    addKpi(avgIlvl, 'Avg Lvl 70 iLvl', '#ff8000');
+                }
+
+                if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
+                if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
+
+                window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
+                window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
+            }
+        } else {
+            if (donutContainer) donutContainer.style.display = 'none';
+        }
+        
         if (timeline) {
             const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
-            timelineTitle.textContent = `📜 ${baseTitle} Activity`;
+            timelineTitle.innerHTML = `📜 ${baseTitle} Activity`;
             applyTimelineFilters();
         }
     }
 
     function showFullCardView(charName) {
         hideAllViews();
-        setDisplayVariant(fullCardContainer, 'block');
-        clearNode(fullCardContainer);
-        const fullCardNode = renderFullCard(charName);
-        if (fullCardNode) fullCardContainer.appendChild(fullCardNode);
-        setNavbarSubpageState(navbar, true);
+        fullCardContainer.style.display = 'block';
+        fullCardContainer.innerHTML = renderFullCard(charName);
+        if (navbar) navbar.style.background = '#111';
+        
         if (timeline) {
             const formattedName = charName.charAt(0).toUpperCase() + charName.slice(1);
-            timelineTitle.textContent = `📜 ${formattedName}'s Recent Activity`;
-            window.currentFilteredChars = [charName.toLowerCase()];
-            applyTimelineFilters();
+            timelineTitle.innerHTML = `📜 ${formattedName}'s Recent Activity`;
+            window.currentFilteredChars = [charName.toLowerCase()]; 
+            applyTimelineFilters(); 
         }
     }
 
@@ -1944,8 +3026,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             // --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
             if (timeline) {
-                timelineTitle.textContent = '📜 Hall of Heroes Award History';
-                restoreTimelineFilters('awards');
+                timelineTitle.innerHTML = `📜 Hall of Heroes Award History`;
+                const filtersContainer = document.querySelector('.timeline-filters');
+                if (filtersContainer) {
+                    filtersContainer.innerHTML = `
+                        <div class="filter-group" style="flex-wrap: wrap;">
+                            <button class="tl-btn active" style="color: #ffd100; border-color: rgba(255, 209, 0, 0.5);" data-type="badge_all">All Awards</button>
+                            <button class="tl-btn" style="color: #ffd700; border-color: rgba(255, 215, 0, 0.5);" data-type="badge_ladder">Medals</button>
+                            <button class="tl-btn" style="color: #ff8000; border-color: rgba(255, 128, 0, 0.5);" data-type="badge_mvp">MVP</button>
+                            <button class="tl-btn" style="color: #00ffcc; border-color: rgba(0, 255, 204, 0.5);" data-type="badge_vanguard">Vanguards</button>
+                            <button class="tl-btn" style="color: #aaa; border-color: rgba(170, 170, 170, 0.5);" data-type="badge_campaign">Campaigns</button>
+                        </div>
+                    `;
+                    document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            tlTypeFilter = e.target.getAttribute('data-type');
+                            applyTimelineFilters();
+                        });
+                    });
+                }
                 tlTypeFilter = 'badge_all';
                 tlDateFilter = 'all'; // Ignore time limits for history
                 window.currentFilteredChars = null; 
@@ -2126,7 +3227,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 contributors.add(cName);
                                 window.warEffortContext[cName] = window.warEffortContext[cName] || [];
                                 const qColor = QUALITY_COLORS[e.item_quality] || '#a335ee';
-                                window.warEffortContext[cName].push({ itemId: e.item_id, name: e.item_name, quality: e.item_quality || 'COMMON' });
+                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" style="color:${qColor}; text-decoration:none;" onclick="event.stopPropagation();">[${e.item_name}]</a>`);
                             }
                             if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
                                 contributors.add(cName);
@@ -2154,7 +3255,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             
             // Explicitly hide timeline entirely for these pages
-            if (timeline) setHidden(timeline, true);
+            if (timeline) timeline.style.display = 'none';
             
             updateDropdownLabel('all');
             
@@ -2185,59 +3286,102 @@ window.addEventListener('DOMContentLoaded', async () => {
         badge.addEventListener('click', () => {
             const className = badge.id.replace('stats-', '');
             const formattedClass = className.charAt(0).toUpperCase() + className.slice(1);
-            const specContainer = document.getElementById('home-spec-container');
+            const cHex = CLASS_COLORS[formattedClass] || '#fff';
+
             if (window.activeClassExpanded === className) {
-                setHidden(specContainer, true);
+                document.getElementById('home-spec-container').style.display = 'none';
                 badge.classList.remove('active-filter');
                 window.activeClassExpanded = null;
                 return;
             }
+
             document.querySelectorAll('.clickable-class').forEach(b => b.classList.remove('active-filter'));
             badge.classList.add('active-filter');
             window.activeClassExpanded = className;
+
+            // USE RAW GUILD ROSTER HERE
             const classRosterRaw = rawGuildRoster.filter(c => (c.class || '').toLowerCase() === className);
             const specCounts = {};
             let unspeccedCount = 0;
+
             classRosterRaw.forEach(rawChar => {
                 const fullChar = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === (rawChar.name || '').toLowerCase());
                 const spec = (fullChar && fullChar.profile && fullChar.profile.active_spec) ? fullChar.profile.active_spec : null;
-                if (spec) specCounts[spec] = (specCounts[spec] || 0) + 1;
-                else unspeccedCount++;
+                if (spec) {
+                    specCounts[spec] = (specCounts[spec] || 0) + 1;
+                } else {
+                    unspeccedCount++;
+                }
             });
-            clearNode(specContainer);
-            const wrapDiv = createElement('div', 'class-stat-container spec-filter-wrapper');
+
+            const specContainer = document.getElementById('home-spec-container');
+            specContainer.textContent = '';
+            
+            const wrapDiv = document.createElement('div');
+            wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+            
             const template = document.getElementById('tpl-home-spec-badge');
             if (template) {
-                const addBadge = (hash, label, count, specName = '', useUnknown = false) => {
-                    const clone = template.content.cloneNode(true);
-                    const btn = clone.querySelector('.spec-btn');
-                    const labelSpan = clone.querySelector('.stat-badge-cls');
-                    const countSpan = clone.querySelector('.stat-badge-count');
-                    btn.setAttribute('data-hash', hash);
-                    btn.title = label;
-                    if (useUnknown) {
-                        btn.classList.add('class-theme-unknown');
-                        labelSpan.classList.add('theme-text');
-                        labelSpan.textContent = 'Unspecced';
-                    } else {
-                        applyClassTheme(btn, formattedClass);
-                        btn.classList.add('theme-border');
-                        labelSpan.classList.add('theme-text');
-                        applyClassTheme(labelSpan, formattedClass);
-                        if (specName) labelSpan.appendChild(createSpecInline(formattedClass, specName));
-                        else labelSpan.textContent = label;
+                // All Class Badge
+                let clone = template.content.cloneNode(true);
+                let badge = clone.querySelector('.spec-btn');
+                badge.setAttribute('data-hash', `class-${className}`);
+                badge.style.borderColor = cHex;
+                badge.classList.add('home-spec-badge-all');
+                badge.title = `View all ${formattedClass}s`;
+                
+                let clsSpan = clone.querySelector('.stat-badge-cls');
+                clsSpan.style.color = cHex;
+                clsSpan.textContent = `All ${formattedClass}s`;
+                
+                clone.querySelector('.stat-badge-count').textContent = classRosterRaw.length;
+                wrapDiv.appendChild(clone);
+                
+                // Individual Spec Badges
+                Object.keys(specCounts).sort().forEach(spec => {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-${spec.toLowerCase().replace(/\\s+/g, '')}`);
+                    badge.style.borderColor = cHex;
+                    badge.title = `View ${spec} ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = cHex;
+                    
+                    const iconUrl = getSpecIcon(formattedClass, spec);
+                    if (iconUrl) {
+                        const img = document.createElement('img');
+                        img.src = iconUrl;
+                        img.className = 'spec-badge-icon';
+                        clsSpan.appendChild(img);
                     }
-                    if (!specName && !useUnknown) btn.classList.add('home-spec-badge-all');
-                    countSpan.textContent = count;
+                    clsSpan.appendChild(document.createTextNode(spec));
+                    
+                    clone.querySelector('.stat-badge-count').textContent = specCounts[spec];
                     wrapDiv.appendChild(clone);
-                };
-                addBadge(`class-${className}`, `All ${formattedClass}s`, classRosterRaw.length);
-                Object.keys(specCounts).sort().forEach(spec => addBadge(`spec-${className}-${spec.toLowerCase().replace(/\s+/g, '')}`, `View ${spec} ${formattedClass}s`, specCounts[spec], spec));
-                if (unspeccedCount > 0) addBadge(`spec-${className}-unspecced`, `View Unspecced ${formattedClass}s`, unspeccedCount, '', true);
+                });
+                
+                // Unspecced Badge
+                if (unspeccedCount > 0) {
+                    clone = template.content.cloneNode(true);
+                    badge = clone.querySelector('.spec-btn');
+                    badge.setAttribute('data-hash', `spec-${className}-unspecced`);
+                    badge.style.borderColor = '#888';
+                    badge.title = `View Unspecced ${formattedClass}s`;
+                    
+                    clsSpan = clone.querySelector('.stat-badge-cls');
+                    clsSpan.style.color = '#888';
+                    clsSpan.textContent = 'Unspecced';
+                    
+                    clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
+                    wrapDiv.appendChild(clone);
+                }
             }
+            
             specContainer.appendChild(wrapDiv);
-            setDisplayVariant(specContainer, 'block');
-            specContainer.querySelectorAll('.spec-btn').forEach(btn => {
+            specContainer.style.display = 'block';
+
+            document.querySelectorAll('.spec-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     window.location.hash = btn.getAttribute('data-hash');
                 });
@@ -2245,13 +3389,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // Interactive Mouse Parallax for Embers
     document.addEventListener('mousemove', (e) => {
         const emberContainer = document.querySelector('.embers-container');
         if (emberContainer) {
             const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
             const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-            emberContainer.setAttribute('data-parallax-x', xAxis.toFixed(2));
-            emberContainer.setAttribute('data-parallax-y', yAxis.toFixed(2));
+            emberContainer.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
         }
     });
     
@@ -2262,7 +3406,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         // 1. CANVAS FOR PHYSICS & PARTICLES
         const canvas = document.createElement('canvas');
         canvas.id = 'ember-canvas';
-        canvas.className = 'ember-canvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.zIndex = '-2'; 
+        canvas.style.pointerEvents = 'none'; 
         document.body.prepend(canvas);
 
         const ctx = canvas.getContext('2d');
@@ -2394,7 +3544,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                 },
                 onHover: (event, elements) => {
-                    setChartPointerState(event, elements.length > 0);
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                 }
             },
             plugins: [createPieOverlayPlugin()]
@@ -2428,7 +3578,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const dynamicBadge = document.querySelector(`.dynamic-badge[data-class="${clickedClass}"]`);
                         
                         // If we are on a concise view with the class badges visible, trigger the in-place filter
-                        if (dynamicBadge && isElementVisible(document.getElementById('concise-view'))) {
+                        if (dynamicBadge && document.getElementById('concise-view').style.display !== 'none') {
                             dynamicBadge.click(); 
                         } else {
                             // Otherwise (on the Home dashboard), route to the dedicated class roster page
@@ -2438,7 +3588,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 },
                 onHover: (event, elements) => {
                     // Change cursor to pointer when hovering over a slice
-                    setChartPointerState(event, elements.length > 0);
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                 },
                 plugins: {
                     legend: {
@@ -2546,99 +3696,154 @@ window.addEventListener('DOMContentLoaded', async () => {
     function renderTimelineBatch() {
         const container = document.getElementById('timeline-feed-container');
         const loadMoreBtn = document.getElementById('load-more-btn');
+        
         if (!container) return;
+
         const endIndex = Math.min(currentTimelineIndex + timelineBatchSize, filteredTimelineData.length);
+        
         for (let i = currentTimelineIndex; i < endIndex; i++) {
             const event = filteredTimelineData[i];
-            const eventEl = createElement('div', 'concise-item tt-char timeline-feed-item');
-            bindCharacterSelect(eventEl, (event.character_name || '').toLowerCase());
+            
+            const eventEl = document.createElement('div');
+            
+            // Monument rendering moved to dedicated feed.
+            
+            // Restored the proper concise-item class from your production site!
+            eventEl.className = 'concise-item tt-char';
+            eventEl.style.cursor = 'pointer';
+            eventEl.onclick = () => selectCharacter((event.character_name || '').toLowerCase());
+            
             eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
             eventEl.setAttribute('data-class', event.class || 'Unknown');
-            if (event.item_quality) eventEl.setAttribute('data-quality', event.item_quality);
-            let dateStr = (event.timestamp || '').substring(0, 10);
+            eventEl.setAttribute('data-event-type', event.type);
+            eventEl.setAttribute('data-timestamp', event.timestamp);
+            if (event.item_quality) {
+                eventEl.setAttribute('data-quality', event.item_quality);
+            }
+            
+            // Format the date to 24-hour clock (e.g., "24 Mar 14:30")
+            let date_str = event.timestamp.substring(0, 10);
             try {
-                const cleanTs = (event.timestamp || '').replace('Z', '+00:00');
+                const cleanTs = event.timestamp.replace('Z', '+00:00');
                 const dt = new Date(cleanTs);
-                if (!isNaN(dt.getTime())) dateStr = dt.toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
-            } catch (e) {}
-            const className = event.class || 'Unknown';
-            const charName = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
-            applyClassTheme(eventEl, className);
-            eventEl.classList.add('theme-border-left');
+                if (!isNaN(dt.getTime())) {
+                    date_str = dt.toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+                }
+            } catch(e) {}
+            
+            const c_hex = CLASS_COLORS[event.class] || '#ffd100';
+            const c_name = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
+            
             if (event.type === 'badge') {
+                eventEl.style.borderLeftColor = c_hex;
+                eventEl.style.padding = '8px 12px'; // Tighter padding for badges
+                let badgeIcon = '🎖️', badgeColor = '#aaa', badgeText = '';
+                
+                if (event.badge_type === 'mvp_pve') { badgeIcon = '👑'; badgeColor = '#ff8000'; badgeText = 'PvE MVP'; }
+                else if (event.badge_type === 'mvp_pvp') { badgeIcon = '⚔️'; badgeColor = '#ff4400'; badgeText = 'PvP MVP'; }
+                else if (event.badge_type === 'vanguard') { badgeIcon = '🌟'; badgeColor = '#00ffcc'; badgeText = 'Vanguard'; }
+                else if (event.badge_type === 'campaign') { badgeIcon = '🎖️'; badgeColor = '#aaa'; badgeText = 'Campaign'; }
+                else if (event.badge_type === 'pve_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvE 1st'; }
+                else if (event.badge_type === 'pve_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvE 2nd'; }
+                else if (event.badge_type === 'pve_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvE 3rd'; }
+                else if (event.badge_type === 'pvp_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvP 1st'; }
+                else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP 2nd'; }
+                else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP 3rd'; }
+                
                 const template = document.getElementById('tpl-timeline-badge');
                 if (template) {
                     const clone = template.content.cloneNode(true);
+                    
                     const node = clone.querySelector('.tl-badge-node');
+                    node.style.background = badgeColor;
+                    node.style.boxShadow = `0 0 8px ${badgeColor}`;
+                    
                     const nameSpan = clone.querySelector('.tl-badge-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
                     const pill = clone.querySelector('.tl-badge-pill');
+                    pill.style.borderLeft = `2px solid ${badgeColor}`;
+                    
                     const iconSpan = clone.querySelector('.tl-badge-icon');
+                    iconSpan.textContent = badgeIcon;
+                    iconSpan.style.filter = `drop-shadow(0 0 2px ${badgeColor})`;
+                    
                     const textSpan = clone.querySelector('.tl-badge-text');
-                    const defs = createAwardDefinitionMap();
-                    const def = defs[event.badge_type] || { icon: '🎖️', label: event.badge_type || 'Award' };
-                    applyAwardTheme(eventEl, event.badge_type);
-                    applyAwardTheme(node, event.badge_type);
-                    node.classList.add('theme-award-node');
-                    nameSpan.textContent = charName;
-                    nameSpan.classList.add('theme-text');
-                    applyClassTheme(nameSpan, className);
-                    applyAwardTheme(pill, event.badge_type);
-                    pill.classList.add('theme-award-pill');
-                    iconSpan.textContent = def.icon;
-                    applyAwardTheme(iconSpan, event.badge_type);
-                    iconSpan.classList.add('theme-award-icon');
-                    textSpan.textContent = def.label;
-                    applyAwardTheme(textSpan, event.badge_type);
-                    textSpan.classList.add('theme-award-text');
-                    clone.querySelector('.tl-badge-category').textContent = `• ${event.category || ''}`;
-                    clone.querySelector('.tl-badge-date').textContent = dateStr;
+                    textSpan.textContent = badgeText;
+                    textSpan.style.color = badgeColor;
+                    
+                    clone.querySelector('.tl-badge-category').textContent = `• ${event.category}`;
+                    clone.querySelector('.tl-badge-date').textContent = date_str;
+                    
                     eventEl.appendChild(clone);
                 }
             } else if (event.type === 'level_up') {
+                eventEl.style.borderLeftColor = c_hex;
                 const template = document.getElementById('tpl-timeline-levelup');
                 if (template) {
                     const clone = template.content.cloneNode(true);
+                    
                     const nameSpan = clone.querySelector('.tl-event-name');
-                    nameSpan.textContent = charName;
-                    nameSpan.classList.add('theme-text');
-                    applyClassTheme(nameSpan, className);
-                    clone.querySelector('.tl-event-date').textContent = dateStr;
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    clone.querySelector('.tl-event-date').textContent = date_str;
                     clone.querySelector('.tl-event-level-text').textContent = `Reached Level ${event.level}`;
+                    
                     eventEl.appendChild(clone);
                 }
             } else {
+                const q = event.item_quality || 'COMMON';
+                const q_hex = QUALITY_COLORS[q] || '#ffffff';
+                eventEl.style.borderLeftColor = q_hex;
+                
                 const template = document.getElementById('tpl-timeline-loot');
                 if (template) {
                     const clone = template.content.cloneNode(true);
+                    
                     const node = clone.querySelector('.timeline-node');
+                    node.style.background = q_hex;
+                    node.style.boxShadow = `0 0 8px ${q_hex}`;
+                    
                     const nameSpan = clone.querySelector('.tl-event-name');
+                    nameSpan.textContent = c_name;
+                    nameSpan.style.color = c_hex;
+                    
+                    clone.querySelector('.tl-event-date').textContent = date_str;
+                    
                     const eventBox = clone.querySelector('.event-box');
-                    const itemLink = clone.querySelector('.tl-event-item-link');
-                    const quality = event.item_quality || 'COMMON';
-                    applyQualityTheme(eventEl, quality);
-                    eventEl.classList.add('theme-quality-border-left');
-                    applyQualityTheme(node, quality);
-                    node.classList.add('theme-quality-node');
-                    nameSpan.textContent = charName;
-                    nameSpan.classList.add('theme-text');
-                    applyClassTheme(nameSpan, className);
-                    clone.querySelector('.tl-event-date').textContent = dateStr;
-                    applyQualityTheme(eventBox, quality);
-                    eventBox.classList.add('theme-quality-border-left');
+                    eventBox.style.borderLeftColor = q_hex;
+                    
                     clone.querySelector('.tl-event-icon').src = event.item_icon;
+                    
+                    const itemLink = clone.querySelector('.tl-event-item-link');
                     itemLink.href = `https://www.wowhead.com/wotlk/item=${event.item_id}`;
                     itemLink.textContent = event.item_name;
-                    applyQualityTheme(itemLink, quality);
-                    itemLink.classList.add('theme-quality-text');
-                    itemLink.addEventListener('click', e => e.stopPropagation());
+                    itemLink.style.color = q_hex;
+
+                    itemLink.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+                    
                     eventEl.appendChild(clone);
                 }
             }
+            
             container.appendChild(eventEl);
         }
+        
         currentTimelineIndex = endIndex;
-        setDisplayVariant(loadMoreBtn, currentTimelineIndex >= filteredTimelineData.length ? 'none' : 'inline-block');
-        if (typeof setupTooltips === 'function') setupTooltips();
+        
+        if (currentTimelineIndex >= filteredTimelineData.length) {
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        } else {
+            if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+        }
+        
+        if (typeof setupTooltips === 'function') {
+            setupTooltips();
+        }
     }
 
     fetchTimeline();
@@ -2694,7 +3899,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        setDisplayVariant(mvpContainer, 'block');
+        mvpContainer.style.display = 'block';
 
         function generateMvpHtml(chars, isPvp) {
             if (chars.length === 0) {
@@ -2727,10 +3932,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const clone = template.content.cloneNode(true);
                 
                 const block = clone.querySelector('.podium-block');
-                block.classList.add(stepClass, 'theme-border-top');
+                block.classList.add(stepClass);
                 block.setAttribute('data-char', (p.name || '').toLowerCase());
-                bindCharacterSelect(block, (p.name || '').toLowerCase());
-                applyClassTheme(block, cClass);
+                block.onclick = () => selectCharacter((p.name || '').toLowerCase());
+                block.style.borderTop = `3px solid ${cHex}`;
                 
                 if (rank === 1) {
                     const crown = document.createElement('div');
@@ -2741,16 +3946,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const avatar = clone.querySelector('.podium-avatar');
                 avatar.src = portraitURL;
-                avatar.classList.add('theme-border');
-                applyClassTheme(avatar, cClass);
+                avatar.style.borderColor = cHex;
                 
                 const rankDiv = clone.querySelector('.podium-rank');
-                applyRankTheme(rankDiv, rank);
+                rankDiv.style.color = rankColor;
                 rankDiv.textContent = `#${rank}`;
                 
                 const nameDiv = clone.querySelector('.podium-name');
-                nameDiv.classList.add('theme-text');
-                applyClassTheme(nameDiv, cClass);
+                nameDiv.style.color = cHex;
                 nameDiv.textContent = p.name;
                 
                 clone.querySelector('.podium-trend-val').textContent = `▲ ${trend.toLocaleString()}`;
@@ -2787,13 +3990,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const img = clone.querySelector('.gloat-avatar');
             img.src = portraitURL;
-            bindCharacterSelect(img, p.name.toLowerCase());
+            img.onclick = () => selectCharacter(p.name.toLowerCase());
             
             const nameSpan = clone.querySelector('.gloat-name');
             nameSpan.textContent = p.name;
-            nameSpan.classList.add('theme-text');
-            applyClassTheme(nameSpan, cClass);
-            bindCharacterSelect(nameSpan, p.name.toLowerCase());
+            nameSpan.style.color = cHex;
+            nameSpan.onclick = () => selectCharacter(p.name.toLowerCase());
             
             clone.querySelector('.gloat-score').textContent = `+${mvpData.score.toLocaleString()}`;
             clone.querySelector('.gloat-label').textContent = `Last Week's ${label}`;
@@ -2935,29 +4137,73 @@ window.addEventListener('DOMContentLoaded', async () => {
             const pct = Math.min((currentVal / maxVal) * 100, 100);
             const fillEl = document.getElementById(fillId);
             const textEl = document.getElementById(textId);
-            const labelMap = { XP: 'Levels', HK: 'HKs', LOOT: 'Epics', ZENITH: 'Max Levels' };
-            const accentMap = { XP: 'gold', HK: 'red', LOOT: 'purple', ZENITH: 'cyan' };
-            if (fillEl && fillEl.parentElement) {
-                const newFill = createProgressFill(pct, type);
-                newFill.id = fillId;
-                fillEl.parentElement.replaceChild(newFill, fillEl);
+            const dynamicGlow = 10 + (pct * 0.25);
+            
+            let colorBase, colorMid, colorMax, labelName, glowColor;
+            if (type === 'XP') {
+                colorBase = '#8B6508'; colorMid = '#ffd100'; colorMax = '#ff8000'; labelName = 'Levels'; glowColor = '#ffd100';
+            } else if (type === 'HK') {
+                colorBase = '#8B0000'; colorMid = '#e74c3c'; colorMax = '#ff4400'; labelName = 'HKs'; glowColor = '#ff0000';
+            } else if (type === 'LOOT') {
+                colorBase = '#4b0082'; colorMid = '#a335ee'; colorMax = '#ff8000'; labelName = 'Epics'; glowColor = '#ff8000';
+            } else { // ZENITH
+                colorBase = '#006064'; colorMid = '#3FC7EB'; colorMax = '#00e5ff'; labelName = 'Max Levels'; glowColor = '#00e5ff';
             }
+
+            if (fillEl) {
+                setTimeout(() => { 
+                    fillEl.style.width = pct + '%'; 
+                    if (pct >= 100) {
+                        // Toned down 100% state: Natural colors, softer shadow, and a slower pulse
+                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMax})`;
+                        fillEl.style.boxShadow = `0 0 20px ${colorMax}`;
+                        fillEl.style.animation = `pulseMax${type} 1.5s infinite alternate`;
+                    } else if (pct >= 75) {
+                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMax})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMax}`;
+                        fillEl.style.animation = `pulseFast${type} 0.8s infinite alternate`;
+                    } else if (pct >= 30) {
+                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMid})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMid}`;
+                        fillEl.style.animation = `pulseSlow${type} 1.5s infinite alternate`;
+                    } else {
+                        fillEl.style.background = `linear-gradient(90deg, #333, ${colorBase})`;
+                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 255, 255, 0.2)`;
+                        fillEl.style.animation = 'none';
+                    }
+                }, 100);
+            }
+            
             if (textEl) {
                 textEl.textContent = '';
-                textEl.className = pct >= 100 ? 'challenge-text we-text-state-max' : 'challenge-text we-text-state-normal';
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'we-text-label';
+                labelSpan.textContent = labelName + ':';
+                
+                const valSpan = document.createElement('span');
+                valSpan.className = 'we-text-values';
+                valSpan.textContent = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}`;
+                
                 if (pct >= 100) {
-                    applyAccentTheme(textEl, accentMap[type] || 'gold');
-                    textEl.classList.add('theme-accent-text');
-                }
-                const labelSpan = createElement('span', 'we-text-label', `${labelMap[type] || type}:`);
-                const valSpan = createElement('span', 'we-text-values', `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}`);
-                textEl.appendChild(labelSpan);
-                textEl.appendChild(valSpan);
-                if (pct >= 100) {
-                    const crushSpan = createElement('span', 'we-text-crushed', '🔥 CRUSHED!');
-                    applyAccentTheme(crushSpan, accentMap[type] || 'gold');
-                    crushSpan.classList.add('theme-accent-shadow');
+                    textEl.className = 'challenge-text we-text-state-max';
+                    textEl.style.color = colorMid;
+                    labelSpan.style.color = '#ddd';
+                    
+                    const crushSpan = document.createElement('span');
+                    crushSpan.className = 'we-text-crushed';
+                    crushSpan.textContent = '🔥 CRUSHED!';
+                    crushSpan.style.textShadow = `0 0 10px ${colorMax}`;
+                    
+                    textEl.appendChild(labelSpan);
+                    textEl.appendChild(valSpan);
                     textEl.appendChild(crushSpan);
+                } else {
+                    textEl.className = 'challenge-text we-text-state-normal';
+                    textEl.style.color = '#fff';
+                    labelSpan.style.color = '#ccc';
+                    
+                    textEl.appendChild(labelSpan);
+                    textEl.appendChild(valSpan);
                 }
             }
         }
@@ -3052,30 +4298,35 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (filtersEl) timelineEl.insertBefore(monContainer, filtersEl);
                 else timelineEl.prepend(monContainer);
             }
-            clearNode(monContainer);
+            
+            monContainer.innerHTML = '';
             if (window.warEffortMonuments.length > 0) {
                 window.warEffortMonuments.forEach(mon => {
-                    const eventEl = createElement('div', 'monument-card');
+                    const eventEl = document.createElement('div');
+                    eventEl.className = 'monument-card';
                     const dt = new Date(mon.timestamp);
                     const timeStr = isNaN(dt) ? '' : dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '');
+                    eventEl.textContent = '';
                     const template = document.getElementById('tpl-monument-card');
                     if (template) {
                         const clone = template.content.cloneNode(true);
+                        
                         clone.querySelector('.mon-title-text').textContent = mon.title;
                         clone.querySelector('.mon-time-text').textContent = timeStr;
                         const descContainer = clone.querySelector('.mon-desc-text');
                         descContainer.textContent = '';
                         if (mon.highlightText) {
                             if (mon.prefixText) descContainer.appendChild(document.createTextNode(mon.prefixText));
-                            const hlSpan = createElement('span', 'monument-highlight-span');
-                            applyMonumentHighlightTheme(hlSpan, mon.highlightColor);
-                            hlSpan.classList.add('theme-accent-text');
+                            const hlSpan = document.createElement('span');
+                            hlSpan.style.color = mon.highlightColor;
+                            hlSpan.classList.add('monument-highlight-span');
                             hlSpan.textContent = mon.highlightText;
                             descContainer.appendChild(hlSpan);
                             if (mon.suffixText) descContainer.appendChild(document.createTextNode(mon.suffixText));
                         } else {
-                            descContainer.textContent = mon.desc || '';
+                            descContainer.innerHTML = mon.desc;
                         }
+                        
                         eventEl.appendChild(clone);
                     }
                     monContainer.appendChild(eventEl);
@@ -3083,40 +4334,79 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // 6. Tooltip Generator Helper (Updated to Route on Click)
         function bindTooltip(triggerId, contributorsDict, titleText, labelText) {
             const tooltipTrigger = document.getElementById(triggerId);
             if (!tooltipTrigger) return;
+            
             const sortedContributors = Object.entries(contributorsDict).sort((a, b) => b[1] - a[1]);
+            
             const newTrigger = tooltipTrigger.cloneNode(true);
             tooltipTrigger.parentNode.replaceChild(newTrigger, tooltipTrigger);
-            newTrigger.addEventListener('mouseenter', () => {
-                const tooltipRoot = createElement('div', 'custom-tooltip visible war-effort-tooltip');
-                tooltipRoot.appendChild(createElement('div', 'we-tt-header', titleText));
+            
+            function displayTooltip(clientX, clientY) {
+                tooltip.textContent = '';
+                
+                const header = document.createElement('div');
+                header.className = 'we-tt-header';
+                header.textContent = titleText;
+                tooltip.appendChild(header);
+                
                 if (sortedContributors.length === 0) {
-                    tooltipRoot.appendChild(createElement('div', 'we-tt-empty', 'The challenges just began!'));
+                    const empty = document.createElement('div');
+                    empty.className = 'we-tt-empty';
+                    empty.textContent = 'The challenges just began!';
+                    tooltip.appendChild(empty);
                 } else {
-                    sortedContributors.slice(0, 15).forEach(([name, count], index) => {
+                    const topList = sortedContributors.slice(0, 15);
+                    topList.forEach(([name, count], index) => {
                         const charData = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === name.toLowerCase());
-                        const className = charData ? getCharClass(charData) : 'Unknown';
+                        const cClass = charData ? getCharClass(charData) : 'Unknown';
+                        const cHex = CLASS_COLORS[cClass] || '#fff';
                         const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-                        const row = createElement('div', 'we-tt-row');
-                        const nameSpan = createElement('span', 'theme-text', `${index + 1}. ${formattedName}`);
-                        applyClassTheme(nameSpan, className);
+                        
+                        const row = document.createElement('div');
+                        row.className = 'we-tt-row';
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.style.color = cHex;
+                        nameSpan.textContent = `${index + 1}. ${formattedName}`;
+                        
+                        const scoreSpan = document.createElement('span');
+                        scoreSpan.className = 'we-tt-score';
+                        scoreSpan.textContent = `+${count.toLocaleString()}`;
+                        
                         row.appendChild(nameSpan);
-                        row.appendChild(createElement('span', 'we-tt-score', `+${count.toLocaleString()}`));
-                        tooltipRoot.appendChild(row);
+                        row.appendChild(scoreSpan);
+                        tooltip.appendChild(row);
                     });
+                    
                     if (sortedContributors.length > 15) {
                         const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
-                        tooltipRoot.appendChild(createElement('div', 'we-tt-footer', `...and +${remaining.toLocaleString()} more ${labelText}!`));
+                        const footer = document.createElement('div');
+                        footer.className = 'we-tt-footer';
+                        footer.textContent = `...and +${remaining.toLocaleString()} more ${labelText}!`;
+                        tooltip.appendChild(footer);
                     }
                 }
-                createInlineTooltipHost(newTrigger, tooltipRoot);
-            });
-            newTrigger.addEventListener('mouseleave', () => removeInlineTooltipHost(newTrigger));
+
+                tooltip.style.borderLeftColor = '#ffd100';
+                let x = clientX + 15;
+                let y = clientY + 15;
+                if (x + 250 > window.innerWidth) x = window.innerWidth - 260; 
+                tooltip.style.left = `${x}px`; 
+                tooltip.style.top = `${y}px`;
+                tooltip.classList.add('visible');
+            }
+
+            newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
+            newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+            
+            // --- NEW: Interactive Navigation ---
             newTrigger.addEventListener('click', e => {
                 e.stopPropagation();
-                removeInlineTooltipHost(newTrigger);
+                tooltip.classList.remove('visible');
+                
                 if (triggerId === 'guild-xp-tooltip-trigger') window.location.hash = 'war-effort-xp';
                 else if (triggerId === 'guild-hk-tooltip-trigger') window.location.hash = 'war-effort-hk';
                 else if (triggerId === 'guild-loot-tooltip-trigger') window.location.hash = 'war-effort-loot';
@@ -3131,5 +4421,4 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     window.addEventListener('hashchange', route);
-}
 });
