@@ -118,15 +118,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     safe_heatmap_data = json.dumps(heatmap_data)
 
     base_dir = os.path.dirname(__file__)
-    try:
-        with open(os.path.join(base_dir, "style.css"), "r", encoding="utf-8") as f:
-            css_content = f.read()
-    except FileNotFoundError: css_content = ""
-        
-    try:
-        with open(os.path.join(base_dir, "script.js"), "r", encoding="utf-8") as f:
-            js_content = f.read()
-    except FileNotFoundError: js_content = ""
 
     os.makedirs("asset", exist_ok=True)
     with open("asset/roster.json", "w", encoding="utf-8") as f:
@@ -147,14 +138,12 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     template = env.get_template("dashboard_template.html")
     
     html = template.render(
-        css_content=css_content,
         display_total_members=display_total_members,
         active_14_days=active_14_days,
         raid_ready_count=raid_ready_count,
         avg_level=avg_level,
         safe_config=safe_config,
         safe_heatmap_data=safe_heatmap_data,
-        js_content=js_content
     )
     
     with open("index.html", "w", encoding="utf-8") as f:
