@@ -264,7 +264,7 @@
             </div>
         </div>
     </template>
-    
+
     <template id="tpl-concise-dashboard-widgets">
         <div class="kpi-flex-row concise-kpi-container"></div>
         <div class="charts-flex-row">
@@ -292,6 +292,33 @@
     
     <template id="tpl-milestone-loot">
         <span><span class="milestone-highlight ms-char"></span> just looted <a href="#" target="_blank" class="ms-loot-link"></a>!<span class="ms-time"></span></span>
+    </template>
+
+    <template id="tpl-timeline-filters-default">
+        <div class="filter-group">
+            <button class="tl-btn" data-type="all">All</button>
+            <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
+            <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
+            <button class="tl-btn" data-type="level_up">Levels</button>
+        </div>
+        <div class="filter-group">
+            <select id="tl-date-filter" class="tl-select">
+                <option value="12">Last 12 Hours</option>
+                <option value="24">Last 24 Hours</option>
+                <option value="48">Last 48 Hours</option>
+                <option value="all" selected>All Available</option>
+            </select>
+        </div>
+    </template>
+
+    <template id="tpl-timeline-filters-badges">
+        <div class="filter-group">
+            <button class="tl-btn tl-btn-badge-all active" data-type="badge_all">All Awards</button>
+            <button class="tl-btn tl-btn-badge-ladder" data-type="badge_ladder">Medals</button>
+            <button class="tl-btn tl-btn-badge-mvp" data-type="badge_mvp">MVP</button>
+            <button class="tl-btn tl-btn-badge-vanguard" data-type="badge_vanguard">Vanguards</button>
+            <button class="tl-btn tl-btn-badge-campaign" data-type="badge_campaign">Campaigns</button>
+        </div>
     </template>
 
     <div class="embers-container"></div> 

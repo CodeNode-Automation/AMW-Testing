@@ -2286,45 +2286,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // --- RESTORE DEFAULT TIMELINE HTML ---
-        const filtersContainer = document.querySelector('.timeline-filters');
-        if (filtersContainer) {
-            filtersContainer.innerHTML = `
-                <div class="filter-group">
-                    <button class="tl-btn" data-type="all">All</button>
-                    <button class="tl-btn tl-btn-rare active" data-type="rare_plus">Rare+</button>
-                    <button class="tl-btn tl-btn-epic" data-type="epic">Epics+</button>
-                    <button class="tl-btn" data-type="level_up">Levels</button>
-                </div>
-                <div class="filter-group">
-                    <select id="tl-date-filter" class="tl-select">
-                        <option value="12">Last 12 Hours</option>
-                        <option value="24">Last 24 Hours</option>
-                        <option value="48">Last 48 Hours</option>
-                        <option value="all" selected>All Available</option>
-                    </select>
-                </div>
-            `;
-            // Re-bind standard events
-            document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    tlTypeFilter = e.target.getAttribute('data-type');
-                    applyTimelineFilters();
-                });
-            });
-            const dateSelect = document.getElementById('tl-date-filter');
-            if (dateSelect) {
-                dateSelect.addEventListener('change', (e) => {
-                    tlDateFilter = e.target.value;
-                    if (tlSpecificDate) {
-                        tlSpecificDate = null;
-                        document.querySelectorAll('.tt-heatmap').forEach(c => c.classList.remove('selected-date'));
-                    }
-                    applyTimelineFilters();
-                });
-            }
-        }
+        renderTimelineFilters('tpl-timeline-filters-default');
 
         tlTypeFilter = 'rare_plus';
         tlDateFilter = 'all';
@@ -2702,6 +2664,39 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
+    }
+
+        function bindTimelineFilterControls() {
+        document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                tlTypeFilter = e.target.getAttribute('data-type');
+                applyTimelineFilters();
+            });
+        });
+
+        const dateSelect = document.getElementById('tl-date-filter');
+        if (dateSelect) {
+            dateSelect.addEventListener('change', (e) => {
+                tlDateFilter = e.target.value;
+                if (tlSpecificDate) {
+                    tlSpecificDate = null;
+                    document.querySelectorAll('.tt-heatmap').forEach(c => c.classList.remove('selected-date'));
+                }
+                applyTimelineFilters();
+            });
+        }
+    }
+
+    function renderTimelineFilters(templateId) {
+        const filtersContainer = document.querySelector('.timeline-filters');
+        const template = document.getElementById(templateId);
+        if (!filtersContainer || !template) return;
+
+        filtersContainer.textContent = '';
+        filtersContainer.appendChild(template.content.cloneNode(true));
+        bindTimelineFilterControls();
     }
 
     function showArchitectureView() {
@@ -3115,24 +3110,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             // --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
             if (timeline) {
                 timelineTitle.innerHTML = `📜 Hall of Heroes Award History`;
-                const filtersContainer = document.querySelector('.timeline-filters');
-                if (filtersContainer) {
-                    filtersContainer.textContent = '';
-
-                    const badgeFiltersTemplate = document.getElementById('tpl-timeline-badge-filters');
-                    if (badgeFiltersTemplate) {
-                        filtersContainer.appendChild(badgeFiltersTemplate.content.cloneNode(true));
-                    }
-
-                    document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
-                            e.target.classList.add('active');
-                            tlTypeFilter = e.target.getAttribute('data-type');
-                            applyTimelineFilters();
-                        });
-                    });
-                }
+                renderTimelineFilters('tpl-timeline-filters-badges');
                 tlTypeFilter = 'badge_all';
                 tlDateFilter = 'all'; // Ignore time limits for history
                 window.currentFilteredChars = null; 
