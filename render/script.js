@@ -1,3 +1,5 @@
+'use strict';
+
 const CLASS_COLORS = {
     "Druid": "#FF7C0A", "Hunter": "#ABD473", "Mage": "#3FC7EB", 
     "Paladin": "#F48CBA", "Priest": "#FFFFFF", "Rogue": "#FFF468",
@@ -118,6 +120,39 @@ function summarizeBadges(badgeArray) {
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
+    const setExpandedState = (element, isExpanded) => {
+        if (element) element.setAttribute('aria-expanded', String(Boolean(isExpanded)));
+    };
+
+    const toggleElementVisibility = (element, shouldShow, displayValue = 'block') => {
+        if (!element) return;
+        if (shouldShow) {
+            element.classList.remove('is-hidden');
+            element.style.display = displayValue;
+        } else {
+            element.classList.add('is-hidden');
+            element.style.display = 'none';
+        }
+    };
+
+    const fetchJson = async (url, { required = true } = {}) => {
+        const response = await fetch(url);
+        if (!response.ok) {
+            if (!required) return null;
+            throw new Error(`Request failed for ${url}: ${response.status}`);
+        }
+        return response.json();
+    };
+
+    const queryCharacters = (characters, query, limit = 8) => {
+        const normalized = (query || '').toLowerCase().trim();
+        if (!normalized) return [];
+        return characters
+            .filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(normalized))
+            .slice(0, limit);
+    };
+
+
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
     const heatmapData = JSON.parse(document.getElementById('heatmap-data').textContent);
     
@@ -133,12 +168,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     // 1. Fetch CRITICAL Roster Data Firstt
     try {
-        const cb = new Date().getTime(); // Cache Buster
-        const rosterRes = await fetch(`asset/roster.json?t=${cb}`);
-        rosterData = await rosterRes.json();
-        
-        const rawRes = await fetch(`asset/raw_roster.json?t=${cb}`);
-        rawGuildRoster = await rawRes.json();
+        const cb = new Date().getTime();
+        rosterData = await fetchJson(`asset/roster.json?t=${cb}`);
+        rawGuildRoster = await fetchJson(`asset/raw_roster.json?t=${cb}`);
     } catch (error) {
         console.error("Failed to load armory data:", error);
         const loaderText = document.querySelector('.loader-content div');
@@ -152,9 +184,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 2. Fetch NON-CRITICAL War Effort Locks (Ignore if it fails or is missing)
     try {
         const cb = new Date().getTime();
-        const weRes = await fetch(`asset/war_effort.json?t=${cb}`);
-        if (weRes.ok) {
-            const weData = await weRes.json();
+        const weData = await fetchJson(`asset/war_effort.json?t=${cb}`, { required: false });
+        if (weData) {
             warEffortLocks = weData.locks || {};
         }
     } catch (error) {
@@ -290,7 +321,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         heroSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = queryCharacters(rosterData, query, rosterData.length);
                 if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
             }
         });
@@ -307,20 +338,65 @@ window.addEventListener('DOMContentLoaded', async () => {
     const customSelect = document.getElementById('customCharSelect');
     const customOptions = document.getElementById('customCharOptions');
     const selectValueText = customSelect ? customSelect.querySelector('.selected-value') : null;
+    const customOptionButtons = Array.from(document.querySelectorAll('.custom-option'));
+
+    const setCustomSelectOpen = (isOpen) => {
+        if (customOptions) customOptions.classList.toggle('show', isOpen);
+        if (customSelect) customSelect.classList.toggle('active', isOpen);
+        setExpandedState(customSelect, isOpen);
+        if (!isOpen && searchAutoComplete) searchAutoComplete.classList.remove('show');
+    };
+
+    const moveCustomSelectFocus = (direction) => {
+        if (!customOptionButtons.length) return;
+        const activeIndex = customOptionButtons.findIndex(option => option === document.activeElement);
+        const fallbackIndex = direction > 0 ? 0 : customOptionButtons.length - 1;
+        const nextIndex = activeIndex === -1 ? fallbackIndex : (activeIndex + direction + customOptionButtons.length) % customOptionButtons.length;
+        customOptionButtons[nextIndex].focus();
+    };
 
     if (customSelect) {
         customSelect.addEventListener('click', (e) => {
             e.stopPropagation();
-            customOptions.classList.toggle('show');
-            customSelect.classList.toggle('active');
-            if (searchAutoComplete) searchAutoComplete.classList.remove('show');
+            const willOpen = !customOptions.classList.contains('show');
+            setCustomSelectOpen(willOpen);
+            if (willOpen && customOptionButtons[0]) customOptionButtons[0].focus();
+        });
+
+        customSelect.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setCustomSelectOpen(true);
+                moveCustomSelectFocus(1);
+            }
+            if (event.key === 'Escape') {
+                setCustomSelectOpen(false);
+                customSelect.focus();
+            }
         });
     }
 
-    document.querySelectorAll('.custom-option').forEach(opt => {
+    customOptionButtons.forEach(opt => {
         opt.addEventListener('click', () => {
             const val = opt.getAttribute('data-value');
+            setCustomSelectOpen(false);
             window.location.hash = val;
+        });
+
+        opt.addEventListener('keydown', event => {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                moveCustomSelectFocus(1);
+            }
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                moveCustomSelectFocus(-1);
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                setCustomSelectOpen(false);
+                customSelect?.focus();
+            }
         });
     });
 
@@ -332,7 +408,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 8);
+            const results = queryCharacters(rosterData, query, 8);
             
             if (results.length > 0) {
                 searchAutoComplete.textContent = '';
@@ -376,7 +452,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = queryCharacters(rosterData, query, rosterData.length);
                 if (results.length > 0) {
                     window.location.hash = results[0].profile.name.toLowerCase();
                 }
@@ -385,8 +461,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.addEventListener('click', (e) => {
-        if (customOptions) customOptions.classList.remove('show');
-        if (customSelect) customSelect.classList.remove('active');
+        setCustomSelectOpen(false);
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
 
         if (e.target && e.target.classList && e.target.classList.contains('toggle-stats-btn')) {
@@ -3858,23 +3933,27 @@ window.addEventListener('DOMContentLoaded', async () => {
     const navLinksContainer = document.querySelector('.nav-links-container');
     
     if (menuToggle && navLinksContainer) {
+        const setMenuOpen = isOpen => {
+            menuToggle.classList.toggle('open', isOpen);
+            navLinksContainer.classList.toggle('open', isOpen);
+            setExpandedState(menuToggle, isOpen);
+        };
+
         menuToggle.addEventListener('click', (e) => {
             e.stopPropagation();
-            menuToggle.classList.toggle('open');
-            navLinksContainer.classList.toggle('open');
+            const willOpen = !navLinksContainer.classList.contains('open');
+            setMenuOpen(willOpen);
         });
         
         document.querySelectorAll('.nav-links-container .nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                menuToggle.classList.remove('open');
-                navLinksContainer.classList.remove('open');
+                setMenuOpen(false);
             });
         });
         
         document.addEventListener('click', (e) => {
             if (navLinksContainer.classList.contains('open') && !menuToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
-                menuToggle.classList.remove('open');
-                navLinksContainer.classList.remove('open');
+                setMenuOpen(false);
             }
         });
     }

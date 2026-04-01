@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guild armory dashboard for Azeroths Most Wanted with roster views, leaderboard insights, and recent activity.">
+    <meta name="theme-color" content="#050507">
     <title>&lt;Azeroths Most Wanted&gt; Guild Armory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false};</script>
     <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script data-goatcounter="https://nullbit5.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-    <style>
-        {{ css_content | safe }}
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to dashboard content</a>
     <div id="loading-overlay">
         <div class="loader-content">
             <img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_tournaments_symbol_bloodelf.jpg" class="pulse-icon" alt="Loading...">
@@ -255,13 +260,13 @@
 
     <div class="embers-container"></div> 
 
-    <div class="navbar">
-        <div class="controls-wrapper">
-            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+    <header class="navbar" role="banner">
+        <nav class="controls-wrapper" aria-label="Primary dashboard navigation">
+            <button class="mobile-menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
                 <span></span><span></span><span></span>
             </button>
             
-            <div class="nav-links-container">
+            <div class="nav-links-container" id="primary-nav">
                 <a href="#" class="nav-btn nav-btn-home"><span class="home-text">🏰 Home Dashboard</span></a>
                 
                 <div class="nav-section-header">WAR EFFORT</div>
@@ -281,39 +286,40 @@
                 <a href="https://discord.gg/t6mufeWRNK" target="_blank" class="nav-btn nav-btn-discord">💬 Join Discord</a>
             </div>
 
-            <div class="custom-select-wrapper" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="customCharOptions">
-                <div class="custom-select" id="customCharSelect" tabindex="0">
+            <div class="custom-select-wrapper">
+                <button class="custom-select" id="customCharSelect" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="customCharOptions">
                     <span class="selected-value">Select View...</span>
                     <span class="custom-select-arrow">▼</span>
-                </div>
+                </button>
                 <div class="custom-select-options" id="customCharOptions" role="listbox">
-                    <div class="custom-option" data-value="total" role="option">
+                    <button class="custom-option" data-value="total" role="option" type="button">
                         <span class="opt-icon-emoji">🌍</span> View Entire Guild
-                    </div>
-                    <div class="custom-option" data-value="active" role="option">
+                    </button>
+                    <button class="custom-option" data-value="active" role="option" type="button">
                         <span class="opt-icon-emoji">🔥</span> Active Roster (14 Days)
-                    </div>
-                    <div class="custom-option" data-value="raidready" role="option">
+                    </button>
+                    <button class="custom-option" data-value="raidready" role="option" type="button">
                         <span class="opt-icon-emoji">⚔️</span> Raid Ready (Lvl 70)
-                    </div>
-                    <div class="custom-option opt-hall-of-heroes" data-value="badges" role="option">
+                    </button>
+                    <button class="custom-option opt-hall-of-heroes" data-value="badges" role="option" type="button">
                         <span class="opt-icon-emoji">🌟</span> Hall of Heroes
-                    </div>
+                    </button>
                 </div>
             </div>
             
             <div class="search-container">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." />
+                    <input type="text" id="charSearch" autocomplete="off" placeholder="Search armory..." aria-label="Search the guild armory" />
                 </div>
-                <div id="search-autocomplete" class="search-autocomplete"></div>
+                <div id="search-autocomplete" class="search-autocomplete" role="listbox" aria-label="Armory search results"></div>
             </div>
-        </div>
-    </div>
+        </nav>
+    </header>
     
-    <div id="custom-tooltip" class="custom-tooltip"></div>
+    <div id="custom-tooltip" class="custom-tooltip" role="tooltip" aria-hidden="true"></div>
     
+    <main id="main-content">
     <div id="main-dashboard" class="dashboard-layout dashboard-hidden">
         <div class="main-content">
             <div id="empty-state">
@@ -328,9 +334,9 @@
                         <div class="search-container hero-search-wrapper">
                             <div class="search-box hero-search-box hero-search-box-inner">
                                 <span class="search-icon hero-search-icon">🔍</span>
-                                <input type="text" id="heroCharSearch" class="hero-search-input" autocomplete="off" placeholder="Search for a guild member..." />
+                                <input type="text" id="heroCharSearch" class="hero-search-input" autocomplete="off" placeholder="Search for a guild member..." aria-label="Search for a guild member" />
                             </div>
-                            <div id="hero-search-autocomplete" class="search-autocomplete hero-search-ac"></div>
+                            <div id="hero-search-autocomplete" class="search-autocomplete hero-search-ac" role="listbox" aria-label="Hero search results"></div>
                         </div>
                     </div>
                 </div>
@@ -342,7 +348,7 @@
                             <span id="countdown-timer-text" class="countdown-timer">--d --h --m --s</span>
                         </div>
                     </div>
-                    <div id="recent-milestones-container" class="ribbon-left" style="display:none;">
+                    <div id="recent-milestones-container" class="ribbon-left is-hidden">
                         <div class="milestone-banner">
                             <span class="milestone-icon">🌟</span>
                             <div id="milestone-text" class="milestone-text"></div>
@@ -530,7 +536,7 @@
                 </div>
             </div>
 
-            <div id="architecture-view" class="arch-view-wrapper" style="display: none;">
+            <div id="architecture-view" class="arch-view-wrapper is-hidden">
                 <h2 class="view-main-title arch-title">System Architecture</h2>
                 
                 <p class="arch-subtitle">⚡ 100% FREE & SERVERLESS ⚡</p>
@@ -669,9 +675,10 @@
             </div>
         </div>
 
-    </div> 
-    
-    <div class="dashboard-footer">
+    </div>
+</main>
+
+    <footer class="dashboard-footer">
         <div class="footer-tech-stack">
             <span class="tech-stack-highlight">⚡ Edge Architecture:</span> GitHub Actions CI/CD &bull; Turso SQLite &bull; Python AsyncIO
         </div>
@@ -682,7 +689,7 @@
             World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.<br>
             Azeroth's Most Wanted Armory is a community project and is not affiliated with, endorsed, or sponsored by Blizzard Entertainment.
         </div>
-    </div>
+    </footer>
 
     <script id="dashboard-config" type="application/json">
         {{ safe_config | safe }}
@@ -691,10 +698,8 @@
         {{ safe_heatmap_data | safe }}
     </script>
 
-    <script>
-        {{ js_content | safe }}
-    </script>
+    <script type="module" src="{{ url_for('static', filename='script.js') }}"></script>
     
-    <button id="backToTopBtn" title="Return to Top">⬆️ Top</button>
+    <button id="backToTopBtn" type="button" title="Return to Top" aria-label="Return to top of page">⬆️ Top</button>
 </body>
 </html>
