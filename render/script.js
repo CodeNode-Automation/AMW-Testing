@@ -209,6 +209,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     
         if (conciseList) {
         conciseList.addEventListener('click', (e) => {
+            if (e.target.closest('.we-loot-link')) return;
+
             const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char]');
             if (!trigger) return;
 
@@ -3596,8 +3598,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                             if (type === 'loot' && e.type === 'item' && (e.item_quality === 'EPIC' || e.item_quality === 'LEGENDARY')) {
                                 contributors.add(cName);
                                 window.warEffortContext[cName] = window.warEffortContext[cName] || [];
-                                const qColor = QUALITY_COLORS[e.item_quality] || '#a335ee';
-                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" style="color:${qColor}; text-decoration:none;" onclick="event.stopPropagation();">[${e.item_name}]</a>`);
+                                const qualityClass = e.item_quality === 'LEGENDARY' ? 'we-loot-link-legendary' : 'we-loot-link-epic';
+                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" class="we-loot-link ${qualityClass}">[${e.item_name}]</a>`);
                             }
                             if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
                                 contributors.add(cName);

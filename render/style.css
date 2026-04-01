@@ -249,6 +249,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .ms-loot-link { font-weight: bold; text-decoration: none; }
 .ms-loot-link-epic { color: #a335ee; }
 .ms-loot-link-legendary { color: #ff8000; }
+.we-loot-link { text-decoration: none; font-weight: bold; }
+.we-loot-link-epic { color: #a335ee; }
+.we-loot-link-legendary { color: #ff8000; }
 .countdown-label { color: #c0c0c0; font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000; }
 .countdown-timer { color: #ff8000; font-family: 'Cinzel', serif; font-weight: bold; font-size: 20px; text-shadow: 0 0 12px rgba(255, 128, 0, 0.5), 1px 1px 2px #000; letter-spacing: 1px; }
 .spec-filter-wrapper { margin-bottom: 0; gap: 12px; justify-content: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
