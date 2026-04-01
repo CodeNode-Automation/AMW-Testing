@@ -209,10 +209,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     
         if (conciseList) {
         conciseList.addEventListener('click', (e) => {
-            const row = e.target.closest('.concise-char-bar.tt-char[data-char]');
-            if (!row) return;
+            const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char]');
+            if (!trigger) return;
 
-            const charName = row.getAttribute('data-char');
+            const charName = trigger.getAttribute('data-char');
             if (charName) {
                 selectCharacter(charName);
             }
@@ -1759,6 +1759,106 @@ window.addEventListener('DOMContentLoaded', async () => {
         return clone.firstElementChild.outerHTML;
     }
 
+    function buildConcisePodiumHtml({
+        cleanName,
+        cClass,
+        activeSpecAttr,
+        awardsAttr,
+        cHex,
+        stepClass,
+        rank,
+        rankColor,
+        portraitURL,
+        baseName,
+        vanguardClass,
+        hashUrl,
+        deepChar,
+        statValue
+    }) {
+        const template = document.getElementById('tpl-concise-podium');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const block = clone.querySelector('.podium-block');
+        const crown = clone.querySelector('.podium-crown');
+        const vanguard = clone.querySelector('.vanguard-floating-icon');
+        const avatar = clone.querySelector('.podium-avatar');
+        const rankEl = clone.querySelector('.podium-rank');
+        const nameEl = clone.querySelector('.podium-name');
+        const pill = clone.querySelector('.podium-pill');
+        const statLine = clone.querySelector('.podium-stat-line');
+        const statValEl = clone.querySelector('.podium-stat-val');
+        const statLabelEl = clone.querySelector('.podium-stat-lbl');
+        const trendContainer = clone.querySelector('.podium-trend-container');
+
+        block.classList.add(stepClass);
+        block.setAttribute('data-char', cleanName);
+        block.setAttribute('data-class', cClass);
+        block.setAttribute('data-spec', activeSpecAttr);
+        block.setAttribute('data-awards', awardsAttr.join(','));
+        block.style.borderTopColor = cHex;
+
+        if (rank !== 1) {
+            crown.hidden = true;
+        }
+
+        if (vanguardClass !== '') {
+            vanguard.hidden = false;
+        }
+
+        avatar.src = portraitURL;
+        avatar.alt = baseName || 'Character portrait';
+        avatar.style.borderColor = cHex;
+
+        rankEl.textContent = `#${rank}`;
+        rankEl.style.color = rankColor;
+
+        nameEl.textContent = baseName;
+        nameEl.style.color = cHex;
+
+        if (hashUrl === 'war-effort-hk') {
+            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+            statValEl.textContent = `+${trendVal.toLocaleString()}`;
+            statValEl.classList.add('text-hk');
+            statLabelEl.textContent = 'HKs';
+            trendContainer.remove();
+        } else if (hashUrl === 'war-effort-xp' && window.warEffortContext && window.warEffortContext[cleanName]) {
+            statValEl.textContent = `+${window.warEffortContext[cleanName]}`;
+            statValEl.classList.add('text-xp');
+            statLabelEl.textContent = 'Levels';
+            trendContainer.remove();
+        } else if (hashUrl === 'war-effort-loot' && window.warEffortContext && window.warEffortContext[cleanName]) {
+            statValEl.textContent = window.warEffortContext[cleanName].length;
+            statValEl.classList.add('text-loot');
+            statLabelEl.textContent = 'Epics';
+            trendContainer.remove();
+        } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
+            statLine.remove();
+            trendContainer.remove();
+
+            const zenithEl = document.createElement('div');
+            zenithEl.className = 'text-zenith';
+            zenithEl.textContent = window.warEffortContext[cleanName].split(' ')[0];
+            pill.appendChild(zenithEl);
+        } else if (hashUrl === 'ladder-pve') {
+            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0;
+            statValEl.textContent = statValue;
+            statValEl.classList.add('text-ilvl');
+            statLabelEl.textContent = 'iLvl';
+            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
+        } else if (hashUrl === 'ladder-pvp') {
+            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+            statValEl.textContent = statValue;
+            statValEl.classList.add('text-hk');
+            statLabelEl.textContent = 'HKs';
+            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
+        } else {
+            trendContainer.remove();
+        }
+
+        return clone.firstElementChild.outerHTML;
+    }
+
     // Variable to track current sort method
     let currentSortMethod = 'level';
 
@@ -2082,38 +2182,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
-                let podiumStatText = '';
-                if (hashUrl === 'war-effort-hk') {
-                    const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    podiumStatText = `<div class="podium-stat-val text-hk">+${trendVal.toLocaleString()} <span class="podium-stat-lbl">HKs</span></div>`;
-                } else if (hashUrl === 'war-effort-xp' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div class="podium-stat-val text-xp">+${window.warEffortContext[cleanName]} <span class="podium-stat-lbl">Levels</span></div>`;
-                } else if (hashUrl === 'war-effort-loot' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div class="podium-stat-val text-loot">${window.warEffortContext[cleanName].length} <span class="podium-stat-lbl">Epics</span></div>`;
-                } else if (hashUrl === 'war-effort-zenith' && window.warEffortContext && window.warEffortContext[cleanName]) {
-                    podiumStatText = `<div class="text-zenith">${window.warEffortContext[cleanName].split(' ')[0]}</div>`;
-                } else if (hashUrl === 'ladder-pve') {
-                    podiumStatText = `<div class="podium-stat-val text-ilvl">${statValue} <span class="podium-stat-lbl">iLvl</span></div><div class="podium-trend-container">${trendHTML}</div>`;
-                } else if (hashUrl === 'ladder-pvp') {
-                    podiumStatText = `<div class="podium-stat-val text-hk">${statValue} <span class="podium-stat-lbl">HKs</span></div><div class="podium-trend-container">${trendHTML}</div>`;
-                }
-
-                let pVanguard = '';
-                if (vanguardClass !== '') {
-                    pVanguard = `<div class="vanguard-floating-icon" title="Vanguard">🌟</div>`;
-                }
-
-                const crownHtml = rank === 1 ? `<div class="podium-crown">👑</div>` : '';
-
-                podiumsHTML += `
-                <div class="podium-block ${stepClass} tt-char" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" onclick="selectCharacter('${cleanName}')" style="border-top: 3px solid ${cHex};">
-                    ${crownHtml}
-                    ${pVanguard}
-                    <img src="${portraitURL}" class="podium-avatar" style="border-color: ${cHex};">
-                    <div class="podium-rank" style="color: ${rankColor};">#${rank}</div>
-                    <div style="color: ${cHex}; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000; z-index: 2; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${baseName}</div>
-                    <div class="podium-pill">${podiumStatText}</div>
-                </div>`;
+                podiumsHTML += buildConcisePodiumHtml({
+                    cleanName,
+                    cClass,
+                    activeSpecAttr,
+                    awardsAttr,
+                    cHex,
+                    stepClass,
+                    rank,
+                    rankColor,
+                    portraitURL,
+                    baseName,
+                    vanguardClass,
+                    hashUrl,
+                    deepChar,
+                    statValue
+                });
             } else {
                 listItemsHTML += rowHTML;
             }
@@ -2805,7 +2889,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-        function bindTimelineFilterControls() {
+    function bindTimelineFilterControls() {
         document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
