@@ -2050,7 +2050,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let specIconHtml = '';
             let displaySpecClass = '';
             let statValue = '???';
-            let statColor = 'color:#666;';
+            let statValueClass = '';
             let trendHTML = '';
             let awardsAttr = [];
 
@@ -2135,7 +2135,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
-                statColor = currentSortMethod === 'hks' ? 'color: #ff4400;' : '';
+                statValueClass = currentSortMethod === 'hks' ? ' c-val-ilvl-hks' : '';
 
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
@@ -2192,7 +2192,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             // --- NEW: Custom War Effort Stats Overrides ---
             let statsHtml = `
                 <span>Level <span class="c-val-lvl">${level}</span></span>
-                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                <span class="concise-stat-line">${statLabel} <span class="c-val-ilvl${statValueClass}">${statValue}</span>${trendHTML}</span>
             `;
             let barStyleOverride = '';
             let innerWrapperStyle = 'display: flex; align-items: center; width: 100%;';
