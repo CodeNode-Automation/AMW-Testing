@@ -1774,8 +1774,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         activeSpecAttr,
         awardsAttr,
         cHex,
-        rowClassNames = [],
-        innerWrapperClass = '',
+        barStyleOverride,
+        innerWrapperStyle,
         rankHtml,
         portraitURL,
         displayName,
@@ -1783,7 +1783,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         raceName,
         specIconHtml,
         displaySpecClass,
-        statsClassName = '',
+        cStatsStyleOverride,
         statsHtml,
         hashUrl,
         vanguardClass,
@@ -1815,11 +1815,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bar.setAttribute('data-class', cClass);
         bar.setAttribute('data-awards', awardsAttr.join(','));
-        bar.style.borderLeftColor = cHex;
-        if (!isClickable) bar.classList.add('concise-char-bar-static');
-        if (rowClassNames.length) bar.classList.add(...rowClassNames);
+        bar.style.cssText = `border-left-color:${cHex};${isClickable ? '' : 'cursor: default;'}${barStyleOverride}`;
 
-        if (innerWrapperClass) innerWrap.classList.add(innerWrapperClass);
+        innerWrap.style.cssText = innerWrapperStyle;
         rankSlot.innerHTML = rankHtml;
 
         portrait.src = portraitURL;
@@ -1835,11 +1833,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
             statsBottom.hidden = false;
-            if (statsClassName) statsBottom.classList.add(statsClassName);
+            statsBottom.style.cssText = cStatsStyleOverride;
             statsBottom.innerHTML = statsHtml;
         } else {
             statsBottom.remove();
-            if (statsClassName) statsTop.classList.add(statsClassName);
+            statsTop.style.cssText = cStatsStyleOverride;
             statsTop.innerHTML = statsHtml;
         }
 
@@ -2194,15 +2192,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             // --- NEW: Custom War Effort Stats Overrides ---
             let statsHtml = `
                 <span>Level <span class="c-val-lvl">${level}</span></span>
-                <span style="display:flex; align-items:center; justify-content:flex-end;">${statLabel} <span class="c-val-ilvl" style="${statColor} margin-left:4px;">${statValue}</span>${trendHTML}</span>
+                <span class="concise-stat-line">${statLabel} <span class="c-val-ilvl${statValueClass}">${statValue}</span>${trendHTML}</span>
             `;
-            let rowClassNames = [];
-            let innerWrapperClass = '';
-            let statsClassName = 'concise-row-stats-default';
+            let barStyleOverride = '';
+            let innerWrapperStyle = 'display: flex; align-items: center; width: 100%;';
+            let cStatsStyleOverride = 'display:flex; align-items:center; justify-content:flex-end; flex:1;';
 
             if (hashUrl.startsWith('war-effort-')) {
                 // By default, stretch the bars
-                rowClassNames.push('concise-char-bar-war-effort');
+                barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px;';
                 
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
@@ -2216,9 +2214,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                             statsHtml = `<span class="we-stat-xp">+${contextData} Levels Contributed</span>`;
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
-                            rowClassNames.push('concise-char-bar-war-effort-loot');
-                            innerWrapperClass = 'concise-row-inner-war-effort-loot';
-                            statsClassName = 'concise-row-stats-war-effort-loot';
+                            barStyleOverride = 'width: 100%; max-width: 100%; margin-bottom: 8px; padding: 15px; flex-direction: column; align-items: flex-start; height: auto;';
+                            innerWrapperStyle = 'display: flex; align-items: center; width: 100%; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;';
+                            cStatsStyleOverride = 'display:flex; width: 100%; flex-direction: column; align-items: flex-start;';
 
                             const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
                             statsHtml = `
@@ -2247,8 +2245,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 activeSpecAttr,
                 awardsAttr,
                 cHex,
-                rowClassNames,
-                innerWrapperClass,
+                barStyleOverride,
+                innerWrapperStyle,
                 rankHtml,
                 portraitURL,
                 displayName,
@@ -2256,7 +2254,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 raceName,
                 specIconHtml,
                 displaySpecClass,
-                statsClassName,
+                cStatsStyleOverride,
                 statsHtml,
                 hashUrl,
                 vanguardClass,
