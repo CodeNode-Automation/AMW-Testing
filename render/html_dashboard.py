@@ -18,17 +18,6 @@ def generate_html_dashboard(roster_data, realm_data=None, timeline_data=None, ra
     # Safely filter out any characters whose profile failed to load from the API
     roster_data = [char for char in roster_data if char and isinstance(char.get("profile"), dict)]
 
-    CLASS_COLORS = {
-        "Druid": "#FF7C0A", "Hunter": "#ABD473", "Mage": "#3FC7EB", 
-        "Paladin": "#F48CBA", "Priest": "#FFFFFF", "Rogue": "#FFF468",
-        "Shaman": "#0070DE", "Warlock": "#8788EE", "Warrior": "#C69B6D",
-        "Death Knight": "#C41E3A"
-    }
-    QUALITY_COLORS = {
-        "POOR": "#9d9d9d", "COMMON": "#ffffff", "UNCOMMON": "#1eff00",
-        "RARE": "#0070dd", "EPIC": "#a335ee", "LEGENDARY": "#ff8000"
-    }
-
     last_updated_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     sorted_roster = sorted(roster_data, key=lambda x: x.get("profile", {}).get("name", "").lower())
     sorted_stats_roster = sorted(roster_data, key=lambda x: (
