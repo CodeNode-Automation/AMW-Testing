@@ -780,6 +780,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .weapon-stats-header-secondary { margin-top: 12px; }
 .weapon-stats-header-mt16 { margin-top: 16px; }
 .weapon-stats-header-mt0 { margin-top: 0; }
+.gear-base-stat { color: #888; font-size: 11px; margin-right: 6px; }
+.gear-gain-stat { color: #2ecc71; font-weight: bold; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
 
