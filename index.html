@@ -329,9 +329,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .c-val-lvl { color: #ffd100; font-family: 'Cinzel'; font-size: 15px; text-shadow: 0 1px 2px #000; }
 .concise-rank-indicator { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; margin-right: 10px; display: flex; align-items: center; justify-content: center; }
+.concise-rank-gold { color: #ffd100; }
+.concise-rank-silver { color: #c0c0c0; }
+.concise-rank-bronze { color: #cd7f32; }
+.concise-rank-default { color: #777; }
 .rank-size-large { font-size: 18px; }
 .rank-size-small { font-size: 15px; }
 .c-val-ilvl { color: #ff8000; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.concise-spec-icon { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222; }
 
 .custom-tooltip { position: fixed; background: linear-gradient(135deg, rgba(15, 15, 25, 0.85) 0%, rgba(5, 5, 10, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.2); border-top: 1px solid rgba(255, 209, 0, 0.6); color: #eee; padding: 18px; border-radius: 12px; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 20px rgba(255, 209, 0, 0.1); visibility: hidden; opacity: 0; transition: opacity 0.2s, visibility 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 200px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); pointer-events: none; transform: translateY(10px) scale(0.95); }
 .custom-tooltip.visible { visibility: visible; opacity: 1; transform: translateY(0) scale(1); }
@@ -753,6 +758,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .weekly-challenges-title { font-family: 'Cinzel'; color: #ffd100; text-align: center; margin-top: 0; margin-bottom: 30px; text-shadow: 0 4px 15px rgba(255, 209, 0, 0.3); letter-spacing: 2px; font-size: 24px; }
 .vanguard-aura { background: rgba(30, 35, 45, 0.95) !important; border-left-color: #00ffcc !important; box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; z-index: 5; position: relative; }
 .vanguard-badge { background: #111; color: #fff; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-left: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.8); display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.vanguard-badge-time { color: #aaa; font-size: 9px; font-weight: normal; margin-left: 4px; text-transform: none; }
 .vanguard-floating-icon { position: absolute; top: -10px; right: -10px; font-size: 22px; filter: drop-shadow(0 0 5px #00ffcc); z-index: 10; }
 .monuments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 15px; width: 100%; }
 .monument-card { background: linear-gradient(135deg, rgba(25, 25, 30, 0.9) 0%, rgba(10, 10, 15, 0.95) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-left: 2px solid #ffd100; padding: 8px 10px; display: flex; flex-direction: column; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
@@ -1641,6 +1647,64 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     
                 </div>
             </div>
+    
+    <template id="tpl-full-card-shell">
+        <div class="char-card">
+            <div class="char-card-header">
+                <h2 class="char-card-name"></h2>
+                <div class="char-badges-container"></div>
+
+                <div class="xp-bar-wrapper">
+                    <div class="xp-bar-rested"></div>
+                    <div class="xp-bar-earned"></div>
+                    <div class="xp-bar-label"></div>
+                </div>
+            </div>
+
+            <div class="card-content-split">
+                <div class="card-left-col">
+                    <div class="char-card-portrait-wrapper">
+                        <img src="" class="char-card-portrait" alt="">
+                    </div>
+
+                    <div class="info-box char-card-stats-box">
+                        <div class="char-card-stats-header">
+                            <h3 class="stat-card-title char-card-stats-title"></h3>
+                            <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
+                        </div>
+
+                        <div class="stat-page-1">
+                            <div class="resource-bar full-card-health-bar">
+                                <div class="bar-fill full-card-health-fill"></div>
+                                <span class="bar-text full-card-health-text"></span>
+                            </div>
+
+                            <div class="resource-bar full-card-power-bar">
+                                <div class="bar-fill full-card-power-fill"></div>
+                                <span class="bar-text full-card-power-text"></span>
+                            </div>
+
+                            <div class="stat-spacer"></div>
+
+                            <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str full-card-stat-str"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi full-card-stat-agi"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta full-card-stat-sta"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int full-card-stat-int"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi full-card-stat-spi"></span></div>
+
+                            <div class="full-card-advanced-stats"></div>
+                        </div>
+
+                        <div class="stat-page-2">
+                            <div class="full-card-weapon-stats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-grid-container full-card-gear-grid"></div>
+            </div>
+        </div>
+    </template>
 
             <div id="full-card-container" class="full-card-container"></div>
         </div> 
@@ -1688,10 +1752,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T19:51:28.646913Z", "active_14_days": 414, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T20:12:29.951677Z", "active_14_days": 414, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 406, "loot": 311, "levels": 95, "total_roster": 661, "active_roster": 414}]
+        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 414, "loot": 319, "levels": 95, "total_roster": 661, "active_roster": 414}]
     </script>
 
     <script>
@@ -2974,11 +3038,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (vCount > 0) extraBadges += `<span class="badge char-badge badge-vanguard" title="${tVanguard}">🌟 Vanguard x${vCount}</span>`;
         if (cCount > 0) extraBadges += `<span class="badge char-badge badge-campaign" title="${tCampaign}">🎖️ Campaigns x${cCount}</span>`;
 
-        return `
-<div class="char-card ${factionCls}" style="border-top-color:${cHex};">
-    <div class="char-card-header">
-        <h2 class="char-card-name" style="color:${cHex};">${p.name || 'Unknown'}</h2>
-        <div class="char-badges-container">
+        const fullCardTemplate = document.getElementById('tpl-full-card-shell');
+        if (!fullCardTemplate) return '';
+
+        const clone = fullCardTemplate.content.cloneNode(true);
+
+        const card = clone.querySelector('.char-card');
+        card.classList.add(factionCls);
+        card.style.borderTopColor = cHex;
+
+        const nameEl = clone.querySelector('.char-card-name');
+        nameEl.textContent = p.name || 'Unknown';
+        nameEl.style.color = cHex;
+
+        const badgesEl = clone.querySelector('.char-badges-container');
+        badgesEl.innerHTML = `
             <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             ${extraBadges}
             <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
@@ -2986,46 +3060,56 @@ window.addEventListener('DOMContentLoaded', async () => {
             <span class="badge char-badge default-badge">${raceName}</span>
             <span class="badge char-badge" style="border-color: ${cHex}; color: ${cHex};">${specIconHtml}${displaySpecClass}</span>
             ${hkBadge}
-        </div>
-        
-        <div class="xp-bar-wrapper">
-            <div class="xp-bar-rested" style="width: ${restedPercent}%;"></div>
-            <div class="xp-bar-earned" style="width: ${xpPercent}%;"></div>
-            <div class="xp-bar-label">${xpLabel}</div>
-        </div>
-    </div>
-    
-    <div class="card-content-split">
-        <div class="card-left-col">
-            <div class="char-card-portrait-wrapper">
-                <img src="${char.render_url || getClassIcon(cClass)}" class="char-card-portrait" style="border-color:${cHex};">
-            </div>
-            <div class="info-box char-card-stats-box">
-                <div class="char-card-stats-header">
-                    <h3 class="stat-card-title char-card-stats-title" style="color:${cHex};">Combat Stats</h3>
-                    <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
-                </div>
-                <div class="stat-page-1">
-                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
-                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
-                    <div class="stat-spacer"></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str">${strVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi">${agiVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta">${staVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int">${intVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi">${spiVal}</span></div>
-                    ${advancedStatsHtml}
-                </div>
-                <div class="stat-page-2" style="display:none; animation: fadeIn 0.3s;">
-                    ${weaponStatsHtml}
-                </div>
-            </div>
-        </div>
-        <div class="gear-grid-container">
-            ${gearHtml}
-        </div>
-    </div>
-</div>`;
+        `;
+
+        const restedBar = clone.querySelector('.xp-bar-rested');
+        restedBar.style.width = `${restedPercent}%`;
+
+        const earnedBar = clone.querySelector('.xp-bar-earned');
+        earnedBar.style.width = `${xpPercent}%`;
+
+        const xpLabelEl = clone.querySelector('.xp-bar-label');
+        xpLabelEl.textContent = xpLabel;
+
+        const portraitEl = clone.querySelector('.char-card-portrait');
+        portraitEl.src = char.render_url || getClassIcon(cClass);
+        portraitEl.alt = p.name || 'Character portrait';
+        portraitEl.style.borderColor = cHex;
+
+        const statsTitleEl = clone.querySelector('.char-card-stats-title');
+        statsTitleEl.textContent = 'Combat Stats';
+        statsTitleEl.style.color = cHex;
+
+        const healthFillEl = clone.querySelector('.full-card-health-fill');
+        healthFillEl.style.background = 'linear-gradient(to right, #1d8348, #2ecc71)';
+
+        const healthTextEl = clone.querySelector('.full-card-health-text');
+        healthTextEl.textContent = `Health: ${health}`;
+
+        const powerFillEl = clone.querySelector('.full-card-power-fill');
+        powerFillEl.style.background = `linear-gradient(to right, ${powerCol}, #0a0a0a)`;
+
+        const powerTextEl = clone.querySelector('.full-card-power-text');
+        powerTextEl.textContent = `${powerName}: ${power}`;
+
+        clone.querySelector('.full-card-stat-str').textContent = strVal;
+        clone.querySelector('.full-card-stat-agi').textContent = agiVal;
+        clone.querySelector('.full-card-stat-sta').textContent = staVal;
+        clone.querySelector('.full-card-stat-int').textContent = intVal;
+        clone.querySelector('.full-card-stat-spi').textContent = spiVal;
+
+        const advancedStatsEl = clone.querySelector('.full-card-advanced-stats');
+        advancedStatsEl.innerHTML = advancedStatsHtml;
+
+        const page2El = clone.querySelector('.stat-page-2');
+        page2El.style.display = 'none';
+        page2El.style.animation = 'fadeIn 0.3s';
+        page2El.innerHTML = weaponStatsHtml;
+
+        const gearGridEl = clone.querySelector('.full-card-gear-grid');
+        gearGridEl.innerHTML = gearHtml;
+
+        return clone.firstElementChild.outerHTML;
     }
 
     function renderDynamicBadges(characters, isRawMode) {
@@ -3743,7 +3827,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
-                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="concise-spec-icon">` : '';
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
@@ -3775,9 +3859,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (isLadderView) {
                 podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+                const rankToneClass = index === 0 ? 'concise-rank-gold' : index === 1 ? 'concise-rank-silver' : index === 2 ? 'concise-rank-bronze' : 'concise-rank-default';
                 const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
-                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass}" style="color: ${rankColor};">#${index + 1}</div>`;
+                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass} ${rankToneClass}">#${index + 1}</div>`;
             }
 
             // --- NEW: Vanguard Aura Logic ---
@@ -3793,7 +3877,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
                         const dt = new Date(window.warEffortLockTimes[type]);
                         if (!isNaN(dt)) {
-                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
+                            timeText = ` <span class="vanguard-badge-time">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         }
                     }
                     
