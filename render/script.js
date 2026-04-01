@@ -246,6 +246,36 @@ window.addEventListener('DOMContentLoaded', async () => {
         return char.class || 'Unknown';
     }
 
+    function appendCharacterSearchResult(targetEl, char, options = {}) {
+        const { forceObjectFitCover = false } = options;
+        const template = document.getElementById('tpl-hero-search-result');
+        if (!template || !targetEl || !char || !char.profile || !char.profile.name) return;
+
+        const cClass = getCharClass(char);
+        const cHex = CLASS_COLORS[cClass] || '#fff';
+        const clone = template.content.cloneNode(true);
+
+        const itemDiv = clone.querySelector('.hero-ac-item');
+        itemDiv.style.borderLeftColor = cHex;
+        itemDiv.addEventListener('click', () => selectCharacter(char.profile.name.toLowerCase()));
+
+        const img = clone.querySelector('.hero-ac-icon');
+        img.src = char.render_url || getClassIcon(cClass);
+        img.style.borderColor = cHex;
+        if (forceObjectFitCover) {
+            img.style.objectFit = 'cover';
+        }
+
+        const nameSpan = clone.querySelector('.hero-ac-name');
+        nameSpan.textContent = char.profile.name;
+        nameSpan.style.color = cHex;
+
+        const metaSpan = clone.querySelector('.ac-meta');
+        metaSpan.textContent = `Level ${char.profile.level} ${cClass}`;
+
+        targetEl.appendChild(clone);
+    }
+
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
@@ -259,28 +289,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
             if (results.length > 0) {
                 heroSearchAutoComplete.textContent = '';
-                const template = document.getElementById('tpl-hero-search-result');
                 results.forEach(c => {
-                    const cClass = getCharClass(c);
-                    const cHex = CLASS_COLORS[cClass] || '#fff';
-                    const clone = template.content.cloneNode(true);
-                    const itemDiv = clone.querySelector('.hero-ac-item');
-                    
-                    itemDiv.style.borderLeftColor = cHex;
-                    itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
-                    
-                    const img = clone.querySelector('.hero-ac-icon');
-                    img.src = c.render_url || getClassIcon(cClass);
-                    img.style.borderColor = cHex;
-                    
-                    const nameSpan = clone.querySelector('.hero-ac-name');
-                    nameSpan.textContent = c.profile.name;
-                    nameSpan.style.color = cHex;
-                    
-                    const metaSpan = clone.querySelector('.ac-meta');
-                    metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
-                    
-                    heroSearchAutoComplete.appendChild(clone);
+                    appendCharacterSearchResult(heroSearchAutoComplete, c);
                 });
                 heroSearchAutoComplete.classList.add('show');
             } else {
@@ -336,32 +346,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (results.length > 0) {
                 searchAutoComplete.textContent = '';
-                const template = document.getElementById('tpl-hero-search-result');
-                if (template) {
-                    results.forEach(c => {
-                        const cClass = getCharClass(c);
-                        const cHex = CLASS_COLORS[cClass] || '#fff';
-                        const clone = template.content.cloneNode(true);
-                        
-                        const itemDiv = clone.querySelector('.hero-ac-item');
-                        itemDiv.style.borderLeftColor = cHex;
-                        itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
-                        
-                        const img = clone.querySelector('.hero-ac-icon');
-                        img.src = c.render_url || getClassIcon(cClass);
-                        img.style.borderColor = cHex;
-                        img.style.objectFit = 'cover';
-                        
-                        const nameSpan = clone.querySelector('.hero-ac-name');
-                        nameSpan.textContent = c.profile.name;
-                        nameSpan.style.color = cHex;
-                        
-                        const metaSpan = clone.querySelector('.ac-meta');
-                        metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
-                        
-                        searchAutoComplete.appendChild(clone);
-                    });
-                }
+                results.forEach(c => {
+                    appendCharacterSearchResult(searchAutoComplete, c, { forceObjectFitCover: true });
+                });
                 searchAutoComplete.classList.add('show');
             } else {
                 searchAutoComplete.textContent = '';
