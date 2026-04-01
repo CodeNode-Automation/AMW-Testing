@@ -13,7 +13,13 @@
     <script src="https://wow.zamimg.com/widgets/power.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script data-goatcounter="https://nullbit5.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% if stylesheet_href is defined and stylesheet_href %}
+    <link rel="stylesheet" href="{{ stylesheet_href }}">
+    {% elif css_content is defined %}
+    <style>
+        {{ css_content | safe }}
+    </style>
+    {% endif %}
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to dashboard content</a>
@@ -698,7 +704,13 @@
         {{ safe_heatmap_data | safe }}
     </script>
 
-    <script type="module" src="{{ url_for('static', filename='script.js') }}"></script>
+    {% if script_src is defined and script_src %}
+    <script type="module" src="{{ script_src }}"></script>
+    {% elif js_content is defined %}
+    <script>
+        {{ js_content | safe }}
+    </script>
+    {% endif %}
     
     <button id="backToTopBtn" type="button" title="Return to Top" aria-label="Return to top of page">⬆️ Top</button>
 </body>
