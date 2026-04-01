@@ -740,6 +740,64 @@
                     
                 </div>
             </div>
+    
+    <template id="tpl-full-card-shell">
+        <div class="char-card">
+            <div class="char-card-header">
+                <h2 class="char-card-name"></h2>
+                <div class="char-badges-container"></div>
+
+                <div class="xp-bar-wrapper">
+                    <div class="xp-bar-rested"></div>
+                    <div class="xp-bar-earned"></div>
+                    <div class="xp-bar-label"></div>
+                </div>
+            </div>
+
+            <div class="card-content-split">
+                <div class="card-left-col">
+                    <div class="char-card-portrait-wrapper">
+                        <img src="" class="char-card-portrait" alt="">
+                    </div>
+
+                    <div class="info-box char-card-stats-box">
+                        <div class="char-card-stats-header">
+                            <h3 class="stat-card-title char-card-stats-title"></h3>
+                            <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
+                        </div>
+
+                        <div class="stat-page-1">
+                            <div class="resource-bar full-card-health-bar">
+                                <div class="bar-fill full-card-health-fill"></div>
+                                <span class="bar-text full-card-health-text"></span>
+                            </div>
+
+                            <div class="resource-bar full-card-power-bar">
+                                <div class="bar-fill full-card-power-fill"></div>
+                                <span class="bar-text full-card-power-text"></span>
+                            </div>
+
+                            <div class="stat-spacer"></div>
+
+                            <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str full-card-stat-str"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi full-card-stat-agi"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta full-card-stat-sta"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int full-card-stat-int"></span></div>
+                            <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi full-card-stat-spi"></span></div>
+
+                            <div class="full-card-advanced-stats"></div>
+                        </div>
+
+                        <div class="stat-page-2">
+                            <div class="full-card-weapon-stats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-grid-container full-card-gear-grid"></div>
+            </div>
+        </div>
+    </template>
 
             <div id="full-card-container" class="full-card-container"></div>
         </div> 

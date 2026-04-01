@@ -1277,11 +1277,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (vCount > 0) extraBadges += `<span class="badge char-badge badge-vanguard" title="${tVanguard}">🌟 Vanguard x${vCount}</span>`;
         if (cCount > 0) extraBadges += `<span class="badge char-badge badge-campaign" title="${tCampaign}">🎖️ Campaigns x${cCount}</span>`;
 
-        return `
-<div class="char-card ${factionCls}" style="border-top-color:${cHex};">
-    <div class="char-card-header">
-        <h2 class="char-card-name" style="color:${cHex};">${p.name || 'Unknown'}</h2>
-        <div class="char-badges-container">
+        const fullCardTemplate = document.getElementById('tpl-full-card-shell');
+        if (!fullCardTemplate) return '';
+
+        const clone = fullCardTemplate.content.cloneNode(true);
+
+        const card = clone.querySelector('.char-card');
+        card.classList.add(factionCls);
+        card.style.borderTopColor = cHex;
+
+        const nameEl = clone.querySelector('.char-card-name');
+        nameEl.textContent = p.name || 'Unknown';
+        nameEl.style.color = cHex;
+
+        const badgesEl = clone.querySelector('.char-badges-container');
+        badgesEl.innerHTML = `
             <span class="badge char-badge" style="border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000;">🛡️ ${guildRank}</span>
             ${extraBadges}
             <span class="badge char-badge default-badge">Level ${p.level || 0}</span>
@@ -1289,46 +1299,56 @@ window.addEventListener('DOMContentLoaded', async () => {
             <span class="badge char-badge default-badge">${raceName}</span>
             <span class="badge char-badge" style="border-color: ${cHex}; color: ${cHex};">${specIconHtml}${displaySpecClass}</span>
             ${hkBadge}
-        </div>
-        
-        <div class="xp-bar-wrapper">
-            <div class="xp-bar-rested" style="width: ${restedPercent}%;"></div>
-            <div class="xp-bar-earned" style="width: ${xpPercent}%;"></div>
-            <div class="xp-bar-label">${xpLabel}</div>
-        </div>
-    </div>
-    
-    <div class="card-content-split">
-        <div class="card-left-col">
-            <div class="char-card-portrait-wrapper">
-                <img src="${char.render_url || getClassIcon(cClass)}" class="char-card-portrait" style="border-color:${cHex};">
-            </div>
-            <div class="info-box char-card-stats-box">
-                <div class="char-card-stats-header">
-                    <h3 class="stat-card-title char-card-stats-title" style="color:${cHex};">Combat Stats</h3>
-                    <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
-                </div>
-                <div class="stat-page-1">
-                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, #1d8348, #2ecc71);"></div><span class="bar-text">Health: ${health}</span></div>
-                    <div class="resource-bar"><div class="bar-fill" style="background:linear-gradient(to right, ${powerCol}, #0a0a0a);"></div><span class="bar-text">${powerName}: ${power}</span></div>
-                    <div class="stat-spacer"></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">⚔️ Strength</span><span class="stat-base-val val-str">${strVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🏹 Agility</span><span class="stat-base-val val-agi">${agiVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🛡️ Stamina</span><span class="stat-base-val val-sta">${staVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">🧠 Intellect</span><span class="stat-base-val val-int">${intVal}</span></div>
-                    <div class="stat-base-row"><span class="stat-base-lbl">✨ Spirit</span><span class="stat-base-val val-spi">${spiVal}</span></div>
-                    ${advancedStatsHtml}
-                </div>
-                <div class="stat-page-2" style="display:none; animation: fadeIn 0.3s;">
-                    ${weaponStatsHtml}
-                </div>
-            </div>
-        </div>
-        <div class="gear-grid-container">
-            ${gearHtml}
-        </div>
-    </div>
-</div>`;
+        `;
+
+        const restedBar = clone.querySelector('.xp-bar-rested');
+        restedBar.style.width = `${restedPercent}%`;
+
+        const earnedBar = clone.querySelector('.xp-bar-earned');
+        earnedBar.style.width = `${xpPercent}%`;
+
+        const xpLabelEl = clone.querySelector('.xp-bar-label');
+        xpLabelEl.textContent = xpLabel;
+
+        const portraitEl = clone.querySelector('.char-card-portrait');
+        portraitEl.src = char.render_url || getClassIcon(cClass);
+        portraitEl.alt = p.name || 'Character portrait';
+        portraitEl.style.borderColor = cHex;
+
+        const statsTitleEl = clone.querySelector('.char-card-stats-title');
+        statsTitleEl.textContent = 'Combat Stats';
+        statsTitleEl.style.color = cHex;
+
+        const healthFillEl = clone.querySelector('.full-card-health-fill');
+        healthFillEl.style.background = 'linear-gradient(to right, #1d8348, #2ecc71)';
+
+        const healthTextEl = clone.querySelector('.full-card-health-text');
+        healthTextEl.textContent = `Health: ${health}`;
+
+        const powerFillEl = clone.querySelector('.full-card-power-fill');
+        powerFillEl.style.background = `linear-gradient(to right, ${powerCol}, #0a0a0a)`;
+
+        const powerTextEl = clone.querySelector('.full-card-power-text');
+        powerTextEl.textContent = `${powerName}: ${power}`;
+
+        clone.querySelector('.full-card-stat-str').textContent = strVal;
+        clone.querySelector('.full-card-stat-agi').textContent = agiVal;
+        clone.querySelector('.full-card-stat-sta').textContent = staVal;
+        clone.querySelector('.full-card-stat-int').textContent = intVal;
+        clone.querySelector('.full-card-stat-spi').textContent = spiVal;
+
+        const advancedStatsEl = clone.querySelector('.full-card-advanced-stats');
+        advancedStatsEl.innerHTML = advancedStatsHtml;
+
+        const page2El = clone.querySelector('.stat-page-2');
+        page2El.style.display = 'none';
+        page2El.style.animation = 'fadeIn 0.3s';
+        page2El.innerHTML = weaponStatsHtml;
+
+        const gearGridEl = clone.querySelector('.full-card-gear-grid');
+        gearGridEl.innerHTML = gearHtml;
+
+        return clone.firstElementChild.outerHTML;
     }
 
     function renderDynamicBadges(characters, isRawMode) {
