@@ -2046,7 +2046,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
-                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" style="width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222;">` : '';
+                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="concise-spec-icon">` : '';
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
@@ -2078,9 +2078,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (isLadderView) {
                 podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-                const rankColor = index === 0 ? '#ffd100' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : '#777';
+                const rankToneClass = index === 0 ? 'concise-rank-gold' : index === 1 ? 'concise-rank-silver' : index === 2 ? 'concise-rank-bronze' : 'concise-rank-default';
                 const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
-                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass}" style="color: ${rankColor};">#${index + 1}</div>`;
+                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass} ${rankToneClass}">#${index + 1}</div>`;
             }
 
             // --- NEW: Vanguard Aura Logic ---
@@ -2096,7 +2096,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
                         const dt = new Date(window.warEffortLockTimes[type]);
                         if (!isNaN(dt)) {
-                            timeText = ` <span style="color:#aaa; font-size:9px; font-weight:normal; margin-left:4px; text-transform:none;">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
+                            timeText = ` <span class="vanguard-badge-time">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
                         }
                     }
                     
