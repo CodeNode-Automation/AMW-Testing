@@ -276,6 +276,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         targetEl.appendChild(clone);
     }
 
+    function findCharactersByName(query, limit) {
+        const normalizedQuery = (query || '').toLowerCase().trim();
+        if (normalizedQuery === '') return [];
+
+        const matches = rosterData.filter(c =>
+            c.profile &&
+            c.profile.name &&
+            c.profile.name.toLowerCase().includes(normalizedQuery)
+        );
+
+        return typeof limit === 'number' ? matches.slice(0, limit) : matches;
+    }
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
@@ -286,7 +298,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         heroSearchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
-            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
+            const results = findCharactersByName(query, 6);
             if (results.length > 0) {
                 heroSearchAutoComplete.textContent = '';
                 results.forEach(c => {
@@ -300,7 +312,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         heroSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = findCharactersByName(query);
                 if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
             }
         });
@@ -342,7 +354,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 8);
+            const results = findCharactersByName(query, 8);
             
             if (results.length > 0) {
                 searchAutoComplete.textContent = '';
@@ -363,7 +375,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = findCharactersByName(query);
                 if (results.length > 0) {
                     window.location.hash = results[0].profile.name.toLowerCase();
                 }
