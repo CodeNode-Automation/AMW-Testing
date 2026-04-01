@@ -207,6 +207,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     const timelineTitle = document.getElementById('timeline-title');
     const tooltip = document.getElementById('custom-tooltip');
     
+        if (conciseList) {
+        conciseList.addEventListener('click', (e) => {
+            const row = e.target.closest('.concise-char-bar.tt-char[data-char]');
+            if (!row) return;
+
+            const charName = row.getAttribute('data-char');
+            if (charName) {
+                selectCharacter(charName);
+            }
+        });
+
+        conciseList.addEventListener('error', (e) => {
+            const img = e.target;
+            if (img instanceof HTMLImageElement && img.classList.contains('c-portrait')) {
+                img.src = 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg';
+            }
+        }, true);
+    }
+
     function getPowerName(cClass) {
         if (cClass === "Warrior") return "Rage";
         if (cClass === "Rogue") return "Energy";
@@ -1663,6 +1682,83 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+        function buildConciseRowHtml({
+        isClickable,
+        cleanName,
+        cClass,
+        activeSpecAttr,
+        awardsAttr,
+        cHex,
+        barStyleOverride,
+        innerWrapperStyle,
+        rankHtml,
+        portraitURL,
+        displayName,
+        vanguardBadgeHtml,
+        raceName,
+        specIconHtml,
+        displaySpecClass,
+        cStatsStyleOverride,
+        statsHtml,
+        hashUrl,
+        vanguardClass,
+        podiumClass
+    }) {
+        const template = document.getElementById('tpl-concise-row');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const bar = clone.querySelector('.concise-char-bar');
+        const innerWrap = clone.querySelector('.concise-row-inner');
+        const rankSlot = clone.querySelector('.concise-rank-slot');
+        const portrait = clone.querySelector('.c-portrait');
+        const nameEl = clone.querySelector('.c-name');
+        const metaEl = clone.querySelector('.c-meta');
+        const statsTop = clone.querySelector('.concise-row-stats-top');
+        const statsBottom = clone.querySelector('.concise-row-stats-bottom');
+
+        if (podiumClass) bar.classList.add(podiumClass);
+        if (vanguardClass) bar.classList.add(vanguardClass);
+
+        if (isClickable) {
+            bar.classList.add('tt-char');
+            bar.setAttribute('data-char', cleanName);
+            bar.setAttribute('data-spec', activeSpecAttr);
+        } else {
+            bar.setAttribute('data-spec', 'unspecced');
+        }
+
+        bar.setAttribute('data-class', cClass);
+        bar.setAttribute('data-awards', awardsAttr.join(','));
+        bar.style.cssText = `border-left-color:${cHex};${isClickable ? '' : 'cursor: default;'}${barStyleOverride}`;
+
+        innerWrap.style.cssText = innerWrapperStyle;
+        rankSlot.innerHTML = rankHtml;
+
+        portrait.src = portraitURL;
+        portrait.style.borderColor = cHex;
+
+        nameEl.style.color = cHex;
+        nameEl.innerHTML = `${displayName}${vanguardBadgeHtml}`;
+
+        metaEl.innerHTML = isClickable
+            ? `${raceName} &bull; ${specIconHtml}${displaySpecClass}`
+            : `${raceName} ${displaySpecClass}`;
+
+        if (hashUrl === 'war-effort-loot') {
+            statsTop.remove();
+            statsBottom.hidden = false;
+            statsBottom.style.cssText = cStatsStyleOverride;
+            statsBottom.innerHTML = statsHtml;
+        } else {
+            statsBottom.remove();
+            statsTop.style.cssText = cStatsStyleOverride;
+            statsTop.innerHTML = statsHtml;
+        }
+
+        return clone.firstElementChild.outerHTML;
+    }
+
     // Variable to track current sort method
     let currentSortMethod = 'level';
 
@@ -1957,40 +2053,28 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 4. Render the HTML Row (or intercept for Podium)
-            let rowHTML = '';
-            if (!isClickable) {
-                rowHTML = `
-                <div class="concise-char-bar ${podiumClass} ${vanguardClass}" data-class="${cClass}" data-spec="unspecced" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
-                    <div style="${innerWrapperStyle}">
-                        <div style="display: flex; align-items: center;">
-                            ${rankHtml}
-                            <div class="c-main-info">
-                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} ${displaySpecClass}</span>
-                            </div>
-                        </div>
-                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                    </div>
-                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                </div>`;
-            } else {
-                rowHTML = `
-                <div onclick="selectCharacter('${cleanName}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; ${barStyleOverride}">
-                    <div style="${innerWrapperStyle}">
-                        <div style="display: flex; align-items: center;">
-                            ${rankHtml}
-                            <div class="c-main-info">
-                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
-                            </div>
-                        </div>
-                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                    </div>
-                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                </div>`;
-            }
+            const rowHTML = buildConciseRowHtml({
+                isClickable,
+                cleanName,
+                cClass,
+                activeSpecAttr,
+                awardsAttr,
+                cHex,
+                barStyleOverride,
+                innerWrapperStyle,
+                rankHtml,
+                portraitURL,
+                displayName,
+                vanguardBadgeHtml,
+                raceName,
+                specIconHtml,
+                displaySpecClass,
+                cStatsStyleOverride,
+                statsHtml,
+                hashUrl,
+                vanguardClass,
+                podiumClass
+            });
 
             // Intercept and Build Podium Block for Top 3
             if (usePodium && index < 3) {
