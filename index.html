@@ -790,6 +790,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .weapon-stats-header-secondary { margin-top: 12px; }
 .weapon-stats-header-mt16 { margin-top: 16px; }
 .weapon-stats-header-mt0 { margin-top: 0; }
+.gear-base-stat { color: #888; font-size: 11px; margin-right: 6px; }
+.gear-gain-stat { color: #2ecc71; font-weight: bold; }
 .mon-time-text { font-size: 10px; color: #888; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .mon-desc-text { font-size: 12px; color: #ddd; line-height: 1.3; }
 
@@ -1762,10 +1764,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T20:34:50.037514Z", "active_14_days": 414, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T20:55:30.643788Z", "active_14_days": 414, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 436, "loot": 335, "levels": 101, "total_roster": 661, "active_roster": 414}]
+        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 469, "loot": 362, "levels": 107, "total_roster": 661, "active_roster": 414}]
     </script>
 
     <script>
@@ -2930,11 +2932,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (mhDps === 0 || isCaster || isTank) {
             const marginClass = mhDps > 0 ? 'weapon-stats-header-mt16' : 'weapon-stats-header-mt0';
             weaponStatsHtml += `<div class="weapon-stats-header ${marginClass}">Gear Contribution</div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${staBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${staVal - staBase}</span></span></div>`;
-            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${intBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${intVal - intBase}</span></span></div>`;
-            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${spiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${spiVal - spiBase}</span></span></div>`;
-            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${strBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${strVal - strBase}</span></span></div>`;
-            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span style="color:#888; font-size:11px; margin-right:6px;">${agiBase} Base</span> <span style="color:#2ecc71; font-weight:bold;">+${agiVal - agiBase}</span></span></div>`;
+            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span class="gear-base-stat">${staBase} Base</span> <span class="gear-gain-stat">+${staVal - staBase}</span></span></div>`;
+            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span class="gear-base-stat">${intBase} Base</span> <span class="gear-gain-stat">+${intVal - intBase}</span></span></div>`;
+            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span class="gear-base-stat">${spiBase} Base</span> <span class="gear-gain-stat">+${spiVal - spiBase}</span></span></div>`;
+            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span class="gear-base-stat">${strBase} Base</span> <span class="gear-gain-stat">+${strVal - strBase}</span></span></div>`;
+            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span class="gear-base-stat">${agiBase} Base</span> <span class="gear-gain-stat">+${agiVal - agiBase}</span></span></div>`;
         }
 
         const xp = p.experience || 0;
