@@ -3030,15 +3030,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 timelineTitle.innerHTML = `📜 Hall of Heroes Award History`;
                 const filtersContainer = document.querySelector('.timeline-filters');
                 if (filtersContainer) {
-                    filtersContainer.innerHTML = `
-                        <div class="filter-group" style="flex-wrap: wrap;">
-                            <button class="tl-btn active" style="color: #ffd100; border-color: rgba(255, 209, 0, 0.5);" data-type="badge_all">All Awards</button>
-                            <button class="tl-btn" style="color: #ffd700; border-color: rgba(255, 215, 0, 0.5);" data-type="badge_ladder">Medals</button>
-                            <button class="tl-btn" style="color: #ff8000; border-color: rgba(255, 128, 0, 0.5);" data-type="badge_mvp">MVP</button>
-                            <button class="tl-btn" style="color: #00ffcc; border-color: rgba(0, 255, 204, 0.5);" data-type="badge_vanguard">Vanguards</button>
-                            <button class="tl-btn" style="color: #aaa; border-color: rgba(170, 170, 170, 0.5);" data-type="badge_campaign">Campaigns</button>
-                        </div>
-                    `;
+                    filtersContainer.textContent = '';
+
+                    const badgeFiltersTemplate = document.getElementById('tpl-timeline-badge-filters');
+                    if (badgeFiltersTemplate) {
+                        filtersContainer.appendChild(badgeFiltersTemplate.content.cloneNode(true));
+                    }
+
                     document.querySelectorAll('.timeline-filters .tl-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             document.querySelectorAll('.timeline-filters .tl-btn').forEach(b => b.classList.remove('active'));
