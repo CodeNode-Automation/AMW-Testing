@@ -288,6 +288,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         return typeof limit === 'number' ? matches.slice(0, limit) : matches;
     }
+
+    function navigateToFirstMatchingCharacter(query) {
+        const results = findCharactersByName(query);
+        if (results.length > 0) {
+            window.location.hash = results[0].profile.name.toLowerCase();
+        }
+    }
+
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
@@ -311,9 +319,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         heroSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const query = e.target.value.toLowerCase().trim();
-                const results = findCharactersByName(query);
-                if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
+                navigateToFirstMatchingCharacter(e.target.value);
             }
         });
     }
@@ -374,11 +380,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const query = e.target.value.toLowerCase().trim();
-                const results = findCharactersByName(query);
-                if (results.length > 0) {
-                    window.location.hash = results[0].profile.name.toLowerCase();
-                }
+                navigateToFirstMatchingCharacter(e.target.value);
             }
         });
     }
