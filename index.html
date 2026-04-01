@@ -307,6 +307,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-class-stats { display: none; width: 100%; justify-content: center; margin-bottom: 0; }
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 .concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
+.concise-row-main { display: flex; align-items: center; }
 .c-main-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .badge-reigning-pve { background: rgba(255, 209, 0, 0.2); border-color: #ffd100; color: #ffd100; font-weight: bold; box-shadow: 0 0 15px rgba(255, 209, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
 .badge-reigning-pvp { background: rgba(255, 68, 0, 0.2); border-color: #ff4400; color: #ff4400; font-weight: bold; box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
@@ -1165,6 +1166,23 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-concise-row">
+        <div class="concise-char-bar">
+            <div class="concise-row-inner">
+                <div class="concise-row-main">
+                    <div class="concise-rank-slot"></div>
+                    <div class="c-main-info">
+                        <img src="" class="c-portrait" loading="lazy" alt="">
+                        <span class="c-name"></span>
+                        <span class="c-meta"></span>
+                    </div>
+                </div>
+                <div class="c-stats-info concise-row-stats-top"></div>
+            </div>
+            <div class="c-stats-info concise-row-stats-bottom" hidden></div>
+        </div>
+    </template>
+
     <template id="tpl-concise-dashboard-widgets">
         <div class="kpi-flex-row concise-kpi-container"></div>
         <div class="charts-flex-row">
@@ -1653,10 +1671,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T19:09:25.713402Z", "active_14_days": 414, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T19:27:18.649309Z", "active_14_days": 414, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 385, "loot": 294, "levels": 91, "total_roster": 661, "active_roster": 414}]
+        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 390, "loot": 298, "levels": 92, "total_roster": 661, "active_roster": 414}]
     </script>
 
     <script>
@@ -1869,6 +1887,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     const timelineTitle = document.getElementById('timeline-title');
     const tooltip = document.getElementById('custom-tooltip');
     
+        if (conciseList) {
+        conciseList.addEventListener('click', (e) => {
+            const row = e.target.closest('.concise-char-bar.tt-char[data-char]');
+            if (!row) return;
+
+            const charName = row.getAttribute('data-char');
+            if (charName) {
+                selectCharacter(charName);
+            }
+        });
+
+        conciseList.addEventListener('error', (e) => {
+            const img = e.target;
+            if (img instanceof HTMLImageElement && img.classList.contains('c-portrait')) {
+                img.src = 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg';
+            }
+        }, true);
+    }
+
     function getPowerName(cClass) {
         if (cClass === "Warrior") return "Rage";
         if (cClass === "Rogue") return "Energy";
@@ -3325,6 +3362,83 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+        function buildConciseRowHtml({
+        isClickable,
+        cleanName,
+        cClass,
+        activeSpecAttr,
+        awardsAttr,
+        cHex,
+        barStyleOverride,
+        innerWrapperStyle,
+        rankHtml,
+        portraitURL,
+        displayName,
+        vanguardBadgeHtml,
+        raceName,
+        specIconHtml,
+        displaySpecClass,
+        cStatsStyleOverride,
+        statsHtml,
+        hashUrl,
+        vanguardClass,
+        podiumClass
+    }) {
+        const template = document.getElementById('tpl-concise-row');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const bar = clone.querySelector('.concise-char-bar');
+        const innerWrap = clone.querySelector('.concise-row-inner');
+        const rankSlot = clone.querySelector('.concise-rank-slot');
+        const portrait = clone.querySelector('.c-portrait');
+        const nameEl = clone.querySelector('.c-name');
+        const metaEl = clone.querySelector('.c-meta');
+        const statsTop = clone.querySelector('.concise-row-stats-top');
+        const statsBottom = clone.querySelector('.concise-row-stats-bottom');
+
+        if (podiumClass) bar.classList.add(podiumClass);
+        if (vanguardClass) bar.classList.add(vanguardClass);
+
+        if (isClickable) {
+            bar.classList.add('tt-char');
+            bar.setAttribute('data-char', cleanName);
+            bar.setAttribute('data-spec', activeSpecAttr);
+        } else {
+            bar.setAttribute('data-spec', 'unspecced');
+        }
+
+        bar.setAttribute('data-class', cClass);
+        bar.setAttribute('data-awards', awardsAttr.join(','));
+        bar.style.cssText = `border-left-color:${cHex};${isClickable ? '' : 'cursor: default;'}${barStyleOverride}`;
+
+        innerWrap.style.cssText = innerWrapperStyle;
+        rankSlot.innerHTML = rankHtml;
+
+        portrait.src = portraitURL;
+        portrait.style.borderColor = cHex;
+
+        nameEl.style.color = cHex;
+        nameEl.innerHTML = `${displayName}${vanguardBadgeHtml}`;
+
+        metaEl.innerHTML = isClickable
+            ? `${raceName} &bull; ${specIconHtml}${displaySpecClass}`
+            : `${raceName} ${displaySpecClass}`;
+
+        if (hashUrl === 'war-effort-loot') {
+            statsTop.remove();
+            statsBottom.hidden = false;
+            statsBottom.style.cssText = cStatsStyleOverride;
+            statsBottom.innerHTML = statsHtml;
+        } else {
+            statsBottom.remove();
+            statsTop.style.cssText = cStatsStyleOverride;
+            statsTop.innerHTML = statsHtml;
+        }
+
+        return clone.firstElementChild.outerHTML;
+    }
+
     // Variable to track current sort method
     let currentSortMethod = 'level';
 
@@ -3619,40 +3733,28 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 4. Render the HTML Row (or intercept for Podium)
-            let rowHTML = '';
-            if (!isClickable) {
-                rowHTML = `
-                <div class="concise-char-bar ${podiumClass} ${vanguardClass}" data-class="${cClass}" data-spec="unspecced" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; cursor: default; ${barStyleOverride}">
-                    <div style="${innerWrapperStyle}">
-                        <div style="display: flex; align-items: center;">
-                            ${rankHtml}
-                            <div class="c-main-info">
-                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} ${displaySpecClass}</span>
-                            </div>
-                        </div>
-                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                    </div>
-                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                </div>`;
-            } else {
-                rowHTML = `
-                <div onclick="selectCharacter('${cleanName}')" class="concise-char-bar tt-char ${podiumClass} ${vanguardClass}" data-char="${cleanName}" data-class="${cClass}" data-spec="${activeSpecAttr}" data-awards="${awardsAttr.join(',')}" style="border-left-color:${cHex}; ${barStyleOverride}">
-                    <div style="${innerWrapperStyle}">
-                        <div style="display: flex; align-items: center;">
-                            ${rankHtml}
-                            <div class="c-main-info">
-                                <img src="${portraitURL}" class="c-portrait" loading="lazy" style="border-color:${cHex};" onerror="this.src='https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg'">
-                                <span class="c-name" style="color:${cHex};">${displayName}${vanguardBadgeHtml}</span>
-                                <span class="c-meta">${raceName} &bull; ${specIconHtml}${displaySpecClass}</span>
-                            </div>
-                        </div>
-                        ${hashUrl !== 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                    </div>
-                    ${hashUrl === 'war-effort-loot' ? `<div class="c-stats-info" style="${cStatsStyleOverride}">${statsHtml}</div>` : ''}
-                </div>`;
-            }
+            const rowHTML = buildConciseRowHtml({
+                isClickable,
+                cleanName,
+                cClass,
+                activeSpecAttr,
+                awardsAttr,
+                cHex,
+                barStyleOverride,
+                innerWrapperStyle,
+                rankHtml,
+                portraitURL,
+                displayName,
+                vanguardBadgeHtml,
+                raceName,
+                specIconHtml,
+                displaySpecClass,
+                cStatsStyleOverride,
+                statsHtml,
+                hashUrl,
+                vanguardClass,
+                podiumClass
+            });
 
             // Intercept and Build Podium Block for Top 3
             if (usePodium && index < 3) {
