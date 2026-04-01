@@ -1579,7 +1579,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T17:29:17.373332Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T17:34:45.250948Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 348, "loot": 266, "levels": 82, "total_roster": 661, "active_roster": 415}]
@@ -1864,6 +1864,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         targetEl.appendChild(clone);
     }
 
+    function findCharactersByName(query, limit) {
+        const normalizedQuery = (query || '').toLowerCase().trim();
+        if (normalizedQuery === '') return [];
+
+        const matches = rosterData.filter(c =>
+            c.profile &&
+            c.profile.name &&
+            c.profile.name.toLowerCase().includes(normalizedQuery)
+        );
+
+        return typeof limit === 'number' ? matches.slice(0, limit) : matches;
+    }
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
@@ -1874,7 +1886,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         heroSearchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             if (query === '') { heroSearchAutoComplete.classList.remove('show'); return; }
-            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
+            const results = findCharactersByName(query, 6);
             if (results.length > 0) {
                 heroSearchAutoComplete.textContent = '';
                 results.forEach(c => {
@@ -1888,7 +1900,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         heroSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = findCharactersByName(query);
                 if (results.length > 0) window.location.hash = results[0].profile.name.toLowerCase();
             }
         });
@@ -1930,7 +1942,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 8);
+            const results = findCharactersByName(query, 8);
             
             if (results.length > 0) {
                 searchAutoComplete.textContent = '';
@@ -1951,7 +1963,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const query = e.target.value.toLowerCase().trim();
-                const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query));
+                const results = findCharactersByName(query);
                 if (results.length > 0) {
                     window.location.hash = results[0].profile.name.toLowerCase();
                 }
