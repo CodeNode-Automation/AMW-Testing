@@ -1579,10 +1579,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-01T17:20:21.537717Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-01T17:29:17.373332Z", "active_14_days": 415, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 346, "loot": 265, "levels": 81, "total_roster": 661, "active_roster": 415}]
+        [{"date": "2026-03-26", "day_name": "Thu", "count": 564, "loot": 439, "levels": 125, "total_roster": 628, "active_roster": 393}, {"date": "2026-03-27", "day_name": "Fri", "count": 761, "loot": 574, "levels": 187, "total_roster": 634, "active_roster": 401}, {"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 348, "loot": 266, "levels": 82, "total_roster": 661, "active_roster": 415}]
     </script>
 
     <script>
@@ -1834,6 +1834,36 @@ window.addEventListener('DOMContentLoaded', async () => {
         return char.class || 'Unknown';
     }
 
+    function appendCharacterSearchResult(targetEl, char, options = {}) {
+        const { forceObjectFitCover = false } = options;
+        const template = document.getElementById('tpl-hero-search-result');
+        if (!template || !targetEl || !char || !char.profile || !char.profile.name) return;
+
+        const cClass = getCharClass(char);
+        const cHex = CLASS_COLORS[cClass] || '#fff';
+        const clone = template.content.cloneNode(true);
+
+        const itemDiv = clone.querySelector('.hero-ac-item');
+        itemDiv.style.borderLeftColor = cHex;
+        itemDiv.addEventListener('click', () => selectCharacter(char.profile.name.toLowerCase()));
+
+        const img = clone.querySelector('.hero-ac-icon');
+        img.src = char.render_url || getClassIcon(cClass);
+        img.style.borderColor = cHex;
+        if (forceObjectFitCover) {
+            img.style.objectFit = 'cover';
+        }
+
+        const nameSpan = clone.querySelector('.hero-ac-name');
+        nameSpan.textContent = char.profile.name;
+        nameSpan.style.color = cHex;
+
+        const metaSpan = clone.querySelector('.ac-meta');
+        metaSpan.textContent = `Level ${char.profile.level} ${cClass}`;
+
+        targetEl.appendChild(clone);
+    }
+
     const searchInput = document.getElementById('charSearch');
     const searchAutoComplete = document.getElementById('search-autocomplete');
     
@@ -1847,28 +1877,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const results = rosterData.filter(c => c.profile && c.profile.name && c.profile.name.toLowerCase().includes(query)).slice(0, 6);
             if (results.length > 0) {
                 heroSearchAutoComplete.textContent = '';
-                const template = document.getElementById('tpl-hero-search-result');
                 results.forEach(c => {
-                    const cClass = getCharClass(c);
-                    const cHex = CLASS_COLORS[cClass] || '#fff';
-                    const clone = template.content.cloneNode(true);
-                    const itemDiv = clone.querySelector('.hero-ac-item');
-                    
-                    itemDiv.style.borderLeftColor = cHex;
-                    itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
-                    
-                    const img = clone.querySelector('.hero-ac-icon');
-                    img.src = c.render_url || getClassIcon(cClass);
-                    img.style.borderColor = cHex;
-                    
-                    const nameSpan = clone.querySelector('.hero-ac-name');
-                    nameSpan.textContent = c.profile.name;
-                    nameSpan.style.color = cHex;
-                    
-                    const metaSpan = clone.querySelector('.ac-meta');
-                    metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
-                    
-                    heroSearchAutoComplete.appendChild(clone);
+                    appendCharacterSearchResult(heroSearchAutoComplete, c);
                 });
                 heroSearchAutoComplete.classList.add('show');
             } else {
@@ -1924,32 +1934,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (results.length > 0) {
                 searchAutoComplete.textContent = '';
-                const template = document.getElementById('tpl-hero-search-result');
-                if (template) {
-                    results.forEach(c => {
-                        const cClass = getCharClass(c);
-                        const cHex = CLASS_COLORS[cClass] || '#fff';
-                        const clone = template.content.cloneNode(true);
-                        
-                        const itemDiv = clone.querySelector('.hero-ac-item');
-                        itemDiv.style.borderLeftColor = cHex;
-                        itemDiv.addEventListener('click', () => selectCharacter(c.profile.name.toLowerCase()));
-                        
-                        const img = clone.querySelector('.hero-ac-icon');
-                        img.src = c.render_url || getClassIcon(cClass);
-                        img.style.borderColor = cHex;
-                        img.style.objectFit = 'cover';
-                        
-                        const nameSpan = clone.querySelector('.hero-ac-name');
-                        nameSpan.textContent = c.profile.name;
-                        nameSpan.style.color = cHex;
-                        
-                        const metaSpan = clone.querySelector('.ac-meta');
-                        metaSpan.textContent = `Level ${c.profile.level} ${cClass}`;
-                        
-                        searchAutoComplete.appendChild(clone);
-                    });
-                }
+                results.forEach(c => {
+                    appendCharacterSearchResult(searchAutoComplete, c, { forceObjectFitCover: true });
+                });
                 searchAutoComplete.classList.add('show');
             } else {
                 searchAutoComplete.textContent = '';
