@@ -1144,7 +1144,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const isMelee = ["Rogue", "Warrior", "Death Knight"].includes(cClass) || ["Retribution", "Enhancement", "Feral Combat"].includes(activeSpec);
         const isCaster = ["Mage", "Warlock", "Priest"].includes(cClass) || ["Balance", "Elemental", "Restoration", "Holy"].includes(activeSpec) || (cClass === "Paladin" && ["Holy", "Protection"].includes(activeSpec)) || (cClass === "Shaman" && activeSpec !== "Enhancement") || (cClass === "Druid" && activeSpec !== "Feral Combat");
 
-        let advancedStatsHtml = `<div class="stat-divider"></div>`;
+        let advancedStatsHtml = getTemplateRootHtml('tpl-full-card-stat-divider');
         advancedStatsHtml += buildFullCardStatRowHtml({
             label: '🛡️ Armor',
             value: armor.toLocaleString(),
@@ -1654,6 +1654,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         gearGridEl.innerHTML = gearHtml;
 
         return clone.firstElementChild.outerHTML;
+    }
+
+    function getTemplateRootHtml(templateId) {
+        const template = document.getElementById(templateId);
+        const rootEl = template?.content?.firstElementChild;
+        return rootEl ? rootEl.outerHTML : '';
     }
 
     function buildFullCardStatRowHtml({ label, value, valueClass = '' }) {
