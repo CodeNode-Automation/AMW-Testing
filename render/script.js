@@ -1210,130 +1210,137 @@ window.addEventListener('DOMContentLoaded', async () => {
         const isMelee = ["Rogue", "Warrior", "Death Knight"].includes(cClass) || ["Retribution", "Enhancement", "Feral Combat"].includes(activeSpec);
         const isCaster = ["Mage", "Warlock", "Priest"].includes(cClass) || ["Balance", "Elemental", "Restoration", "Holy"].includes(activeSpec) || (cClass === "Paladin" && ["Holy", "Protection"].includes(activeSpec)) || (cClass === "Shaman" && activeSpec !== "Enhancement") || (cClass === "Druid" && activeSpec !== "Feral Combat");
 
-        let advancedStatsHtml = getTemplateRootHtml('tpl-full-card-stat-divider');
-        advancedStatsHtml += buildFullCardStatRowHtml({
+        const pushNode = (collection, node) => {
+            if (node) {
+                collection.push(node);
+            }
+        };
+
+        const advancedStatsNodes = [];
+        pushNode(advancedStatsNodes, getTemplateRootHtml('tpl-full-card-stat-divider'));
+        pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
             label: '🛡️ Armor',
             value: armor.toLocaleString(),
             valueClass: 'val-wht'
-        });
+        }));
         
         // 1. Defenses (Gated to Tanks or High-Defense Off-Tanks)
         if (isTank || defense > 350) {
             if (defense > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🧱 Defense',
                     value: defense,
                     valueClass: 'val-wht'
-                });
+                }));
             }
             if (dodge > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🤸 Dodge',
                     value: `${dodge.toFixed(2)}%`,
                     valueClass: 'val-wht'
-                });
+                }));
             }
             if (parry > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '⚔️ Parry',
                     value: `${parry.toFixed(2)}%`,
                     valueClass: 'val-wht'
-                });
+                }));
             }
             if (block > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🛡️ Block',
                     value: `${block.toFixed(2)}%`,
                     valueClass: 'val-wht'
-                });
+                }));
             }
         }
 
         // 2. Physical Offense (Melee & Ranged)
         if (isMelee || isHunter) {
             if (ap > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '⚔️ Attack Power',
                     value: ap,
                     valueClass: 'val-org'
-                });
+                }));
             }
         }
         if (isMelee) {
             if (meleeCrit > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🩸 Melee Crit',
                     value: `${meleeCrit.toFixed(2)}%`,
                     valueClass: 'val-red'
-                });
+                }));
             }
             if (meleeHaste > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '⚡ Melee Haste',
                     value: `${meleeHaste.toFixed(2)}%`,
                     valueClass: 'val-red'
-                });
+                }));
             }
         }
         if (isHunter) {
             if (rangedCrit > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🏹 Ranged Crit',
                     value: `${rangedCrit.toFixed(2)}%`,
                     valueClass: 'val-grn'
-                });
+                }));
             }
             if (rangedHaste > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '⚡ Ranged Haste',
                     value: `${rangedHaste.toFixed(2)}%`,
                     valueClass: 'val-grn'
-                });
+                }));
             }
         }
 
         // 3. Spellcasting & Healing
         if (isCaster) {
             if (spellPower > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '✨ Spell Power',
                     value: spellPower,
                     valueClass: 'val-blu'
-                });
+                }));
             }
             if (spellCrit > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🔥 Spell Crit',
                     value: `${spellCrit.toFixed(2)}%`,
                     valueClass: 'val-ylw'
-                });
+                }));
             }
             if (spellHaste > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '⚡ Spell Haste',
                     value: `${spellHaste.toFixed(2)}%`,
                     valueClass: 'val-ylw'
-                });
+                }));
             }
             if (spellPen > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '🌀 Spell Pen',
                     value: spellPen,
                     valueClass: 'val-blu'
-                });
+                }));
             }
             if (mp5 > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '💧 Mana/5 (Combat)',
                     value: Math.round(mp5),
                     valueClass: 'val-grn'
-                });
+                }));
             } else if (manaRegen > 0) {
-                advancedStatsHtml += buildFullCardStatRowHtml({
+                pushNode(advancedStatsNodes, buildFullCardStatRowHtml({
                     label: '💧 Mana Regen',
                     value: Math.round(manaRegen),
                     valueClass: 'val-grn'
-                });
+                }));
             }
         }
 
@@ -1356,96 +1363,96 @@ window.addEventListener('DOMContentLoaded', async () => {
         const intBase = st.intellect_base || ((st.intellect && st.intellect.base) || 0);
         const spiBase = st.spirit_base || ((st.spirit && st.spirit.base) || 0);
 
-        let weaponStatsHtml = '';
+        const weaponStatsNodes = [];
         
         if (mhDps > 0) {
-            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+            pushNode(weaponStatsNodes, buildFullCardWeaponHeaderHtml({
                 text: 'Main Hand Weapon'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '🗡️ Damage',
                 value: `${Math.round(mhMin)} - ${Math.round(mhMax)}`,
                 valueClass: 'val-wht'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '⏱️ Speed',
                 value: mhSpeed.toFixed(2),
                 valueClass: 'val-wht'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '💥 DPS',
                 value: mhDps.toFixed(1),
                 valueClass: 'val-org'
-            });
+            }));
         }
 
         if (ohDps > 0) {
-            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+            pushNode(weaponStatsNodes, buildFullCardWeaponHeaderHtml({
                 text: 'Off Hand Weapon',
                 extraClass: 'weapon-stats-header-secondary'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '🗡️ Damage',
                 value: `${Math.round(ohMin)} - ${Math.round(ohMax)}`,
                 valueClass: 'val-wht'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '⏱️ Speed',
                 value: ohSpeed.toFixed(2),
                 valueClass: 'val-wht'
-            });
-            weaponStatsHtml += buildFullCardStatRowHtml({
+            }));
+            pushNode(weaponStatsNodes, buildFullCardStatRowHtml({
                 label: '💥 DPS',
                 value: ohDps.toFixed(1),
                 valueClass: 'val-org'
-            });
+            }));
         }
 
         // Show Gear Contribution for Casters or characters lacking weapon API data
         if (mhDps === 0 || isCaster || isTank) {
             const marginClass = mhDps > 0 ? 'weapon-stats-header-mt16' : 'weapon-stats-header-mt0';
 
-            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+            pushNode(weaponStatsNodes, buildFullCardWeaponHeaderHtml({
                 text: 'Gear Contribution',
                 extraClass: marginClass
-            });
+            }));
 
-            weaponStatsHtml += buildFullCardGearContributionRowHtml({
+            pushNode(weaponStatsNodes, buildFullCardGearContributionRowHtml({
                 label: '🛡️ Stamina',
                 baseValue: staBase,
                 gainValue: staVal - staBase
-            });
+            }));
 
             if (intVal > 0) {
-                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                pushNode(weaponStatsNodes, buildFullCardGearContributionRowHtml({
                     label: '🧠 Intellect',
                     baseValue: intBase,
                     gainValue: intVal - intBase
-                });
+                }));
             }
 
             if (spiVal > 0) {
-                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                pushNode(weaponStatsNodes, buildFullCardGearContributionRowHtml({
                     label: '✨ Spirit',
                     baseValue: spiBase,
                     gainValue: spiVal - spiBase
-                });
+                }));
             }
 
             if (strVal > 0 && !isCaster) {
-                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                pushNode(weaponStatsNodes, buildFullCardGearContributionRowHtml({
                     label: '⚔️ Strength',
                     baseValue: strBase,
                     gainValue: strVal - strBase
-                });
+                }));
             }
 
             if (agiVal > 0 && (!isCaster || isHunter)) {
-                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                pushNode(weaponStatsNodes, buildFullCardGearContributionRowHtml({
                     label: '🏹 Agility',
                     baseValue: agiBase,
                     gainValue: agiVal - agiBase
-                });
+                }));
             }
         }
 
@@ -1772,10 +1779,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         clone.querySelector('.full-card-stat-spi').textContent = spiVal;
 
         const advancedStatsEl = clone.querySelector('.full-card-advanced-stats');
-        advancedStatsEl.innerHTML = advancedStatsHtml;
+        advancedStatsEl.textContent = '';
+        advancedStatsNodes.forEach(node => {
+            if (node) {
+                advancedStatsEl.appendChild(node);
+            }
+        });
 
         const page2El = clone.querySelector('.stat-page-2');
-        page2El.innerHTML = weaponStatsHtml;
+        page2El.textContent = '';
+        weaponStatsNodes.forEach(node => {
+            if (node) {
+                page2El.appendChild(node);
+            }
+        });
 
         const gearGridEl = clone.querySelector('.full-card-gear-grid');
         gearGridEl.textContent = '';
@@ -1791,12 +1808,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     function getTemplateRootHtml(templateId) {
         const template = document.getElementById(templateId);
         const rootEl = template?.content?.firstElementChild;
-        return rootEl ? rootEl.outerHTML : '';
+        return rootEl ? rootEl.cloneNode(true) : null;
     }
 
     function buildFullCardGearContributionRowHtml({ label, baseValue, gainValue }) {
         const template = document.getElementById('tpl-full-card-gear-contribution-row');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const labelEl = clone.querySelector('.stat-lbl');
@@ -1816,12 +1833,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         const rootEl = clone.firstElementChild;
-        return rootEl ? rootEl.outerHTML : '';
+        return rootEl || null;
     }
 
     function buildFullCardWeaponHeaderHtml({ text, extraClass = '' }) {
         const template = document.getElementById('tpl-full-card-weapon-header');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const headerEl = clone.querySelector('.weapon-stats-header');
@@ -1834,12 +1851,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         const rootEl = clone.firstElementChild;
-        return rootEl ? rootEl.outerHTML : '';
+        return rootEl || null;
     }
 
     function buildFullCardStatRowHtml({ label, value, valueClass = '' }) {
         const template = document.getElementById('tpl-full-card-stat-row');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const labelEl = clone.querySelector('.stat-lbl');
@@ -1857,7 +1874,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         const rowEl = clone.firstElementChild;
-        return rowEl ? rowEl.outerHTML : '';
+        return rowEl || null;
     }
 
     function appendFullCardBadge(container, {
