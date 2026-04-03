@@ -250,6 +250,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .dynamic-badge .stat-badge-cls {
     color: var(--dynamic-badge-accent, #fff);
 }
+.spec-btn {
+    border-color: var(--spec-badge-accent, rgba(255, 255, 255, 0.05));
+}
+
+.spec-btn .stat-badge-cls {
+    color: var(--spec-badge-accent, #fff);
+}
 .spec-btn:hover { background: rgba(255,255,255,0.1) !important; border-color: #fff !important; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: scale(1) !important; }
 
 .milestone-banner { display: flex; align-items: center; width: 100%; max-width: 900px; margin: 0 auto; background: linear-gradient(90deg, rgba(25, 15, 40, 0.9) 0%, rgba(10, 10, 15, 0.95) 50%, rgba(40, 25, 15, 0.9) 100%); backdrop-filter: blur(8px); border: 1px solid rgba(255, 209, 0, 0.2); border-left: 4px solid #ffd100; border-right: 4px solid #a335ee; border-radius: 12px; padding: 15px 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(163, 53, 238, 0.15), inset 0 0 15px rgba(255, 209, 0, 0.05); position: relative; overflow: hidden; }

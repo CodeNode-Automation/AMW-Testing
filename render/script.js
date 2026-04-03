@@ -2047,12 +2047,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                         let clone = specTemplate.content.cloneNode(true);
                         let badge = clone.querySelector('.spec-btn');
                         badge.setAttribute('data-spec', 'all');
-                        badge.style.borderColor = cHex;
+                        badge.style.setProperty('--spec-badge-accent', cHex);
                         badge.classList.add('spec-badge-all');
                         badge.title = `View all ${formattedClass}s`;
                         
                         let clsSpan = clone.querySelector('.stat-badge-cls');
-                        clsSpan.style.color = cHex;
                         clsSpan.textContent = `All ${formattedClass}s`;
                         
                         clone.querySelector('.stat-badge-count').textContent = classRoster.length;
@@ -2062,11 +2061,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                             clone = specTemplate.content.cloneNode(true);
                             badge = clone.querySelector('.spec-btn');
                             badge.setAttribute('data-spec', spec);
-                            badge.style.borderColor = cHex;
+                            badge.style.setProperty('--spec-badge-accent', cHex);
                             badge.title = `View ${spec} ${formattedClass}s`;
                             
                             clsSpan = clone.querySelector('.stat-badge-cls');
-                            clsSpan.style.color = cHex;
                             
                             const iconUrl = getSpecIcon(formattedClass, spec);
                             if (iconUrl) {
@@ -2091,11 +2089,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                             clone = specTemplate.content.cloneNode(true);
                             badge = clone.querySelector('.spec-btn');
                             badge.setAttribute('data-spec', 'unspecced');
-                            badge.style.borderColor = '#888';
+                            badge.style.setProperty('--spec-badge-accent', '#888');
                             badge.title = `View Unspecced ${formattedClass}s`;
                             
                             clsSpan = clone.querySelector('.stat-badge-cls');
-                            clsSpan.style.color = '#888';
                             clsSpan.textContent = 'Unspecced';
                             
                             clone.querySelector('.stat-badge-count').textContent = unspeccedCount;
