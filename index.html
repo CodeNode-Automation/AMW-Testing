@@ -1974,7 +1974,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T16:42:01.152669Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T16:47:58.178327Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 712, "loot": 543, "levels": 169, "total_roster": 658, "active_roster": 411}]
@@ -3454,7 +3454,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        let gearHtml = "";
+        const gearNodes = [];
         
         // Items that cannot be traditionally enchanted (ignoring rings to prevent false positives for non-enchanters)
         const UNENCHANTABLE_SLOTS = ['NECK', 'SHIRT', 'TABARD', 'FINGER_1', 'FINGER_2', 'TRINKET_1', 'TRINKET_2'];
@@ -3520,7 +3520,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                     const gearSlotNode = gearClone.firstElementChild;
                     if (gearSlotNode) {
-                        gearHtml += gearSlotNode.outerHTML;
+                        gearNodes.push(gearSlotNode);
                     }
                 }
             } else {
@@ -3538,7 +3538,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                     const emptySlotEl = emptyClone.firstElementChild;
                     if (emptySlotEl) {
-                        gearHtml += emptySlotEl.outerHTML;
+                        gearNodes.push(emptySlotEl);
                     }
                 }
             }
@@ -3761,7 +3761,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         page2El.innerHTML = weaponStatsHtml;
 
         const gearGridEl = clone.querySelector('.full-card-gear-grid');
-        gearGridEl.innerHTML = gearHtml;
+        gearGridEl.textContent = '';
+        gearNodes.forEach(node => {
+            if (node) {
+                gearGridEl.appendChild(node);
+            }
+        });
 
         return clone.firstElementChild.outerHTML;
     }
