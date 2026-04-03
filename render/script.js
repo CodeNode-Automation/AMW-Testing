@@ -2362,10 +2362,42 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // --- NEW: Custom War Effort Stats Overrides ---
-            let statsHtml = `
-                <span>Level <span class="c-val-lvl">${level}</span></span>
-                <span class="concise-stat-line">${statLabel} <span class="c-val-ilvl${statValueClass}">${statValue}</span>${trendHTML}</span>
-            `;
+            const defaultStatsTemplate = document.getElementById('tpl-concise-default-stats');
+            let statsHtml = '';
+
+            if (defaultStatsTemplate) {
+                const defaultStatsClone = defaultStatsTemplate.content.cloneNode(true);
+                const levelEl = defaultStatsClone.querySelector('[data-role="level-value"]');
+                const labelEl = defaultStatsClone.querySelector('[data-role="stat-label"]');
+                const valueEl = defaultStatsClone.querySelector('[data-role="stat-value"]');
+                const trendSlot = defaultStatsClone.querySelector('[data-role="trend-slot"]');
+
+                levelEl.textContent = level;
+                labelEl.textContent = `${statLabel} `;
+                valueEl.textContent = statValue;
+
+                if (statValueClass) {
+                    valueEl.classList.add(statValueClass.trim());
+                }
+
+                if (trendHTML) {
+                    const trendWrapper = document.createElement('div');
+                    trendWrapper.innerHTML = trendHTML;
+                    const trendEl = trendWrapper.firstElementChild;
+
+                    if (trendEl) {
+                        trendSlot.replaceWith(trendEl);
+                    } else {
+                        trendSlot.remove();
+                    }
+                } else {
+                    trendSlot.remove();
+                }
+
+                const statsWrapper = document.createElement('div');
+                statsWrapper.appendChild(defaultStatsClone);
+                statsHtml = statsWrapper.innerHTML;
+            }
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
 
