@@ -1338,12 +1338,49 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Show Gear Contribution for Casters or characters lacking weapon API data
         if (mhDps === 0 || isCaster || isTank) {
             const marginClass = mhDps > 0 ? 'weapon-stats-header-mt16' : 'weapon-stats-header-mt0';
-            weaponStatsHtml += `<div class="weapon-stats-header ${marginClass}">Gear Contribution</div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span class="gear-base-stat">${staBase} Base</span> <span class="gear-gain-stat">+${staVal - staBase}</span></span></div>`;
-            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span class="gear-base-stat">${intBase} Base</span> <span class="gear-gain-stat">+${intVal - intBase}</span></span></div>`;
-            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span class="gear-base-stat">${spiBase} Base</span> <span class="gear-gain-stat">+${spiVal - spiBase}</span></span></div>`;
-            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span class="gear-base-stat">${strBase} Base</span> <span class="gear-gain-stat">+${strVal - strBase}</span></span></div>`;
-            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span class="gear-base-stat">${agiBase} Base</span> <span class="gear-gain-stat">+${agiVal - agiBase}</span></span></div>`;
+
+            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+                text: 'Gear Contribution',
+                extraClass: marginClass
+            });
+
+            weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                label: '🛡️ Stamina',
+                baseValue: staBase,
+                gainValue: staVal - staBase
+            });
+
+            if (intVal > 0) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '🧠 Intellect',
+                    baseValue: intBase,
+                    gainValue: intVal - intBase
+                });
+            }
+
+            if (spiVal > 0) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '✨ Spirit',
+                    baseValue: spiBase,
+                    gainValue: spiVal - spiBase
+                });
+            }
+
+            if (strVal > 0 && !isCaster) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '⚔️ Strength',
+                    baseValue: strBase,
+                    gainValue: strVal - strBase
+                });
+            }
+
+            if (agiVal > 0 && (!isCaster || isHunter)) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '🏹 Agility',
+                    baseValue: agiBase,
+                    gainValue: agiVal - agiBase
+                });
+            }
         }
 
         const xp = p.experience || 0;
@@ -1688,6 +1725,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     function getTemplateRootHtml(templateId) {
         const template = document.getElementById(templateId);
         const rootEl = template?.content?.firstElementChild;
+        return rootEl ? rootEl.outerHTML : '';
+    }
+
+    function buildFullCardGearContributionRowHtml({ label, baseValue, gainValue }) {
+        const template = document.getElementById('tpl-full-card-gear-contribution-row');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const labelEl = clone.querySelector('.stat-lbl');
+        const baseEl = clone.querySelector('.gear-base-stat');
+        const gainEl = clone.querySelector('.gear-gain-stat');
+
+        if (labelEl) {
+            labelEl.textContent = label;
+        }
+
+        if (baseEl) {
+            baseEl.textContent = `${baseValue} Base`;
+        }
+
+        if (gainEl) {
+            gainEl.textContent = `+${gainValue}`;
+        }
+
+        const rootEl = clone.firstElementChild;
         return rootEl ? rootEl.outerHTML : '';
     }
 
