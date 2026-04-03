@@ -1757,6 +1757,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-full-card-weapon-header">
+        <div class="weapon-stats-header"></div>
+    </template>
+
     <template id="tpl-full-card-stat-divider">
         <div class="stat-divider"></div>
     </template>
@@ -1872,7 +1876,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T13:25:16.562360Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T13:28:00.786493Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 626, "loot": 485, "levels": 141, "total_roster": 658, "active_roster": 411}]
@@ -3174,17 +3178,46 @@ window.addEventListener('DOMContentLoaded', async () => {
         let weaponStatsHtml = '';
         
         if (mhDps > 0) {
-            weaponStatsHtml += `<div class="weapon-stats-header">Main Hand Weapon</div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(mhMin)} - ${Math.round(mhMax)}</span></div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${mhSpeed.toFixed(2)}</span></div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${mhDps.toFixed(1)}</span></div>`;
+            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+                text: 'Main Hand Weapon'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '🗡️ Damage',
+                value: `${Math.round(mhMin)} - ${Math.round(mhMax)}`,
+                valueClass: 'val-wht'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '⏱️ Speed',
+                value: mhSpeed.toFixed(2),
+                valueClass: 'val-wht'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '💥 DPS',
+                value: mhDps.toFixed(1),
+                valueClass: 'val-org'
+            });
         }
 
         if (ohDps > 0) {
-            weaponStatsHtml += `<div class="weapon-stats-header weapon-stats-header-secondary">Off Hand Weapon</div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🗡️ Damage</span><span class="stat-val val-wht">${Math.round(ohMin)} - ${Math.round(ohMax)}</span></div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⏱️ Speed</span><span class="stat-val val-wht">${ohSpeed.toFixed(2)}</span></div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">💥 DPS</span><span class="stat-val val-org">${ohDps.toFixed(1)}</span></div>`;
+            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+                text: 'Off Hand Weapon',
+                extraClass: 'weapon-stats-header-secondary'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '🗡️ Damage',
+                value: `${Math.round(ohMin)} - ${Math.round(ohMax)}`,
+                valueClass: 'val-wht'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '⏱️ Speed',
+                value: ohSpeed.toFixed(2),
+                valueClass: 'val-wht'
+            });
+            weaponStatsHtml += buildFullCardStatRowHtml({
+                label: '💥 DPS',
+                value: ohDps.toFixed(1),
+                valueClass: 'val-org'
+            });
         }
 
         // Show Gear Contribution for Casters or characters lacking weapon API data
@@ -3540,6 +3573,24 @@ window.addEventListener('DOMContentLoaded', async () => {
     function getTemplateRootHtml(templateId) {
         const template = document.getElementById(templateId);
         const rootEl = template?.content?.firstElementChild;
+        return rootEl ? rootEl.outerHTML : '';
+    }
+
+    function buildFullCardWeaponHeaderHtml({ text, extraClass = '' }) {
+        const template = document.getElementById('tpl-full-card-weapon-header');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const headerEl = clone.querySelector('.weapon-stats-header');
+
+        if (headerEl) {
+            headerEl.textContent = text;
+            if (extraClass) {
+                extraClass.split(' ').filter(Boolean).forEach(cls => headerEl.classList.add(cls));
+            }
+        }
+
+        const rootEl = clone.firstElementChild;
         return rootEl ? rootEl.outerHTML : '';
     }
 
