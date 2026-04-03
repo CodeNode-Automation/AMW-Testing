@@ -1227,6 +1227,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <span class="c-badge-reigning"></span>
     </template>
 
+    <template id="tpl-concise-spec-icon">
+        <img src="" class="concise-spec-icon" loading="lazy" alt="">
+    </template>
+
     <template id="tpl-concise-podium">
         <div class="podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
@@ -1796,10 +1800,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T09:44:59.462382Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T09:57:42.661288Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 476, "loot": 374, "levels": 102, "total_roster": 659, "active_roster": 412}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 478, "loot": 376, "levels": 102, "total_roster": 659, "active_roster": 412}]
     </script>
 
     <script>
@@ -1946,6 +1950,31 @@ function appendConciseBadges(container, badgeConfigs) {
     });
 
     container.appendChild(wrapperClone);
+}
+
+function appendConciseMeta(container, { raceName, specIconUrl, displaySpecClass, isClickable }) {
+    if (!container) return;
+
+    container.textContent = '';
+
+    if (!isClickable) {
+        container.textContent = `${raceName} ${displaySpecClass}`;
+        return;
+    }
+
+    container.appendChild(document.createTextNode(`${raceName} • `));
+
+    if (specIconUrl) {
+        const specIconTemplate = document.getElementById('tpl-concise-spec-icon');
+        if (specIconTemplate) {
+            const specClone = specIconTemplate.content.cloneNode(true);
+            const specImg = specClone.querySelector('.concise-spec-icon');
+            specImg.src = specIconUrl;
+            container.appendChild(specClone);
+        }
+    }
+
+    container.appendChild(document.createTextNode(displaySpecClass));
 }
 
 // NEW: Added 'async' so we can fetch the external files
@@ -3618,7 +3647,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         showVanguardBadge,
         vanguardBadgeTimeText,
         raceName,
-        specIconHtml,
+        specIconUrl,
         displaySpecClass,
         statsHtml,
         hashUrl,
@@ -3689,9 +3718,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        metaEl.innerHTML = isClickable
-            ? `${raceName} &bull; ${specIconHtml}${displaySpecClass}`
-            : `${raceName} ${displaySpecClass}`;
+        appendConciseMeta(metaEl, {
+            raceName,
+            specIconUrl,
+            displaySpecClass,
+            isClickable
+        });
 
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
@@ -3909,7 +3941,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let baseName = '';
             let displayName, cClass, raceName, cHex, portraitURL, level;
             let activeSpecAttr = 'unspecced';
-            let specIconHtml = '';
+            let specIconUrl = '';
             let displaySpecClass = '';
             let statValue = '???';
             let statValueClass = '';
@@ -4073,8 +4105,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
-                const specIconUrl = getSpecIcon(cClass, activeSpec);
-                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="concise-spec-icon">` : '';
+                specIconUrl = getSpecIcon(cClass, activeSpec) || '';
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
@@ -4197,7 +4228,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 showVanguardBadge,
                 vanguardBadgeTimeText,
                 raceName,
-                specIconHtml,
+                specIconUrl,
                 displaySpecClass,
                 statsHtml,
                 hashUrl,
