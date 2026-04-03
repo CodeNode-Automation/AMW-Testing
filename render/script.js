@@ -837,8 +837,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const block = clone.querySelector('.podium-block');
                 block.classList.add(stepClass);
                 block.setAttribute('data-char', cleanName);
+                block.setAttribute('data-class', cClass);
                 block.addEventListener('click', () => selectCharacter(cleanName));
-                block.style.borderTopColor = cHex;
 
                 const crown = clone.querySelector('.podium-crown');
                 if (rank === 1) {
@@ -850,14 +850,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const avatar = clone.querySelector('.podium-avatar');
                 avatar.src = portraitURL;
                 avatar.alt = p.name || 'Character portrait';
-                avatar.style.borderColor = cHex;
 
                 const rankEl = clone.querySelector('.podium-rank');
                 rankEl.textContent = `#${rank}`;
 
                 const nameEl = clone.querySelector('.podium-name');
                 nameEl.textContent = p.name;
-                nameEl.style.color = cHex;
 
                 const statValEl = clone.querySelector('.podium-stat-val');
                 statValEl.textContent = p.equipped_item_level || 0;
@@ -875,8 +873,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const row = clone.querySelector('.leaderboard-row');
                 row.setAttribute('data-char', cleanName);
+                row.setAttribute('data-class', cClass);
                 row.addEventListener('click', () => selectCharacter(cleanName));
-                row.style.borderLeftColor = cHex;
 
                 const rankEl = clone.querySelector('.lb-rank');
                 rankEl.textContent = `#${index + 1}`;
@@ -888,7 +886,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const nameEl = clone.querySelector('.lb-name');
                 nameEl.textContent = p.name;
-                nameEl.style.color = cHex;
 
                 const specEl = clone.querySelector('.lb-spec');
                 specEl.textContent = displaySpecClass;
@@ -1039,7 +1036,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const portraitEl = clone.querySelector('.lb-portrait');
                 portraitEl.src = portraitURL;
                 portraitEl.alt = p.name || 'Character portrait';
-                portraitEl.style.borderColor = cHex;
 
                 const nameEl = clone.querySelector('.lb-name');
                 nameEl.textContent = p.name;
