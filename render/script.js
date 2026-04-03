@@ -1026,11 +1026,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const specEl = clone.querySelector('.lb-spec');
                 specEl.textContent = displaySpecClass;
                 if (specIconUrl) {
-                    const specIconEl = document.createElement('img');
-                    specIconEl.src = specIconUrl;
-                    specIconEl.className = 'spec-icon-sm';
-                    specIconEl.alt = '';
-                    specEl.prepend(specIconEl);
+                    const specIconEl = buildSmallSpecIconNode({
+                        src: specIconUrl,
+                        alt: `${displaySpecClass} icon`
+                    });
+                    if (specIconEl) {
+                        specEl.prepend(specIconEl);
+                    }
                 }
 
                 const scoreEl = clone.querySelector('.lb-score');
