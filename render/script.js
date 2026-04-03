@@ -2384,7 +2384,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         statValue
     }) {
         const template = document.getElementById('tpl-concise-podium');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const block = clone.querySelector('.podium-block');
@@ -2466,7 +2466,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             trendContainer.remove();
         }
 
-        return clone.firstElementChild.outerHTML;
+        return clone.firstElementChild;
     }
 
     // Variable to track current sort method
@@ -2557,7 +2557,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Generate the HTML for the list
         const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
-        let podiumsHTML = '';
+        const podiumNodes = [];
         let listItemsHTML = '';
 
         sortedCharacters.forEach((char, index) => {
@@ -2946,7 +2946,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
                 
-                podiumsHTML += buildConcisePodiumHtml({
+                const podiumNode = buildConcisePodiumHtml({
                     cleanName,
                     cClass,
                     activeSpecAttr,
@@ -2962,6 +2962,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                     deepChar,
                     statValue
                 });
+
+                if (podiumNode) {
+                    podiumNodes.push(podiumNode);
+                }
             } else {
                 listItemsHTML += rowHTML;
             }
@@ -2969,7 +2973,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         conciseList.textContent = '';
 
-        if (usePodium && podiumsHTML !== '') {
+        if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
 
@@ -2977,7 +2981,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
 
             if (podiumWrap) {
-                podiumWrap.appendChild(document.createRange().createContextualFragment(podiumsHTML));
+                podiumNodes.forEach(node => {
+                    if (node) podiumWrap.appendChild(node);
+                });
                 conciseList.appendChild(podiumWrap);
             }
 
