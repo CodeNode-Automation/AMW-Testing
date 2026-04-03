@@ -253,6 +253,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .dynamic-award-badge .stat-badge-count { font-size: 16px; }
 .stat-badge-cls { font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }
 .stat-badge-count { font-family: 'Cinzel'; font-size: 20px; color: white; font-weight: bold; text-shadow: 0 2px 4px #000; }
+.dynamic-badge {
+    border-color: var(--dynamic-badge-accent, rgba(255, 255, 255, 0.05));
+}
+
+.dynamic-badge .stat-badge-cls {
+    color: var(--dynamic-badge-accent, #fff);
+}
 .spec-btn:hover { background: rgba(255,255,255,0.1) !important; border-color: #fff !important; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: scale(1) !important; }
 
 .milestone-banner { display: flex; align-items: center; width: 100%; max-width: 900px; margin: 0 auto; background: linear-gradient(90deg, rgba(25, 15, 40, 0.9) 0%, rgba(10, 10, 15, 0.95) 50%, rgba(40, 25, 15, 0.9) 100%); backdrop-filter: blur(8px); border: 1px solid rgba(255, 209, 0, 0.2); border-left: 4px solid #ffd100; border-right: 4px solid #a335ee; border-radius: 12px; padding: 15px 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(163, 53, 238, 0.15), inset 0 0 15px rgba(255, 209, 0, 0.05); position: relative; overflow: hidden; }
@@ -1953,10 +1960,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:59:59.583157Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T15:04:01.879303Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 669, "loot": 510, "levels": 159, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 674, "loot": 514, "levels": 160, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -3912,11 +3919,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const countSpan = clone.querySelector('.stat-badge-count');
                 
                 badgeDiv.setAttribute('data-class', cls);
-                badgeDiv.style.borderColor = color;
+                badgeDiv.style.setProperty('--dynamic-badge-accent', color);
                 badgeDiv.title = `Filter ${cls}s`;
                 
                 clsSpan.textContent = cls;
-                clsSpan.style.color = color;
                 
                 countSpan.textContent = counts[cls];
                 
