@@ -358,6 +358,37 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-badges-box { width: 100%; display: flex; flex-direction: column; justify-content: center; }
 .concise-main-col { flex: 2; min-width: 300px; width: 100%; }
 .concise-class-stats { display: none; width: 100%; justify-content: center; margin-bottom: 0; }
+.concise-wrapper-awards-layout { flex-direction: column; }
+
+.concise-sidebar-awards-layout {
+    max-width: 100%;
+    width: 100%;
+}
+
+.concise-sidebar-hidden { display: none; }
+
+.concise-badges-default-layout {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+    overflow-x: visible;
+    padding: 0;
+    margin-top: 0;
+}
+
+.concise-badges-awards-layout {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 15px 10px 25px 10px;
+    margin-top: -10px;
+}
+
+.timeline-container.concise-timeline-awards-layout {
+    width: 100%;
+    max-width: 440px;
+}
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 .concise-row-main { display: flex; align-items: center; }
 .concise-row-inner { display: flex; align-items: center; width: 100%; }
@@ -2094,10 +2125,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T18:37:18.177681Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T18:45:23.344713Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 767, "loot": 587, "levels": 180, "total_roster": 658, "active_roster": 409}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 775, "loot": 592, "levels": 183, "total_roster": 658, "active_roster": 409}]
     </script>
 
     <script>
@@ -6029,49 +6060,23 @@ window.addEventListener('DOMContentLoaded', async () => {
         const leftCol = document.getElementById('concise-left-col');
         const badgesContainer = document.getElementById('concise-class-badges');
 
+        wrapper.classList.remove('concise-wrapper-awards-layout');
+        leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
+        badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout');
+        if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
+
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
-            leftCol.style.display = 'flex';
-            
-            // Restore default column layout
-            wrapper.style.flexDirection = 'row';
-            leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
-            badgesContainer.style.flexWrap = 'wrap';
-            badgesContainer.style.justifyContent = 'center';
-            badgesContainer.style.maxWidth = '900px';
-            
-            // FIX: Reset inline padding/margins when leaving the Hall of Heroes
-            badgesContainer.style.overflowX = 'visible'; 
-            badgesContainer.style.padding = ''; 
-            badgesContainer.style.marginTop = '';
-            
-            if (timeline) {
-                timeline.style.width = ''; 
-                timeline.style.maxWidth = ''; // Reset timeline width
-            }
+            badgesContainer.classList.add('concise-badges-default-layout');
             
         } else if (showBadges === 'awards') {
             renderAwardFilterBadges(characters, isRawRoster);
-            leftCol.style.display = 'flex';
+            wrapper.classList.add('concise-wrapper-awards-layout');
+            leftCol.classList.add('concise-sidebar-awards-layout');
+            badgesContainer.classList.add('concise-badges-awards-layout');
             
-            // Stack layout: Bubbles single-file on top, character list stretched wide below
-            wrapper.style.flexDirection = 'column';
-            leftCol.style.maxWidth = '100%';
-            leftCol.style.width = '100%';
-            badgesContainer.style.flexWrap = 'nowrap';
-            badgesContainer.style.justifyContent = 'flex-start';
-            badgesContainer.style.maxWidth = '100%';
-            badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
-            
-            // FIX: Generous internal padding gives the bubbles room to grow without getting severed
-            badgesContainer.style.padding = '15px 10px 25px 10px';
-            badgesContainer.style.marginTop = '-10px';
-            
-            // Stretch the activity feed slightly, but keep it responsive for mobile!
             if (timeline) {
-                timeline.style.width = '100%'; 
-                timeline.style.maxWidth = '440px'; 
+                timeline.classList.add('concise-timeline-awards-layout');
             }
             
         } else {
@@ -6079,19 +6084,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.hidden = true;
             
-            // Restore default column layout
-            wrapper.style.flexDirection = 'row';
-            leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
-            if (timeline) {
-                timeline.style.width = ''; 
-                timeline.style.maxWidth = ''; // Reset timeline width
-            }
-            
             if (!chartViews.includes(hash)) {
-                leftCol.style.display = 'none';
-            } else {
-                leftCol.style.display = 'flex';
+                leftCol.classList.add('concise-sidebar-hidden');
             }
         }
 
