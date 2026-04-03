@@ -3230,7 +3230,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (noResultsMsg) noResultsMsg.hidden = false;
 
             const loadMoreBtn = document.getElementById('load-more-btn');
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
             if (container) container.style.display = 'flex';
             if (noResultsMsg) noResultsMsg.hidden = true;
@@ -4894,9 +4894,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         currentTimelineIndex = endIndex;
         
         if (currentTimelineIndex >= filteredTimelineData.length) {
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
-            if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+            if (loadMoreBtn) loadMoreBtn.hidden = false;
         }
         
         if (typeof setupTooltips === 'function') {
