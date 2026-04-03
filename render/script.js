@@ -2822,7 +2822,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     trendSlot.remove();
                 }
 
-                statsNode = defaultStatsClone.firstElementChild;
+                statsNode = defaultStatsClone;
             }
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
@@ -2839,7 +2839,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const hkEl = hkClone.querySelector('.we-stat-hk');
                         hkEl.textContent = `+${trendVal.toLocaleString()} HKs Contributed`;
 
-                        statsNode = hkClone.firstElementChild;
+                        statsNode = hkClone;
                     }
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
@@ -2853,7 +2853,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const xpEl = xpClone.querySelector('.we-stat-xp');
                                 xpEl.textContent = `+${contextData} Levels Contributed`;
 
-                                statsNode = xpClone.firstElementChild;
+                                statsNode = xpClone;
                             }
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
@@ -2883,7 +2883,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                     lootContainer.appendChild(badgeClone);
                                 });
 
-                                statsNode = lootClone.firstElementChild;
+                                statsNode = lootClone;
                             }
                         } else if (hashUrl === 'war-effort-zenith') {
                             const zenithTemplate = document.getElementById('tpl-we-stat-zenith');
@@ -2892,7 +2892,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const zenithVal = zenithClone.querySelector('.we-zenith-val');
                                 zenithVal.textContent = contextData;
 
-                                statsNode = zenithClone.firstElementChild;
+                                statsNode = zenithClone;
                             }
                         }
                     }
