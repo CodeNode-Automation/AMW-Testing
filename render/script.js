@@ -748,22 +748,30 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     function createTrendSpan(trend, variant = 'default') {
-        const span = document.createElement('span');
+        const templateId = variant === 'podium'
+            ? 'tpl-podium-trend-indicator'
+            : 'tpl-trend-indicator';
+
+        const template = document.getElementById(templateId);
+        if (!template) return document.createElement('span');
+
+        const clone = template.content.cloneNode(true);
+        const span = clone.firstElementChild;
+
+        if (!span) return document.createElement('span');
 
         if (variant === 'podium') {
             if (trend > 0) {
-                span.className = 'podium-trend-positive';
+                span.classList.add('podium-trend-positive');
                 span.textContent = `▲ ${trend}`;
             } else if (trend < 0) {
-                span.className = 'podium-trend-negative';
+                span.classList.add('podium-trend-negative');
                 span.textContent = `▼ ${Math.abs(trend)}`;
             } else {
-                span.className = 'podium-trend-neutral';
+                span.classList.add('podium-trend-neutral');
                 span.textContent = '-';
             }
         } else {
-            span.classList.add('trend-indicator');
-
             if (trend > 0) {
                 span.classList.add('trend-positive');
                 span.textContent = `▲ ${trend}`;
