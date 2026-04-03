@@ -136,6 +136,15 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-box.clickable:hover { transform: translateY(-6px) scale(1.02); border-top-color: rgba(255, 209, 0, 0.4); border-bottom-color: #fff; cursor: pointer !important; box-shadow: 0 15px 35px rgba(255, 209, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.6); }
 .stat-value { display: block; font-family: 'Cinzel'; font-size: 38px; color: #fff; font-weight: bold; text-shadow: 0 4px 20px rgba(255, 209, 0, 0.4); letter-spacing: 2px; }
 .stat-label { display: block; font-size: 10px; color: #999; text-transform: uppercase; margin-top: 8px; letter-spacing: 3px; font-weight: 600; }
+.concise-stat-box-accent {
+    min-width: 200px;
+    margin-bottom: 5px;
+    border-color: var(--concise-kpi-accent, rgba(255, 255, 255, 0.05));
+}
+
+.concise-stat-box-accent .concise-stat-value {
+    color: var(--concise-kpi-accent, #fff);
+}
 /* Layout */
 .analytics-kpi-wrapper { max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 /* Layout */
@@ -336,6 +345,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-wrapper { display: flex; flex-wrap: wrap; gap: 25px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: flex-start; }
 .concise-sidebar { flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; gap: 20px; }
 .concise-donut-box { width: 100%; max-width: 100%; margin: 0; display: none; flex-direction: column; align-items: center; gap: 20px; }
+.concise-donut-box.is-visible { display: flex; }
 .concise-badges-box { width: 100%; display: flex; flex-direction: column; justify-content: center; }
 .concise-main-col { flex: 2; min-width: 300px; width: 100%; }
 .concise-class-stats { display: none; width: 100%; justify-content: center; margin-bottom: 0; }
@@ -2013,10 +2023,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T17:32:26.155869Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T17:41:52.225805Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 743, "loot": 568, "levels": 175, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 749, "loot": 572, "levels": 177, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -6024,10 +6034,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         if (chartViews.includes(hash)) {
             if (donutContainer) {
-                donutContainer.style.display = 'flex';
-                donutContainer.style.flexDirection = 'column';
-                donutContainer.style.alignItems = 'center';
-                donutContainer.style.gap = '20px';
+                donutContainer.classList.add('is-visible');
                 
                donutContainer.textContent = '';
                 const template = document.getElementById('tpl-concise-dashboard-widgets');
@@ -6041,11 +6048,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (kpiTpl && kpiContainer) {
                         const clone = kpiTpl.content.cloneNode(true);
                         const box = clone.querySelector('.concise-stat-box');
-                        box.style.borderColor = colorHex;
-                        box.style.minWidth = '200px';
-                        box.style.marginBottom = '5px';
+                        box.classList.add('concise-stat-box-accent');
+                        box.style.setProperty('--concise-kpi-accent', colorHex);
                         const valSpan = clone.querySelector('.concise-stat-value');
-                        valSpan.style.color = colorHex;
                         valSpan.textContent = val;
                         clone.querySelector('.concise-stat-label').textContent = label;
                         kpiContainer.appendChild(clone);
@@ -6097,7 +6102,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
             }
         } else {
-            if (donutContainer) donutContainer.style.display = 'none';
+            if (donutContainer) donutContainer.classList.remove('is-visible');
         }
         
         if (timeline) {
