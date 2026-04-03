@@ -693,9 +693,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .ac-empty-icon { width: 32px; height: 32px; border-radius: 4px; filter: grayscale(100%); margin-bottom: 8px; }
 .ac-empty-text { color: #aaa; font-style: italic; font-size: 13px; }
 
-.hero-ac-item { border-left-width: 3px; border-left-style: solid; padding: 12px; }
-.hero-ac-icon { border-width: 1px; border-style: solid; }
-.hero-ac-name { font-size: 16px; }
+.hero-ac-item { border-left-width: 3px; border-left-style: solid; border-left-color: var(--hero-ac-accent, #666); padding: 12px; }
+.hero-ac-icon { border-width: 1px; border-style: solid; border-color: var(--hero-ac-accent, #666); }
+.hero-ac-name { font-size: 16px; color: var(--hero-ac-accent, #fff); }
+.hero-ac-icon-cover { object-fit: cover; }
 
 /* ========================================= */
 /* WAR EFFORT INCENTIVES                     */

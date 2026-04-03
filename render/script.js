@@ -353,19 +353,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         const clone = template.content.cloneNode(true);
 
         const itemDiv = clone.querySelector('.hero-ac-item');
-        itemDiv.style.borderLeftColor = cHex;
+        itemDiv.style.setProperty('--hero-ac-accent', cHex);
         itemDiv.addEventListener('click', () => selectCharacter(char.profile.name.toLowerCase()));
 
         const img = clone.querySelector('.hero-ac-icon');
         img.src = char.render_url || getClassIcon(cClass);
-        img.style.borderColor = cHex;
         if (forceObjectFitCover) {
-            img.style.objectFit = 'cover';
+            img.classList.add('hero-ac-icon-cover');
         }
 
         const nameSpan = clone.querySelector('.hero-ac-name');
         nameSpan.textContent = char.profile.name;
-        nameSpan.style.color = cHex;
 
         const metaSpan = clone.querySelector('.ac-meta');
         metaSpan.textContent = `Level ${char.profile.level} ${cClass}`;
