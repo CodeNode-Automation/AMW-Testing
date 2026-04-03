@@ -1155,7 +1155,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function renderFullCard(charName) {
         const char = rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === charName);
-        if (!char) return "";
+        if (!char) return null;
         
         const p = char.profile || {};
         const eq = char.equipped || {};
@@ -1802,7 +1802,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        return clone.firstElementChild.outerHTML;
+        return clone.firstElementChild || null;
     }
 
     function getTemplateRootHtml(templateId) {
@@ -4083,7 +4083,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showFullCardView(charName) {
         hideAllViews();
         fullCardContainer.style.display = 'block';
-        fullCardContainer.innerHTML = renderFullCard(charName);
+        fullCardContainer.textContent = '';
+
+        const fullCardNode = renderFullCard(charName);
+        if (fullCardNode) {
+            fullCardContainer.appendChild(fullCardNode);
+        }
+
         if (navbar) navbar.style.background = '#111';
         
         if (timeline) {
