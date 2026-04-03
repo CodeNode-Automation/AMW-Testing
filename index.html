@@ -1974,10 +1974,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T16:10:08.701845Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T16:26:15.996429Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 705, "loot": 537, "levels": 168, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 710, "loot": 541, "levels": 169, "total_roster": 658, "active_roster": 410}]
     </script>
 
     <script>
@@ -4267,7 +4267,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         podiumClass
     }) {
         const template = document.getElementById('tpl-concise-row');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const bar = clone.querySelector('.concise-char-bar');
@@ -4347,7 +4347,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsTop.innerHTML = statsHtml;
         }
 
-        return clone.firstElementChild.outerHTML;
+        return clone.firstElementChild;
     }
 
     function buildConcisePodiumHtml({
@@ -4541,7 +4541,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Generate the HTML for the list
         const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
         const podiumNodes = [];
-        let listItemsHTML = '';
+        const listItemNodes = [];
 
         sortedCharacters.forEach((char, index) => {
             let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
@@ -4897,7 +4897,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 4. Render the HTML Row (or intercept for Podium)
-            const rowHTML = buildConciseRowHtml({
+            const rowNode = buildConciseRowHtml({
                 isClickable,
                 cleanName,
                 cClass,
@@ -4949,8 +4949,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (podiumNode) {
                     podiumNodes.push(podiumNode);
                 }
-            } else {
-                listItemsHTML += rowHTML;
+            } else if (rowNode) {
+                listItemNodes.push(rowNode);
             }
         });
         
@@ -4971,11 +4971,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listWrap.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+                listItemNodes.forEach(node => {
+                    if (node) listWrap.appendChild(node);
+                });
                 conciseList.appendChild(listWrap);
             }
         } else {
-            conciseList.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+            listItemNodes.forEach(node => {
+                if (node) conciseList.appendChild(node);
+            });
         }
         
         let templateId = null;
