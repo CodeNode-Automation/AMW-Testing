@@ -1938,7 +1938,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (specContainer) specContainer.hidden = true;
 
         if (!characters || characters.length === 0) {
-            container.style.display = 'none';
+            container.classList.remove('is-visible');
             return;
         }
         
@@ -1981,7 +1981,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        container.style.display = 'flex';
+        container.classList.add('is-visible');
 
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
             badge.addEventListener('click', function() {
@@ -2174,7 +2174,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     function renderAwardFilterBadges(characters, isRawMode) {
         const container = document.getElementById('concise-class-badges');
         const specContainer = document.getElementById('concise-spec-container');
-        if (specContainer) specContainer.style.display = 'none';
+        if (specContainer) specContainer.hidden = true;
 
         if (!characters || characters.length === 0) {
             container.style.display = 'none';
@@ -2225,11 +2225,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const countSpan = clone.querySelector('.stat-badge-count');
                     
                     badgeDiv.setAttribute('data-award', key);
-                    badgeDiv.style.borderColor = def.color;
+                    badgeDiv.style.setProperty('--award-badge-accent', def.color);
                     badgeDiv.title = `Filter ${def.label}`;
                     
                     clsSpan.textContent = `${def.icon} ${def.label}`;
-                    clsSpan.style.color = def.color;
                     
                     countSpan.textContent = counts[key];
                     
