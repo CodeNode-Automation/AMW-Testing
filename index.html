@@ -1904,6 +1904,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
             </div>
             
+            <div id="tl-no-results" class="tl-empty-msg" hidden>No activity found for these filters yet... keep raiding!</div>
+
             <div class="timeline-feed" id="timeline-feed-container">
                 </div>
 
@@ -1928,10 +1930,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:05:59.458955Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:23:42.634706Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 645, "loot": 497, "levels": 148, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 656, "loot": 504, "levels": 152, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -5162,23 +5164,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         currentTimelineIndex = 0;
 
         // 3. Handle empty states or render the first batch
-        let noResultsMsg = document.getElementById('tl-no-results');
+        const noResultsMsg = document.getElementById('tl-no-results');
         if (filteredTimelineData.length === 0) {
             if (container) container.style.display = 'none';
-            if (!noResultsMsg) {
-                noResultsMsg = document.createElement('div');
-                noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.className = 'tl-empty-msg';
-                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
-                document.getElementById('timeline').appendChild(noResultsMsg);
-            } else {
-                noResultsMsg.style.display = 'block';
-            }
+            if (noResultsMsg) noResultsMsg.hidden = false;
+
             const loadMoreBtn = document.getElementById('load-more-btn');
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             if (container) container.style.display = 'flex';
-            if (noResultsMsg) noResultsMsg.style.display = 'none';
+            if (noResultsMsg) noResultsMsg.hidden = true;
             renderTimelineBatch();
         }
     }
