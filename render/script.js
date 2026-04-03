@@ -2369,7 +2369,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    statsHtml = `<span class="we-stat-hk">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                    const hkTemplate = document.getElementById('tpl-we-stat-hk');
+                    if (hkTemplate) {
+                        const hkClone = hkTemplate.content.cloneNode(true);
+                        const hkEl = hkClone.querySelector('.we-stat-hk');
+                        hkEl.textContent = `+${trendVal.toLocaleString()} HKs Contributed`;
+
+                        const hkWrapper = document.createElement('div');
+                        hkWrapper.appendChild(hkClone);
+                        statsHtml = hkWrapper.innerHTML;
+                    }
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
                     const contextData = window.warEffortContext[charKey];
