@@ -2032,10 +2032,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T17:57:22.837254Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T18:04:31.715921Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 753, "loot": 575, "levels": 178, "total_roster": 658, "active_roster": 410}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 753, "loot": 575, "levels": 178, "total_roster": 658, "active_roster": 409}]
     </script>
 
     <script>
@@ -7069,8 +7069,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const block = clone.querySelector('.podium-block');
                 block.classList.add(stepClass);
                 block.setAttribute('data-char', (p.name || '').toLowerCase());
+                block.setAttribute('data-class', cClass);
                 block.onclick = () => selectCharacter((p.name || '').toLowerCase());
-                block.style.borderTop = `3px solid ${cHex}`;
                 
                 if (rank === 1) {
                     const crown = document.createElement('div');
@@ -7081,14 +7081,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const avatar = clone.querySelector('.podium-avatar');
                 avatar.src = portraitURL;
-                avatar.style.borderColor = cHex;
                 
                 const rankDiv = clone.querySelector('.podium-rank');
-                rankDiv.style.color = rankColor;
                 rankDiv.textContent = `#${rank}`;
                 
                 const nameDiv = clone.querySelector('.podium-name');
-                nameDiv.style.color = cHex;
                 nameDiv.textContent = p.name;
                 
                 clone.querySelector('.podium-trend-val').textContent = `▲ ${trend.toLocaleString()}`;
