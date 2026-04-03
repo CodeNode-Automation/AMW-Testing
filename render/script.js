@@ -1836,15 +1836,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     function renderDynamicBadges(characters, isRawMode) {
         const container = document.getElementById('concise-class-badges');
         
-        let specContainer = document.getElementById('concise-spec-container');
-        if (!specContainer) {
-            specContainer = document.createElement('div');
-            specContainer.id = 'concise-spec-container';
-            specContainer.className = 'concise-spec-container-default';
-            container.parentNode.appendChild(specContainer); 
-        } else {
-            specContainer.style.display = 'none';
-        }
+        const specContainer = document.getElementById('concise-spec-container');
+        specContainer.style.display = 'none';
 
         if (!characters || characters.length === 0) {
             container.style.display = 'none';
