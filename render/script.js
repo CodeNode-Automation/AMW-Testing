@@ -1778,7 +1778,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         advancedStatsEl.innerHTML = advancedStatsHtml;
 
         const page2El = clone.querySelector('.stat-page-2');
-        page2El.style.animation = 'fadeIn 0.3s';
         page2El.innerHTML = weaponStatsHtml;
 
         const gearGridEl = clone.querySelector('.full-card-gear-grid');
