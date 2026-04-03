@@ -3926,49 +3926,23 @@ window.addEventListener('DOMContentLoaded', async () => {
         const leftCol = document.getElementById('concise-left-col');
         const badgesContainer = document.getElementById('concise-class-badges');
 
+        wrapper.classList.remove('concise-wrapper-awards-layout');
+        leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
+        badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout');
+        if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
+
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
-            leftCol.style.display = 'flex';
-            
-            // Restore default column layout
-            wrapper.style.flexDirection = 'row';
-            leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
-            badgesContainer.style.flexWrap = 'wrap';
-            badgesContainer.style.justifyContent = 'center';
-            badgesContainer.style.maxWidth = '900px';
-            
-            // FIX: Reset inline padding/margins when leaving the Hall of Heroes
-            badgesContainer.style.overflowX = 'visible'; 
-            badgesContainer.style.padding = ''; 
-            badgesContainer.style.marginTop = '';
-            
-            if (timeline) {
-                timeline.style.width = ''; 
-                timeline.style.maxWidth = ''; // Reset timeline width
-            }
+            badgesContainer.classList.add('concise-badges-default-layout');
             
         } else if (showBadges === 'awards') {
             renderAwardFilterBadges(characters, isRawRoster);
-            leftCol.style.display = 'flex';
+            wrapper.classList.add('concise-wrapper-awards-layout');
+            leftCol.classList.add('concise-sidebar-awards-layout');
+            badgesContainer.classList.add('concise-badges-awards-layout');
             
-            // Stack layout: Bubbles single-file on top, character list stretched wide below
-            wrapper.style.flexDirection = 'column';
-            leftCol.style.maxWidth = '100%';
-            leftCol.style.width = '100%';
-            badgesContainer.style.flexWrap = 'nowrap';
-            badgesContainer.style.justifyContent = 'flex-start';
-            badgesContainer.style.maxWidth = '100%';
-            badgesContainer.style.overflowX = 'auto'; // Allows horizontal scroll if screen is too small
-            
-            // FIX: Generous internal padding gives the bubbles room to grow without getting severed
-            badgesContainer.style.padding = '15px 10px 25px 10px';
-            badgesContainer.style.marginTop = '-10px';
-            
-            // Stretch the activity feed slightly, but keep it responsive for mobile!
             if (timeline) {
-                timeline.style.width = '100%'; 
-                timeline.style.maxWidth = '440px'; 
+                timeline.classList.add('concise-timeline-awards-layout');
             }
             
         } else {
@@ -3976,19 +3950,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.hidden = true;
             
-            // Restore default column layout
-            wrapper.style.flexDirection = 'row';
-            leftCol.style.maxWidth = '350px';
-            leftCol.style.width = 'auto';
-            if (timeline) {
-                timeline.style.width = ''; 
-                timeline.style.maxWidth = ''; // Reset timeline width
-            }
-            
             if (!chartViews.includes(hash)) {
-                leftCol.style.display = 'none';
-            } else {
-                leftCol.style.display = 'flex';
+                leftCol.classList.add('concise-sidebar-hidden');
             }
         }
 
