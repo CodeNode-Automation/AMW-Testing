@@ -1145,37 +1145,130 @@ window.addEventListener('DOMContentLoaded', async () => {
         const isCaster = ["Mage", "Warlock", "Priest"].includes(cClass) || ["Balance", "Elemental", "Restoration", "Holy"].includes(activeSpec) || (cClass === "Paladin" && ["Holy", "Protection"].includes(activeSpec)) || (cClass === "Shaman" && activeSpec !== "Enhancement") || (cClass === "Druid" && activeSpec !== "Feral Combat");
 
         let advancedStatsHtml = `<div class="stat-divider"></div>`;
-        advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Armor</span><span class="stat-val val-wht">${armor.toLocaleString()}</span></div>`;
+        advancedStatsHtml += buildFullCardStatRowHtml({
+            label: '🛡️ Armor',
+            value: armor.toLocaleString(),
+            valueClass: 'val-wht'
+        });
         
         // 1. Defenses (Gated to Tanks or High-Defense Off-Tanks)
         if (isTank || defense > 350) {
-            if (defense > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧱 Defense</span><span class="stat-val val-wht">${defense}</span></div>`;
-            if (dodge > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🤸 Dodge</span><span class="stat-val val-wht">${dodge.toFixed(2)}%</span></div>`;
-            if (parry > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Parry</span><span class="stat-val val-wht">${parry.toFixed(2)}%</span></div>`;
-            if (block > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Block</span><span class="stat-val val-wht">${block.toFixed(2)}%</span></div>`;
+            if (defense > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🧱 Defense',
+                    value: defense,
+                    valueClass: 'val-wht'
+                });
+            }
+            if (dodge > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🤸 Dodge',
+                    value: `${dodge.toFixed(2)}%`,
+                    valueClass: 'val-wht'
+                });
+            }
+            if (parry > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '⚔️ Parry',
+                    value: `${parry.toFixed(2)}%`,
+                    valueClass: 'val-wht'
+                });
+            }
+            if (block > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🛡️ Block',
+                    value: `${block.toFixed(2)}%`,
+                    valueClass: 'val-wht'
+                });
+            }
         }
 
         // 2. Physical Offense (Melee & Ranged)
         if (isMelee || isHunter) {
-            if (ap > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Attack Power</span><span class="stat-val val-org">${ap}</span></div>`;
+            if (ap > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '⚔️ Attack Power',
+                    value: ap,
+                    valueClass: 'val-org'
+                });
+            }
         }
         if (isMelee) {
-            if (meleeCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🩸 Melee Crit</span><span class="stat-val val-red">${meleeCrit.toFixed(2)}%</span></div>`;
-            if (meleeHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Melee Haste</span><span class="stat-val val-red">${meleeHaste.toFixed(2)}%</span></div>`;
+            if (meleeCrit > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🩸 Melee Crit',
+                    value: `${meleeCrit.toFixed(2)}%`,
+                    valueClass: 'val-red'
+                });
+            }
+            if (meleeHaste > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '⚡ Melee Haste',
+                    value: `${meleeHaste.toFixed(2)}%`,
+                    valueClass: 'val-red'
+                });
+            }
         }
         if (isHunter) {
-            if (rangedCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Ranged Crit</span><span class="stat-val val-grn">${rangedCrit.toFixed(2)}%</span></div>`;
-            if (rangedHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Ranged Haste</span><span class="stat-val val-grn">${rangedHaste.toFixed(2)}%</span></div>`;
+            if (rangedCrit > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🏹 Ranged Crit',
+                    value: `${rangedCrit.toFixed(2)}%`,
+                    valueClass: 'val-grn'
+                });
+            }
+            if (rangedHaste > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '⚡ Ranged Haste',
+                    value: `${rangedHaste.toFixed(2)}%`,
+                    valueClass: 'val-grn'
+                });
+            }
         }
 
         // 3. Spellcasting & Healing
         if (isCaster) {
-            if (spellPower > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spell Power</span><span class="stat-val val-blu">${spellPower}</span></div>`;
-            if (spellCrit > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🔥 Spell Crit</span><span class="stat-val val-ylw">${spellCrit.toFixed(2)}%</span></div>`;
-            if (spellHaste > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚡ Spell Haste</span><span class="stat-val val-ylw">${spellHaste.toFixed(2)}%</span></div>`;
-            if (spellPen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">🌀 Spell Pen</span><span class="stat-val val-blu">${spellPen}</span></div>`;
-            if (mp5 > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana/5 (Combat)</span><span class="stat-val val-grn">${Math.round(mp5)}</span></div>`;
-            else if (manaRegen > 0) advancedStatsHtml += `<div class="stat-row"><span class="stat-lbl">💧 Mana Regen</span><span class="stat-val val-grn">${Math.round(manaRegen)}</span></div>`;
+            if (spellPower > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '✨ Spell Power',
+                    value: spellPower,
+                    valueClass: 'val-blu'
+                });
+            }
+            if (spellCrit > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🔥 Spell Crit',
+                    value: `${spellCrit.toFixed(2)}%`,
+                    valueClass: 'val-ylw'
+                });
+            }
+            if (spellHaste > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '⚡ Spell Haste',
+                    value: `${spellHaste.toFixed(2)}%`,
+                    valueClass: 'val-ylw'
+                });
+            }
+            if (spellPen > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '🌀 Spell Pen',
+                    value: spellPen,
+                    valueClass: 'val-blu'
+                });
+            }
+            if (mp5 > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '💧 Mana/5 (Combat)',
+                    value: Math.round(mp5),
+                    valueClass: 'val-grn'
+                });
+            } else if (manaRegen > 0) {
+                advancedStatsHtml += buildFullCardStatRowHtml({
+                    label: '💧 Mana Regen',
+                    value: Math.round(manaRegen),
+                    valueClass: 'val-grn'
+                });
+            }
         }
 
         const hks = p.honorable_kills || 0;
@@ -1561,6 +1654,29 @@ window.addEventListener('DOMContentLoaded', async () => {
         gearGridEl.innerHTML = gearHtml;
 
         return clone.firstElementChild.outerHTML;
+    }
+
+    function buildFullCardStatRowHtml({ label, value, valueClass = '' }) {
+        const template = document.getElementById('tpl-full-card-stat-row');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const labelEl = clone.querySelector('.stat-lbl');
+        const valueEl = clone.querySelector('.stat-val');
+
+        if (labelEl) {
+            labelEl.textContent = label;
+        }
+
+        if (valueEl) {
+            valueEl.textContent = value;
+            if (valueClass) {
+                valueClass.split(' ').filter(Boolean).forEach(cls => valueEl.classList.add(cls));
+            }
+        }
+
+        const rowEl = clone.firstElementChild;
+        return rowEl ? rowEl.outerHTML : '';
     }
 
     function appendFullCardBadge(container, {
