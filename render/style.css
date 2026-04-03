@@ -223,6 +223,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-badge-ilvl { border-color: #ff8000; color: #ff8000; }
 .toggle-stats-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; outline: none; transition: 0.2s; padding: 0; }
 .toggle-stats-btn:hover { color: #ffd100; }
+.stat-page-panel.is-hidden { display: none; }
 .gear-slot-wrapper { background: rgba(20,20,20,0.9); }
 .gear-slot-icon-wrapper { position: relative; }
 .gear-slot-info { display: flex; flex-direction: column; justify-content: center; }

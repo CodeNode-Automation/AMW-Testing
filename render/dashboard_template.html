@@ -272,7 +272,11 @@
     <template id="tpl-home-leaderboard-list-wrap">
         <div class="lb-list-wrap collapsed-list"></div>
     </template>
-    
+
+    <template id="tpl-home-leaderboard-expand-btn">
+        <button type="button" class="expand-lb-btn">Show Top 25 ▼</button>
+    </template>
+
     <template id="tpl-concise-row">
         <div class="concise-char-bar">
             <div class="concise-row-inner">
@@ -919,7 +923,7 @@
                             <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
                         </div>
 
-                        <div class="stat-page-1">
+                        <div class="stat-page-1 stat-page-panel">
                             <div class="resource-bar full-card-health-bar">
                                 <div class="bar-fill full-card-health-fill"></div>
                                 <span class="bar-text full-card-health-text"></span>
@@ -941,7 +945,7 @@
                             <div class="full-card-advanced-stats"></div>
                         </div>
 
-                        <div class="stat-page-2">
+                        <div class="stat-page-2 stat-page-panel is-hidden">
                             <div class="full-card-weapon-stats"></div>
                         </div>
                     </div>

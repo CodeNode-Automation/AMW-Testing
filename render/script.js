@@ -495,10 +495,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const p2 = p.querySelector('.stat-page-2');
                 const title = p.querySelector('.stat-card-title');
                 if (p1 && p2 && title) {
-                    if (p1.style.display === 'none') {
-                        p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; btn.innerText = '▶';
+                    const showingWeaponPage = p1.classList.contains('is-hidden');
+
+                    if (showingWeaponPage) {
+                        p1.classList.remove('is-hidden');
+                        p2.classList.add('is-hidden');
+                        title.innerText = 'Combat Stats';
+                        btn.innerText = '▶';
                     } else {
-                        p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; btn.innerText = '◀';
+                        p1.classList.add('is-hidden');
+                        p2.classList.remove('is-hidden');
+                        title.innerText = 'Weapon & Gear';
+                        btn.innerText = '◀';
                     }
                 }
             }
@@ -913,15 +921,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         pveContainer.appendChild(listWrap);
 
         if (topPve.length > 5) {
-            const btn = document.createElement('button');
-            btn.className = 'expand-lb-btn';
-            btn.textContent = 'Show Top 25 ▼';
-            btn.addEventListener('click', function() {
-                const listWrapEl = this.previousElementSibling;
-                if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
-                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
-            });
-            pveContainer.appendChild(btn);
+            const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
+            const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const listWrapEl = this.previousElementSibling;
+                    if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
+                    this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+                });
+                pveContainer.appendChild(btn);
+            }
         }
     }
 
@@ -1066,15 +1076,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         pvpContainer.appendChild(listWrap);
 
         if (topPvp.length > 5) {
-            const btn = document.createElement('button');
-            btn.className = 'expand-lb-btn';
-            btn.textContent = 'Show Top 25 ▼';
-            btn.addEventListener('click', function() {
-                const listWrapEl = this.previousElementSibling;
-                if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
-                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
-            });
-            pvpContainer.appendChild(btn);
+            const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
+            const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const listWrapEl = this.previousElementSibling;
+                    if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
+                    this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+                });
+                pvpContainer.appendChild(btn);
+            }
         }
     }
     
@@ -1766,7 +1778,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         advancedStatsEl.innerHTML = advancedStatsHtml;
 
         const page2El = clone.querySelector('.stat-page-2');
-        page2El.style.display = 'none';
         page2El.style.animation = 'fadeIn 0.3s';
         page2El.innerHTML = weaponStatsHtml;
 
