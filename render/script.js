@@ -2284,7 +2284,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         podiumClass
     }) {
         const template = document.getElementById('tpl-concise-row');
-        if (!template) return '';
+        if (!template) return null;
 
         const clone = template.content.cloneNode(true);
         const bar = clone.querySelector('.concise-char-bar');
@@ -2364,7 +2364,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsTop.innerHTML = statsHtml;
         }
 
-        return clone.firstElementChild.outerHTML;
+        return clone.firstElementChild;
     }
 
     function buildConcisePodiumHtml({
@@ -2558,7 +2558,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Generate the HTML for the list
         const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
         const podiumNodes = [];
-        let listItemsHTML = '';
+        const listItemNodes = [];
 
         sortedCharacters.forEach((char, index) => {
             let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
@@ -2914,7 +2914,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 4. Render the HTML Row (or intercept for Podium)
-            const rowHTML = buildConciseRowHtml({
+            const rowNode = buildConciseRowHtml({
                 isClickable,
                 cleanName,
                 cClass,
@@ -2966,8 +2966,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (podiumNode) {
                     podiumNodes.push(podiumNode);
                 }
-            } else {
-                listItemsHTML += rowHTML;
+            } else if (rowNode) {
+                listItemNodes.push(rowNode);
             }
         });
         
@@ -2988,11 +2988,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listWrap.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+                listItemNodes.forEach(node => {
+                    if (node) listWrap.appendChild(node);
+                });
                 conciseList.appendChild(listWrap);
             }
         } else {
-            conciseList.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+            listItemNodes.forEach(node => {
+                if (node) conciseList.appendChild(node);
+            });
         }
         
         let templateId = null;
