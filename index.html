@@ -378,7 +378,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-val-ilvl { color: #ff8000; font-size: 15px; text-shadow: 0 1px 2px #000; }
 .concise-spec-icon { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid #222; }
 
-.custom-tooltip { position: fixed; background: linear-gradient(135deg, rgba(15, 15, 25, 0.85) 0%, rgba(5, 5, 10, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.2); border-top: 1px solid rgba(255, 209, 0, 0.6); color: #eee; padding: 18px; border-radius: 12px; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 20px rgba(255, 209, 0, 0.1); visibility: hidden; opacity: 0; transition: opacity 0.2s, visibility 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 200px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); pointer-events: none; transform: translateY(10px) scale(0.95); }
+.custom-tooltip { position: fixed; background: linear-gradient(135deg, rgba(15, 15, 25, 0.85) 0%, rgba(5, 5, 10, 0.95) 100%); border: 1px solid rgba(255, 209, 0, 0.2); border-top: 1px solid rgba(255, 209, 0, 0.6); border-left-color: var(--heatmap-tooltip-accent, rgba(255, 209, 0, 0.2)); color: #eee; padding: 18px; border-radius: 12px; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 20px rgba(255, 209, 0, 0.1); visibility: hidden; opacity: 0; transition: opacity 0.2s, visibility 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 200px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); pointer-events: none; transform: translateY(10px) scale(0.95); }
 .custom-tooltip.visible { visibility: visible; opacity: 1; transform: translateY(0) scale(1); }
 .custom-tooltip .tt-name { font-family: 'Cinzel'; font-size: 18px; margin-bottom: 8px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 .custom-tooltip .tt-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #222; align-items: center; }
@@ -655,7 +655,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .error-text { color: #e74c3c !important; }
 .hero-title { color: #ffd100; font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 1px; text-shadow: 0 2px 4px #000; margin-top: 0; margin-bottom: 20px; }
 
-.tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; }
+.tooltip-activity { font-family:'Cinzel'; font-weight:bold; font-size:16px; margin-bottom:4px; color: var(--heatmap-tooltip-accent, #ffd100); }
 .we-tt-header { font-family: 'Cinzel'; color: #ffd100; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #555; padding-bottom: 4px; }
 .we-tt-empty { color: #aaa; font-style: italic; }
 .we-tt-footer { color: #888; font-style: italic; font-size: 11px; text-align: right; margin-top: 6px; border-top: 1px dashed #444; padding-top: 4px; }
@@ -1968,10 +1968,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T15:37:00.114784Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T15:43:20.847434Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 688, "loot": 523, "levels": 165, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 692, "loot": 526, "levels": 166, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -2692,7 +2692,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     const activityDiv = clone.querySelector('.tooltip-activity');
                     activityDiv.textContent = `${count} Activities`;
-                    activityDiv.style.color = color;
                     
                     const dateDiv = clone.querySelector('.tooltip-date');
                     dateDiv.textContent = dateStr;
@@ -2700,7 +2699,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     tooltip.appendChild(clone);
                 }
 
-                tooltip.style.borderLeftColor = color;
+                tooltip.style.setProperty('--heatmap-tooltip-accent', color);
                 
                 let x = e.clientX + 15;
                 let y = e.clientY + 15;
