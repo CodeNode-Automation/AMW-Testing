@@ -170,11 +170,11 @@ function appendConciseMeta(container, { raceName, specIconUrl, displaySpecClass,
 
 function buildConciseTrendHtml(trend) {
     const template = document.getElementById('tpl-concise-trend-indicator');
-    if (!template) return '';
+    if (!template) return null;
 
     const clone = template.content.cloneNode(true);
     const trendEl = clone.querySelector('.trend-indicator-concise');
-    if (!trendEl) return '';
+    if (!trendEl) return null;
 
     if (trend > 0) {
         trendEl.classList.add('trend-positive');
@@ -188,7 +188,7 @@ function buildConciseTrendHtml(trend) {
     }
 
     const rootEl = clone.firstElementChild;
-    return rootEl ? rootEl.outerHTML : '';
+    return rootEl || null;
 }
 
 // NEW: Added 'async' so we can fetch the external files
@@ -2278,7 +2278,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         raceName,
         specIconUrl,
         displaySpecClass,
-        statsHtml,
+        statsNode,
         hashUrl,
         vanguardClass,
         podiumClass
@@ -2358,10 +2358,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsTop.remove();
             statsBottom.hidden = false;
             statsBottom.classList.add('concise-row-stats-bottom-war-effort-loot');
-            statsBottom.innerHTML = statsHtml;
+            if (statsNode) {
+                statsBottom.appendChild(statsNode);
+            }
         } else {
             statsBottom.remove();
-            statsTop.innerHTML = statsHtml;
+            if (statsNode) {
+                statsTop.appendChild(statsNode);
+            }
         }
 
         return clone.firstElementChild;
@@ -2576,7 +2580,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let displaySpecClass = '';
             let statValue = '???';
             let statValueClass = '';
-            let trendHTML = '';
+            let trendNode = null;
             let awardsAttr = [];
             let conciseBadges = [];
 
@@ -2745,7 +2749,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
-                    trendHTML = buildConciseTrendHtml(trend);
+                    trendNode = buildConciseTrendHtml(trend);
                 }
             } else {
                 baseName = char.name || 'Unknown';
@@ -2795,7 +2799,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             // --- NEW: Custom War Effort Stats Overrides ---
             const defaultStatsTemplate = document.getElementById('tpl-concise-default-stats');
-            let statsHtml = '';
+            let statsNode = null;
 
             if (defaultStatsTemplate) {
                 const defaultStatsClone = defaultStatsTemplate.content.cloneNode(true);
@@ -2812,23 +2816,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                     valueEl.classList.add(statValueClass.trim());
                 }
 
-                if (trendHTML) {
-                    const trendWrapper = document.createElement('div');
-                    trendWrapper.innerHTML = trendHTML;
-                    const trendEl = trendWrapper.firstElementChild;
-
-                    if (trendEl) {
-                        trendSlot.replaceWith(trendEl);
-                    } else {
-                        trendSlot.remove();
-                    }
+                if (trendNode) {
+                    trendSlot.replaceWith(trendNode);
                 } else {
                     trendSlot.remove();
                 }
 
-                const statsWrapper = document.createElement('div');
-                statsWrapper.appendChild(defaultStatsClone);
-                statsHtml = statsWrapper.innerHTML;
+                statsNode = defaultStatsClone.firstElementChild;
             }
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
@@ -2845,9 +2839,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const hkEl = hkClone.querySelector('.we-stat-hk');
                         hkEl.textContent = `+${trendVal.toLocaleString()} HKs Contributed`;
 
-                        const hkWrapper = document.createElement('div');
-                        hkWrapper.appendChild(hkClone);
-                        statsHtml = hkWrapper.innerHTML;
+                        statsNode = hkClone.firstElementChild;
                     }
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
@@ -2861,9 +2853,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const xpEl = xpClone.querySelector('.we-stat-xp');
                                 xpEl.textContent = `+${contextData} Levels Contributed`;
 
-                                const xpWrapper = document.createElement('div');
-                                xpWrapper.appendChild(xpClone);
-                                statsHtml = xpWrapper.innerHTML;
+                                statsNode = xpClone.firstElementChild;
                             }
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
@@ -2893,9 +2883,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                     lootContainer.appendChild(badgeClone);
                                 });
 
-                                const lootWrapper = document.createElement('div');
-                                lootWrapper.appendChild(lootClone);
-                                statsHtml = lootWrapper.innerHTML;
+                                statsNode = lootClone.firstElementChild;
                             }
                         } else if (hashUrl === 'war-effort-zenith') {
                             const zenithTemplate = document.getElementById('tpl-we-stat-zenith');
@@ -2904,9 +2892,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const zenithVal = zenithClone.querySelector('.we-zenith-val');
                                 zenithVal.textContent = contextData;
 
-                                const zenithWrapper = document.createElement('div');
-                                zenithWrapper.appendChild(zenithClone);
-                                statsHtml = zenithWrapper.innerHTML;
+                                statsNode = zenithClone.firstElementChild;
                             }
                         }
                     }
@@ -2934,7 +2920,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 raceName,
                 specIconUrl,
                 displaySpecClass,
-                statsHtml,
+                statsNode,
                 hashUrl,
                 vanguardClass,
                 podiumClass
