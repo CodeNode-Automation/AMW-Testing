@@ -1179,7 +1179,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         const hks = p.honorable_kills || 0;
-        const hkBadge = hks > 0 ? `<span class="badge hk-card-badge">⚔️ ${hks.toLocaleString()} HKs</span>` : '';
         
         // --- NEW: Page 2 Weapon & Gear Breakdown ---
         const mhMin = st.main_hand_damage_min || st.main_hand_min || ((st.main_hand_weapon_damage && st.main_hand_weapon_damage.min) || 0);
@@ -1320,21 +1319,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         const tPvpChamp = getDetailedBadgeTooltip(p.name, ['mvp_pvp'], `${pvpChamp}x PvP Champion`, pvpChamp);
         const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
         const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
-        
-        let extraBadges = '';
-        if (isPveReigning) extraBadges += `<span class="badge char-badge badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning PvE MVP</span>`;
-        if (isPvpReigning) extraBadges += `<span class="badge char-badge badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning PvP MVP</span>`;
-        
-        if (pveGold > 0) extraBadges += `<span class="badge char-badge badge-pve-gold" title="${tPveGold}">🛡️🥇 PvE Gold x${pveGold}</span>`;
-        if (pveSilver > 0) extraBadges += `<span class="badge char-badge badge-silver" title="${tPveSilver}">🛡️🥈 PvE Silver x${pveSilver}</span>`;
-        if (pveBronze > 0) extraBadges += `<span class="badge char-badge badge-bronze" title="${tPveBronze}">🛡️🥉 PvE Bronze x${pveBronze}</span>`;
-        if (pvpGold > 0) extraBadges += `<span class="badge char-badge badge-gold-alt" title="${tPvpGold}">⚔️🥇 PvP Gold x${pvpGold}</span>`;
-        if (pvpSilver > 0) extraBadges += `<span class="badge char-badge badge-silver" title="${tPvpSilver}">⚔️🥈 PvP Silver x${pvpSilver}</span>`;
-        if (pvpBronze > 0) extraBadges += `<span class="badge char-badge badge-bronze" title="${tPvpBronze}">⚔️🥉 PvP Bronze x${pvpBronze}</span>`;
-        if (pveChamp > 0) extraBadges += `<span class="badge char-badge badge-pve-champ" title="${tPveChamp}">👑 PvE Champ x${pveChamp}</span>`;
-        if (pvpChamp > 0) extraBadges += `<span class="badge char-badge badge-pvp-champ" title="${tPvpChamp}">⚔️ PvP Champ x${pvpChamp}</span>`;
-        if (vCount > 0) extraBadges += `<span class="badge char-badge badge-vanguard" title="${tVanguard}">🌟 Vanguard x${vCount}</span>`;
-        if (cCount > 0) extraBadges += `<span class="badge char-badge badge-campaign" title="${tCampaign}">🎖️ Campaigns x${cCount}</span>`;
 
         const fullCardTemplate = document.getElementById('tpl-full-card-shell');
         if (!fullCardTemplate) return '';
@@ -1357,7 +1341,101 @@ window.addEventListener('DOMContentLoaded', async () => {
             classNames: ['char-badge-guild-rank']
         });
 
-        appendFullCardBadgeHtml(badgesEl, extraBadges);
+        if (isPveReigning) {
+            appendFullCardBadge(badgesEl, {
+                text: '👑 Reigning PvE MVP',
+                title: 'Current Reigning PvE Champion!',
+                classNames: ['badge-reigning-pve']
+            });
+        }
+
+        if (isPvpReigning) {
+            appendFullCardBadge(badgesEl, {
+                text: '⚔️ Reigning PvP MVP',
+                title: 'Current Reigning PvP Champion!',
+                classNames: ['badge-reigning-pvp']
+            });
+        }
+
+        if (pveGold > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `🛡️🥇 PvE Gold x${pveGold}`,
+                title: tPveGold,
+                classNames: ['badge-pve-gold']
+            });
+        }
+
+        if (pveSilver > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `🛡️🥈 PvE Silver x${pveSilver}`,
+                title: tPveSilver,
+                classNames: ['badge-silver']
+            });
+        }
+
+        if (pveBronze > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `🛡️🥉 PvE Bronze x${pveBronze}`,
+                title: tPveBronze,
+                classNames: ['badge-bronze']
+            });
+        }
+
+        if (pvpGold > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `⚔️🥇 PvP Gold x${pvpGold}`,
+                title: tPvpGold,
+                classNames: ['badge-gold-alt']
+            });
+        }
+
+        if (pvpSilver > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `⚔️🥈 PvP Silver x${pvpSilver}`,
+                title: tPvpSilver,
+                classNames: ['badge-silver']
+            });
+        }
+
+        if (pvpBronze > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `⚔️🥉 PvP Bronze x${pvpBronze}`,
+                title: tPvpBronze,
+                classNames: ['badge-bronze']
+            });
+        }
+
+        if (pveChamp > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `👑 PvE Champ x${pveChamp}`,
+                title: tPveChamp,
+                classNames: ['badge-pve-champ']
+            });
+        }
+
+        if (pvpChamp > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `⚔️ PvP Champ x${pvpChamp}`,
+                title: tPvpChamp,
+                classNames: ['badge-pvp-champ']
+            });
+        }
+
+        if (vCount > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `🌟 Vanguard x${vCount}`,
+                title: tVanguard,
+                classNames: ['badge-vanguard']
+            });
+        }
+
+        if (cCount > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `🎖️ Campaigns x${cCount}`,
+                title: tCampaign,
+                classNames: ['badge-campaign']
+            });
+        }
 
         appendFullCardBadge(badgesEl, {
             text: `Level ${p.level || 0}`,
@@ -1382,7 +1460,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             iconAlt: ''
         });
 
-        appendFullCardBadgeHtml(badgesEl, hkBadge);
+        if (hks > 0) {
+            appendFullCardBadge(badgesEl, {
+                text: `⚔️ ${hks.toLocaleString()} HKs`,
+                classNames: ['hk-card-badge']
+            });
+        }
 
         const restedBar = clone.querySelector('.xp-bar-rested');
         restedBar.style.width = `${restedPercent}%`;
@@ -2444,10 +2527,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const lootClone = lootTemplate.content.cloneNode(true);
                                 const lootContainer = lootClone.querySelector('.we-loot-container');
 
-                                contextData.forEach(itemHtml => {
+                                contextData.forEach(itemData => {
                                     const badgeClone = lootBadgeTemplate.content.cloneNode(true);
                                     const badgeEl = badgeClone.querySelector('.we-loot-badge');
-                                    badgeEl.innerHTML = itemHtml;
+                                    const lootLinkTemplate = document.getElementById('tpl-we-loot-link');
+
+                                    if (lootLinkTemplate) {
+                                        const linkClone = lootLinkTemplate.content.cloneNode(true);
+                                        const linkEl = linkClone.querySelector('.we-loot-link');
+                                        linkEl.href = `https://www.wowhead.com/wotlk/item=${itemData.itemId}`;
+                                        linkEl.classList.add(itemData.qualityClass);
+                                        linkEl.textContent = `[${itemData.itemName}]`;
+                                        badgeEl.appendChild(linkClone);
+                                    }
+
                                     lootContainer.appendChild(badgeClone);
                                 });
 
@@ -2598,7 +2691,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
-                const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-tt">` : '';
                 const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 // --- NEW: Grab the Guild Rank & MVP Badges (Scope-Safe) ---
@@ -2665,7 +2757,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     const classWrap = clone.querySelector('.tooltip-class-wrap');
                     classWrap.style.color = cHex;
-                    classWrap.innerHTML = `${specIconHtml}${displaySpecClass}`;
+                    classWrap.textContent = '';
+
+                    if (specIconUrl) {
+                        const tooltipSpecIconTemplate = document.getElementById('tpl-tooltip-spec-icon');
+                        if (tooltipSpecIconTemplate) {
+                            const specClone = tooltipSpecIconTemplate.content.cloneNode(true);
+                            const specImg = specClone.querySelector('.spec-icon-tt');
+                            specImg.src = specIconUrl;
+                            classWrap.appendChild(specClone);
+                        }
+                    }
+
+                    classWrap.appendChild(document.createTextNode(displaySpecClass));
                     
                     clone.querySelector('.tooltip-ilvl').textContent = p.equipped_item_level || 0;
                     clone.querySelector('.tooltip-power-label').textContent = powerName;
@@ -3836,7 +3940,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 contributors.add(cName);
                                 window.warEffortContext[cName] = window.warEffortContext[cName] || [];
                                 const qualityClass = e.item_quality === 'LEGENDARY' ? 'we-loot-link-legendary' : 'we-loot-link-epic';
-                                window.warEffortContext[cName].push(`<a href="https://www.wowhead.com/wotlk/item=${e.item_id}" target="_blank" class="we-loot-link ${qualityClass}">[${e.item_name}]</a>`);
+                                window.warEffortContext[cName].push({
+                                    itemId: e.item_id,
+                                    itemName: e.item_name,
+                                    qualityClass
+                                });
                             }
                             if (type === 'zenith' && e.type === 'level_up' && e.level === 70) {
                                 contributors.add(cName);
