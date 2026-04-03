@@ -443,7 +443,23 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .custom-tooltip .tt-label { color: #aaa; margin-right: 15px; }
 .custom-tooltip .tt-val { color: white; font-weight: bold; display: flex; align-items: center; }
 
-.leaderboard-row { border-left-width: 4px; border-left-style: solid; padding: 8px 12px; }
+.leaderboard-row { border-left-width: 4px; border-left-style: solid; border-left-color: var(--home-lb-accent, transparent); padding: 8px 12px; }
+
+.leaderboard-row[data-class="Druid"] { --home-lb-accent: #FF7C0A; }
+.leaderboard-row[data-class="Hunter"] { --home-lb-accent: #ABD473; }
+.leaderboard-row[data-class="Mage"] { --home-lb-accent: #3FC7EB; }
+.leaderboard-row[data-class="Paladin"] { --home-lb-accent: #F48CBA; }
+.leaderboard-row[data-class="Priest"] { --home-lb-accent: #FFFFFF; }
+.leaderboard-row[data-class="Rogue"] { --home-lb-accent: #FFF468; }
+.leaderboard-row[data-class="Shaman"] { --home-lb-accent: #0070DE; }
+.leaderboard-row[data-class="Warlock"] { --home-lb-accent: #8788EE; }
+.leaderboard-row[data-class="Warrior"] { --home-lb-accent: #C69B6D; }
+.leaderboard-row[data-class="Death Knight"] { --home-lb-accent: #C41E3A; }
+
+.leaderboard-row .lb-portrait { border-color: var(--home-lb-accent, #fff); }
+.leaderboard-row .lb-name { color: var(--home-lb-accent, inherit); }
+
+.podium-block { border-top-color: var(--class-accent, transparent); }
 .lb-rank { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; color: #777; font-size: 15px; }
 .lb-portrait { width: 28px; height: 28px; border-radius: 50%; border-width: 1px; border-style: solid; object-fit: cover; margin-right: 12px; }
 .lb-info { flex: 1; display: flex; flex-direction: column; }
@@ -2078,10 +2094,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T18:27:50.521846Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T18:37:18.177681Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 757, "loot": 579, "levels": 178, "total_roster": 658, "active_roster": 409}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 767, "loot": 587, "levels": 180, "total_roster": 658, "active_roster": 409}]
     </script>
 
     <script>
@@ -2924,8 +2940,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const block = clone.querySelector('.podium-block');
                 block.classList.add(stepClass);
                 block.setAttribute('data-char', cleanName);
+                block.setAttribute('data-class', cClass);
                 block.addEventListener('click', () => selectCharacter(cleanName));
-                block.style.borderTopColor = cHex;
 
                 const crown = clone.querySelector('.podium-crown');
                 if (rank === 1) {
@@ -2937,14 +2953,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const avatar = clone.querySelector('.podium-avatar');
                 avatar.src = portraitURL;
                 avatar.alt = p.name || 'Character portrait';
-                avatar.style.borderColor = cHex;
 
                 const rankEl = clone.querySelector('.podium-rank');
                 rankEl.textContent = `#${rank}`;
 
                 const nameEl = clone.querySelector('.podium-name');
                 nameEl.textContent = p.name;
-                nameEl.style.color = cHex;
 
                 const statValEl = clone.querySelector('.podium-stat-val');
                 statValEl.textContent = p.equipped_item_level || 0;
@@ -2962,8 +2976,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const row = clone.querySelector('.leaderboard-row');
                 row.setAttribute('data-char', cleanName);
+                row.setAttribute('data-class', cClass);
                 row.addEventListener('click', () => selectCharacter(cleanName));
-                row.style.borderLeftColor = cHex;
 
                 const rankEl = clone.querySelector('.lb-rank');
                 rankEl.textContent = `#${index + 1}`;
@@ -2975,7 +2989,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const nameEl = clone.querySelector('.lb-name');
                 nameEl.textContent = p.name;
-                nameEl.style.color = cHex;
 
                 const specEl = clone.querySelector('.lb-spec');
                 specEl.textContent = displaySpecClass;
@@ -3126,7 +3139,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const portraitEl = clone.querySelector('.lb-portrait');
                 portraitEl.src = portraitURL;
                 portraitEl.alt = p.name || 'Character portrait';
-                portraitEl.style.borderColor = cHex;
 
                 const nameEl = clone.querySelector('.lb-name');
                 nameEl.textContent = p.name;
