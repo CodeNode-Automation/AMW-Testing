@@ -804,7 +804,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         .slice(0, 25);
 
     if (topPve.length > 0 && pveContainer) {
-        pveWrapper.style.display = 'block';
+        if (pveWrapper) pveWrapper.hidden = false;
         pveContainer.textContent = '';
 
         const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
@@ -958,7 +958,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         .slice(0, 25); // Changed to Top 25
 
     if (topPvp.length > 0 && pvpContainer) {
-        pvpWrapper.style.display = 'block';
+        if (pvpWrapper) pvpWrapper.hidden = false;
         pvpContainer.textContent = '';
 
         const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
