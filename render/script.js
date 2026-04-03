@@ -2967,15 +2967,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        let finalHTML = '';
-        if (usePodium && podiumsHTML !== '') {
-            finalHTML += `<div class="lb-podium-wrap">${podiumsHTML}</div>`;
-            finalHTML += `<div class="lb-list-wrap">${listItemsHTML}</div>`;
-        } else {
-            finalHTML += listItemsHTML;
-        }
+        conciseList.textContent = '';
 
-        conciseList.innerHTML = finalHTML;
+        if (usePodium && podiumsHTML !== '') {
+            const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+            const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
+
+            const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+            const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (podiumWrap) {
+                podiumWrap.appendChild(document.createRange().createContextualFragment(podiumsHTML));
+                conciseList.appendChild(podiumWrap);
+            }
+
+            if (listWrap) {
+                listWrap.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+                conciseList.appendChild(listWrap);
+            }
+        } else {
+            conciseList.appendChild(document.createRange().createContextualFragment(listItemsHTML));
+        }
         
         let templateId = null;
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
