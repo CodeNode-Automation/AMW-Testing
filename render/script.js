@@ -1471,7 +1471,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        let gearHtml = "";
+        const gearNodes = [];
         
         // Items that cannot be traditionally enchanted (ignoring rings to prevent false positives for non-enchanters)
         const UNENCHANTABLE_SLOTS = ['NECK', 'SHIRT', 'TABARD', 'FINGER_1', 'FINGER_2', 'TRINKET_1', 'TRINKET_2'];
@@ -1537,7 +1537,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                     const gearSlotNode = gearClone.firstElementChild;
                     if (gearSlotNode) {
-                        gearHtml += gearSlotNode.outerHTML;
+                        gearNodes.push(gearSlotNode);
                     }
                 }
             } else {
@@ -1555,7 +1555,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                     const emptySlotEl = emptyClone.firstElementChild;
                     if (emptySlotEl) {
-                        gearHtml += emptySlotEl.outerHTML;
+                        gearNodes.push(emptySlotEl);
                     }
                 }
             }
@@ -1778,7 +1778,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         page2El.innerHTML = weaponStatsHtml;
 
         const gearGridEl = clone.querySelector('.full-card-gear-grid');
-        gearGridEl.innerHTML = gearHtml;
+        gearGridEl.textContent = '';
+        gearNodes.forEach(node => {
+            if (node) {
+                gearGridEl.appendChild(node);
+            }
+        });
 
         return clone.firstElementChild.outerHTML;
     }
