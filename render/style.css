@@ -219,7 +219,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Components */
 .dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
 /* Components */
-.concise-spec-container-default { display: none; text-align: center; margin-bottom: 20px; animation: fadeInUp 0.3s forwards; }
+.concise-spec-container-default { text-align: center; margin-bottom: 20px; animation: fadeInUp 0.3s forwards; }
+.concise-spec-container-default[hidden] { display: none; }
 .full-card-badge-content { display: inline-flex; align-items: center; gap: 4px; }
 .full-card-badge-icon { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #222; }
 .full-card-badge-accent {
