@@ -234,6 +234,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .toggle-stats-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; outline: none; transition: 0.2s; padding: 0; }
 .toggle-stats-btn:hover { color: #ffd100; }
 .stat-page-panel.is-hidden { display: none; }
+.stat-page-animated { animation: fadeIn 0.3s; }
 .gear-slot-wrapper { background: rgba(20,20,20,0.9); }
 .gear-slot-icon-wrapper { position: relative; }
 .gear-slot-info { display: flex; flex-direction: column; justify-content: center; }
@@ -1910,7 +1911,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
 
             <div class="load-more-container">
-                <button id="load-more-btn" class="tl-load-more-btn">Load More Activity</button>
+                <button id="load-more-btn" class="tl-load-more-btn" hidden>Load More Activity</button>
             </div>
         </div>
 
@@ -1930,10 +1931,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:29:08.842735Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:33:16.017537Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 656, "loot": 504, "levels": 152, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 659, "loot": 506, "levels": 153, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -5169,7 +5170,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (noResultsMsg) noResultsMsg.hidden = false;
 
             const loadMoreBtn = document.getElementById('load-more-btn');
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
             if (container) container.style.display = 'flex';
             if (noResultsMsg) noResultsMsg.hidden = true;
@@ -6833,9 +6834,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         currentTimelineIndex = endIndex;
         
         if (currentTimelineIndex >= filteredTimelineData.length) {
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
-            if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
+            if (loadMoreBtn) loadMoreBtn.hidden = false;
         }
         
         if (typeof setupTooltips === 'function') {
