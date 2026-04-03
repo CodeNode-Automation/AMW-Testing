@@ -5028,8 +5028,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const block = clone.querySelector('.podium-block');
                 block.classList.add(stepClass);
                 block.setAttribute('data-char', (p.name || '').toLowerCase());
+                block.setAttribute('data-class', cClass);
                 block.onclick = () => selectCharacter((p.name || '').toLowerCase());
-                block.style.borderTop = `3px solid ${cHex}`;
                 
                 if (rank === 1) {
                     const crown = document.createElement('div');
@@ -5040,14 +5040,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const avatar = clone.querySelector('.podium-avatar');
                 avatar.src = portraitURL;
-                avatar.style.borderColor = cHex;
                 
                 const rankDiv = clone.querySelector('.podium-rank');
-                rankDiv.style.color = rankColor;
                 rankDiv.textContent = `#${rank}`;
                 
                 const nameDiv = clone.querySelector('.podium-name');
-                nameDiv.style.color = cHex;
                 nameDiv.textContent = p.name;
                 
                 clone.querySelector('.podium-trend-val').textContent = `▲ ${trend.toLocaleString()}`;
