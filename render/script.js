@@ -143,6 +143,31 @@ function appendConciseBadges(container, badgeConfigs) {
     container.appendChild(wrapperClone);
 }
 
+function appendConciseMeta(container, { raceName, specIconUrl, displaySpecClass, isClickable }) {
+    if (!container) return;
+
+    container.textContent = '';
+
+    if (!isClickable) {
+        container.textContent = `${raceName} ${displaySpecClass}`;
+        return;
+    }
+
+    container.appendChild(document.createTextNode(`${raceName} • `));
+
+    if (specIconUrl) {
+        const specIconTemplate = document.getElementById('tpl-concise-spec-icon');
+        if (specIconTemplate) {
+            const specClone = specIconTemplate.content.cloneNode(true);
+            const specImg = specClone.querySelector('.concise-spec-icon');
+            specImg.src = specIconUrl;
+            container.appendChild(specClone);
+        }
+    }
+
+    container.appendChild(document.createTextNode(displaySpecClass));
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -1813,7 +1838,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         showVanguardBadge,
         vanguardBadgeTimeText,
         raceName,
-        specIconHtml,
+        specIconUrl,
         displaySpecClass,
         statsHtml,
         hashUrl,
@@ -1884,9 +1909,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        metaEl.innerHTML = isClickable
-            ? `${raceName} &bull; ${specIconHtml}${displaySpecClass}`
-            : `${raceName} ${displaySpecClass}`;
+        appendConciseMeta(metaEl, {
+            raceName,
+            specIconUrl,
+            displaySpecClass,
+            isClickable
+        });
 
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
@@ -2104,7 +2132,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let baseName = '';
             let displayName, cClass, raceName, cHex, portraitURL, level;
             let activeSpecAttr = 'unspecced';
-            let specIconHtml = '';
+            let specIconUrl = '';
             let displaySpecClass = '';
             let statValue = '???';
             let statValueClass = '';
@@ -2268,8 +2296,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
-                const specIconUrl = getSpecIcon(cClass, activeSpec);
-                specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="concise-spec-icon">` : '';
+                specIconUrl = getSpecIcon(cClass, activeSpec) || '';
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
                 
                 statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
@@ -2392,7 +2419,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 showVanguardBadge,
                 vanguardBadgeTimeText,
                 raceName,
-                specIconHtml,
+                specIconUrl,
                 displaySpecClass,
                 statsHtml,
                 hashUrl,
