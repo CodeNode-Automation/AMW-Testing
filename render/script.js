@@ -1915,7 +1915,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const container = document.getElementById('concise-class-badges');
         
         const specContainer = document.getElementById('concise-spec-container');
-        specContainer.style.display = 'none';
+        if (specContainer) specContainer.hidden = true;
 
         if (!characters || characters.length === 0) {
             container.style.display = 'none';
@@ -1985,7 +1985,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (isActive) {
                     document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
                     document.querySelectorAll('.dynamic-badge').forEach(b => b.style.opacity = '1');
-                    specContainer.style.display = 'none';
+                    if (specContainer) specContainer.hidden = true;
                     
                     window.currentFilteredChars = characters.map(c => (c.profile && c.profile.name ? c.profile.name.toLowerCase() : (c.name ? c.name.toLowerCase() : '')));
                     applyTimelineFilters();
@@ -2100,7 +2100,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }
                     }
                     specContainer.appendChild(wrapDiv);
-                    specContainer.style.display = 'block';
+                    specContainer.hidden = false;
 
                     document.querySelectorAll('.concise-spec-btn').forEach(specBtn => {
                         specBtn.addEventListener('click', function() {
@@ -3946,7 +3946,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         } else {
             badgesContainer.style.display = 'none';
             const specContainer = document.getElementById('concise-spec-container');
-            if (specContainer) specContainer.style.display = 'none';
+            if (specContainer) specContainer.hidden = true;
             
             // Restore default column layout
             wrapper.style.flexDirection = 'row';
