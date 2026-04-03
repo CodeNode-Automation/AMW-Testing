@@ -1838,7 +1838,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
         portrait.style.borderColor = cHex;
 
-        nameEl.textContent = displayName;
+        nameEl.innerHTML = displayName;
         nameEl.style.color = cHex;
 
         if (showVanguardBadge) {
