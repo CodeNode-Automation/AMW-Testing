@@ -732,7 +732,22 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-        function createTrendSpan(trend, variant = 'default') {
+    function buildSmallSpecIconNode({ src, alt = '' }) {
+        const template = document.getElementById('tpl-spec-icon-sm');
+        if (!template) return null;
+
+        const clone = template.content.cloneNode(true);
+        const img = clone.querySelector('.spec-icon-sm');
+
+        if (img) {
+            img.src = src;
+            img.alt = alt;
+        }
+
+        return clone.firstElementChild || null;
+    }
+
+    function createTrendSpan(trend, variant = 'default') {
         const span = document.createElement('span');
 
         if (variant === 'podium') {
@@ -860,11 +875,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const specEl = clone.querySelector('.lb-spec');
                 specEl.textContent = displaySpecClass;
                 if (specIconUrl) {
-                    const specIconEl = document.createElement('img');
-                    specIconEl.src = specIconUrl;
-                    specIconEl.className = 'spec-icon-sm';
-                    specIconEl.alt = '';
-                    specEl.prepend(specIconEl);
+                    const specIconEl = buildSmallSpecIconNode({
+                        src: specIconUrl,
+                        alt: `${displaySpecClass} icon`
+                    });
+                    if (specIconEl) {
+                        specEl.prepend(specIconEl);
+                    }
                 }
 
                 const scoreEl = clone.querySelector('.lb-score');
