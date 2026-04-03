@@ -1755,13 +1755,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         statsTitleEl.textContent = 'Combat Stats';
 
         const healthFillEl = clone.querySelector('.full-card-health-fill');
-        healthFillEl.style.background = 'linear-gradient(to right, #1d8348, #2ecc71)';
 
         const healthTextEl = clone.querySelector('.full-card-health-text');
         healthTextEl.textContent = `Health: ${health}`;
 
         const powerFillEl = clone.querySelector('.full-card-power-fill');
-        powerFillEl.style.background = `linear-gradient(to right, ${powerCol}, #0a0a0a)`;
+        powerFillEl.style.setProperty('--full-card-power-accent', powerCol);
 
         const powerTextEl = clone.querySelector('.full-card-power-text');
         powerTextEl.textContent = `${powerName}: ${power}`;
