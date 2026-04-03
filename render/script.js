@@ -3476,7 +3476,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showAnalyticsView() {
         hideAllViews();
         if (analyticsView) analyticsView.style.display = 'block';
-        if (navbar) navbar.style.background = '#111';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.add('navbar-theme-app');
+        }
         if (timeline) timeline.style.display = 'none'; 
 
         // --- CALCULATE KPIs ---

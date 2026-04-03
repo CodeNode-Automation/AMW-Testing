@@ -44,6 +44,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 .main-logo { max-width: 320px; width: 100%; display: block; margin: 0 auto 5px auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); animation: fadeIn 0.8s ease-out, floatLogo 6s ease-in-out infinite; transition: max-width 0.3s ease; }
 .navbar { position: sticky; top: 0; width: 100%; z-index: 100; background: rgba(8, 8, 10, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; align-items: center; padding: 12px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9); }
+.navbar-theme-home { background: rgba(15, 15, 15, 0.85); }
+.navbar-theme-app { background: #111; }
 
 .navbar-theme-home { background: rgba(15, 15, 15, 0.85); }
 .navbar-theme-app { background: #111; }
