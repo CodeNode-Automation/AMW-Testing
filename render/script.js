@@ -715,7 +715,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     const activityDiv = clone.querySelector('.tooltip-activity');
                     activityDiv.textContent = `${count} Activities`;
-                    activityDiv.style.color = color;
                     
                     const dateDiv = clone.querySelector('.tooltip-date');
                     dateDiv.textContent = dateStr;
@@ -723,7 +722,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     tooltip.appendChild(clone);
                 }
 
-                tooltip.style.borderLeftColor = color;
+                tooltip.style.setProperty('--heatmap-tooltip-accent', color);
                 
                 let x = e.clientX + 15;
                 let y = e.clientY + 15;
