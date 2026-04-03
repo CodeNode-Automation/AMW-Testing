@@ -115,6 +115,34 @@ function summarizeBadges(badgeArray) {
     return Object.entries(counts).map(([k, v]) => `${v}x ${k}`).join(', ');
 }
 
+function appendConciseBadges(container, badgeConfigs) {
+    if (!container || !badgeConfigs || badgeConfigs.length === 0) return;
+
+    const wrapperTemplate = document.getElementById('tpl-concise-badges-wrapper');
+    const pillTemplate = document.getElementById('tpl-concise-badge-pill');
+    const reigningTemplate = document.getElementById('tpl-concise-badge-reigning');
+
+    if (!wrapperTemplate || !pillTemplate || !reigningTemplate) return;
+
+    const wrapperClone = wrapperTemplate.content.cloneNode(true);
+    const wrapper = wrapperClone.querySelector('.c-badges-wrapper');
+
+    badgeConfigs.forEach(({ text, title = '', classNames = [] }) => {
+        const isReigning = classNames.includes('c-badge-reigning');
+        const badgeTemplate = isReigning ? reigningTemplate : pillTemplate;
+        const badgeClone = badgeTemplate.content.cloneNode(true);
+        const badgeEl = badgeClone.querySelector(isReigning ? '.c-badge-reigning' : '.c-badge-pill');
+
+        classNames.forEach(cls => badgeEl.classList.add(cls));
+        badgeEl.textContent = text;
+        if (title) badgeEl.title = title;
+
+        wrapper.appendChild(badgeClone);
+    });
+
+    container.appendChild(wrapperClone);
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -1781,6 +1809,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         rankSizeClass,
         portraitURL,
         displayName,
+        conciseBadges,
         showVanguardBadge,
         vanguardBadgeTimeText,
         raceName,
@@ -1838,8 +1867,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
         portrait.style.borderColor = cHex;
 
-        nameEl.innerHTML = displayName;
+        nameEl.textContent = displayName;
         nameEl.style.color = cHex;
+        appendConciseBadges(nameEl, conciseBadges);
 
         if (showVanguardBadge) {
             const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
@@ -2080,6 +2110,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let statValueClass = '';
             let trendHTML = '';
             let awardsAttr = [];
+            let conciseBadges = [];
 
             // 3. Populate Variables
             if (deepChar && deepChar.profile) {
@@ -2128,27 +2159,107 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const tVanguard = getDetailedBadgeTooltip(p.name, ['vanguard'], summarizeBadges(vBadges), vCount);
                 const tCampaign = getDetailedBadgeTooltip(p.name, ['campaign'], summarizeBadges(cBadges), cCount);
 
-                // 3. Inject them into the HTML
-                let cBadgesHtml = '<div class="c-badges-wrapper">';
-                
-                if (isPveReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pve" title="Current Reigning PvE Champion!">👑 Reigning MVP</span>`;
-                if (isPvpReigning) cBadgesHtml += `<span class="c-badge-reigning c-badge-reigning-pvp" title="Current Reigning PvP Champion!">⚔️ Reigning MVP</span>`;
-                
-                if (pveGold > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-gold" title="${tPveGold}">🛡️🥇 ${pveGold}</span>`;
-                if (pveSilver > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-silver" title="${tPveSilver}">🛡️🥈 ${pveSilver}</span>`;
-                if (pveBronze > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-bronze" title="${tPveBronze}">🛡️🥉 ${pveBronze}</span>`;
-                if (pvpGold > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-gold" title="${tPvpGold}">⚔️🥇 ${pvpGold}</span>`;
-                if (pvpSilver > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-silver" title="${tPvpSilver}">⚔️🥈 ${pvpSilver}</span>`;
-                if (pvpBronze > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-bronze" title="${tPvpBronze}">⚔️🥉 ${pvpBronze}</span>`;
-                if (pveChamp > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-pve" title="${tPveChamp}">👑 ${pveChamp}</span>`;
-                if (pvpChamp > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-pvp" title="${tPvpChamp}">⚔️ ${pvpChamp}</span>`;
-                if (vCount > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-vanguard" title="${tVanguard}">🌟 ${vCount}</span>`;
-                if (cCount > 0) cBadgesHtml += `<span class="c-badge-pill c-badge-campaign" title="${tCampaign}">🎖️ ${cCount}</span>`;
-                cBadgesHtml += '</div>';
+                conciseBadges = [];
+
+                if (isPveReigning) {
+                    conciseBadges.push({
+                        text: '👑 Reigning MVP',
+                        title: 'Current Reigning PvE Champion!',
+                        classNames: ['c-badge-reigning', 'c-badge-reigning-pve']
+                    });
+                }
+
+                if (isPvpReigning) {
+                    conciseBadges.push({
+                        text: '⚔️ Reigning MVP',
+                        title: 'Current Reigning PvP Champion!',
+                        classNames: ['c-badge-reigning', 'c-badge-reigning-pvp']
+                    });
+                }
+
+                if (pveGold > 0) {
+                    conciseBadges.push({
+                        text: `🛡️🥇 ${pveGold}`,
+                        title: tPveGold,
+                        classNames: ['c-badge-pill', 'c-badge-gold']
+                    });
+                }
+
+                if (pveSilver > 0) {
+                    conciseBadges.push({
+                        text: `🛡️🥈 ${pveSilver}`,
+                        title: tPveSilver,
+                        classNames: ['c-badge-pill', 'c-badge-silver']
+                    });
+                }
+
+                if (pveBronze > 0) {
+                    conciseBadges.push({
+                        text: `🛡️🥉 ${pveBronze}`,
+                        title: tPveBronze,
+                        classNames: ['c-badge-pill', 'c-badge-bronze']
+                    });
+                }
+
+                if (pvpGold > 0) {
+                    conciseBadges.push({
+                        text: `⚔️🥇 ${pvpGold}`,
+                        title: tPvpGold,
+                        classNames: ['c-badge-pill', 'c-badge-gold']
+                    });
+                }
+
+                if (pvpSilver > 0) {
+                    conciseBadges.push({
+                        text: `⚔️🥈 ${pvpSilver}`,
+                        title: tPvpSilver,
+                        classNames: ['c-badge-pill', 'c-badge-silver']
+                    });
+                }
+
+                if (pvpBronze > 0) {
+                    conciseBadges.push({
+                        text: `⚔️🥉 ${pvpBronze}`,
+                        title: tPvpBronze,
+                        classNames: ['c-badge-pill', 'c-badge-bronze']
+                    });
+                }
+
+                if (pveChamp > 0) {
+                    conciseBadges.push({
+                        text: `👑 ${pveChamp}`,
+                        title: tPveChamp,
+                        classNames: ['c-badge-pill', 'c-badge-pve']
+                    });
+                }
+
+                if (pvpChamp > 0) {
+                    conciseBadges.push({
+                        text: `⚔️ ${pvpChamp}`,
+                        title: tPvpChamp,
+                        classNames: ['c-badge-pill', 'c-badge-pvp']
+                    });
+                }
+
+                if (vCount > 0) {
+                    conciseBadges.push({
+                        text: `🌟 ${vCount}`,
+                        title: tVanguard,
+                        classNames: ['c-badge-pill', 'c-badge-vanguard']
+                    });
+                }
+
+                if (cCount > 0) {
+                    conciseBadges.push({
+                        text: `🎖️ ${cCount}`,
+                        title: tCampaign,
+                        classNames: ['c-badge-pill', 'c-badge-campaign']
+                    });
+                }
 
                 baseName = p.name || 'Unknown';
                 cleanName = (p.name || 'Unknown').toLowerCase();
-                displayName = (p.name || 'Unknown') + cBadgesHtml;
+                displayName = p.name || 'Unknown';
                 cClass = getCharClass(deepChar);
                 raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
                 cHex = CLASS_COLORS[cClass] || "#fff";
@@ -2277,6 +2388,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 rankSizeClass,
                 portraitURL,
                 displayName,
+                conciseBadges,
                 showVanguardBadge,
                 vanguardBadgeTimeText,
                 raceName,
