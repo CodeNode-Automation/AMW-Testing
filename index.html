@@ -86,7 +86,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .opt-icon { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
 /* Typography */
 .custom-select-arrow { font-size: 12px; color: #aaa; }
-.char-selected-text { text-shadow: 1px 1px 2px #000; }
+.char-selected-text {
+    color: var(--selected-char-color, #fff);
+    text-shadow: 1px 1px 2px #000;
+}
 .opt-icon-emoji { font-size: 16px; }
 .opt-hall-of-heroes { color: #ffd100; font-weight: bold; }
 
@@ -1950,10 +1953,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:55:49.352146Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:59:59.583157Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 667, "loot": 509, "levels": 158, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 669, "loot": 510, "levels": 159, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -2472,6 +2475,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     function updateDropdownLabel(ignoreVal) {
         if (!selectValueText) return;
+
+        selectValueText.className = 'selected-value';
+        selectValueText.style.removeProperty('--selected-char-color');
         
         // Smarter logic: Read the actual active URL hash to determine the label
         const hash = window.location.hash.substring(1); 
@@ -2500,7 +2506,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const cHex = CLASS_COLORS[cClass] || '#fff';
                 selectValueText.textContent = char.profile.name;
                 selectValueText.className = 'selected-value char-selected-text';
-                selectValueText.style.color = cHex;
+                selectValueText.style.setProperty('--selected-char-color', cHex);
             } else {
                 selectValueText.innerHTML = "Select View...";
             }
