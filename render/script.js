@@ -799,11 +799,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         pveWrapper.style.display = 'block';
         pveContainer.textContent = '';
 
-        const podiumWrap = document.createElement('div');
-        podiumWrap.className = 'lb-podium-wrap';
+        const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+        const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
 
-        const listWrap = document.createElement('div');
-        listWrap.className = 'lb-list-wrap collapsed-list';
+        const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+        const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+
+        if (!podiumWrap || !listWrap) return;
 
         const podiumTemplate = document.getElementById('tpl-home-leaderboard-podium');
         const rowTemplate = document.getElementById('tpl-home-leaderboard-row');
@@ -949,11 +951,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         pvpWrapper.style.display = 'block';
         pvpContainer.textContent = '';
 
-        const podiumWrap = document.createElement('div');
-        podiumWrap.className = 'lb-podium-wrap';
+        const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+        const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
 
-        const listWrap = document.createElement('div');
-        listWrap.className = 'lb-list-wrap collapsed-list';
+        const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+        const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+
+        if (!podiumWrap || !listWrap) return;
 
         const podiumTemplate = document.getElementById('tpl-home-leaderboard-podium');
         const rowTemplate = document.getElementById('tpl-home-leaderboard-row');
@@ -1866,11 +1870,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (borderColor) badge.style.borderColor = borderColor;
 
         if (iconSrc) {
-            const img = document.createElement('img');
-            img.src = iconSrc;
-            img.alt = iconAlt;
-            img.className = 'full-card-badge-icon';
-            content.appendChild(img);
+            const iconTemplate = document.getElementById('tpl-full-card-badge-icon');
+            if (iconTemplate) {
+                const iconClone = iconTemplate.content.cloneNode(true);
+                const img = iconClone.querySelector('.full-card-badge-icon');
+
+                if (img) {
+                    img.src = iconSrc;
+                    img.alt = iconAlt;
+                }
+
+                content.appendChild(iconClone);
+            }
         }
 
         content.appendChild(document.createTextNode(text));
