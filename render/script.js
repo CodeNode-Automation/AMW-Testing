@@ -3225,23 +3225,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         currentTimelineIndex = 0;
 
         // 3. Handle empty states or render the first batch
-        let noResultsMsg = document.getElementById('tl-no-results');
+        const noResultsMsg = document.getElementById('tl-no-results');
         if (filteredTimelineData.length === 0) {
             if (container) container.style.display = 'none';
-            if (!noResultsMsg) {
-                noResultsMsg = document.createElement('div');
-                noResultsMsg.id = 'tl-no-results';
-                noResultsMsg.className = 'tl-empty-msg';
-                noResultsMsg.innerText = 'No activity found for these filters yet... keep raiding!';
-                document.getElementById('timeline').appendChild(noResultsMsg);
-            } else {
-                noResultsMsg.style.display = 'block';
-            }
+            if (noResultsMsg) noResultsMsg.hidden = false;
+
             const loadMoreBtn = document.getElementById('load-more-btn');
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         } else {
             if (container) container.style.display = 'flex';
-            if (noResultsMsg) noResultsMsg.style.display = 'none';
+            if (noResultsMsg) noResultsMsg.hidden = true;
             renderTimelineBatch();
         }
     }
