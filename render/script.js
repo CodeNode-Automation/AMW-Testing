@@ -1596,11 +1596,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const card = clone.querySelector('.char-card');
         card.classList.add(factionCls);
-        card.style.borderTopColor = cHex;
+        card.classList.add('char-card-accent');
+        card.style.setProperty('--full-card-accent', cHex);
 
         const nameEl = clone.querySelector('.char-card-name');
         nameEl.textContent = p.name || 'Unknown';
-        nameEl.style.color = cHex;
 
         const badgesEl = clone.querySelector('.char-badges-container');
         badgesEl.textContent = '';
@@ -1748,11 +1748,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const portraitEl = clone.querySelector('.char-card-portrait');
         portraitEl.src = char.render_url || getClassIcon(cClass);
         portraitEl.alt = p.name || 'Character portrait';
-        portraitEl.style.borderColor = cHex;
 
         const statsTitleEl = clone.querySelector('.char-card-stats-title');
         statsTitleEl.textContent = 'Combat Stats';
-        statsTitleEl.style.color = cHex;
 
         const healthFillEl = clone.querySelector('.full-card-health-fill');
         healthFillEl.style.background = 'linear-gradient(to right, #1d8348, #2ecc71)';

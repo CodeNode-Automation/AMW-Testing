@@ -826,6 +826,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-card-stats-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 18px; }
 .char-card-stats-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; }
 .char-card-stats-title { font-family: 'Cinzel'; font-size: 18px; margin: 0; text-shadow: 1px 1px 2px #000; }
+.char-card-accent {
+    --full-card-accent: #fff;
+    border-top-color: var(--full-card-accent);
+}
+
+.char-card-accent .char-card-name,
+.char-card-accent .char-card-stats-title {
+    color: var(--full-card-accent);
+}
+
+.char-card-accent .char-card-portrait {
+    border-color: var(--full-card-accent);
+}
 .mvp-empty-state { text-align: center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px; }
 .mvp-empty-icon { font-size: 28px; margin-bottom: 12px; filter: grayscale(50%); }
 .mvp-empty-title { color: #ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000; }
