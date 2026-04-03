@@ -3723,7 +3723,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showArchitectureView() {
         hideAllViews();
         if (architectureView) architectureView.style.display = 'block';
-        if (navbar) navbar.style.background = '#111';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.add('navbar-theme-app');
+        }
         if (timeline) timeline.style.display = 'none'; 
     }
 
@@ -3735,7 +3738,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showHomeView() {
         hideAllViews();
         emptyState.style.display = 'block';
-        if (navbar) navbar.style.background = 'rgba(15, 15, 15, 0.85)';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-app');
+            navbar.classList.add('navbar-theme-home');
+        }
         updateDropdownLabel('all');
 
         // Hide nav search purely on the homepage
@@ -3909,7 +3915,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showConciseView(title, characters, isRawRoster = false, showBadges = true, defaultSort = 'level') {
         hideAllViews();
         conciseView.style.display = 'flex';
-        if (navbar) navbar.style.background = '#111';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.add('navbar-theme-app');
+        }
         
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
         renderConciseList(title, characters, isRawRoster);
@@ -4048,7 +4057,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             fullCardContainer.appendChild(fullCardNode);
         }
 
-        if (navbar) navbar.style.background = '#111';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.add('navbar-theme-app');
+        }
         
         if (timeline) {
             const formattedName = charName.charAt(0).toUpperCase() + charName.slice(1);
