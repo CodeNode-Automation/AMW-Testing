@@ -4002,10 +4002,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         if (chartViews.includes(hash)) {
             if (donutContainer) {
-                donutContainer.style.display = 'flex';
-                donutContainer.style.flexDirection = 'column';
-                donutContainer.style.alignItems = 'center';
-                donutContainer.style.gap = '20px';
+                donutContainer.classList.add('is-visible');
                 
                donutContainer.textContent = '';
                 const template = document.getElementById('tpl-concise-dashboard-widgets');
@@ -4019,11 +4016,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (kpiTpl && kpiContainer) {
                         const clone = kpiTpl.content.cloneNode(true);
                         const box = clone.querySelector('.concise-stat-box');
-                        box.style.borderColor = colorHex;
-                        box.style.minWidth = '200px';
-                        box.style.marginBottom = '5px';
+                        box.classList.add('concise-stat-box-accent');
+                        box.style.setProperty('--concise-kpi-accent', colorHex);
                         const valSpan = clone.querySelector('.concise-stat-value');
-                        valSpan.style.color = colorHex;
                         valSpan.textContent = val;
                         clone.querySelector('.concise-stat-label').textContent = label;
                         kpiContainer.appendChild(clone);
@@ -4075,7 +4070,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
             }
         } else {
-            if (donutContainer) donutContainer.style.display = 'none';
+            if (donutContainer) donutContainer.classList.remove('is-visible');
         }
         
         if (timeline) {
