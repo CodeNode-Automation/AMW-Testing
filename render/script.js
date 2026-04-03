@@ -168,6 +168,29 @@ function appendConciseMeta(container, { raceName, specIconUrl, displaySpecClass,
     container.appendChild(document.createTextNode(displaySpecClass));
 }
 
+function buildConciseTrendHtml(trend) {
+    const template = document.getElementById('tpl-concise-trend-indicator');
+    if (!template) return '';
+
+    const clone = template.content.cloneNode(true);
+    const trendEl = clone.querySelector('.trend-indicator-concise');
+    if (!trendEl) return '';
+
+    if (trend > 0) {
+        trendEl.classList.add('trend-positive');
+        trendEl.textContent = `▲ ${trend}`;
+    } else if (trend < 0) {
+        trendEl.classList.add('trend-negative');
+        trendEl.textContent = `▼ ${Math.abs(trend)}`;
+    } else {
+        trendEl.classList.add('trend-neutral');
+        trendEl.textContent = '-';
+    }
+
+    const rootEl = clone.firstElementChild;
+    return rootEl ? rootEl.outerHTML : '';
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -2673,9 +2696,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // Calculate Trend based on the current ladder view
                 if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
                     const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
-                    if (trend > 0) trendHTML = `<span class="trend-indicator-concise trend-positive">▲ ${trend}</span>`;
-                    else if (trend < 0) trendHTML = `<span class="trend-indicator-concise trend-negative">▼ ${Math.abs(trend)}</span>`;
-                    else trendHTML = `<span class="trend-indicator-concise trend-neutral">-</span>`;
+                    trendHTML = buildConciseTrendHtml(trend);
                 }
             } else {
                 baseName = char.name || 'Unknown';
