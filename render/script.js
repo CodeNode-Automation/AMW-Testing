@@ -4383,7 +4383,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const cHex = CLASS_COLORS[formattedClass] || '#fff';
 
             if (window.activeClassExpanded === className) {
-                document.getElementById('home-spec-container').style.display = 'none';
+                const homeSpecContainer = document.getElementById('home-spec-container');
+                if (homeSpecContainer) homeSpecContainer.hidden = true;
                 badge.classList.remove('active-filter');
                 window.activeClassExpanded = null;
                 return;
@@ -4470,7 +4471,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             
             specContainer.appendChild(wrapDiv);
-            specContainer.style.display = 'block';
+            specContainer.hidden = false;
 
             document.querySelectorAll('.spec-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
