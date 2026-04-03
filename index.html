@@ -233,6 +233,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-badge-ilvl { border-color: #ff8000; color: #ff8000; }
 .toggle-stats-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; outline: none; transition: 0.2s; padding: 0; }
 .toggle-stats-btn:hover { color: #ffd100; }
+.stat-page-panel.is-hidden { display: none; }
 .gear-slot-wrapper { background: rgba(20,20,20,0.9); }
 .gear-slot-icon-wrapper { position: relative; }
 .gear-slot-info { display: flex; flex-direction: column; justify-content: center; }
@@ -1197,7 +1198,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     <template id="tpl-home-leaderboard-list-wrap">
         <div class="lb-list-wrap collapsed-list"></div>
     </template>
-    
+
+    <template id="tpl-home-leaderboard-expand-btn">
+        <button type="button" class="expand-lb-btn">Show Top 25 ▼</button>
+    </template>
+
     <template id="tpl-concise-row">
         <div class="concise-char-bar">
             <div class="concise-row-inner">
@@ -1844,7 +1849,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                             <button class="toggle-stats-btn" title="Toggle Stats Page">▶</button>
                         </div>
 
-                        <div class="stat-page-1">
+                        <div class="stat-page-1 stat-page-panel">
                             <div class="resource-bar full-card-health-bar">
                                 <div class="bar-fill full-card-health-fill"></div>
                                 <span class="bar-text full-card-health-text"></span>
@@ -1866,7 +1871,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                             <div class="full-card-advanced-stats"></div>
                         </div>
 
-                        <div class="stat-page-2">
+                        <div class="stat-page-2 stat-page-panel is-hidden">
                             <div class="full-card-weapon-stats"></div>
                         </div>
                     </div>
@@ -1923,7 +1928,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T13:58:08.510847Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:05:59.458955Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 645, "loot": 497, "levels": 148, "total_roster": 658, "active_roster": 411}]
@@ -2427,10 +2432,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const p2 = p.querySelector('.stat-page-2');
                 const title = p.querySelector('.stat-card-title');
                 if (p1 && p2 && title) {
-                    if (p1.style.display === 'none') {
-                        p1.style.display = 'block'; p2.style.display = 'none'; title.innerText = 'Combat Stats'; btn.innerText = '▶';
+                    const showingWeaponPage = p1.classList.contains('is-hidden');
+
+                    if (showingWeaponPage) {
+                        p1.classList.remove('is-hidden');
+                        p2.classList.add('is-hidden');
+                        title.innerText = 'Combat Stats';
+                        btn.innerText = '▶';
                     } else {
-                        p1.style.display = 'none'; p2.style.display = 'block'; title.innerText = 'Weapon & Gear'; btn.innerText = '◀';
+                        p1.classList.add('is-hidden');
+                        p2.classList.remove('is-hidden');
+                        title.innerText = 'Weapon & Gear';
+                        btn.innerText = '◀';
                     }
                 }
             }
@@ -2845,15 +2858,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         pveContainer.appendChild(listWrap);
 
         if (topPve.length > 5) {
-            const btn = document.createElement('button');
-            btn.className = 'expand-lb-btn';
-            btn.textContent = 'Show Top 25 ▼';
-            btn.addEventListener('click', function() {
-                const listWrapEl = this.previousElementSibling;
-                if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
-                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
-            });
-            pveContainer.appendChild(btn);
+            const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
+            const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const listWrapEl = this.previousElementSibling;
+                    if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
+                    this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+                });
+                pveContainer.appendChild(btn);
+            }
         }
     }
 
@@ -2998,15 +3013,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         pvpContainer.appendChild(listWrap);
 
         if (topPvp.length > 5) {
-            const btn = document.createElement('button');
-            btn.className = 'expand-lb-btn';
-            btn.textContent = 'Show Top 25 ▼';
-            btn.addEventListener('click', function() {
-                const listWrapEl = this.previousElementSibling;
-                if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
-                this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
-            });
-            pvpContainer.appendChild(btn);
+            const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
+            const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const listWrapEl = this.previousElementSibling;
+                    if (listWrapEl) listWrapEl.classList.toggle('collapsed-list');
+                    this.textContent = this.textContent.includes('▼') ? 'Collapse Leaderboard ▲' : 'Show Top 25 ▼';
+                });
+                pvpContainer.appendChild(btn);
+            }
         }
     }
     
@@ -3698,7 +3715,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         advancedStatsEl.innerHTML = advancedStatsHtml;
 
         const page2El = clone.querySelector('.stat-page-2');
-        page2El.style.display = 'none';
         page2El.style.animation = 'fadeIn 0.3s';
         page2El.innerHTML = weaponStatsHtml;
 
