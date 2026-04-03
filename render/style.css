@@ -303,6 +303,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-main-col { flex: 2; min-width: 300px; width: 100%; }
 .concise-class-stats { display: none; width: 100%; justify-content: center; margin-bottom: 0; }
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+.concise-row-main { display: flex; align-items: center; }
+.concise-row-inner { display: flex; align-items: center; width: 100%; }
+.concise-row-stats-top { justify-content: flex-end; flex: 1; }
+.concise-char-bar-war-effort { width: 100%; max-width: 100%; margin-bottom: 8px; padding: 12px 15px; }
+.concise-char-bar-war-effort-loot { padding: 15px; flex-direction: column; align-items: flex-start; height: auto; }
+.concise-row-inner-war-effort-loot { justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px; }
+.concise-row-stats-bottom-war-effort-loot { width: 100%; flex-direction: column; align-items: flex-start; }
 .concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
 .concise-row-main { display: flex; align-items: center; }
 .c-main-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
