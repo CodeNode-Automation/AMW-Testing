@@ -218,6 +218,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
 /* Components */
 .dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
+.filter-badge-dimmed { opacity: 0.4; transform: scale(1); }
+.filter-badge-selected { opacity: 1; transform: translateY(-3px) scale(1.05); }
+.concise-char-bar-filtered-out { display: none !important; }
 /* Components */
 .concise-spec-container-default { text-align: center; margin-bottom: 20px; animation: fadeInUp 0.3s forwards; }
 .concise-spec-container-default[hidden] { display: none; }
