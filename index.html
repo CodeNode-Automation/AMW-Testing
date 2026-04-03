@@ -1260,6 +1260,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <span class="c-badge-reigning"></span>
     </template>
 
+    <template id="tpl-spec-filter-wrapper">
+        <div class="class-stat-container spec-filter-wrapper"></div>
+    </template>
+
     <template id="tpl-concise-spec-icon">
         <img src="" class="concise-spec-icon" loading="lazy" alt="">
     </template>
@@ -1887,10 +1891,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T13:34:22.916998Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T13:37:33.626523Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 634, "loot": 490, "levels": 144, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 637, "loot": 491, "levels": 146, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -3855,8 +3859,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     });
 
                     specContainer.textContent = '';
-                    const wrapDiv = document.createElement('div');
-                    wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+
+                    const specFilterWrapperTemplate = document.getElementById('tpl-spec-filter-wrapper');
+                    const wrapDiv = specFilterWrapperTemplate?.content?.firstElementChild?.cloneNode(true);
+
+                    if (!wrapDiv) return;
                     
                     const specTemplate = document.getElementById('tpl-spec-badge');
                     if (specTemplate) {
