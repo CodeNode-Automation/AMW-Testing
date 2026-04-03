@@ -1583,12 +1583,12 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
                 
                 <div id="leaderboards-wrapper" class="leaderboards-wrapper">
-                    <div id="pve-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                    <div id="pve-leaderboard-container" class="leaderboard-panel" hidden>
                         <h3 class="leaderboard-title lb-title-pve">🛡️ Top 25 Item Level 🛡️</h3>
                         <div id="pve-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pve" class="view-all-btn btn-pve">View Full PvE Ladder ➔</button>
                     </div>
-                    <div id="pvp-leaderboard-container" class="leaderboard-panel" style="display:none;">
+                    <div id="pvp-leaderboard-container" class="leaderboard-panel" hidden>
                         <h3 class="leaderboard-title lb-title-pvp">⚔️ Top 25 Honorable Kills ⚔️</h3>
                         <div id="pvp-leaderboard" class="leaderboard-list"></div>
                         <button id="btn-view-pvp" class="view-all-btn btn-pvp">View Full PvP Ladder ➔</button>
@@ -1932,10 +1932,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:37:58.444136Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:42:16.072505Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 659, "loot": 506, "levels": 153, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 662, "loot": 507, "levels": 155, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -2745,7 +2745,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         .slice(0, 25);
 
     if (topPve.length > 0 && pveContainer) {
-        pveWrapper.style.display = 'block';
+        if (pveWrapper) pveWrapper.hidden = false;
         pveContainer.textContent = '';
 
         const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
@@ -2899,7 +2899,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         .slice(0, 25); // Changed to Top 25
 
     if (topPvp.length > 0 && pvpContainer) {
-        pvpWrapper.style.display = 'block';
+        if (pvpWrapper) pvpWrapper.hidden = false;
         pvpContainer.textContent = '';
 
         const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
