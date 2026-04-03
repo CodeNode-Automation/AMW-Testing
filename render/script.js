@@ -1282,11 +1282,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             } else {
                 const emptyIcon = EMPTY_ICONS[slot] || 'inv_misc_questionmark';
-                gearHtml += `
-                <div class="item-slot empty-slot">
-                    <img src="https://wow.zamimg.com/images/wow/icons/large/${emptyIcon}.jpg" class="empty-slot-icon">
-                    <span class="empty-slot-text">Empty Slot</span>
-                </div>`;
+                const emptySlotTemplate = document.getElementById('tpl-full-card-empty-slot');
+
+                if (emptySlotTemplate) {
+                    const emptyClone = emptySlotTemplate.content.cloneNode(true);
+                    const emptyImg = emptyClone.querySelector('.empty-slot-icon');
+
+                    if (emptyImg) {
+                        emptyImg.src = `https://wow.zamimg.com/images/wow/icons/large/${emptyIcon}.jpg`;
+                        emptyImg.alt = `${slot.replace(/_/g, ' ')} empty slot`;
+                    }
+
+                    const emptySlotEl = emptyClone.firstElementChild;
+                    if (emptySlotEl) {
+                        gearHtml += emptySlotEl.outerHTML;
+                    }
+                }
             }
         });
 
