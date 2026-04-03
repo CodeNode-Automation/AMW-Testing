@@ -4801,8 +4801,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             // Monument rendering moved to dedicated feed.
             
             // Restored the proper concise-item class from your production site!
-            eventEl.className = 'concise-item tt-char';
-            eventEl.style.cursor = 'pointer';
+            eventEl.className = 'concise-item tt-char timeline-event';
             eventEl.onclick = () => selectCharacter((event.character_name || '').toLowerCase());
             
             eventEl.setAttribute('data-char', (event.character_name || '').toLowerCase());
@@ -4827,8 +4826,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             const c_name = (event.character_name || 'Unknown').charAt(0).toUpperCase() + (event.character_name || '').slice(1).toLowerCase();
             
             if (event.type === 'badge') {
-                eventEl.style.borderLeftColor = c_hex;
-                eventEl.style.padding = '8px 12px'; // Tighter padding for badges
+                eventEl.classList.add('timeline-event-badge');
+                eventEl.style.setProperty('--timeline-border-accent', c_hex);
+                eventEl.style.setProperty('--timeline-class-accent', c_hex);
                 let badgeIcon = '🎖️', badgeColor = '#aaa', badgeText = '';
                 
                 if (event.badge_type === 'mvp_pve') { badgeIcon = '👑'; badgeColor = '#ff8000'; badgeText = 'PvE MVP'; }
@@ -4841,29 +4841,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 else if (event.badge_type === 'pvp_gold') { badgeIcon = '🥇'; badgeColor = '#ffd700'; badgeText = 'PvP 1st'; }
                 else if (event.badge_type === 'pvp_silver') { badgeIcon = '🥈'; badgeColor = '#c0c0c0'; badgeText = 'PvP 2nd'; }
                 else if (event.badge_type === 'pvp_bronze') { badgeIcon = '🥉'; badgeColor = '#cd7f32'; badgeText = 'PvP 3rd'; }
+
+                eventEl.style.setProperty('--timeline-badge-accent', badgeColor);
                 
                 const template = document.getElementById('tpl-timeline-badge');
                 if (template) {
                     const clone = template.content.cloneNode(true);
                     
-                    const node = clone.querySelector('.tl-badge-node');
-                    node.style.background = badgeColor;
-                    node.style.boxShadow = `0 0 8px ${badgeColor}`;
-                    
                     const nameSpan = clone.querySelector('.tl-badge-name');
                     nameSpan.textContent = c_name;
-                    nameSpan.style.color = c_hex;
-                    
-                    const pill = clone.querySelector('.tl-badge-pill');
-                    pill.style.borderLeft = `2px solid ${badgeColor}`;
                     
                     const iconSpan = clone.querySelector('.tl-badge-icon');
                     iconSpan.textContent = badgeIcon;
-                    iconSpan.style.filter = `drop-shadow(0 0 2px ${badgeColor})`;
                     
                     const textSpan = clone.querySelector('.tl-badge-text');
                     textSpan.textContent = badgeText;
-                    textSpan.style.color = badgeColor;
                     
                     clone.querySelector('.tl-badge-category').textContent = `• ${event.category}`;
                     clone.querySelector('.tl-badge-date').textContent = date_str;
@@ -4871,14 +4863,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     eventEl.appendChild(clone);
                 }
             } else if (event.type === 'level_up') {
-                eventEl.style.borderLeftColor = c_hex;
+                eventEl.style.setProperty('--timeline-border-accent', c_hex);
+                eventEl.style.setProperty('--timeline-class-accent', c_hex);
                 const template = document.getElementById('tpl-timeline-levelup');
                 if (template) {
                     const clone = template.content.cloneNode(true);
                     
                     const nameSpan = clone.querySelector('.tl-event-name');
                     nameSpan.textContent = c_name;
-                    nameSpan.style.color = c_hex;
                     
                     clone.querySelector('.tl-event-date').textContent = date_str;
                     clone.querySelector('.tl-event-level-text').textContent = `Reached Level ${event.level}`;
@@ -4888,31 +4880,24 @@ window.addEventListener('DOMContentLoaded', async () => {
             } else {
                 const q = event.item_quality || 'COMMON';
                 const q_hex = QUALITY_COLORS[q] || '#ffffff';
-                eventEl.style.borderLeftColor = q_hex;
+                eventEl.style.setProperty('--timeline-border-accent', q_hex);
+                eventEl.style.setProperty('--timeline-class-accent', c_hex);
+                eventEl.style.setProperty('--timeline-quality-accent', q_hex);
+                eventEl.style.setProperty('--timeline-node-accent', q_hex);
                 
                 const template = document.getElementById('tpl-timeline-loot');
                 if (template) {
                     const clone = template.content.cloneNode(true);
                     
-                    const node = clone.querySelector('.timeline-node');
-                    node.style.background = q_hex;
-                    node.style.boxShadow = `0 0 8px ${q_hex}`;
-                    
                     const nameSpan = clone.querySelector('.tl-event-name');
                     nameSpan.textContent = c_name;
-                    nameSpan.style.color = c_hex;
                     
                     clone.querySelector('.tl-event-date').textContent = date_str;
-                    
-                    const eventBox = clone.querySelector('.event-box');
-                    eventBox.style.borderLeftColor = q_hex;
-                    
                     clone.querySelector('.tl-event-icon').src = event.item_icon;
                     
                     const itemLink = clone.querySelector('.tl-event-item-link');
                     itemLink.href = `https://www.wowhead.com/wotlk/item=${event.item_id}`;
                     itemLink.textContent = event.item_name;
-                    itemLink.style.color = q_hex;
 
                     itemLink.addEventListener('click', (e) => {
                         e.stopPropagation();
