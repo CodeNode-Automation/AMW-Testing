@@ -228,6 +228,9 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }
 /* Components */
 .dynamic-award-badge { cursor: pointer; padding: 8px 12px; min-width: 100px; }
+.filter-badge-dimmed { opacity: 0.4; transform: scale(1); }
+.filter-badge-selected { opacity: 1; transform: translateY(-3px) scale(1.05); }
+.concise-char-bar-filtered-out { display: none !important; }
 /* Components */
 .concise-spec-container-default { text-align: center; margin-bottom: 20px; animation: fadeInUp 0.3s forwards; }
 .concise-spec-container-default[hidden] { display: none; }
@@ -1974,10 +1977,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T17:05:37.952299Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T17:13:27.559295Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 721, "loot": 550, "levels": 171, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 728, "loot": 556, "levels": 172, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -3972,9 +3975,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const isActive = this.classList.contains('active-filter');
                 
                 document.querySelectorAll('.dynamic-badge').forEach(b => {
-                    b.classList.remove('active-filter');
-                    b.style.opacity = '0.4';
-                    b.style.transform = 'scale(1)';
+                    b.classList.remove('active-filter', 'filter-badge-dimmed', 'filter-badge-selected');
                 });
                 
                 // Trigger smooth fade-in animation
@@ -3986,25 +3987,33 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 if (isActive) {
-                    document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
-                    document.querySelectorAll('.dynamic-badge').forEach(b => b.style.opacity = '1');
+                    document.querySelectorAll('.concise-char-bar').forEach(el => {
+                        el.classList.remove('concise-char-bar-filtered-out');
+                    });
+                    document.querySelectorAll('.dynamic-badge').forEach(b => {
+                        b.classList.remove('filter-badge-dimmed', 'filter-badge-selected');
+                    });
                     if (specContainer) specContainer.hidden = true;
                     
                     window.currentFilteredChars = characters.map(c => (c.profile && c.profile.name ? c.profile.name.toLowerCase() : (c.name ? c.name.toLowerCase() : '')));
                     applyTimelineFilters();
                 } else {
-                    this.classList.add('active-filter');
-                    this.style.opacity = '1';
-                    this.style.transform = 'scale(1.05)';
+                    document.querySelectorAll('.dynamic-badge').forEach(b => {
+                        if (b !== this) {
+                            b.classList.add('filter-badge-dimmed');
+                        }
+                    });
+
+                    this.classList.add('active-filter', 'filter-badge-selected');
                     
                     const visibleChars = [];
                     document.querySelectorAll('.concise-char-bar').forEach(el => {
                         const charName = el.getAttribute('data-char');
                         if (el.getAttribute('data-class') === targetClass) {
-                            el.style.display = 'flex';
+                            el.classList.remove('concise-char-bar-filtered-out');
                             if(charName) visibleChars.push(charName);
                         } else {
-                            el.style.display = 'none';
+                            el.classList.add('concise-char-bar-filtered-out');
                         }
                     });
                     
@@ -4122,19 +4131,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const charName = el.getAttribute('data-char');
                                 if (el.getAttribute('data-class') === targetClass) {
                                     if (targetSpec === 'all') {
-                                        el.style.display = 'flex';
+                                        el.classList.remove('concise-char-bar-filtered-out');
                                         if(charName) subVisibleChars.push(charName);
                                     } else {
                                         const elSpec = el.getAttribute('data-spec') || 'unspecced';
                                         if (elSpec === targetSpec) {
-                                            el.style.display = 'flex';
+                                            el.classList.remove('concise-char-bar-filtered-out');
                                             if(charName) subVisibleChars.push(charName);
                                         } else {
-                                            el.style.display = 'none';
+                                            el.classList.add('concise-char-bar-filtered-out');
                                         }
                                     }
                                 } else {
-                                    el.style.display = 'none';
+                                    el.classList.add('concise-char-bar-filtered-out');
                                 }
                             });
                             
@@ -4223,9 +4232,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const isActive = this.classList.contains('active-filter');
                 
                 document.querySelectorAll('.dynamic-award-badge').forEach(b => {
-                    b.classList.remove('active-filter');
-                    b.style.opacity = '0.4';
-                    b.style.transform = 'scale(1)';
+                    b.classList.remove('active-filter', 'filter-badge-dimmed', 'filter-badge-selected');
                 });
                 
                 const charList = document.getElementById('concise-char-list');
@@ -4236,24 +4243,32 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 if (isActive) {
-                    document.querySelectorAll('.concise-char-bar').forEach(el => el.style.display = 'flex');
-                    document.querySelectorAll('.dynamic-award-badge').forEach(b => b.style.opacity = '1');
+                    document.querySelectorAll('.concise-char-bar').forEach(el => {
+                        el.classList.remove('concise-char-bar-filtered-out');
+                    });
+                    document.querySelectorAll('.dynamic-award-badge').forEach(b => {
+                        b.classList.remove('filter-badge-dimmed', 'filter-badge-selected');
+                    });
                     window.currentFilteredChars = null; 
                     applyTimelineFilters();
                 } else {
-                    this.classList.add('active-filter');
-                    this.style.opacity = '1';
-                    this.style.transform = 'scale(1.05)';
+                    document.querySelectorAll('.dynamic-award-badge').forEach(b => {
+                        if (b !== this) {
+                            b.classList.add('filter-badge-dimmed');
+                        }
+                    });
+
+                    this.classList.add('active-filter', 'filter-badge-selected');
                     
                     const visibleChars = [];
                     document.querySelectorAll('.concise-char-bar').forEach(el => {
                         const awards = el.getAttribute('data-awards') || '';
                         if (awards.includes(targetAward)) {
-                            el.style.display = 'flex';
+                            el.classList.remove('concise-char-bar-filtered-out');
                             const charName = el.getAttribute('data-char');
                             if(charName) visibleChars.push(charName);
                         } else {
-                            el.style.display = 'none';
+                            el.classList.add('concise-char-bar-filtered-out');
                         }
                     });
                     window.currentFilteredChars = visibleChars;
