@@ -441,7 +441,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-select { background: transparent; border: none; color: #888; font-family: 'Cinzel'; font-weight: bold; font-size: 12px; padding: 6px 10px; outline: none; cursor: pointer; }
 .tl-select option { background: #111; color: #fff; }
 /* Components */
-.tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: inline-block; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-load-more-btn[hidden] { display: none; }
 .tl-btn-rare { color: #0070dd; border-color: rgba(0, 112, 221, 0.5); }
 .tl-btn-epic { color: #a335ee; border-color: rgba(163, 53, 238, 0.5); }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
@@ -1931,7 +1932,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:33:16.017537Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:37:58.444136Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 659, "loot": 506, "levels": 153, "total_roster": 658, "active_roster": 411}]
@@ -5166,13 +5167,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         // 3. Handle empty states or render the first batch
         const noResultsMsg = document.getElementById('tl-no-results');
         if (filteredTimelineData.length === 0) {
-            if (container) container.style.display = 'none';
+            if (container) container.hidden = true;
             if (noResultsMsg) noResultsMsg.hidden = false;
 
             const loadMoreBtn = document.getElementById('load-more-btn');
             if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
-            if (container) container.style.display = 'flex';
+            if (container) container.hidden = false;
             if (noResultsMsg) noResultsMsg.hidden = true;
             renderTimelineBatch();
         }
