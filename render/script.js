@@ -1950,11 +1950,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const countSpan = clone.querySelector('.stat-badge-count');
                 
                 badgeDiv.setAttribute('data-class', cls);
-                badgeDiv.style.borderColor = color;
+                badgeDiv.style.setProperty('--dynamic-badge-accent', color);
                 badgeDiv.title = `Filter ${cls}s`;
                 
                 clsSpan.textContent = cls;
-                clsSpan.style.color = color;
                 
                 countSpan.textContent = counts[cls];
                 
