@@ -431,7 +431,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tl-select { background: transparent; border: none; color: #888; font-family: 'Cinzel'; font-weight: bold; font-size: 12px; padding: 6px 10px; outline: none; cursor: pointer; }
 .tl-select option { background: #111; color: #fff; }
 /* Components */
-.tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-load-more-btn { padding: 10px 20px; cursor: pointer; display: inline-block; background: rgba(0,0,0,0.8); color: #ffd100; border: 1px solid #ffd100; border-radius: 4px; font-family: 'Cinzel', serif; transition: all 0.3s ease; }
+.tl-load-more-btn[hidden] { display: none; }
 .tl-btn-rare { color: #0070dd; border-color: rgba(0, 112, 221, 0.5); }
 .tl-btn-epic { color: #a335ee; border-color: rgba(163, 53, 238, 0.5); }
 .timeline-feed { position: relative; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
