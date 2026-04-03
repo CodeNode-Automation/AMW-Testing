@@ -1959,8 +1959,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     });
 
                     specContainer.textContent = '';
-                    const wrapDiv = document.createElement('div');
-                    wrapDiv.className = 'class-stat-container spec-filter-wrapper';
+
+                    const specFilterWrapperTemplate = document.getElementById('tpl-spec-filter-wrapper');
+                    const wrapDiv = specFilterWrapperTemplate?.content?.firstElementChild?.cloneNode(true);
+
+                    if (!wrapDiv) return;
                     
                     const specTemplate = document.getElementById('tpl-spec-badge');
                     if (specTemplate) {
