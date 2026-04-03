@@ -3226,13 +3226,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         // 3. Handle empty states or render the first batch
         const noResultsMsg = document.getElementById('tl-no-results');
         if (filteredTimelineData.length === 0) {
-            if (container) container.style.display = 'none';
+            if (container) container.hidden = true;
             if (noResultsMsg) noResultsMsg.hidden = false;
 
             const loadMoreBtn = document.getElementById('load-more-btn');
             if (loadMoreBtn) loadMoreBtn.hidden = true;
         } else {
-            if (container) container.style.display = 'flex';
+            if (container) container.hidden = false;
             if (noResultsMsg) noResultsMsg.hidden = true;
             renderTimelineBatch();
         }
