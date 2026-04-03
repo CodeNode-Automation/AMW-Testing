@@ -785,7 +785,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 block.style.borderTopColor = cHex;
 
                 const crown = clone.querySelector('.podium-crown');
-                if (rank !== 1) {
+                if (rank === 1) {
+                    crown.hidden = false;
+                } else {
                     crown.hidden = true;
                 }
 
@@ -932,7 +934,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 block.style.borderTopColor = cHex;
 
                 const crown = clone.querySelector('.podium-crown');
-                if (rank !== 1) {
+                if (rank === 1) {
+                    crown.hidden = false;
+                } else {
                     crown.hidden = true;
                 }
 
@@ -1968,7 +1972,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         block.setAttribute('data-awards', awardsAttr.join(','));
         block.style.borderTopColor = cHex;
 
-        if (rank !== 1) {
+        if (rank === 1) {
+            crown.hidden = false;
+        } else {
             crown.hidden = true;
         }
 
