@@ -219,6 +219,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-spec-container-default { display: none; text-align: center; margin-bottom: 20px; animation: fadeInUp 0.3s forwards; }
 .full-card-badge-content { display: inline-flex; align-items: center; gap: 4px; }
 .full-card-badge-icon { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #222; }
+.full-card-badge-accent {
+    color: var(--full-card-badge-text-color);
+    border-color: var(--full-card-badge-border-color);
+}
 .char-badge-guild-rank { border-color: #ffd100; color: #ffd100; text-shadow: 1px 1px 2px #000; }
 .char-badge-ilvl { border-color: #ff8000; color: #ff8000; }
 .toggle-stats-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 14px; outline: none; transition: 0.2s; padding: 0; }

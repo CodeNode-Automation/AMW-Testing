@@ -1874,8 +1874,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         classNames.forEach(cls => badge.classList.add(cls));
         if (title) badge.title = title;
-        if (textColor) badge.style.color = textColor;
-        if (borderColor) badge.style.borderColor = borderColor;
+
+        if (textColor || borderColor) {
+            badge.classList.add('full-card-badge-accent');
+        }
+        if (textColor) {
+            badge.style.setProperty('--full-card-badge-text-color', textColor);
+        }
+        if (borderColor) {
+            badge.style.setProperty('--full-card-badge-border-color', borderColor);
+        }
 
         if (iconSrc) {
             const iconTemplate = document.getElementById('tpl-full-card-badge-icon');
