@@ -2390,13 +2390,24 @@ window.addEventListener('DOMContentLoaded', async () => {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             isWarEffortLootRow = true;
 
-                            const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
-                            statsHtml = `
-                                <span class="we-loot-header">Epic Loot Acquired:</span>
-                                <div class="we-loot-container">
-                                    ${itemBadges}
-                                </div>
-                            `;
+                            const lootTemplate = document.getElementById('tpl-we-stat-loot');
+                            const lootBadgeTemplate = document.getElementById('tpl-we-loot-badge');
+
+                            if (lootTemplate && lootBadgeTemplate) {
+                                const lootClone = lootTemplate.content.cloneNode(true);
+                                const lootContainer = lootClone.querySelector('.we-loot-container');
+
+                                contextData.forEach(itemHtml => {
+                                    const badgeClone = lootBadgeTemplate.content.cloneNode(true);
+                                    const badgeEl = badgeClone.querySelector('.we-loot-badge');
+                                    badgeEl.innerHTML = itemHtml;
+                                    lootContainer.appendChild(badgeClone);
+                                });
+
+                                const lootWrapper = document.createElement('div');
+                                lootWrapper.appendChild(lootClone);
+                                statsHtml = lootWrapper.innerHTML;
+                            }
                         } else if (hashUrl === 'war-effort-zenith') {
                             const zenithTemplate = document.getElementById('tpl-we-stat-zenith');
                             if (zenithTemplate) {
@@ -4760,7 +4771,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
-        renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
+        renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 1000, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 60, 'LOOT');
         renderBar('guild-zenith-fill', 'guild-zenith-text', totalZenith, 10, 'ZENITH');
 
@@ -4789,11 +4800,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('xp', fallback, topDyn);
         }
 
-        if (totalHks >= 500) {
+        if (totalHks >= 1000) {
             const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
             const topDyn = topPvpers.slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
-            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", highlightColor: "#ff4400", highlightText: topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1), suffixText: " led the 500 HK charge!", timestamp: new Date().toISOString() };
+            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", highlightColor: "#ff4400", highlightText: topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1), suffixText: " led the 1000 HK charge!", timestamp: new Date().toISOString() };
             applyLockFallback('hk', fallback, topDyn);
         }
 
@@ -4819,7 +4830,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('zenith', fallback, topDyn);
         }
 
-        if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 60 && totalZenith >= 10) {
+        if (totalLevels >= 750 && totalHks >= 1000 && totalLoot >= 60 && totalZenith >= 10) {
             const lockTimes = [
                 new Date(window.warEffortLockTimes.xp).getTime(),
                 new Date(window.warEffortLockTimes.hk).getTime(),
