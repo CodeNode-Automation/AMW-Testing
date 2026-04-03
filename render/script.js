@@ -2348,7 +2348,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         bar.setAttribute('data-class', cClass);
         bar.setAttribute('data-awards', awardsAttr.join(','));
-        bar.style.borderLeftColor = cHex;
 
         if (rankNumber !== null) {
             const rankTemplate = document.getElementById('tpl-concise-rank-indicator');
@@ -2362,10 +2361,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         portrait.src = portraitURL;
-        portrait.style.borderColor = cHex;
 
         nameEl.textContent = displayName;
-        nameEl.style.color = cHex;
         appendConciseBadges(nameEl, conciseBadges);
 
         if (showVanguardBadge) {
@@ -2442,7 +2439,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         block.setAttribute('data-class', cClass);
         block.setAttribute('data-spec', activeSpecAttr);
         block.setAttribute('data-awards', awardsAttr.join(','));
-        block.style.borderTopColor = cHex;
 
         if (rank === 1) {
             crown.hidden = false;
@@ -2456,13 +2452,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         avatar.src = portraitURL;
         avatar.alt = baseName || 'Character portrait';
-        avatar.style.borderColor = cHex;
 
         rankEl.textContent = `#${rank}`;
-        rankEl.style.color = rankColor;
 
         nameEl.textContent = baseName;
-        nameEl.style.color = cHex;
 
         if (hashUrl === 'war-effort-hk') {
             const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;

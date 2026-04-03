@@ -337,7 +337,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .concise-char-bar-war-effort-loot { padding: 15px; flex-direction: column; align-items: flex-start; height: auto; }
 .concise-row-inner-war-effort-loot { justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px; }
 .concise-row-stats-bottom-war-effort-loot { width: 100%; flex-direction: column; align-items: flex-start; }
-.concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: inherit; box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
+.concise-char-bar:hover { transform: translateX(6px); background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%); border-color: rgba(255, 255, 255, 0.1); border-left-color: var(--class-accent, transparent); box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5); }
 .c-main-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .badge-reigning-pve { background: rgba(255, 209, 0, 0.2); border-color: #ffd100; color: #ffd100; font-weight: bold; box-shadow: 0 0 15px rgba(255, 209, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
 .badge-reigning-pvp { background: rgba(255, 68, 0, 0.2); border-color: #ff4400; color: #ff4400; font-weight: bold; box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); animation: pulseGlow 2s infinite alternate; }
@@ -355,6 +355,42 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-badge-campaign { background: rgba(170, 170, 170, 0.15); border-color: rgba(170, 170, 170, 0.4); color: #ddd; }
 .c-portrait { width: 36px; height: 36px; border-radius: 50%; border: 2px solid; background: #000; object-fit: cover; object-position: center; flex-shrink: 0; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
+.concise-char-bar[data-class="Druid"],
+.podium-block[data-class="Druid"] { --class-accent: #FF7C0A; }
+
+.concise-char-bar[data-class="Hunter"],
+.podium-block[data-class="Hunter"] { --class-accent: #ABD473; }
+
+.concise-char-bar[data-class="Mage"],
+.podium-block[data-class="Mage"] { --class-accent: #3FC7EB; }
+
+.concise-char-bar[data-class="Paladin"],
+.podium-block[data-class="Paladin"] { --class-accent: #F48CBA; }
+
+.concise-char-bar[data-class="Priest"],
+.podium-block[data-class="Priest"] { --class-accent: #FFFFFF; }
+
+.concise-char-bar[data-class="Rogue"],
+.podium-block[data-class="Rogue"] { --class-accent: #FFF468; }
+
+.concise-char-bar[data-class="Shaman"],
+.podium-block[data-class="Shaman"] { --class-accent: #0070DE; }
+
+.concise-char-bar[data-class="Warlock"],
+.podium-block[data-class="Warlock"] { --class-accent: #8788EE; }
+
+.concise-char-bar[data-class="Warrior"],
+.podium-block[data-class="Warrior"] { --class-accent: #C69B6D; }
+
+.concise-char-bar[data-class="Death Knight"],
+.podium-block[data-class="Death Knight"] { --class-accent: #C41E3A; }
+
+.concise-char-bar { border-left-color: var(--class-accent, transparent); }
+.concise-char-bar .c-portrait { border-color: var(--class-accent, #fff); }
+.concise-char-bar .c-name { color: var(--class-accent, inherit); }
+
+.podium-block .podium-avatar { border-color: var(--class-accent, #fff); }
+.podium-block .podium-name { color: var(--class-accent, inherit); }
 .c-meta { font-size: 13px; color: #aaa; font-style: italic; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; margin-top: 2px; }
 .c-stats-info { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: bold; text-align: right; }
 .concise-stat-line { display: flex; align-items: center; justify-content: flex-end; }
