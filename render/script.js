@@ -513,6 +513,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     function updateDropdownLabel(ignoreVal) {
         if (!selectValueText) return;
+
+        selectValueText.className = 'selected-value';
+        selectValueText.style.removeProperty('--selected-char-color');
         
         // Smarter logic: Read the actual active URL hash to determine the label
         const hash = window.location.hash.substring(1); 
@@ -541,7 +544,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const cHex = CLASS_COLORS[cClass] || '#fff';
                 selectValueText.textContent = char.profile.name;
                 selectValueText.className = 'selected-value char-selected-text';
-                selectValueText.style.color = cHex;
+                selectValueText.style.setProperty('--selected-char-color', cHex);
             } else {
                 selectValueText.innerHTML = "Select View...";
             }

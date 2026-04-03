@@ -76,7 +76,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .opt-icon { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
 /* Typography */
 .custom-select-arrow { font-size: 12px; color: #aaa; }
-.char-selected-text { text-shadow: 1px 1px 2px #000; }
+.char-selected-text {
+    color: var(--selected-char-color, #fff);
+    text-shadow: 1px 1px 2px #000;
+}
 .opt-icon-emoji { font-size: 16px; }
 .opt-hall-of-heroes { color: #ffd100; font-weight: bold; }
 
