@@ -54,6 +54,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 .main-logo { max-width: 320px; width: 100%; display: block; margin: 0 auto 5px auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); animation: fadeIn 0.8s ease-out, floatLogo 6s ease-in-out infinite; transition: max-width 0.3s ease; }
 .navbar { position: sticky; top: 0; width: 100%; z-index: 100; background: rgba(8, 8, 10, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; align-items: center; padding: 12px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9); }
+.navbar-theme-home { background: rgba(15, 15, 15, 0.85); }
+.navbar-theme-app { background: #111; }
 
 .navbar-theme-home { background: rgba(15, 15, 15, 0.85); }
 .navbar-theme-app { background: #111; }
@@ -2128,10 +2130,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T18:55:11.794272Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T19:07:26.526396Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 786, "loot": 601, "levels": 185, "total_roster": 658, "active_roster": 409}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 789, "loot": 603, "levels": 186, "total_roster": 658, "active_roster": 409}]
     </script>
 
     <script>
@@ -5613,7 +5615,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showAnalyticsView() {
         hideAllViews();
         if (analyticsView) analyticsView.style.display = 'block';
-        if (navbar) navbar.style.background = '#111';
+        if (navbar) {
+            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.add('navbar-theme-app');
+        }
         if (timeline) timeline.style.display = 'none'; 
 
         // --- CALCULATE KPIs ---
