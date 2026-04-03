@@ -1190,6 +1190,14 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-home-leaderboard-podium-wrap">
+        <div class="lb-podium-wrap"></div>
+    </template>
+
+    <template id="tpl-home-leaderboard-list-wrap">
+        <div class="lb-list-wrap collapsed-list"></div>
+    </template>
+    
     <template id="tpl-concise-row">
         <div class="concise-char-bar">
             <div class="concise-row-inner">
@@ -1762,6 +1770,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </span>
     </template>
 
+    <template id="tpl-full-card-badge-icon">
+        <img src="" class="full-card-badge-icon" alt="">
+    </template>
+
     <template id="tpl-full-card-gear-slot">
         <div class="item-slot gear-slot-wrapper">
             <div class="gear-slot-icon-wrapper">
@@ -1911,10 +1923,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T13:55:10.105535Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T13:58:08.510847Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 641, "loot": 494, "levels": 147, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 645, "loot": 497, "levels": 148, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -2719,11 +2731,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         pveWrapper.style.display = 'block';
         pveContainer.textContent = '';
 
-        const podiumWrap = document.createElement('div');
-        podiumWrap.className = 'lb-podium-wrap';
+        const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+        const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
 
-        const listWrap = document.createElement('div');
-        listWrap.className = 'lb-list-wrap collapsed-list';
+        const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+        const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+
+        if (!podiumWrap || !listWrap) return;
 
         const podiumTemplate = document.getElementById('tpl-home-leaderboard-podium');
         const rowTemplate = document.getElementById('tpl-home-leaderboard-row');
@@ -2869,11 +2883,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         pvpWrapper.style.display = 'block';
         pvpContainer.textContent = '';
 
-        const podiumWrap = document.createElement('div');
-        podiumWrap.className = 'lb-podium-wrap';
+        const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+        const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
 
-        const listWrap = document.createElement('div');
-        listWrap.className = 'lb-list-wrap collapsed-list';
+        const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+        const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
+
+        if (!podiumWrap || !listWrap) return;
 
         const podiumTemplate = document.getElementById('tpl-home-leaderboard-podium');
         const rowTemplate = document.getElementById('tpl-home-leaderboard-row');
@@ -3786,11 +3802,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (borderColor) badge.style.borderColor = borderColor;
 
         if (iconSrc) {
-            const img = document.createElement('img');
-            img.src = iconSrc;
-            img.alt = iconAlt;
-            img.className = 'full-card-badge-icon';
-            content.appendChild(img);
+            const iconTemplate = document.getElementById('tpl-full-card-badge-icon');
+            if (iconTemplate) {
+                const iconClone = iconTemplate.content.cloneNode(true);
+                const img = iconClone.querySelector('.full-card-badge-icon');
+
+                if (img) {
+                    img.src = iconSrc;
+                    img.alt = iconAlt;
+                }
+
+                content.appendChild(iconClone);
+            }
         }
 
         content.appendChild(document.createTextNode(text));
