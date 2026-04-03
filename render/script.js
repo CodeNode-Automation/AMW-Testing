@@ -1993,10 +1993,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                             
                             const iconUrl = getSpecIcon(formattedClass, spec);
                             if (iconUrl) {
-                                const img = document.createElement('img');
-                                img.src = iconUrl;
-                                img.className = 'spec-badge-icon';
-                                clsSpan.appendChild(img);
+                                const iconTemplate = document.getElementById('tpl-spec-badge-icon');
+                                if (iconTemplate) {
+                                    const iconClone = iconTemplate.content.cloneNode(true);
+                                    const img = iconClone.querySelector('.spec-badge-icon');
+                                    if (img) {
+                                        img.src = iconUrl;
+                                        img.alt = `${spec} ${formattedClass} icon`;
+                                    }
+                                    clsSpan.appendChild(iconClone);
+                                }
                             }
                             clsSpan.appendChild(document.createTextNode(spec));
                             
