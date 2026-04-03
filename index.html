@@ -1224,6 +1224,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <div class="we-loot-badge"></div>
     </template>
 
+    <template id="tpl-we-stat-hk">
+        <span class="we-stat-hk"></span>
+    </template>
+
     <template id="tpl-we-stat-xp">
         <span class="we-stat-xp"></span>
     </template>
@@ -1820,10 +1824,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T10:26:57.697722Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T10:32:33.554449Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 505, "loot": 397, "levels": 108, "total_roster": 659, "active_roster": 412}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 513, "loot": 403, "levels": 110, "total_roster": 659, "active_roster": 412}]
     </script>
 
     <script>
@@ -4198,7 +4202,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 
                 if (hashUrl === 'war-effort-hk') {
                     const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-                    statsHtml = `<span class="we-stat-hk">+${trendVal.toLocaleString()} HKs Contributed</span>`;
+                    const hkTemplate = document.getElementById('tpl-we-stat-hk');
+                    if (hkTemplate) {
+                        const hkClone = hkTemplate.content.cloneNode(true);
+                        const hkEl = hkClone.querySelector('.we-stat-hk');
+                        hkEl.textContent = `+${trendVal.toLocaleString()} HKs Contributed`;
+
+                        const hkWrapper = document.createElement('div');
+                        hkWrapper.appendChild(hkClone);
+                        statsHtml = hkWrapper.innerHTML;
+                    }
                 } else if (window.warEffortContext) {
                     const charKey = cleanName; // FIXED: Using cleanName
                     const contextData = window.warEffortContext[charKey];
