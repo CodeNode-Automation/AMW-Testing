@@ -222,8 +222,6 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* BADGES & BANNERS                          */
 /* ========================================= */
 .class-stat-container { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; padding-top: 15px !important; padding-bottom: 25px !important; padding-left: 20px; padding-right: 20px; margin-top: -10px !important; -ms-overflow-style: none; scrollbar-width: none; scroll-snap-type: x mandatory; }
-.concise-class-stats { display: none; }
-.concise-class-stats.is-visible { display: flex; }
 .stat-badge { display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, rgba(30, 30, 35, 0.6) 0%, rgba(10, 10, 15, 0.9) 100%); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); padding: 10px 18px; border-radius: 12px; min-width: 105px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); user-select: none; border-left: 3px solid; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 .stat-badge:hover { transform: translateY(-5px) scale(1.03); background: linear-gradient(180deg, rgba(45, 45, 50, 0.8) 0%, rgba(15, 15, 20, 0.9) 100%); border-right-color: rgba(255, 209, 0, 0.3); border-top-color: rgba(255, 209, 0, 0.5); border-bottom-color: rgba(255, 209, 0, 0.3); box-shadow: 0 12px 24px rgba(0,0,0,0.8), 0 0 20px rgba(255, 209, 0, 0.15); }
 .stat-badge.active-filter { transform: translateY(-3px); background: linear-gradient(180deg, rgba(50, 45, 30, 0.8) 0%, rgba(20, 15, 10, 0.9) 100%); box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 25px rgba(255,209,0,0.25); border-color: #ffd100; }

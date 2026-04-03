@@ -1938,7 +1938,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (specContainer) specContainer.hidden = true;
 
         if (!characters || characters.length === 0) {
-            container.classList.remove('is-visible');
+            container.style.display = 'none';
             return;
         }
         
@@ -1981,7 +1981,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        container.classList.add('is-visible');
+        container.style.display = 'flex';
 
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
             badge.addEventListener('click', function() {
