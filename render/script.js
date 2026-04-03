@@ -1257,29 +1257,64 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const q = data.quality || "COMMON", qHex = QUALITY_COLORS[q];
                 const hasEnchant = data.tooltip_params && data.tooltip_params.includes('ench=');
                 const canBeEnchanted = !UNENCHANTABLE_SLOTS.includes(slot);
-                
-                let enchantBadge = '';
-                let warningStyle = '';
-                let warningText = '';
 
-                if (hasEnchant) {
-                    enchantBadge = `<div class="enchant-badge">E</div>`;
-                } else if (canBeEnchanted && (q === "EPIC" || q === "LEGENDARY")) {
-                    warningStyle = `missing-enchant-warning`;
-                    warningText = `<div class="missing-enchant-text">⚠️ Missing Enchant</div>`;
+                let warningStyle = '';
+
+                if (!hasEnchant && canBeEnchanted && (q === "EPIC" || q === "LEGENDARY")) {
+                    warningStyle = 'missing-enchant-warning';
                 }
 
-                gearHtml += `
-                <div class="item-slot gear-slot-wrapper qual-border-left-${q} ${warningStyle}">
-                    <div class="gear-slot-icon-wrapper">
-                        <img src="${data.icon_data}" class="gear-slot-icon ${warningStyle ? 'gear-slot-icon-warning' : `qual-border-${q}`}">
-                        ${enchantBadge}
-                    </div>
-                    <div class="gear-slot-info">
-                        <a href="https://www.wowhead.com/wotlk/item=${data.item_id}" class="gear-slot-link qual-color-${q}" data-wowhead="${data.tooltip_params}" target="_blank">${data.name}</a>
-                        ${warningText}
-                    </div>
-                </div>`;
+                const gearSlotTemplate = document.getElementById('tpl-full-card-gear-slot');
+
+                if (gearSlotTemplate) {
+                    const gearClone = gearSlotTemplate.content.cloneNode(true);
+                    const gearSlotEl = gearClone.querySelector('.item-slot');
+                    const gearIconEl = gearClone.querySelector('.gear-slot-icon');
+                    const enchantBadgeEl = gearClone.querySelector('.enchant-badge');
+                    const gearLinkEl = gearClone.querySelector('.gear-slot-link');
+                    const warningTextEl = gearClone.querySelector('.missing-enchant-text');
+
+                    if (gearSlotEl) {
+                        gearSlotEl.classList.add(`qual-border-left-${q}`);
+                        if (warningStyle) {
+                            gearSlotEl.classList.add(warningStyle);
+                        }
+                    }
+
+                    if (gearIconEl) {
+                        gearIconEl.src = data.icon_data;
+                        gearIconEl.alt = data.name || 'Equipped item';
+                        gearIconEl.classList.add(warningStyle ? 'gear-slot-icon-warning' : `qual-border-${q}`);
+                    }
+
+                    if (hasEnchant) {
+                        if (enchantBadgeEl) {
+                            enchantBadgeEl.hidden = false;
+                        }
+                    } else if (enchantBadgeEl) {
+                        enchantBadgeEl.remove();
+                    }
+
+                    if (gearLinkEl) {
+                        gearLinkEl.href = `https://www.wowhead.com/wotlk/item=${data.item_id}`;
+                        gearLinkEl.classList.add(`qual-color-${q}`);
+                        gearLinkEl.textContent = data.name;
+                        gearLinkEl.setAttribute('data-wowhead', data.tooltip_params);
+                    }
+
+                    if (warningStyle) {
+                        if (warningTextEl) {
+                            warningTextEl.hidden = false;
+                        }
+                    } else if (warningTextEl) {
+                        warningTextEl.remove();
+                    }
+
+                    const gearSlotNode = gearClone.firstElementChild;
+                    if (gearSlotNode) {
+                        gearHtml += gearSlotNode.outerHTML;
+                    }
+                }
             } else {
                 const emptyIcon = EMPTY_ICONS[slot] || 'inv_misc_questionmark';
                 const emptySlotTemplate = document.getElementById('tpl-full-card-empty-slot');
