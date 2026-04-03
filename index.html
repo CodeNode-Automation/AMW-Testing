@@ -836,6 +836,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-card-stats-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 18px; }
 .char-card-stats-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; }
 .char-card-stats-title { font-family: 'Cinzel'; font-size: 18px; margin: 0; text-shadow: 1px 1px 2px #000; }
+.char-card-accent {
+    --full-card-accent: #fff;
+    border-top-color: var(--full-card-accent);
+}
+
+.char-card-accent .char-card-name,
+.char-card-accent .char-card-stats-title {
+    color: var(--full-card-accent);
+}
+
+.char-card-accent .char-card-portrait {
+    border-color: var(--full-card-accent);
+}
 .mvp-empty-state { text-align: center; padding: 25px 10px; border: 1px dashed #555; border-radius: 8px; background: rgba(0,0,0,0.3); margin-top: 5px; }
 .mvp-empty-icon { font-size: 28px; margin-bottom: 12px; filter: grayscale(50%); }
 .mvp-empty-title { color: #ffd100; font-family: 'Cinzel'; font-size: 16px; margin-bottom: 6px; text-shadow: 1px 1px 2px #000; }
@@ -1937,7 +1950,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T14:50:39.244295Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T14:55:49.352146Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 667, "loot": 509, "levels": 158, "total_roster": 658, "active_roster": 411}]
@@ -3542,11 +3555,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const card = clone.querySelector('.char-card');
         card.classList.add(factionCls);
-        card.style.borderTopColor = cHex;
+        card.classList.add('char-card-accent');
+        card.style.setProperty('--full-card-accent', cHex);
 
         const nameEl = clone.querySelector('.char-card-name');
         nameEl.textContent = p.name || 'Unknown';
-        nameEl.style.color = cHex;
 
         const badgesEl = clone.querySelector('.char-badges-container');
         badgesEl.textContent = '';
@@ -3694,11 +3707,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const portraitEl = clone.querySelector('.char-card-portrait');
         portraitEl.src = char.render_url || getClassIcon(cClass);
         portraitEl.alt = p.name || 'Character portrait';
-        portraitEl.style.borderColor = cHex;
 
         const statsTitleEl = clone.querySelector('.char-card-stats-title');
         statsTitleEl.textContent = 'Combat Stats';
-        statsTitleEl.style.color = cHex;
 
         const healthFillEl = clone.querySelector('.full-card-health-fill');
         healthFillEl.style.background = 'linear-gradient(to right, #1d8348, #2ecc71)';
