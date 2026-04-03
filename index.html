@@ -1215,6 +1215,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         <span class="vanguard-badge">🌟 VANGUARD <span class="vanguard-badge-time" hidden></span></span>
     </template>
 
+    <template id="tpl-we-stat-loot">
+        <div class="we-stat-loot">
+            <span class="we-loot-header">Epic Loot Acquired:</span>
+            <div class="we-loot-container"></div>
+        </div>
+    </template>
+
+    <template id="tpl-we-loot-badge">
+        <div class="we-loot-badge"></div>
+    </template>
+
     <template id="tpl-we-stat-xp">
         <span class="we-stat-xp"></span>
     </template>
@@ -1811,10 +1822,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T10:11:29.106729Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T10:20:54.346501Z", "active_14_days": 412, "raid_ready_count": 22, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 489, "loot": 385, "levels": 104, "total_roster": 659, "active_roster": 412}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 493, "loot": 388, "levels": 105, "total_roster": 659, "active_roster": 412}]
     </script>
 
     <script>
@@ -4210,13 +4221,24 @@ window.addEventListener('DOMContentLoaded', async () => {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             isWarEffortLootRow = true;
 
-                            const itemBadges = contextData.map(itemHtml => `<div class="we-loot-badge">${itemHtml}</div>`).join('');
-                            statsHtml = `
-                                <span class="we-loot-header">Epic Loot Acquired:</span>
-                                <div class="we-loot-container">
-                                    ${itemBadges}
-                                </div>
-                            `;
+                            const lootTemplate = document.getElementById('tpl-we-stat-loot');
+                            const lootBadgeTemplate = document.getElementById('tpl-we-loot-badge');
+
+                            if (lootTemplate && lootBadgeTemplate) {
+                                const lootClone = lootTemplate.content.cloneNode(true);
+                                const lootContainer = lootClone.querySelector('.we-loot-container');
+
+                                contextData.forEach(itemHtml => {
+                                    const badgeClone = lootBadgeTemplate.content.cloneNode(true);
+                                    const badgeEl = badgeClone.querySelector('.we-loot-badge');
+                                    badgeEl.innerHTML = itemHtml;
+                                    lootContainer.appendChild(badgeClone);
+                                });
+
+                                const lootWrapper = document.createElement('div');
+                                lootWrapper.appendChild(lootClone);
+                                statsHtml = lootWrapper.innerHTML;
+                            }
                         } else if (hashUrl === 'war-effort-zenith') {
                             const zenithTemplate = document.getElementById('tpl-we-stat-zenith');
                             if (zenithTemplate) {
@@ -6580,7 +6602,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         renderBar('guild-xp-fill', 'guild-xp-text', totalLevels, 750, 'XP');
-        renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 500, 'HK');
+        renderBar('guild-hk-fill', 'guild-hk-text', totalHks, 1000, 'HK');
         renderBar('guild-loot-fill', 'guild-loot-text', totalLoot, 60, 'LOOT');
         renderBar('guild-zenith-fill', 'guild-zenith-text', totalZenith, 10, 'ZENITH');
 
@@ -6609,11 +6631,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('xp', fallback, topDyn);
         }
 
-        if (totalHks >= 500) {
+        if (totalHks >= 1000) {
             const topPvpers = Object.entries(hkContributors).sort((a,b)=>b[1]-a[1]);
             const topDyn = topPvpers.slice(0,3).map(x=>x[0].toLowerCase());
             let fallback = null;
-            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", highlightColor: "#ff4400", highlightText: topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1), suffixText: " led the 500 HK charge!", timestamp: new Date().toISOString() };
+            if (topPvpers.length > 0) fallback = { title: "🩸 Blood of the Enemy", highlightColor: "#ff4400", highlightText: topPvpers[0][0].charAt(0).toUpperCase() + topPvpers[0][0].slice(1), suffixText: " led the 1000 HK charge!", timestamp: new Date().toISOString() };
             applyLockFallback('hk', fallback, topDyn);
         }
 
@@ -6639,7 +6661,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             applyLockFallback('zenith', fallback, topDyn);
         }
 
-        if (totalLevels >= 750 && totalHks >= 500 && totalLoot >= 60 && totalZenith >= 10) {
+        if (totalLevels >= 750 && totalHks >= 1000 && totalLoot >= 60 && totalZenith >= 10) {
             const lockTimes = [
                 new Date(window.warEffortLockTimes.xp).getTime(),
                 new Date(window.warEffortLockTimes.hk).getTime(),
