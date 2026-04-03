@@ -1767,7 +1767,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-        function buildConciseRowHtml({
+    function buildConciseRowHtml({
         isClickable,
         cleanName,
         cClass,
@@ -1776,10 +1776,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         cHex,
         isWarEffortRow,
         isWarEffortLootRow,
-        rankHtml,
+        rankNumber,
+        rankToneClass,
+        rankSizeClass,
         portraitURL,
         displayName,
-        vanguardBadgeHtml,
+        showVanguardBadge,
+        vanguardBadgeTimeText,
         raceName,
         specIconHtml,
         displaySpecClass,
@@ -1821,13 +1824,35 @@ window.addEventListener('DOMContentLoaded', async () => {
         bar.setAttribute('data-awards', awardsAttr.join(','));
         bar.style.borderLeftColor = cHex;
 
-        rankSlot.innerHTML = rankHtml;
+        if (rankNumber !== null) {
+            const rankTemplate = document.getElementById('tpl-concise-rank-indicator');
+            if (rankTemplate) {
+                const rankClone = rankTemplate.content.cloneNode(true);
+                const rankEl = rankClone.querySelector('.concise-rank-indicator');
+                rankEl.classList.add(rankSizeClass, rankToneClass);
+                rankEl.textContent = `#${rankNumber}`;
+                rankSlot.appendChild(rankClone);
+            }
+        }
 
         portrait.src = portraitURL;
         portrait.style.borderColor = cHex;
 
+        nameEl.textContent = displayName;
         nameEl.style.color = cHex;
-        nameEl.innerHTML = `${displayName}${vanguardBadgeHtml}`;
+
+        if (showVanguardBadge) {
+            const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
+            if (vanguardTemplate) {
+                const vanguardClone = vanguardTemplate.content.cloneNode(true);
+                const timeEl = vanguardClone.querySelector('.vanguard-badge-time');
+                if (vanguardBadgeTimeText) {
+                    timeEl.textContent = vanguardBadgeTimeText;
+                    timeEl.hidden = false;
+                }
+                nameEl.appendChild(vanguardClone);
+            }
+        }
 
         metaEl.innerHTML = isClickable
             ? `${raceName} &bull; ${specIconHtml}${displaySpecClass}`
@@ -2161,33 +2186,34 @@ window.addEventListener('DOMContentLoaded', async () => {
             // Inject Podium Classes & Rank Number if we are on a Ladder View
             const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
             let podiumClass = '';
-            let rankHtml = '';
-            
+            let rankNumber = null;
+            let rankToneClass = '';
+            let rankSizeClass = '';
+
             if (isLadderView) {
                 podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-                const rankToneClass = index === 0 ? 'concise-rank-gold' : index === 1 ? 'concise-rank-silver' : index === 2 ? 'concise-rank-bronze' : 'concise-rank-default';
-                const rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
-                rankHtml = `<div class="concise-rank-indicator ${rankSizeClass} ${rankToneClass}">#${index + 1}</div>`;
+                rankToneClass = index === 0 ? 'concise-rank-gold' : index === 1 ? 'concise-rank-silver' : index === 2 ? 'concise-rank-bronze' : 'concise-rank-default';
+                rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
+                rankNumber = index + 1;
             }
 
             // --- NEW: Vanguard Aura Logic ---
             let vanguardClass = '';
-            let vanguardBadgeHtml = '';
+            let showVanguardBadge = false;
+            let vanguardBadgeTimeText = '';
             if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
                 const type = hashUrl.replace('war-effort-', '');
                 if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(cleanName)) {
                     vanguardClass = 'vanguard-aura';
-                    let timeText = '';
-                    
+                    showVanguardBadge = true;
+
                     // Grab the locked timestamp and format it nicely (24-Hour)
                     if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
                         const dt = new Date(window.warEffortLockTimes[type]);
                         if (!isNaN(dt)) {
-                            timeText = ` <span class="vanguard-badge-time">(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})</span>`;
+                            vanguardBadgeTimeText = `(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})`;
                         }
                     }
-                    
-                    vanguardBadgeHtml = `<span class="vanguard-badge">🌟 VANGUARD${timeText}</span>`;
                 }
             }
 
@@ -2246,10 +2272,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 cHex,
                 isWarEffortRow,
                 isWarEffortLootRow,
-                rankHtml,
+                rankNumber,
+                rankToneClass,
+                rankSizeClass,
                 portraitURL,
                 displayName,
-                vanguardBadgeHtml,
+                showVanguardBadge,
+                vanguardBadgeTimeText,
                 raceName,
                 specIconHtml,
                 displaySpecClass,
