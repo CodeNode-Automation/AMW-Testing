@@ -2376,7 +2376,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     if (contextData) {
                         if (hashUrl === 'war-effort-xp') {
-                            statsHtml = `<span class="we-stat-xp">+${contextData} Levels Contributed</span>`;
+                            const xpTemplate = document.getElementById('tpl-we-stat-xp');
+                            if (xpTemplate) {
+                                const xpClone = xpTemplate.content.cloneNode(true);
+                                const xpEl = xpClone.querySelector('.we-stat-xp');
+                                xpEl.textContent = `+${contextData} Levels Contributed`;
+
+                                const xpWrapper = document.createElement('div');
+                                xpWrapper.appendChild(xpClone);
+                                statsHtml = xpWrapper.innerHTML;
+                            }
                         } else if (hashUrl === 'war-effort-loot') {
                             // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             isWarEffortLootRow = true;
@@ -2389,12 +2398,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 </div>
                             `;
                         } else if (hashUrl === 'war-effort-zenith') {
-                            statsHtml = `
-                                <div class="we-zenith-wrapper">
-                                    <span class="we-zenith-lbl">Reached Level 70 on:</span>
-                                    <span class="we-zenith-val">${contextData}</span>
-                                </div>
-                            `;
+                            const zenithTemplate = document.getElementById('tpl-we-stat-zenith');
+                            if (zenithTemplate) {
+                                const zenithClone = zenithTemplate.content.cloneNode(true);
+                                const zenithVal = zenithClone.querySelector('.we-zenith-val');
+                                zenithVal.textContent = contextData;
+
+                                const zenithWrapper = document.createElement('div');
+                                zenithWrapper.appendChild(zenithClone);
+                                statsHtml = zenithWrapper.innerHTML;
+                            }
                         }
                     }
                 }
