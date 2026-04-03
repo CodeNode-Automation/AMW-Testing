@@ -1757,6 +1757,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
+    <template id="tpl-full-card-gear-contribution-row">
+        <div class="stat-row">
+            <span class="stat-lbl"></span>
+            <span class="stat-val">
+                <span class="gear-base-stat"></span>
+                <span class="gear-gain-stat"></span>
+            </span>
+        </div>
+    </template>
+
     <template id="tpl-full-card-weapon-header">
         <div class="weapon-stats-header"></div>
     </template>
@@ -1876,10 +1886,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-03T13:28:00.786493Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-03T13:31:27.737823Z", "active_14_days": 411, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 626, "loot": 485, "levels": 141, "total_roster": 658, "active_roster": 411}]
+        [{"date": "2026-03-28", "day_name": "Sat", "count": 664, "loot": 513, "levels": 151, "total_roster": 642, "active_roster": 409}, {"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 628, "loot": 486, "levels": 142, "total_roster": 658, "active_roster": 411}]
     </script>
 
     <script>
@@ -3223,12 +3233,49 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Show Gear Contribution for Casters or characters lacking weapon API data
         if (mhDps === 0 || isCaster || isTank) {
             const marginClass = mhDps > 0 ? 'weapon-stats-header-mt16' : 'weapon-stats-header-mt0';
-            weaponStatsHtml += `<div class="weapon-stats-header ${marginClass}">Gear Contribution</div>`;
-            weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🛡️ Stamina</span><span class="stat-val"><span class="gear-base-stat">${staBase} Base</span> <span class="gear-gain-stat">+${staVal - staBase}</span></span></div>`;
-            if (intVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🧠 Intellect</span><span class="stat-val"><span class="gear-base-stat">${intBase} Base</span> <span class="gear-gain-stat">+${intVal - intBase}</span></span></div>`;
-            if (spiVal > 0) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">✨ Spirit</span><span class="stat-val"><span class="gear-base-stat">${spiBase} Base</span> <span class="gear-gain-stat">+${spiVal - spiBase}</span></span></div>`;
-            if (strVal > 0 && !isCaster) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">⚔️ Strength</span><span class="stat-val"><span class="gear-base-stat">${strBase} Base</span> <span class="gear-gain-stat">+${strVal - strBase}</span></span></div>`;
-            if (agiVal > 0 && (!isCaster || isHunter)) weaponStatsHtml += `<div class="stat-row"><span class="stat-lbl">🏹 Agility</span><span class="stat-val"><span class="gear-base-stat">${agiBase} Base</span> <span class="gear-gain-stat">+${agiVal - agiBase}</span></span></div>`;
+
+            weaponStatsHtml += buildFullCardWeaponHeaderHtml({
+                text: 'Gear Contribution',
+                extraClass: marginClass
+            });
+
+            weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                label: '🛡️ Stamina',
+                baseValue: staBase,
+                gainValue: staVal - staBase
+            });
+
+            if (intVal > 0) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '🧠 Intellect',
+                    baseValue: intBase,
+                    gainValue: intVal - intBase
+                });
+            }
+
+            if (spiVal > 0) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '✨ Spirit',
+                    baseValue: spiBase,
+                    gainValue: spiVal - spiBase
+                });
+            }
+
+            if (strVal > 0 && !isCaster) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '⚔️ Strength',
+                    baseValue: strBase,
+                    gainValue: strVal - strBase
+                });
+            }
+
+            if (agiVal > 0 && (!isCaster || isHunter)) {
+                weaponStatsHtml += buildFullCardGearContributionRowHtml({
+                    label: '🏹 Agility',
+                    baseValue: agiBase,
+                    gainValue: agiVal - agiBase
+                });
+            }
         }
 
         const xp = p.experience || 0;
@@ -3573,6 +3620,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     function getTemplateRootHtml(templateId) {
         const template = document.getElementById(templateId);
         const rootEl = template?.content?.firstElementChild;
+        return rootEl ? rootEl.outerHTML : '';
+    }
+
+    function buildFullCardGearContributionRowHtml({ label, baseValue, gainValue }) {
+        const template = document.getElementById('tpl-full-card-gear-contribution-row');
+        if (!template) return '';
+
+        const clone = template.content.cloneNode(true);
+        const labelEl = clone.querySelector('.stat-lbl');
+        const baseEl = clone.querySelector('.gear-base-stat');
+        const gainEl = clone.querySelector('.gear-gain-stat');
+
+        if (labelEl) {
+            labelEl.textContent = label;
+        }
+
+        if (baseEl) {
+            baseEl.textContent = `${baseValue} Base`;
+        }
+
+        if (gainEl) {
+            gainEl.textContent = `+${gainValue}`;
+        }
+
+        const rootEl = clone.firstElementChild;
         return rootEl ? rootEl.outerHTML : '';
     }
 
