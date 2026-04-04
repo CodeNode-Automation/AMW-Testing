@@ -5554,9 +5554,9 @@ a,
 .lb-podium-wrap.ladder-podium-wrap {
   align-items: flex-end;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 28px;
   margin-bottom: 8px;
-  padding-top: 18px;
+  padding-top: 26px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
@@ -5567,20 +5567,19 @@ a,
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  min-height: 168px;
   padding: 18px 10px 14px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
-  transform: translateY(-18px);
+  min-height: 196px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
-  transform: translateY(8px);
+  min-height: 168px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
-  transform: translateY(18px);
+  min-height: 154px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
@@ -5589,7 +5588,9 @@ a,
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-  top: -34px;
+  top: -42px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 6;
 }
 
@@ -5648,25 +5649,24 @@ a,
 @media (max-width: 900px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 8px;
-    margin-top: 18px;
-    padding-top: 14px;
-  }
-
-  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
-    min-height: 152px;
-    padding: 16px 8px 12px;
+    margin-top: 22px;
+    padding-top: 20px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
-    transform: translateY(-14px);
+    min-height: 178px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
-    transform: translateY(6px);
+    min-height: 154px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
-    transform: translateY(14px);
+    min-height: 142px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    padding: 16px 8px 12px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
@@ -5675,7 +5675,7 @@ a,
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -30px;
+    top: -38px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
@@ -5691,25 +5691,24 @@ a,
 @media (max-width: 600px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 6px;
-    margin-top: 14px;
-    padding-top: 10px;
-  }
-
-  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
-    min-height: 136px;
-    padding: 14px 6px 10px;
+    margin-top: 16px;
+    padding-top: 16px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
-    transform: translateY(-10px);
+    min-height: 156px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
-    transform: translateY(4px);
+    min-height: 138px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
-    transform: translateY(10px);
+    min-height: 126px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    padding: 14px 6px 10px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
@@ -5718,7 +5717,7 @@ a,
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -26px;
+    top: -34px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
