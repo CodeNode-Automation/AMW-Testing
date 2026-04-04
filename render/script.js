@@ -3056,11 +3056,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 listItemNodes.forEach(node => {
                     if (node) listWrap.appendChild(node);
                 });
-                conciseList.appendChild(listWrap);
 
                 if (isFullLadderView) {
-                    appendLadderLoadMoreButton(conciseList, listItemNodes);
+                    appendLadderLoadMoreButton(listWrap, listItemNodes);
                 }
+
+                conciseList.appendChild(listWrap);
             }
         } else {
             listItemNodes.forEach(node => {
@@ -4115,9 +4116,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (timeline) {
-            const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
-            timelineTitle.textContent = `📜 ${baseTitle} Activity`;
-            applyTimelineFilters();
+            if (isFullLadderView) {
+                timeline.classList.add('view-hidden');
+            } else {
+                const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
+                timeline.classList.remove('view-hidden');
+                timelineTitle.textContent = `📜 ${baseTitle} Activity`;
+                applyTimelineFilters();
+            }
         }
     }
 
