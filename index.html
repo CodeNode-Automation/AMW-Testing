@@ -353,8 +353,24 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .leaderboard-title { font-family: 'Cinzel'; text-align: center; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; text-shadow: 0 2px 4px #000; }
-.lb-title-pve { color: #ff8000; }
-.lb-title-pvp { color: #ff4400; }
+.lb-title-pve,
+.mvp-card-pve,
+.mvp-card-title-pve {
+    --activity-accent: #ff8000;
+    --activity-glow: rgba(255,128,0,0.1);
+}
+
+.lb-title-pvp,
+.mvp-card-pvp,
+.mvp-card-title-pvp {
+    --activity-accent: #ff4400;
+    --activity-glow: rgba(255,68,0,0.1);
+}
+
+.lb-title-pve,
+.lb-title-pvp {
+    color: var(--activity-accent);
+}
 
 /* Components */
 .btn-pve { border-color: #ff8000; color: #ff8000; }
@@ -1349,10 +1365,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .mvp-card-title { text-align: center; font-family: 'Cinzel'; margin-top: 0; margin-bottom: 15px; }
 
 /* Components */
-.mvp-card-pve { border: 1px solid #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1); }
-.mvp-card-title-pve { color: #ff8000; }
-.mvp-card-pvp { border: 1px solid #ff4400; box-shadow: inset 0 0 15px rgba(255,68,0,0.1); }
-.mvp-card-title-pvp { color: #ff4400; }
+.mvp-card-pve,
+.mvp-card-pvp {
+    border: 1px solid var(--activity-accent);
+    box-shadow: inset 0 0 15px var(--activity-glow);
+}
+
+.mvp-card-title-pve,
+.mvp-card-title-pvp {
+    color: var(--activity-accent);
+}
 .lb-podium-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-top: 25px; margin-bottom: 15px; width: 100%; } .lb-list-wrap { display: flex; flex-direction: column; gap: 8px; width: 100%; } @media(max-width:600px){ .lb-podium-wrap { gap: 4px; } .podium-block { padding: 30px 2px 8px 2px; } }
 
 .home-dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%; max-width: 1200px; margin: 0 auto; } @media(min-width: 1024px) { .home-dashboard-grid { grid-template-columns: 1fr 1fr; grid-template-areas: "heatmap heatmap" "wareffort mvps" "leaderboards leaderboards"; align-items: stretch; gap: 40px; } .home-dashboard-grid > div:nth-child(1) { grid-area: heatmap; } .home-dashboard-grid > #guild-xp-container { grid-area: wareffort; margin: 0 !important; } .home-dashboard-grid > #weekly-mvps-container { grid-area: mvps; margin: 0 !important; } .home-dashboard-grid > #leaderboards-wrapper { grid-area: leaderboards; margin: 0 auto !important; } }
@@ -2431,10 +2453,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T09:23:25.319718Z", "active_14_days": 409, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T09:44:39.409072Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 257, "loot": 195, "levels": 62, "total_roster": 660, "active_roster": 409}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 266, "loot": 201, "levels": 65, "total_roster": 660, "active_roster": 408}]
     </script>
 
     <script>
