@@ -421,6 +421,7 @@
             <img src="" class="podium-avatar" alt="">
             <div class="podium-rank"></div>
             <div class="podium-name"></div>
+            <div class="podium-meta"></div>
             <div class="podium-pill">
                 <div class="podium-stat-line">
                     <span class="podium-stat-val"></span>
@@ -428,6 +429,55 @@
                 </div>
                 <div class="podium-trend-container"></div>
             </div>
+            <div class="podium-rivalry"></div>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-shell">
+        <section class="ladder-hero-shell">
+            <div class="ladder-hero-head">
+                <span class="ladder-overline"></span>
+                <h3 class="ladder-hero-title"></h3>
+                <p class="ladder-hero-desc"></p>
+            </div>
+            <div class="ladder-hero-stats"></div>
+            <div class="ladder-hero-tools">
+                <div class="ladder-find-wrap">
+                    <label class="ladder-find-label" for="ladder-rank-search">Find your rank</label>
+                    <div class="ladder-find-controls">
+                        <input type="text" id="ladder-rank-search" class="ladder-find-input" autocomplete="off" placeholder="Enter a character name...">
+                        <button type="button" class="ladder-find-btn">Jump to player</button>
+                    </div>
+                    <div class="ladder-find-status" aria-live="polite">Search the ladder and jump directly to any ranked character.</div>
+                </div>
+            </div>
+            <div class="ladder-insights-grid"></div>
+        </section>
+        <div class="ladder-podium-heading">
+            <span class="ladder-section-kicker"></span>
+            <h3 class="ladder-section-title"></h3>
+            <p class="ladder-section-desc"></p>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-hero-stat">
+        <div class="ladder-hero-stat-card">
+            <span class="ladder-hero-stat-value"></span>
+            <span class="ladder-hero-stat-label"></span>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-insight-card">
+        <article class="ladder-insight-card">
+            <span class="ladder-insight-kicker"></span>
+            <span class="ladder-insight-value"></span>
+            <span class="ladder-insight-meta"></span>
+        </article>
+    </template>
+
+    <template id="tpl-ladder-rank-separator">
+        <div class="ladder-rank-separator">
+            <span class="ladder-rank-separator-label"></span>
         </div>
     </template>
 

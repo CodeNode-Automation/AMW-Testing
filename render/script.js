@@ -191,6 +191,244 @@ function buildConciseTrendHtml(trend) {
     return rootEl || null;
 }
 
+function getCharacterRole(cClass, specName = '') {
+    if (["Protection", "Blood"].includes(specName) || (cClass === "Druid" && specName === "Feral Combat")) return "Tank";
+    if (["Holy", "Discipline", "Restoration"].includes(specName)) return "Healer";
+    if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(specName)) return "Ranged DPS";
+    return "Melee DPS";
+}
+
+function getLadderConfig(hashUrl) {
+    if (hashUrl === 'ladder-pvp') {
+        return {
+            theme: 'pvp',
+            overline: 'Guild War Board',
+            heroTitle: 'The Blood Ledger',
+            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
+            metricLabel: 'Honorable Kills',
+            metricShort: 'HKs',
+            podiumKicker: 'Battlefield Elite',
+            podiumTitle: 'Featured Champions',
+            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
+        };
+    }
+
+    return {
+        theme: 'pve',
+        overline: 'Raid Command Board',
+        heroTitle: 'The Black Temple Vanguard',
+        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
+        metricLabel: 'Item Level',
+        metricShort: 'iLvl',
+        podiumKicker: 'Raid Vanguard',
+        podiumTitle: 'Featured Champions',
+        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
+    };
+}
+
+function getLadderMetricValue(char, hashUrl) {
+    const profile = char && char.profile ? char.profile : {};
+    return hashUrl === 'ladder-pvp'
+        ? (profile.honorable_kills || 0)
+        : (profile.equipped_item_level || 0);
+}
+
+function getLadderTrendValue(char, hashUrl) {
+    const profile = char && char.profile ? char.profile : {};
+    return hashUrl === 'ladder-pvp'
+        ? (profile.trend_pvp || profile.trend_hks || 0)
+        : (profile.trend_pve || profile.trend_ilvl || 0);
+}
+
+function formatLadderMetricValue(value, hashUrl) {
+    const safeValue = Math.max(0, Number(value) || 0);
+    return hashUrl === 'ladder-pvp'
+        ? safeValue.toLocaleString()
+        : Math.round(safeValue).toLocaleString();
+}
+
+function formatCompactMetricValue(value) {
+    return new Intl.NumberFormat('en', {
+        notation: 'compact',
+        maximumFractionDigits: value >= 100000 ? 1 : 0
+    }).format(Math.max(0, Number(value) || 0));
+}
+
+function getLadderStatusMeta(trendValue) {
+    if (trendValue > 0) return { text: 'Rising', className: 'is-rising' };
+    if (trendValue < 0) return { text: 'Slipping', className: 'is-slipping' };
+    return { text: 'Holding', className: 'is-holding' };
+}
+
+function buildLadderHeroStatNode(value, label) {
+    const template = document.getElementById('tpl-ladder-hero-stat');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const valueEl = clone.querySelector('.ladder-hero-stat-value');
+    const labelEl = clone.querySelector('.ladder-hero-stat-label');
+
+    if (valueEl) valueEl.textContent = value;
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function buildLadderInsightNode(kicker, value, meta) {
+    const template = document.getElementById('tpl-ladder-insight-card');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const kickerEl = clone.querySelector('.ladder-insight-kicker');
+    const valueEl = clone.querySelector('.ladder-insight-value');
+    const metaEl = clone.querySelector('.ladder-insight-meta');
+
+    if (kickerEl) kickerEl.textContent = kicker;
+    if (valueEl) valueEl.textContent = value;
+    if (metaEl) metaEl.textContent = meta;
+
+    return clone.firstElementChild || null;
+}
+
+function buildLadderSeparatorNode(label) {
+    const template = document.getElementById('tpl-ladder-rank-separator');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const labelEl = clone.querySelector('.ladder-rank-separator-label');
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function getLadderSeparatorLabel(rankNumber, totalCount) {
+    if (rankNumber === 4) {
+        return `The Pursuing Pack • Ranks #4 - #${Math.min(9, totalCount)}`;
+    }
+
+    if (rankNumber >= 10 && (rankNumber - 10) % 5 === 0) {
+        return `Ranks #${rankNumber} - #${Math.min(rankNumber + 4, totalCount)}`;
+    }
+
+    return '';
+}
+
+function decorateLadderRows(rowNodes, totalCount) {
+    const decoratedNodes = [];
+
+    rowNodes.forEach((node, index) => {
+        const actualRank = index + 4;
+        const separatorLabel = getLadderSeparatorLabel(actualRank, totalCount);
+
+        if (separatorLabel) {
+            const separatorNode = buildLadderSeparatorNode(separatorLabel);
+            if (separatorNode) decoratedNodes.push(separatorNode);
+        }
+
+        decoratedNodes.push(node);
+    });
+
+    return decoratedNodes;
+}
+
+function findLadderCharacterIndex(characters, rawQuery) {
+    const query = (rawQuery || '').toLowerCase().trim();
+    if (!query) return -1;
+
+    const names = characters.map(char => char && char.profile && char.profile.name ? char.profile.name.toLowerCase() : '');
+
+    let matchIndex = names.findIndex(name => name === query);
+    if (matchIndex !== -1) return matchIndex;
+
+    matchIndex = names.findIndex(name => name.startsWith(query));
+    if (matchIndex !== -1) return matchIndex;
+
+    return names.findIndex(name => name.includes(query));
+}
+
+function buildLadderShell(characters, hashUrl) {
+    const template = document.getElementById('tpl-ladder-shell');
+    if (!template || !Array.isArray(characters) || characters.length === 0) return null;
+
+    const config = getLadderConfig(hashUrl);
+    const clone = template.content.cloneNode(true);
+    const shell = clone.querySelector('.ladder-hero-shell');
+    const overline = clone.querySelector('.ladder-overline');
+    const heroTitle = clone.querySelector('.ladder-hero-title');
+    const heroDesc = clone.querySelector('.ladder-hero-desc');
+    const statsGrid = clone.querySelector('.ladder-hero-stats');
+    const insightsGrid = clone.querySelector('.ladder-insights-grid');
+    const podiumKicker = clone.querySelector('.ladder-section-kicker');
+    const podiumTitle = clone.querySelector('.ladder-section-title');
+    const podiumDesc = clone.querySelector('.ladder-section-desc');
+
+    if (shell) shell.classList.add(`ladder-shell-${config.theme}`);
+    if (overline) overline.textContent = config.overline;
+    if (heroTitle) heroTitle.textContent = config.heroTitle;
+    if (heroDesc) heroDesc.textContent = config.heroDesc;
+    if (podiumKicker) podiumKicker.textContent = config.podiumKicker;
+    if (podiumTitle) podiumTitle.textContent = config.podiumTitle;
+    if (podiumDesc) podiumDesc.textContent = config.podiumDesc;
+
+    const leader = characters[0];
+    const second = characters[1] || null;
+    const leaderProfile = leader.profile || {};
+    const leaderName = leaderProfile.name || 'Unknown';
+    const leaderMetric = getLadderMetricValue(leader, hashUrl);
+    const averageMetric = Math.round(characters.reduce((sum, char) => sum + getLadderMetricValue(char, hashUrl), 0) / characters.length) || 0;
+
+    const classCounts = characters.reduce((acc, char) => {
+        const cClass = char && char.profile && char.profile.character_class && char.profile.character_class.name
+            ? (typeof char.profile.character_class.name === 'string' ? char.profile.character_class.name : char.profile.character_class.name.en_US)
+            : 'Unknown';
+        acc[cClass] = (acc[cClass] || 0) + 1;
+        return acc;
+    }, {});
+
+    const dominantClassEntry = Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0] || ['Unknown', 0];
+    const biggestMover = [...characters]
+        .sort((a, b) => getLadderTrendValue(b, hashUrl) - getLadderTrendValue(a, hashUrl))[0] || leader;
+    const biggestMoverTrend = getLadderTrendValue(biggestMover, hashUrl);
+    const rivalryGap = second ? Math.max(0, leaderMetric - getLadderMetricValue(second, hashUrl)) : 0;
+    const leaderRole = getCharacterRole(
+        leader && leader.profile && leader.profile.character_class && leader.profile.character_class.name
+            ? (typeof leader.profile.character_class.name === 'string' ? leader.profile.character_class.name : leader.profile.character_class.name.en_US)
+            : 'Unknown',
+        leaderProfile.active_spec || ''
+    );
+
+    [
+        buildLadderHeroStatNode(characters.length.toLocaleString(), 'Ranked Heroes'),
+        buildLadderHeroStatNode(formatLadderMetricValue(leaderMetric, hashUrl), `Champion ${config.metricShort}`),
+        buildLadderHeroStatNode(formatLadderMetricValue(averageMetric, hashUrl), `Average ${config.metricShort}`)
+    ].forEach(node => {
+        if (node && statsGrid) statsGrid.appendChild(node);
+    });
+
+    const insightNodes = [
+        buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
+        buildLadderInsightNode(
+            'Fastest Climb',
+            biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
+            biggestMoverTrend > 0
+                ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
+                : 'No positive climb recorded yet'
+        ),
+        buildLadderInsightNode('Most Represented Class', dominantClassEntry[0], `${dominantClassEntry[1]} heroes currently ranked`),
+        buildLadderInsightNode(
+            'Closest Rivalry',
+            second ? `${formatCompactMetricValue(rivalryGap)} ${config.metricShort}` : 'No rival yet',
+            second ? `Gap between #1 ${leaderName} and #2 ${second.profile && second.profile.name ? second.profile.name : 'Unknown'}` : 'Only one player is currently ranked'
+        )
+    ];
+
+    insightNodes.forEach(node => {
+        if (node && insightsGrid) insightsGrid.appendChild(node);
+    });
+
+    return clone;
+}
+
 // NEW: Added 'async' so we can fetch the external files
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -2305,7 +2543,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         statsNode,
         hashUrl,
         vanguardClass,
-        podiumClass
+        podiumClass,
+        ladderMeta = null
     }) {
         const template = document.getElementById('tpl-concise-row');
         if (!template) return null;
@@ -2326,6 +2565,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (isWarEffortLootRow) {
             bar.classList.add('concise-char-bar-war-effort-loot');
             innerWrap.classList.add('concise-row-inner-war-effort-loot');
+        }
+
+        if (ladderMeta) {
+            bar.classList.add('ladder-row-card', `ladder-row-${ladderMeta.theme}`);
+            bar.setAttribute('data-rank', String(rankNumber || ''));
         }
 
         if (isClickable) {
@@ -2375,6 +2619,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             isClickable
         });
 
+        if (ladderMeta && ladderMeta.statusText) {
+            metaEl.appendChild(document.createTextNode(' • '));
+            const statusChip = document.createElement('span');
+            statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
+            statusChip.textContent = ladderMeta.statusText;
+            metaEl.appendChild(statusChip);
+        }
+
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
             statsBottom.hidden = false;
@@ -2386,6 +2638,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsBottom.remove();
             if (statsNode) {
                 statsTop.appendChild(statsNode);
+            }
+
+            if (ladderMeta && ladderMeta.noteText) {
+                const noteEl = document.createElement('div');
+                noteEl.className = 'ladder-row-note';
+                noteEl.textContent = ladderMeta.noteText;
+                statsTop.appendChild(noteEl);
             }
         }
 
@@ -2406,7 +2665,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         vanguardClass,
         hashUrl,
         deepChar,
-        statValue
+        statValue,
+        raceName,
+        displaySpecClass,
+        rivalryText
     }) {
         const template = document.getElementById('tpl-concise-podium');
         if (!template) return null;
@@ -2418,6 +2680,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const avatar = clone.querySelector('.podium-avatar');
         const rankEl = clone.querySelector('.podium-rank');
         const nameEl = clone.querySelector('.podium-name');
+        const metaEl = clone.querySelector('.podium-meta');
+        const rivalryEl = clone.querySelector('.podium-rivalry');
         const pill = clone.querySelector('.podium-pill');
         const statLine = clone.querySelector('.podium-stat-line');
         const statValEl = clone.querySelector('.podium-stat-val');
@@ -2446,6 +2710,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         rankEl.textContent = `#${rank}`;
 
         nameEl.textContent = baseName;
+        if (metaEl) metaEl.textContent = `${raceName} • ${displaySpecClass}`;
+        if (rivalryEl) rivalryEl.textContent = rivalryText || '';
 
         if (hashUrl === 'war-effort-hk') {
             const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
@@ -2493,7 +2759,93 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Variable to track current sort method
     let currentSortMethod = 'level';
     let conciseRenderedCount = 0;
+    let pendingLadderJumpQuery = '';
     const conciseBatchSize = 25;
+
+    function setLadderJumpStatus(shellNode, message, state = '') {
+        if (!shellNode) return;
+
+        const statusEl = shellNode.querySelector('.ladder-find-status');
+        if (!statusEl) return;
+
+        statusEl.textContent = message;
+        statusEl.classList.remove('is-success', 'is-error');
+        if (state) statusEl.classList.add(state);
+    }
+
+    function scrollToLadderCharacter(query, rankNumber = null) {
+        const normalizedQuery = (query || '').toLowerCase().trim();
+        if (!normalizedQuery || !conciseList) return false;
+
+        const candidates = Array.from(conciseList.querySelectorAll('.podium-block[data-char], .concise-char-bar[data-char]'));
+        const targetNode = candidates.find(node => (node.getAttribute('data-char') || '').toLowerCase() === normalizedQuery);
+        if (!targetNode) return false;
+
+        targetNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetNode.classList.remove('ladder-row-flash');
+        void targetNode.offsetWidth;
+        targetNode.classList.add('ladder-row-flash');
+        window.setTimeout(() => targetNode.classList.remove('ladder-row-flash'), 1800);
+
+        const shellNode = conciseList.querySelector('.ladder-hero-shell')?.parentElement || conciseList;
+        setLadderJumpStatus(
+            shellNode,
+            rankNumber ? `Jumped to #${rankNumber}.` : 'Jumped to the selected player.',
+            'is-success'
+        );
+
+        return true;
+    }
+
+    function bindLadderJumpControls(shellFragment, title, characters, isRawMode) {
+        if (!shellFragment) return;
+
+        const shellNode = shellFragment.querySelector('.ladder-hero-shell')
+            ? shellFragment
+            : shellFragment.closest('.ladder-shell-wrapper') || shellFragment;
+        const input = shellFragment.querySelector('.ladder-find-input');
+        const button = shellFragment.querySelector('.ladder-find-btn');
+
+        if (!input || !button) return;
+
+        const executeJump = () => {
+            const rawQuery = input.value || '';
+            const matchIndex = findLadderCharacterIndex(characters, rawQuery);
+
+            if (matchIndex === -1) {
+                setLadderJumpStatus(shellNode, `No ranked player found for "${rawQuery.trim() || 'that search'}".`, 'is-error');
+                return;
+            }
+
+            const matchedChar = characters[matchIndex];
+            const matchedName = matchedChar && matchedChar.profile && matchedChar.profile.name
+                ? matchedChar.profile.name.toLowerCase()
+                : rawQuery.toLowerCase().trim();
+            const requiredVisibleCount = Math.max(25, matchIndex + 1);
+
+            pendingLadderJumpQuery = matchedName;
+
+            if (requiredVisibleCount > conciseRenderedCount) {
+                conciseRenderedCount = requiredVisibleCount;
+                renderConciseList(title, characters, isRawMode);
+                return;
+            }
+
+            scrollToLadderCharacter(matchedName, matchIndex + 1);
+        };
+
+        button.onclick = executeJump;
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                executeJump();
+            }
+        });
+
+        if (pendingLadderJumpQuery) {
+            input.value = pendingLadderJumpQuery;
+        }
+    }
 
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
@@ -2918,6 +3270,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
+            const isLadderCardView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+            const ladderMetric = isLadderCardView ? getLadderMetricValue(deepChar || char, hashUrl) : 0;
+            const ladderLeaderMetric = isLadderCardView && sortedCharacters[0] ? getLadderMetricValue(sortedCharacters[0], hashUrl) : 0;
+            const ladderTrend = isLadderCardView ? getLadderTrendValue(deepChar || char, hashUrl) : 0;
+            const ladderStatus = getLadderStatusMeta(ladderTrend);
+            const ladderGap = Math.max(0, ladderLeaderMetric - ladderMetric);
+            const ladderMeta = isLadderCardView && index >= 3 ? {
+                theme: hashUrl === 'ladder-pvp' ? 'pvp' : 'pve',
+                statusText: ladderStatus.text,
+                statusClass: ladderStatus.className,
+                noteText: rankNumber === 4
+                    ? `Closest challenger • ${ladderGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'} behind #1`
+                    : `Gap to #1 • ${ladderGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`
+            } : null;
+
             // 4. Render the HTML Row (or intercept for Podium)
             const rowNode = buildConciseRowHtml({
                 isClickable,
@@ -2942,7 +3309,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 statsNode,
                 hashUrl,
                 vanguardClass,
-                podiumClass
+                podiumClass,
+                ladderMeta
             });
 
             // Intercept and Build Podium Block for Top 3
@@ -2950,6 +3318,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                const previousChar = index > 0 ? sortedCharacters[index - 1] : null;
+                const nextChar = sortedCharacters[index + 1] || null;
+                let rivalryText = 'Champion of the current ladder';
+
+                if (rank === 1 && nextChar) {
+                    const leadGap = Math.max(0, getLadderMetricValue(deepChar || char, hashUrl) - getLadderMetricValue(nextChar, hashUrl));
+                    rivalryText = `Leads #2 by ${leadGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
+                } else if (previousChar) {
+                    const chaseGap = Math.max(0, getLadderMetricValue(previousChar, hashUrl) - getLadderMetricValue(deepChar || char, hashUrl));
+                    rivalryText = `Trails the rank above by ${chaseGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
+                }
                 
                 const podiumNode = buildConcisePodiumHtml({
                     cleanName,
@@ -2965,7 +3344,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                     vanguardClass,
                     hashUrl,
                     deepChar,
-                    statValue
+                    statValue,
+                    raceName,
+                    displaySpecClass,
+                    rivalryText
                 });
 
                 if (podiumNode) {
@@ -2985,6 +3367,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         const visibleListNodes = isPaginatedLadder
             ? listItemNodes.slice(0, visibleListCount)
             : listItemNodes;
+        const renderedListNodes = isPaginatedLadder
+            ? decorateLadderRows(visibleListNodes, characters.length)
+            : visibleListNodes;
+
+        if (isPaginatedLadder) {
+            const ladderShell = buildLadderShell(characters, hashUrl);
+            if (ladderShell) {
+                bindLadderJumpControls(ladderShell, title, characters, isRawMode);
+                conciseList.appendChild(ladderShell);
+            }
+        }
 
         if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
@@ -3001,13 +3394,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                visibleListNodes.forEach(node => {
+                renderedListNodes.forEach(node => {
                     if (node) listWrap.appendChild(node);
                 });
                 conciseList.appendChild(listWrap);
             }
         } else {
-            visibleListNodes.forEach(node => {
+            renderedListNodes.forEach(node => {
                 if (node) conciseList.appendChild(node);
             });
         }
@@ -3058,28 +3451,39 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Bind the event listener to the newly created dropdown if it exists
-        const sortDropdown = document.getElementById('concise-sort-dropdown');
-        if (sortDropdown) {
-            sortDropdown.addEventListener('change', function(e) {
-                currentSortMethod = e.target.value;
-                // Re-render the list with the exact same parameters but new sort
-                renderConciseList(title, characters, isRawMode);
-                
-                // Re-apply any active spec filters to the newly rendered HTML
-                if (typeof applyTimelineFilters === 'function') {
-                     // Trigger a click on the active badge to re-filter the DOM elements
-                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
-                     if (activeBadge) {
-                         // Briefly remove the class so the click handler re-applies it correctly
-                         activeBadge.classList.remove('active-filter'); 
-                         activeBadge.click();
-                     }
-                }
-            });
-        } 
+        const sortDropdown = document.getElementById('concise-sort-dropdown');
+        if (sortDropdown) {
+            sortDropdown.addEventListener('change', function(e) {
+                currentSortMethod = e.target.value;
+                // Re-render the list with the exact same parameters but new sort
+                renderConciseList(title, characters, isRawMode);
+                
+                // Re-apply any active spec filters to the newly rendered HTML
+                if (typeof applyTimelineFilters === 'function') {
+                     // Trigger a click on the active badge to re-filter the DOM elements
+                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
+                     if (activeBadge) {
+                         // Briefly remove the class so the click handler re-applies it correctly
+                         activeBadge.classList.remove('active-filter'); 
+                         activeBadge.click();
+                     }
+                }
+            });
+        } 
 
-        setupTooltips();
-    }
+        if (isPaginatedLadder && pendingLadderJumpQuery) {
+            const pendingQuery = pendingLadderJumpQuery;
+            const pendingRank = findLadderCharacterIndex(characters, pendingQuery) + 1;
+
+            window.requestAnimationFrame(() => {
+                if (scrollToLadderCharacter(pendingQuery, pendingRank)) {
+                    pendingLadderJumpQuery = '';
+                }
+            });
+        }
+
+        setupTooltips();
+    }
 
     function setupTooltips() {
         const tt_chars = document.querySelectorAll('.tt-char:not(.tt-bound)');
@@ -3955,6 +4359,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const hash = window.location.hash.substring(1);
         const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+        conciseView.classList.toggle('concise-view-ladder', isLadderHash);
 
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
         conciseRenderedCount = isLadderHash ? 25 : 0;

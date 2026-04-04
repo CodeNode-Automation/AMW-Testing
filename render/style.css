@@ -5466,3 +5466,397 @@ a,
     filter: drop-shadow(0 0 8px rgba(255, 209, 0, 0.6));
   }
 }
+
+/* ========================================= */
+/* LADDER EXPERIENCE UPGRADES                */
+/* ========================================= */
+#concise-view.concise-view-ladder {
+  gap: 14px;
+}
+
+#concise-view.concise-view-ladder #concise-view-title {
+  margin-bottom: 8px;
+}
+
+.ladder-hero-shell {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 26px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 209, 0, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(255, 209, 0, 0.14), transparent 30%),
+    linear-gradient(135deg, rgba(24, 18, 12, 0.92) 0%, rgba(10, 10, 14, 0.96) 100%);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.5),
+    inset 0 0 25px rgba(255, 209, 0, 0.04);
+}
+
+.ladder-hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 35%, transparent 65%, rgba(255, 255, 255, 0.05));
+}
+
+.ladder-overline,
+.ladder-section-kicker,
+.ladder-insight-kicker,
+.ladder-find-label {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ladder-overline {
+  color: #ffd100;
+}
+
+.ladder-hero-head,
+.ladder-hero-stats,
+.ladder-hero-tools,
+.ladder-insights-grid,
+.ladder-podium-heading {
+  position: relative;
+  z-index: 1;
+}
+
+.ladder-hero-title,
+.ladder-section-title {
+  margin: 0;
+  font-family: "Cinzel";
+  text-shadow: 0 3px 8px #000;
+}
+
+.ladder-hero-title {
+  font-size: clamp(26px, 4vw, 38px);
+  color: #fff3c4;
+}
+
+.ladder-hero-desc,
+.ladder-section-desc,
+.ladder-find-status,
+.ladder-insight-meta,
+.podium-meta,
+.podium-rivalry,
+.ladder-row-note {
+  color: #c7bfaa;
+}
+
+.ladder-hero-desc,
+.ladder-section-desc {
+  margin: 8px 0 0;
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.ladder-hero-stats,
+.ladder-insights-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.ladder-hero-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ladder-insights-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ladder-hero-stat-card,
+.ladder-insight-card,
+.ladder-podium-heading,
+.ladder-rank-separator {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.18));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ladder-hero-stat-card,
+.ladder-insight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 98px;
+  padding: 16px 18px;
+  border-radius: 12px;
+}
+
+.ladder-hero-stat-value,
+.ladder-insight-value {
+  font-family: "Cinzel";
+  font-size: 26px;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 2px 6px #000;
+}
+
+.ladder-hero-stat-label,
+.ladder-insight-meta {
+  font-size: 12px;
+}
+
+.ladder-insight-value {
+  font-size: 20px;
+}
+
+.ladder-find-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.ladder-find-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.ladder-find-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 209, 0, 0.18);
+  background: rgba(8, 8, 12, 0.88);
+  color: #f4ecd6;
+  font-size: 14px;
+}
+
+.ladder-find-input:focus {
+  outline: none;
+  border-color: rgba(255, 209, 0, 0.7);
+  box-shadow: 0 0 0 3px rgba(255, 209, 0, 0.14);
+}
+
+.ladder-find-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 209, 0, 0.3);
+  background: linear-gradient(180deg, rgba(255, 209, 0, 0.22), rgba(140, 72, 0, 0.22));
+  color: #ffe9a6;
+  font-family: "Cinzel";
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ladder-find-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 0, 0.68);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.ladder-find-status {
+  min-height: 18px;
+  font-size: 12px;
+}
+
+.ladder-find-status.is-success {
+  color: #8ee28e;
+}
+
+.ladder-find-status.is-error {
+  color: #ff9a7a;
+}
+
+.ladder-podium-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 22px;
+  margin: 18px 0 4px;
+  border-radius: 14px;
+}
+
+.ladder-section-kicker {
+  color: #ffb14a;
+}
+
+.ladder-section-title {
+  font-size: 24px;
+  color: #fff0bf;
+}
+
+.ladder-rank-separator {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin: 10px 0 2px;
+  border-radius: 999px;
+}
+
+.ladder-rank-separator::before,
+.ladder-rank-separator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 22%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 0, 0.55), transparent);
+}
+
+.ladder-rank-separator::before {
+  left: 18px;
+}
+
+.ladder-rank-separator::after {
+  right: 18px;
+}
+
+.ladder-rank-separator-label {
+  position: relative;
+  z-index: 1;
+  padding: 0 18px;
+  color: #f5d889;
+  font-family: "Cinzel";
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ladder-row-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ladder-row-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 20%, transparent 80%, rgba(255, 255, 255, 0.03));
+}
+
+.ladder-row-pve {
+  background: linear-gradient(90deg, rgba(36, 24, 10, 0.92) 0%, rgba(15, 12, 16, 0.96) 100%);
+  border-color: rgba(255, 166, 0, 0.12);
+}
+
+.ladder-row-pvp {
+  background: linear-gradient(90deg, rgba(34, 12, 12, 0.92) 0%, rgba(15, 10, 12, 0.96) 100%);
+  border-color: rgba(255, 92, 72, 0.12);
+}
+
+.ladder-row-card .concise-row-stats-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ladder-row-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ladder-row-status.is-rising {
+  color: #95f095;
+  border-color: rgba(149, 240, 149, 0.34);
+  background: rgba(44, 104, 44, 0.28);
+}
+
+.ladder-row-status.is-holding {
+  color: #d6d0bf;
+  border-color: rgba(214, 208, 191, 0.24);
+  background: rgba(120, 112, 94, 0.18);
+}
+
+.ladder-row-status.is-slipping {
+  color: #ffb0a3;
+  border-color: rgba(255, 176, 163, 0.32);
+  background: rgba(120, 52, 44, 0.22);
+}
+
+.ladder-row-note {
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.ladder-row-flash {
+  animation: ladderFlashPulse 1.8s ease;
+}
+
+.podium-meta,
+.podium-rivalry {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.35;
+  text-shadow: 0 1px 3px #000;
+}
+
+.podium-meta {
+  margin-bottom: 6px;
+  color: #d8cfba;
+}
+
+.podium-rivalry {
+  margin-top: 8px;
+  color: #f5d889;
+}
+
+@keyframes ladderFlashPulse {
+  0% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 rgba(255, 209, 0, 0);
+  }
+  35% {
+    transform: translateX(4px);
+    box-shadow: 0 0 0 2px rgba(255, 209, 0, 0.18), 0 0 28px rgba(255, 209, 0, 0.22);
+  }
+  100% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 rgba(255, 209, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .ladder-hero-stats,
+  .ladder-insights-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .ladder-hero-shell {
+    padding: 20px;
+  }
+
+  .ladder-find-controls {
+    flex-direction: column;
+  }
+
+  .ladder-hero-stats,
+  .ladder-insights-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ladder-rank-separator::before,
+  .ladder-rank-separator::after {
+    width: 14%;
+  }
+}
