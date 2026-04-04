@@ -1484,7 +1484,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     <template id="tpl-monument-highlight">
         <span class="monument-highlight-span"></span>
     </template>
-    
+
     <template id="tpl-mvp-placeholder">
         <div class="mvp-placeholder-card">
             <div class="mvp-placeholder-icon">👑</div>
@@ -1524,6 +1524,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
     <template id="tpl-mvp-podium-block">
         <div class="podium-block tt-char" data-char="">
+            <div class="podium-crown" hidden>👑</div>
             <img src="" class="podium-avatar">
             <div class="podium-rank"></div>
             <div class="podium-name"></div>
@@ -1535,7 +1536,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
         </div>
     </template>
 
-        <template id="tpl-home-leaderboard-podium">
+    <template id="tpl-mvp-podium-wrap">
+        <div class="mvp-podium-container"></div>
+    </template>
+    
+    <template id="tpl-home-leaderboard-podium">
         <div class="podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
             <img src="" class="podium-avatar">
@@ -2306,10 +2311,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:45:45.185151Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:52:10.009737Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 245, "loot": 186, "levels": 59, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 247, "loot": 187, "levels": 60, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
@@ -7268,8 +7273,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return clone;
             }
             
-            const container = document.createElement('div');
-            container.className = 'mvp-podium-container';
+            const containerTemplate = document.getElementById('tpl-mvp-podium-wrap');
+            if (!containerTemplate) return document.createDocumentFragment();
+
+            const containerClone = containerTemplate.content.cloneNode(true);
+            const container = containerClone.querySelector('.mvp-podium-container');
+            if (!container) return document.createDocumentFragment();
 
             chars.forEach((char, index) => {
                 const p = char.profile;
@@ -7291,12 +7300,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 block.setAttribute('data-char', (p.name || '').toLowerCase());
                 block.setAttribute('data-class', cClass);
                 block.onclick = () => selectCharacter((p.name || '').toLowerCase());
-                
-                if (rank === 1) {
-                    const crown = document.createElement('div');
-                    crown.className = 'podium-crown';
-                    crown.textContent = '👑';
-                    block.insertBefore(crown, block.firstChild);
+
+                const crown = clone.querySelector('.podium-crown');
+                if (crown) {
+                    crown.hidden = rank !== 1;
                 }
                 
                 const avatar = clone.querySelector('.podium-avatar');
@@ -7314,7 +7321,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 container.appendChild(clone);
             });
 
-            return container;
+            return containerClone;
         }
 
         function generateGloatingHtml(mvpData, isPvp) {
