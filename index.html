@@ -1051,17 +1051,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Typography */
 .gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 .gloat-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
-.mvp-gloat-card[data-class="Druid"] .gloat-name { color: #FF7C0A; }
-.mvp-gloat-card[data-class="Hunter"] .gloat-name { color: #ABD473; }
-.mvp-gloat-card[data-class="Mage"] .gloat-name { color: #3FC7EB; }
-.mvp-gloat-card[data-class="Paladin"] .gloat-name { color: #F48CBA; }
-.mvp-gloat-card[data-class="Priest"] .gloat-name { color: #FFFFFF; }
-.mvp-gloat-card[data-class="Rogue"] .gloat-name { color: #FFF468; }
-.mvp-gloat-card[data-class="Shaman"] .gloat-name { color: #0070DE; }
-.mvp-gloat-card[data-class="Warlock"] .gloat-name { color: #8788EE; }
-.mvp-gloat-card[data-class="Warrior"] .gloat-name { color: #C69B6D; }
-.mvp-gloat-card[data-class="Death Knight"] .gloat-name { color: #C41E3A; }
-.mvp-gloat-card[data-class="Unknown"] .gloat-name { color: #fff; }
+.mvp-gloat-card[data-class="Druid"] { --mvp-name-color: #FF7C0A; }
+.mvp-gloat-card[data-class="Hunter"] { --mvp-name-color: #ABD473; }
+.mvp-gloat-card[data-class="Mage"] { --mvp-name-color: #3FC7EB; }
+.mvp-gloat-card[data-class="Paladin"] { --mvp-name-color: #F48CBA; }
+.mvp-gloat-card[data-class="Priest"] { --mvp-name-color: #FFFFFF; }
+.mvp-gloat-card[data-class="Rogue"] { --mvp-name-color: #FFF468; }
+.mvp-gloat-card[data-class="Shaman"] { --mvp-name-color: #0070DE; }
+.mvp-gloat-card[data-class="Warlock"] { --mvp-name-color: #8788EE; }
+.mvp-gloat-card[data-class="Warrior"] { --mvp-name-color: #C69B6D; }
+.mvp-gloat-card[data-class="Death Knight"] { --mvp-name-color: #C41E3A; }
+.mvp-gloat-card[data-class="Unknown"] { --mvp-name-color: #fff; }
+
+.mvp-gloat-card .gloat-name {
+    color: var(--mvp-name-color, inherit);
+}
 .gloat-score { color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .gloat-label { font-size: 10px; color: #aaa; }
 
@@ -1102,12 +1106,16 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Typography */
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-.monument-highlight-span { font-weight: bold; }
-.monument-highlight-span[data-monument-tone="xp"] { color: #ffd100; }
-.monument-highlight-span[data-monument-tone="hk"] { color: #ff4400; }
-.monument-highlight-span[data-monument-tone="loot"] { color: #a335ee; }
-.monument-highlight-span[data-monument-tone="zenith"] { color: #3FC7EB; }
-.monument-highlight-span[data-monument-tone="flawless"] { color: #ffd100; }
+.monument-highlight-span { 
+    font-weight: bold;
+    color: var(--monument-highlight-color, inherit);
+}
+
+.monument-highlight-span[data-monument-tone="xp"] { --monument-highlight-color: #ffd100; }
+.monument-highlight-span[data-monument-tone="hk"] { --monument-highlight-color: #ff4400; }
+.monument-highlight-span[data-monument-tone="loot"] { --monument-highlight-color: #a335ee; }
+.monument-highlight-span[data-monument-tone="zenith"] { --monument-highlight-color: #3FC7EB; }
+.monument-highlight-span[data-monument-tone="flawless"] { --monument-highlight-color: #ffd100; }
 .weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .weapon-stats-header-secondary { margin-top: 12px; }
 .weapon-stats-header-mt16 { margin-top: 16px; }
@@ -2287,10 +2295,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T09:00:58.933022Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T09:03:08.258413Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 247, "loot": 187, "levels": 60, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 248, "loot": 188, "levels": 60, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
