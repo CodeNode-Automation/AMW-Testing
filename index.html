@@ -712,6 +712,17 @@ a,
 .view-hidden {
   display: none !important;
 }
+.expand-lb-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  text-shadow: none;
+}
+
+.expand-lb-btn:disabled:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 0, 0.05), transparent);
+  border-style: dashed;
+  border-color: rgba(255, 209, 0, 0.4);
+}
 .analytics-view-container.view-active,
 .full-card-container.view-active,
 .arch-view-wrapper.view-active {
@@ -6493,10 +6504,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T16:41:53.228887Z", "active_14_days": 405, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T17:00:30.336759Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 465, "loot": 351, "levels": 114, "total_roster": 659, "active_roster": 405}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 466, "loot": 351, "levels": 115, "total_roster": 659, "active_roster": 404}]
     </script>
 
     <script>
@@ -9482,7 +9493,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
             const isFullLadderPage = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
-            const ladderBatchSize = 22;
+            const ladderInitialCount = 22;
+            const ladderLoadBatchSize = 25;
 
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
@@ -9498,7 +9510,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 listItemNodes.forEach((node, index) => {
                     if (!node) return;
 
-                    if (isFullLadderPage && index >= ladderBatchSize) {
+                    if (isFullLadderPage && index >= ladderInitialCount) {
                         node.hidden = true;
                     }
 
@@ -9507,7 +9519,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 conciseList.appendChild(listWrap);
 
-                if (isFullLadderPage && listItemNodes.length > ladderBatchSize) {
+                if (isFullLadderPage && listItemNodes.length > ladderInitialCount) {
                     const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
                     const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
 
@@ -9526,7 +9538,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                         btn.addEventListener('click', function() {
                             const hiddenRows = Array.from(listWrap.querySelectorAll('.concise-char-bar[hidden]'));
-                            hiddenRows.slice(0, ladderBatchSize).forEach(row => {
+                            hiddenRows.slice(0, ladderLoadBatchSize).forEach(row => {
                                 row.hidden = false;
                             });
                             updateButtonText();
@@ -9544,9 +9556,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         let templateId = null;
+        const isLadderHash = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
             templateId = 'tpl-sort-badges';
-        } else if (!hashUrl.startsWith('war-effort-')) {
+        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash) {
             templateId = 'tpl-sort-default';
         }
         
