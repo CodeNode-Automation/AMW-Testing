@@ -5348,17 +5348,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         // --- NEW: COMPACT MONUMENTS GRID FEED ---
         const timelineEl = document.getElementById('timeline');
-        if (timelineEl) {
-            let monContainer = document.getElementById('monuments-container');
-            if (!monContainer) {
-                monContainer = document.createElement('div');
-                monContainer.id = 'monuments-container';
-                monContainer.className = 'monuments-grid';
-                const filtersEl = timelineEl.querySelector('.timeline-filters');
-                if (filtersEl) timelineEl.insertBefore(monContainer, filtersEl);
-                else timelineEl.prepend(monContainer);
-            }
-            
+        const monContainer = document.getElementById('monuments-container');
+        if (timelineEl && monContainer) {
             monContainer.innerHTML = '';
             if (window.warEffortMonuments.length > 0) {
                 window.warEffortMonuments.forEach(mon => {
