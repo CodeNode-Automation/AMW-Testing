@@ -3062,7 +3062,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const cClass = getCharClass(char);
                 const powerName = getPowerName(cClass);
                 const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
-                const cHex = CLASS_COLORS[cClass] || "#ffd100";
+                const tooltipClassKey = cClass || 'Unknown';
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
@@ -3100,7 +3100,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const clone = template.content.cloneNode(true);
                     
                     const nameWrap = clone.querySelector('.tooltip-name-wrap');
-                    nameWrap.style.color = cHex;
+                    if (nameWrap) nameWrap.setAttribute('data-class', tooltipClassKey);
                     clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
                     
                     const badgesContainer = clone.querySelector('.tooltip-badges-container');
@@ -3131,7 +3131,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
                     
                     const classWrap = clone.querySelector('.tooltip-class-wrap');
-                    classWrap.style.color = cHex;
+                    classWrap.setAttribute('data-class', tooltipClassKey);
                     classWrap.textContent = '';
 
                     if (specIconUrl) {
@@ -3152,7 +3152,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     tooltip.appendChild(clone);
                 }
-                tooltip.style.borderLeftColor = cHex;
+                tooltip.setAttribute('data-class', tooltipClassKey);
                 
                 let x = e.clientX + 15;
                 let y = e.clientY + 15;

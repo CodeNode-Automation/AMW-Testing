@@ -827,6 +827,51 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tooltip-name-wrap { display: flex; align-items: center; }
 .tooltip-class-wrap { display: flex; align-items: center; }
 
+.custom-tooltip[data-class="Druid"] { --heatmap-tooltip-accent: #FF7C0A; }
+.custom-tooltip[data-class="Hunter"] { --heatmap-tooltip-accent: #ABD473; }
+.custom-tooltip[data-class="Mage"] { --heatmap-tooltip-accent: #3FC7EB; }
+.custom-tooltip[data-class="Paladin"] { --heatmap-tooltip-accent: #F48CBA; }
+.custom-tooltip[data-class="Priest"] { --heatmap-tooltip-accent: #FFFFFF; }
+.custom-tooltip[data-class="Rogue"] { --heatmap-tooltip-accent: #FFF468; }
+.custom-tooltip[data-class="Shaman"] { --heatmap-tooltip-accent: #0070DE; }
+.custom-tooltip[data-class="Warlock"] { --heatmap-tooltip-accent: #8788EE; }
+.custom-tooltip[data-class="Warrior"] { --heatmap-tooltip-accent: #C69B6D; }
+.custom-tooltip[data-class="Death Knight"] { --heatmap-tooltip-accent: #C41E3A; }
+.custom-tooltip[data-class="Unknown"] { --heatmap-tooltip-accent: #ffd100; }
+
+.custom-tooltip[data-class="Druid"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Druid"] .tooltip-class-wrap { color: #FF7C0A; }
+
+.custom-tooltip[data-class="Hunter"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Hunter"] .tooltip-class-wrap { color: #ABD473; }
+
+.custom-tooltip[data-class="Mage"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Mage"] .tooltip-class-wrap { color: #3FC7EB; }
+
+.custom-tooltip[data-class="Paladin"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Paladin"] .tooltip-class-wrap { color: #F48CBA; }
+
+.custom-tooltip[data-class="Priest"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Priest"] .tooltip-class-wrap { color: #FFFFFF; }
+
+.custom-tooltip[data-class="Rogue"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Rogue"] .tooltip-class-wrap { color: #FFF468; }
+
+.custom-tooltip[data-class="Shaman"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Shaman"] .tooltip-class-wrap { color: #0070DE; }
+
+.custom-tooltip[data-class="Warlock"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Warlock"] .tooltip-class-wrap { color: #8788EE; }
+
+.custom-tooltip[data-class="Warrior"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Warrior"] .tooltip-class-wrap { color: #C69B6D; }
+
+.custom-tooltip[data-class="Death Knight"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Death Knight"] .tooltip-class-wrap { color: #C41E3A; }
+
+.custom-tooltip[data-class="Unknown"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Unknown"] .tooltip-class-wrap { color: #ffd100; }
+
 /* Components */
 .tt-no-border { border-bottom: none !important; }
 .spec-icon-card { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2); }
