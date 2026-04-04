@@ -5552,62 +5552,66 @@ a,
 }
 
 .lb-podium-wrap.ladder-podium-wrap {
-  align-items: flex-end;
-  gap: 14px;
-  margin-top: 2px;
-  margin-bottom: 10px;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: 0;
+  margin-bottom: 8px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
-  min-height: 228px;
-  padding: 36px 14px 18px;
+  gap: 8px;
+  min-height: 170px;
+  padding: 26px 10px 14px;
 }
 
-.lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
-  transform: translateY(-12px);
-}
-
-.lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
-  transform: translateY(0);
-}
-
+.lb-podium-wrap.ladder-podium-wrap .podium-step-1,
+.lb-podium-wrap.ladder-podium-wrap .podium-step-2,
 .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
-  transform: translateY(8px);
+  transform: none;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
+  width: 52px;
+  height: 52px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
+  top: -18px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
   position: absolute;
-  top: 12px;
-  left: 14px;
+  top: 10px;
+  left: 10px;
   bottom: auto;
   transform: none;
   font-family: "Cinzel";
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
-  opacity: 0.92;
+  opacity: 0.78;
   z-index: 4;
-  color: rgba(255, 244, 200, 0.92);
+  color: rgba(255, 244, 200, 0.88);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
   width: 100%;
-  min-height: 2.3em;
-  margin-top: 18px;
-  padding: 0 10px;
+  min-height: 2.1em;
+  margin-top: 8px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   white-space: normal;
-  line-height: 1.15;
+  line-height: 1.1;
+  font-size: 14px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
@@ -5616,44 +5620,90 @@ a,
   bottom: auto;
   transform: none;
   margin-top: auto;
-  min-width: 112px;
+  min-width: 92px;
+  padding: 5px 12px;
   z-index: 3;
 }
 
-.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-trend-container {
-  gap: 6px;
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-stat-val {
+  font-size: 16px;
 }
 
-@media (max-width: 600px) {
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-stat-lbl {
+  font-size: 11px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-trend-container {
+  gap: 4px;
+}
+
+@media (max-width: 900px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 8px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
-    min-height: 198px;
-    padding: 34px 8px 16px;
+    min-height: 154px;
+    padding: 24px 8px 12px;
   }
 
-  .lb-podium-wrap.ladder-podium-wrap .podium-step-1,
-  .lb-podium-wrap.ladder-podium-wrap .podium-step-2,
-  .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
-    transform: none;
-  }
-
-  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
-    top: 10px;
-    left: 10px;
-    font-size: 16px;
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
+    width: 46px;
+    height: 46px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
-    min-height: 2.6em;
-    margin-top: 14px;
     font-size: 13px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
-    min-width: 96px;
+    min-width: 84px;
+    padding: 4px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lb-podium-wrap.ladder-podium-wrap {
+    gap: 6px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    min-height: 138px;
+    padding: 20px 6px 10px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
+    top: -14px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+    top: 8px;
+    left: 8px;
+    font-size: 14px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+    min-height: 2.4em;
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+    min-width: 78px;
+    padding: 4px 8px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-stat-val {
+    font-size: 14px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-stat-lbl {
+    font-size: 10px;
   }
 }
 
