@@ -2980,7 +2980,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
             const isFullLadderPage = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
-            const ladderBatchSize = 22;
+            const ladderInitialCount = 22;
+            const ladderLoadBatchSize = 25;
 
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
@@ -2996,7 +2997,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 listItemNodes.forEach((node, index) => {
                     if (!node) return;
 
-                    if (isFullLadderPage && index >= ladderBatchSize) {
+                    if (isFullLadderPage && index >= ladderInitialCount) {
                         node.hidden = true;
                     }
 
@@ -3005,7 +3006,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 conciseList.appendChild(listWrap);
 
-                if (isFullLadderPage && listItemNodes.length > ladderBatchSize) {
+                if (isFullLadderPage && listItemNodes.length > ladderInitialCount) {
                     const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
                     const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
 
@@ -3024,7 +3025,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                         btn.addEventListener('click', function() {
                             const hiddenRows = Array.from(listWrap.querySelectorAll('.concise-char-bar[hidden]'));
-                            hiddenRows.slice(0, ladderBatchSize).forEach(row => {
+                            hiddenRows.slice(0, ladderLoadBatchSize).forEach(row => {
                                 row.hidden = false;
                             });
                             updateButtonText();
@@ -3042,9 +3043,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         let templateId = null;
+        const isLadderHash = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
             templateId = 'tpl-sort-badges';
-        } else if (!hashUrl.startsWith('war-effort-')) {
+        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash) {
             templateId = 'tpl-sort-default';
         }
         

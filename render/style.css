@@ -702,6 +702,17 @@ a,
 .view-hidden {
   display: none !important;
 }
+.expand-lb-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  text-shadow: none;
+}
+
+.expand-lb-btn:disabled:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 0, 0.05), transparent);
+  border-style: dashed;
+  border-color: rgba(255, 209, 0, 0.4);
+}
 .analytics-view-container.view-active,
 .full-card-container.view-active,
 .arch-view-wrapper.view-active {
