@@ -5226,6 +5226,21 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (textEl) {
                 textEl.textContent = '';
+
+                let textTypeClass = 'we-text-type-zenith';
+                let crushedClass = 'we-text-crushed-zenith';
+
+                if (type === 'XP') {
+                    textTypeClass = 'we-text-type-xp';
+                    crushedClass = 'we-text-crushed-xp';
+                } else if (type === 'HK') {
+                    textTypeClass = 'we-text-type-hk';
+                    crushedClass = 'we-text-crushed-hk';
+                } else if (type === 'LOOT') {
+                    textTypeClass = 'we-text-type-loot';
+                    crushedClass = 'we-text-crushed-loot';
+                }
+
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'we-text-label';
                 labelSpan.textContent = labelName + ':';
@@ -5235,22 +5250,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 valSpan.textContent = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}`;
                 
                 if (pct >= 100) {
-                    textEl.className = 'challenge-text we-text-state-max';
-                    textEl.style.color = colorMid;
-                    labelSpan.style.color = '#ddd';
+                    textEl.className = `challenge-text we-text-state-max ${textTypeClass}`;
                     
                     const crushSpan = document.createElement('span');
-                    crushSpan.className = 'we-text-crushed';
+                    crushSpan.className = `we-text-crushed ${crushedClass}`;
                     crushSpan.textContent = '🔥 CRUSHED!';
-                    crushSpan.style.textShadow = `0 0 10px ${colorMax}`;
                     
                     textEl.appendChild(labelSpan);
                     textEl.appendChild(valSpan);
                     textEl.appendChild(crushSpan);
                 } else {
-                    textEl.className = 'challenge-text we-text-state-normal';
-                    textEl.style.color = '#fff';
-                    labelSpan.style.color = '#ccc';
+                    textEl.className = `challenge-text we-text-state-normal ${textTypeClass}`;
                     
                     textEl.appendChild(labelSpan);
                     textEl.appendChild(valSpan);
