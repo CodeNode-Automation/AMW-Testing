@@ -1075,6 +1075,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Typography */
 .gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 .gloat-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
+.mvp-gloat-card[data-class="Druid"] .gloat-name { color: #FF7C0A; }
+.mvp-gloat-card[data-class="Hunter"] .gloat-name { color: #ABD473; }
+.mvp-gloat-card[data-class="Mage"] .gloat-name { color: #3FC7EB; }
+.mvp-gloat-card[data-class="Paladin"] .gloat-name { color: #F48CBA; }
+.mvp-gloat-card[data-class="Priest"] .gloat-name { color: #FFFFFF; }
+.mvp-gloat-card[data-class="Rogue"] .gloat-name { color: #FFF468; }
+.mvp-gloat-card[data-class="Shaman"] .gloat-name { color: #0070DE; }
+.mvp-gloat-card[data-class="Warlock"] .gloat-name { color: #8788EE; }
+.mvp-gloat-card[data-class="Warrior"] .gloat-name { color: #C69B6D; }
+.mvp-gloat-card[data-class="Death Knight"] .gloat-name { color: #C41E3A; }
+.mvp-gloat-card[data-class="Unknown"] .gloat-name { color: #fff; }
 .gloat-score { color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .gloat-label { font-size: 10px; color: #aaa; }
 
@@ -2286,10 +2297,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:27:29.076879Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:30:33.890860Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 242, "loot": 184, "levels": 58, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 243, "loot": 185, "levels": 58, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
@@ -7313,12 +7324,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const p = char.profile;
             const cClass = getCharClass(char);
-            const cHex = CLASS_COLORS[cClass] || '#fff';
             const portraitURL = char.render_url || getClassIcon(cClass);
             
             const template = document.getElementById('tpl-mvp-gloat');
             if (!template) return document.createDocumentFragment();
             const clone = template.content.cloneNode(true);
+            
+            const card = clone.querySelector('.mvp-gloat-card');
+            if (card) card.setAttribute('data-class', cClass);
             
             const img = clone.querySelector('.gloat-avatar');
             img.src = portraitURL;
@@ -7326,7 +7339,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const nameSpan = clone.querySelector('.gloat-name');
             nameSpan.textContent = p.name;
-            nameSpan.style.color = cHex;
             nameSpan.onclick = () => selectCharacter(p.name.toLowerCase());
             
             clone.querySelector('.gloat-score').textContent = `+${mvpData.score.toLocaleString()}`;
