@@ -5435,7 +5435,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             const scoreSpan = rowClone.querySelector('.we-tt-score');
 
                             if (nameSpan) {
-                                nameSpan.style.color = cHex;
+                                nameSpan.setAttribute('data-class', cClass);
                                 nameSpan.textContent = `${index + 1}. ${formattedName}`;
                             }
 
@@ -5461,7 +5461,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
 
-                tooltip.style.borderLeftColor = '#ffd100';
+                tooltip.classList.add('we-tooltip-war-effort');
+                tooltip.removeAttribute('data-class');
                 let x = clientX + 15;
                 let y = clientY + 15;
                 if (x + 250 > window.innerWidth) x = window.innerWidth - 260; 
@@ -5471,12 +5472,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
-            newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+            newTrigger.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+                tooltip.classList.remove('we-tooltip-war-effort');
+            });
             
             // --- NEW: Interactive Navigation ---
             newTrigger.addEventListener('click', e => {
                 e.stopPropagation();
                 tooltip.classList.remove('visible');
+                tooltip.classList.remove('we-tooltip-war-effort');
                 
                 if (triggerId === 'guild-xp-tooltip-trigger') window.location.hash = 'war-effort-xp';
                 else if (triggerId === 'guild-hk-tooltip-trigger') window.location.hash = 'war-effort-hk';
