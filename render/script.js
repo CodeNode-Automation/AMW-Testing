@@ -2693,10 +2693,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const crown = clone.querySelector('.podium-crown');
         const vanguard = clone.querySelector('.vanguard-floating-icon');
         const avatar = clone.querySelector('.podium-avatar');
-        const rankEl = clone.querySelector('.podium-rank');
         const nameEl = clone.querySelector('.podium-name');
-        const metaEl = clone.querySelector('.podium-meta');
-        const rivalryEl = clone.querySelector('.podium-rivalry');
         const pill = clone.querySelector('.podium-pill');
         const statLine = clone.querySelector('.podium-stat-line');
         const statValEl = clone.querySelector('.podium-stat-val');
@@ -2722,11 +2719,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         avatar.src = portraitURL;
         avatar.alt = baseName || 'Character portrait';
 
-        rankEl.textContent = `#${rank}`;
-
         nameEl.textContent = baseName;
-        if (metaEl) metaEl.textContent = `${raceName} • ${displaySpecClass}`;
-        if (rivalryEl) rivalryEl.textContent = rivalryText || '';
 
         if (hashUrl === 'war-effort-hk') {
             const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
