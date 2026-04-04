@@ -420,34 +420,44 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-portrait { width: 36px; height: 36px; border-radius: 50%; border: 2px solid; background: #000; object-fit: cover; object-position: center; flex-shrink: 0; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
 .concise-char-bar[data-class="Druid"],
-.podium-block[data-class="Druid"] { --class-accent: #FF7C0A; }
+.podium-block[data-class="Druid"],
+.leaderboard-row[data-class="Druid"] { --class-accent: #FF7C0A; }
 
 .concise-char-bar[data-class="Hunter"],
-.podium-block[data-class="Hunter"] { --class-accent: #ABD473; }
+.podium-block[data-class="Hunter"],
+.leaderboard-row[data-class="Hunter"] { --class-accent: #ABD473; }
 
 .concise-char-bar[data-class="Mage"],
-.podium-block[data-class="Mage"] { --class-accent: #3FC7EB; }
+.podium-block[data-class="Mage"],
+.leaderboard-row[data-class="Mage"] { --class-accent: #3FC7EB; }
 
 .concise-char-bar[data-class="Paladin"],
-.podium-block[data-class="Paladin"] { --class-accent: #F48CBA; }
+.podium-block[data-class="Paladin"],
+.leaderboard-row[data-class="Paladin"] { --class-accent: #F48CBA; }
 
 .concise-char-bar[data-class="Priest"],
-.podium-block[data-class="Priest"] { --class-accent: #FFFFFF; }
+.podium-block[data-class="Priest"],
+.leaderboard-row[data-class="Priest"] { --class-accent: #FFFFFF; }
 
 .concise-char-bar[data-class="Rogue"],
-.podium-block[data-class="Rogue"] { --class-accent: #FFF468; }
+.podium-block[data-class="Rogue"],
+.leaderboard-row[data-class="Rogue"] { --class-accent: #FFF468; }
 
 .concise-char-bar[data-class="Shaman"],
-.podium-block[data-class="Shaman"] { --class-accent: #0070DE; }
+.podium-block[data-class="Shaman"],
+.leaderboard-row[data-class="Shaman"] { --class-accent: #0070DE; }
 
 .concise-char-bar[data-class="Warlock"],
-.podium-block[data-class="Warlock"] { --class-accent: #8788EE; }
+.podium-block[data-class="Warlock"],
+.leaderboard-row[data-class="Warlock"] { --class-accent: #8788EE; }
 
 .concise-char-bar[data-class="Warrior"],
-.podium-block[data-class="Warrior"] { --class-accent: #C69B6D; }
+.podium-block[data-class="Warrior"],
+.leaderboard-row[data-class="Warrior"] { --class-accent: #C69B6D; }
 
 .concise-char-bar[data-class="Death Knight"],
-.podium-block[data-class="Death Knight"] { --class-accent: #C41E3A; }
+.podium-block[data-class="Death Knight"],
+.leaderboard-row[data-class="Death Knight"] { --class-accent: #C41E3A; }
 
 .concise-char-bar { border-left-color: var(--class-accent, transparent); }
 .concise-char-bar .c-portrait { border-color: var(--class-accent, #fff); }
@@ -478,21 +488,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .custom-tooltip .tt-label { color: #aaa; margin-right: 15px; }
 .custom-tooltip .tt-val { color: white; font-weight: bold; display: flex; align-items: center; }
 
-.leaderboard-row { border-left-width: 4px; border-left-style: solid; border-left-color: var(--home-lb-accent, transparent); padding: 8px 12px; }
+.leaderboard-row { border-left-width: 4px; border-left-style: solid; border-left-color: var(--class-accent, transparent); padding: 8px 12px; }
 
-.leaderboard-row[data-class="Druid"] { --home-lb-accent: #FF7C0A; }
-.leaderboard-row[data-class="Hunter"] { --home-lb-accent: #ABD473; }
-.leaderboard-row[data-class="Mage"] { --home-lb-accent: #3FC7EB; }
-.leaderboard-row[data-class="Paladin"] { --home-lb-accent: #F48CBA; }
-.leaderboard-row[data-class="Priest"] { --home-lb-accent: #FFFFFF; }
-.leaderboard-row[data-class="Rogue"] { --home-lb-accent: #FFF468; }
-.leaderboard-row[data-class="Shaman"] { --home-lb-accent: #0070DE; }
-.leaderboard-row[data-class="Warlock"] { --home-lb-accent: #8788EE; }
-.leaderboard-row[data-class="Warrior"] { --home-lb-accent: #C69B6D; }
-.leaderboard-row[data-class="Death Knight"] { --home-lb-accent: #C41E3A; }
-
-.leaderboard-row .lb-portrait { border-color: var(--home-lb-accent, #fff); }
-.leaderboard-row .lb-name { color: var(--home-lb-accent, inherit); }
+.leaderboard-row .lb-portrait { border-color: var(--class-accent, #fff); }
+.leaderboard-row .lb-name { color: var(--class-accent, inherit); }
 
 .podium-block { border-top-color: var(--class-accent, transparent); }
 .lb-rank { font-family: 'Cinzel'; font-weight: bold; width: 30px; text-shadow: 1px 1px 2px #000; color: #777; font-size: 15px; }
