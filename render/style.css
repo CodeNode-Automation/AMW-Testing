@@ -421,43 +421,55 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .c-name { font-family: 'Cinzel'; font-size: 16px; font-weight: bold; min-width: 120px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); letter-spacing: 0.5px; display: inline-flex; align-items: center; flex-wrap: wrap; }
 .concise-char-bar[data-class="Druid"],
 .podium-block[data-class="Druid"],
-.leaderboard-row[data-class="Druid"] { --class-accent: #FF7C0A; }
+.leaderboard-row[data-class="Druid"],
+.mvp-gloat-card[data-class="Druid"] { --class-accent: #FF7C0A; }
 
 .concise-char-bar[data-class="Hunter"],
 .podium-block[data-class="Hunter"],
-.leaderboard-row[data-class="Hunter"] { --class-accent: #ABD473; }
+.leaderboard-row[data-class="Hunter"],
+.mvp-gloat-card[data-class="Hunter"] { --class-accent: #ABD473; }
 
 .concise-char-bar[data-class="Mage"],
 .podium-block[data-class="Mage"],
-.leaderboard-row[data-class="Mage"] { --class-accent: #3FC7EB; }
+.leaderboard-row[data-class="Mage"],
+.mvp-gloat-card[data-class="Mage"] { --class-accent: #3FC7EB; }
 
 .concise-char-bar[data-class="Paladin"],
 .podium-block[data-class="Paladin"],
-.leaderboard-row[data-class="Paladin"] { --class-accent: #F48CBA; }
+.leaderboard-row[data-class="Paladin"],
+.mvp-gloat-card[data-class="Paladin"] { --class-accent: #F48CBA; }
 
 .concise-char-bar[data-class="Priest"],
 .podium-block[data-class="Priest"],
-.leaderboard-row[data-class="Priest"] { --class-accent: #FFFFFF; }
+.leaderboard-row[data-class="Priest"],
+.mvp-gloat-card[data-class="Priest"] { --class-accent: #FFFFFF; }
 
 .concise-char-bar[data-class="Rogue"],
 .podium-block[data-class="Rogue"],
-.leaderboard-row[data-class="Rogue"] { --class-accent: #FFF468; }
+.leaderboard-row[data-class="Rogue"],
+.mvp-gloat-card[data-class="Rogue"] { --class-accent: #FFF468; }
 
 .concise-char-bar[data-class="Shaman"],
 .podium-block[data-class="Shaman"],
-.leaderboard-row[data-class="Shaman"] { --class-accent: #0070DE; }
+.leaderboard-row[data-class="Shaman"],
+.mvp-gloat-card[data-class="Shaman"] { --class-accent: #0070DE; }
 
 .concise-char-bar[data-class="Warlock"],
 .podium-block[data-class="Warlock"],
-.leaderboard-row[data-class="Warlock"] { --class-accent: #8788EE; }
+.leaderboard-row[data-class="Warlock"],
+.mvp-gloat-card[data-class="Warlock"] { --class-accent: #8788EE; }
 
 .concise-char-bar[data-class="Warrior"],
 .podium-block[data-class="Warrior"],
-.leaderboard-row[data-class="Warrior"] { --class-accent: #C69B6D; }
+.leaderboard-row[data-class="Warrior"],
+.mvp-gloat-card[data-class="Warrior"] { --class-accent: #C69B6D; }
 
 .concise-char-bar[data-class="Death Knight"],
 .podium-block[data-class="Death Knight"],
-.leaderboard-row[data-class="Death Knight"] { --class-accent: #C41E3A; }
+.leaderboard-row[data-class="Death Knight"],
+.mvp-gloat-card[data-class="Death Knight"] { --class-accent: #C41E3A; }
+
+.mvp-gloat-card[data-class="Unknown"] { --class-accent: #fff; }
 
 .concise-char-bar { border-left-color: var(--class-accent, transparent); }
 .concise-char-bar .c-portrait { border-color: var(--class-accent, #fff); }
@@ -1088,20 +1100,8 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Typography */
 .gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 .gloat-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
-.mvp-gloat-card[data-class="Druid"] { --mvp-name-color: #FF7C0A; }
-.mvp-gloat-card[data-class="Hunter"] { --mvp-name-color: #ABD473; }
-.mvp-gloat-card[data-class="Mage"] { --mvp-name-color: #3FC7EB; }
-.mvp-gloat-card[data-class="Paladin"] { --mvp-name-color: #F48CBA; }
-.mvp-gloat-card[data-class="Priest"] { --mvp-name-color: #FFFFFF; }
-.mvp-gloat-card[data-class="Rogue"] { --mvp-name-color: #FFF468; }
-.mvp-gloat-card[data-class="Shaman"] { --mvp-name-color: #0070DE; }
-.mvp-gloat-card[data-class="Warlock"] { --mvp-name-color: #8788EE; }
-.mvp-gloat-card[data-class="Warrior"] { --mvp-name-color: #C69B6D; }
-.mvp-gloat-card[data-class="Death Knight"] { --mvp-name-color: #C41E3A; }
-.mvp-gloat-card[data-class="Unknown"] { --mvp-name-color: #fff; }
-
 .mvp-gloat-card .gloat-name {
-    color: var(--mvp-name-color, inherit);
+    color: var(--class-accent, #fff);
 }
 .gloat-score { color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .gloat-label { font-size: 10px; color: #aaa; }
