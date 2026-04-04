@@ -476,6 +476,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     max-width: 440px;
 }
 .concise-char-bar { display: flex; align-items: center; background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 8px 16px; transition: all 0.3s ease; color: white; justify-content: space-between; text-decoration: none; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+.concise-char-bar[hidden],
+.leaderboard-row[hidden],
+.podium-block[hidden] {
+    display: none !important;
+}
 .concise-row-main { display: flex; align-items: center; }
 .concise-row-inner { display: flex; align-items: center; width: 100%; }
 .concise-row-stats-top { justify-content: flex-end; flex: 1; }
