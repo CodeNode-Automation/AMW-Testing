@@ -1016,20 +1016,78 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tick-50 { left: 50%; background: rgba(255,255,255,0.1); }
 .tick-75 { left: 75%; background: rgba(255,255,255,0.05); }
 .challenge-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; }
-.mvp-placeholder-card { display: flex; align-items: center; background: rgba(255, 209, 0, 0.02); border: 1px dashed rgba(255, 209, 0, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 12px; }
-.mvp-placeholder-icon { margin-right: 12px; }
-.mvp-placeholder-avatar { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 2px dashed #555; background: rgba(0,0,0,0.5); margin-right: 12px; }
-.mvp-placeholder-info { flex: 1; display: flex; flex-direction: column; }
-.mvp-placeholder-meta { display: flex; flex-direction: column; align-items: flex-end; }
+.mvp-placeholder-card,
+.mvp-gloat-card {
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+.mvp-placeholder-card {
+    background: rgba(255, 209, 0, 0.02);
+    border: 1px dashed rgba(255, 209, 0, 0.3);
+}
+
+.mvp-placeholder-icon,
+.gloat-icon {
+    margin-right: 12px;
+    font-size: 22px;
+}
+
+.mvp-placeholder-avatar,
+.gloat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.mvp-placeholder-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #555;
+    background: rgba(0,0,0,0.5);
+}
+
+.mvp-placeholder-info,
+.gloat-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mvp-placeholder-meta,
+.gloat-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
 .char-card-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
 
 /* Typography */
 .challenge-header { font-family: 'Cinzel'; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
-.we-stat-hk { color: #ff4400; font-weight: bold; font-size: 18px; text-shadow: 1px 1px 2px #000; }
-.we-stat-xp { color: #ffd100; font-weight: bold; font-size: 18px; text-shadow: 1px 1px 2px #000; }
+.we-stat-hk,
+.we-stat-xp {
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.we-stat-hk { color: #ff4400; }
+.we-stat-xp { color: #ffd100; }
+
 .we-zenith-wrapper { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
 .we-zenith-lbl { color: #888; font-size: 11px; text-transform: uppercase; }
-.we-zenith-val { color: #3FC7EB; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000; margin-top: 4px; }
+.we-zenith-val {
+    color: #3FC7EB;
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 1px 1px 2px #000;
+    margin-top: 4px;
+}
 .we-text-label { margin-right: 8px; text-transform: uppercase; }
 .we-text-crushed { color: #fff; margin-left: 8px; }
 .we-text-values { font-size: 15px; }
@@ -1089,13 +1147,19 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .char-card-name { font-family: 'Cinzel'; font-size: 38px; margin: 0; text-shadow: 0 2px 4px #000; }
 
 /* Components */
-.mvp-gloat-card { background: rgba(255, 209, 0, 0.05); border: 1px solid rgba(255, 209, 0, 0.5); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 0 10px rgba(255, 209, 0, 0.1); }
-.gloat-icon { margin-right: 12px; font-size: 22px; filter: drop-shadow(0 0 5px #ffd100); }
-.gloat-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ffd100; object-fit: cover; margin-right: 12px; cursor: pointer; }
+.mvp-gloat-card {
+    background: rgba(255, 209, 0, 0.05);
+    border: 1px solid rgba(255, 209, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 209, 0, 0.1);
+}
 
-/* Layout */
-.gloat-info { flex: 1; display: flex; flex-direction: column; }
-.gloat-meta { display: flex; flex-direction: column; align-items: flex-end; }
+.gloat-icon { filter: drop-shadow(0 0 5px #ffd100); }
+
+.gloat-avatar {
+    border: 2px solid #ffd100;
+    object-fit: cover;
+    cursor: pointer;
+}
 
 /* Typography */
 .gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
@@ -1107,10 +1171,33 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .gloat-label { font-size: 10px; color: #aaa; }
 
 /* Components */
-.challenge-header-xp { color: #ffd100; text-shadow: 0 2px 8px rgba(255, 209, 0, 0.4); }
-.challenge-header-loot { color: #a335ee; text-shadow: 0 2px 8px rgba(163, 53, 238, 0.4); }
-.challenge-header-zenith { color: #3FC7EB; text-shadow: 0 2px 8px rgba(63, 199, 235, 0.4); }
-.challenge-header-hk { color: #ff4400; text-shadow: 0 2px 8px rgba(255, 68, 0, 0.4); }
+.challenge-header-xp,
+.challenge-header-loot,
+.challenge-header-zenith,
+.challenge-header-hk {
+    color: var(--challenge-header-accent);
+    text-shadow: 0 2px 8px var(--challenge-header-glow);
+}
+
+.challenge-header-xp {
+    --challenge-header-accent: #ffd100;
+    --challenge-header-glow: rgba(255, 209, 0, 0.4);
+}
+
+.challenge-header-loot {
+    --challenge-header-accent: #a335ee;
+    --challenge-header-glow: rgba(163, 53, 238, 0.4);
+}
+
+.challenge-header-zenith {
+    --challenge-header-accent: #3FC7EB;
+    --challenge-header-glow: rgba(63, 199, 235, 0.4);
+}
+
+.challenge-header-hk {
+    --challenge-header-accent: #ff4400;
+    --challenge-header-glow: rgba(255, 68, 0, 0.4);
+}
 .mvp-placeholder-icon { opacity: 0.5; filter: grayscale(100%); }
 .mvp-placeholder-meta { opacity: 0.5; }
 /* Layout */
