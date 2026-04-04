@@ -2492,6 +2492,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Variable to track current sort method
     let currentSortMethod = 'level';
+    let conciseRenderedCount = 0;
+    const conciseBatchSize = 25;
 
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
@@ -2976,12 +2978,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         conciseList.textContent = '';
 
+        const isPaginatedLadder = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+        const visibleListCount = isPaginatedLadder
+            ? Math.max(0, conciseRenderedCount - podiumNodes.length)
+            : listItemNodes.length;
+        const visibleListNodes = isPaginatedLadder
+            ? listItemNodes.slice(0, visibleListCount)
+            : listItemNodes;
+
         if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
-            const isFullLadderPage = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
-            const ladderInitialCount = 22;
-            const ladderLoadBatchSize = 25;
 
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
@@ -2994,52 +3001,38 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listItemNodes.forEach((node, index) => {
-                    if (!node) return;
-
-                    if (isFullLadderPage && index >= ladderInitialCount) {
-                        node.hidden = true;
-                    }
-
-                    listWrap.appendChild(node);
+                visibleListNodes.forEach(node => {
+                    if (node) listWrap.appendChild(node);
                 });
-
                 conciseList.appendChild(listWrap);
-
-                if (isFullLadderPage && listItemNodes.length > ladderInitialCount) {
-                    const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
-                    const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
-
-                    if (btn) {
-                        const updateButtonText = () => {
-                            const remaining = listWrap.querySelectorAll('.concise-char-bar[hidden]').length;
-
-                            if (remaining > 0) {
-                                btn.disabled = false;
-                                btn.textContent = `Load More Ranks (${remaining} Remaining) ▼`;
-                            } else {
-                                btn.disabled = true;
-                                btn.textContent = 'All Ladder Ranks Loaded';
-                            }
-                        };
-
-                        btn.addEventListener('click', function() {
-                            const hiddenRows = Array.from(listWrap.querySelectorAll('.concise-char-bar[hidden]'));
-                            hiddenRows.slice(0, ladderLoadBatchSize).forEach(row => {
-                                row.hidden = false;
-                            });
-                            updateButtonText();
-                        });
-
-                        updateButtonText();
-                        conciseList.appendChild(btn);
-                    }
-                }
             }
         } else {
-            listItemNodes.forEach(node => {
+            visibleListNodes.forEach(node => {
                 if (node) conciseList.appendChild(node);
             });
+        }
+
+        const conciseLoadMoreContainer = document.getElementById('concise-load-more-container');
+        const conciseLoadMoreBtn = document.getElementById('concise-load-more-btn');
+
+        if (conciseLoadMoreContainer && conciseLoadMoreBtn) {
+            const hasMoreRows = isPaginatedLadder && visibleListNodes.length < listItemNodes.length;
+
+            conciseLoadMoreContainer.hidden = !hasMoreRows;
+            conciseLoadMoreBtn.hidden = !hasMoreRows;
+
+            if (hasMoreRows) {
+                const remainingRows = listItemNodes.length - visibleListNodes.length;
+                const nextLoadCount = Math.min(conciseBatchSize, remainingRows);
+
+                conciseLoadMoreBtn.textContent = `Load ${nextLoadCount} More Players`;
+                conciseLoadMoreBtn.onclick = () => {
+                    conciseRenderedCount += conciseBatchSize;
+                    renderConciseList(title, characters, isRawMode);
+                };
+            } else {
+                conciseLoadMoreBtn.onclick = null;
+            }
         }
         
         let templateId = null;
@@ -3960,7 +3953,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             navbar.classList.add('navbar-theme-app');
         }
         
+        const hash = window.location.hash.substring(1);
+        const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
+        conciseRenderedCount = isLadderHash ? 25 : 0;
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
@@ -3968,8 +3965,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        const hash = window.location.hash.substring(1);
-        const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
         const chartViews = ['total', 'active', 'raidready'];
 
         const wrapper = document.getElementById('concise-content-wrapper');
