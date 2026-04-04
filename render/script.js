@@ -2979,6 +2979,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
+            const isFullLadderPage = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+            const ladderBatchSize = 22;
 
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
@@ -2991,10 +2993,47 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listItemNodes.forEach(node => {
-                    if (node) listWrap.appendChild(node);
+                listItemNodes.forEach((node, index) => {
+                    if (!node) return;
+
+                    if (isFullLadderPage && index >= ladderBatchSize) {
+                        node.hidden = true;
+                    }
+
+                    listWrap.appendChild(node);
                 });
+
                 conciseList.appendChild(listWrap);
+
+                if (isFullLadderPage && listItemNodes.length > ladderBatchSize) {
+                    const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
+                    const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
+
+                    if (btn) {
+                        const updateButtonText = () => {
+                            const remaining = listWrap.querySelectorAll('.concise-char-bar[hidden]').length;
+
+                            if (remaining > 0) {
+                                btn.disabled = false;
+                                btn.textContent = `Load More Ranks (${remaining} Remaining) ▼`;
+                            } else {
+                                btn.disabled = true;
+                                btn.textContent = 'All Ladder Ranks Loaded';
+                            }
+                        };
+
+                        btn.addEventListener('click', function() {
+                            const hiddenRows = Array.from(listWrap.querySelectorAll('.concise-char-bar[hidden]'));
+                            hiddenRows.slice(0, ladderBatchSize).forEach(row => {
+                                row.hidden = false;
+                            });
+                            updateButtonText();
+                        });
+
+                        updateButtonText();
+                        conciseList.appendChild(btn);
+                    }
+                }
             }
         } else {
             listItemNodes.forEach(node => {
@@ -3927,18 +3966,26 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         const hash = window.location.hash.substring(1);
-        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
+        const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+        const chartViews = ['total', 'active', 'raidready'];
 
         const wrapper = document.getElementById('concise-content-wrapper');
         const leftCol = document.getElementById('concise-left-col');
         const badgesContainer = document.getElementById('concise-class-badges');
+        const specContainer = document.getElementById('concise-spec-container');
 
-        wrapper.classList.remove('concise-wrapper-awards-layout');
+        wrapper.classList.remove('concise-wrapper-awards-layout', 'concise-wrapper-ladder-layout');
         leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
         badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout', 'badges-hidden');
-        if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
+        if (timeline) timeline.classList.remove('concise-timeline-awards-layout', 'view-hidden');
 
-        if (showBadges === true) {
+        if (isLadderHash) {
+            wrapper.classList.add('concise-wrapper-ladder-layout');
+            leftCol.classList.add('concise-sidebar-hidden');
+            badgesContainer.classList.add('badges-hidden');
+            if (specContainer) specContainer.hidden = true;
+
+        } else if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
             badgesContainer.classList.add('concise-badges-default-layout');
             
@@ -3954,7 +4001,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             
         } else {
             badgesContainer.classList.add('badges-hidden');
-            const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.hidden = true;
             
             if (!chartViews.includes(hash)) {
@@ -4040,8 +4086,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (timeline) {
             const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
-            timelineTitle.textContent = `📜 ${baseTitle} Activity`;
-            applyTimelineFilters();
+
+            if (isLadderHash) {
+                timeline.classList.add('view-hidden');
+            } else {
+                timeline.classList.remove('view-hidden');
+                timelineTitle.textContent = `📜 ${baseTitle} Activity`;
+                applyTimelineFilters();
+            }
         }
     }
 

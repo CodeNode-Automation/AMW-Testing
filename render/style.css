@@ -1638,6 +1638,27 @@ a,
   display: none;
 }
 
+.concise-wrapper-ladder-layout {
+  display: block;
+}
+
+.concise-wrapper-ladder-layout .concise-main-col {
+  flex: none;
+  max-width: 100%;
+}
+
+.expand-lb-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  text-shadow: none;
+}
+
+.expand-lb-btn:disabled:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 0, 0.05), transparent);
+  border-style: dashed;
+  border-color: rgba(255, 209, 0, 0.4);
+}
+
 .concise-badges-default-layout {
   flex-wrap: wrap;
   justify-content: center;
