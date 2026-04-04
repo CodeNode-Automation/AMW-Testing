@@ -830,6 +830,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
 /* Components */
 .we-tt-score { color: #fff; font-weight: bold; }
+.custom-tooltip.we-tooltip-war-effort {
+    --heatmap-tooltip-accent: #ffd100;
+}
+
+.we-tt-name[data-class="Druid"] { color: #FF7C0A; }
+.we-tt-name[data-class="Hunter"] { color: #ABD473; }
+.we-tt-name[data-class="Mage"] { color: #3FC7EB; }
+.we-tt-name[data-class="Paladin"] { color: #F48CBA; }
+.we-tt-name[data-class="Priest"] { color: #FFFFFF; }
+.we-tt-name[data-class="Rogue"] { color: #FFF468; }
+.we-tt-name[data-class="Shaman"] { color: #0070DE; }
+.we-tt-name[data-class="Warlock"] { color: #8788EE; }
+.we-tt-name[data-class="Warrior"] { color: #C69B6D; }
+.we-tt-name[data-class="Death Knight"] { color: #C41E3A; }
+.we-tt-name[data-class="Unknown"] { color: #fff; }
 .we-loot-badge { background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap; }
 .we-loot-header { display: block; color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; }
 .we-loot-container { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; font-size: 13px; line-height: 1.2; }
@@ -2270,7 +2285,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:20:27.467529Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:24:07.517806Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 242, "loot": 184, "levels": 58, "total_roster": 661, "active_roster": 410}]
@@ -7714,7 +7729,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             const scoreSpan = rowClone.querySelector('.we-tt-score');
 
                             if (nameSpan) {
-                                nameSpan.style.color = cHex;
+                                nameSpan.setAttribute('data-class', cClass);
                                 nameSpan.textContent = `${index + 1}. ${formattedName}`;
                             }
 
@@ -7740,7 +7755,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
 
-                tooltip.style.borderLeftColor = '#ffd100';
+                tooltip.classList.add('we-tooltip-war-effort');
+                tooltip.removeAttribute('data-class');
                 let x = clientX + 15;
                 let y = clientY + 15;
                 if (x + 250 > window.innerWidth) x = window.innerWidth - 260; 
@@ -7750,12 +7766,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             newTrigger.addEventListener('mousemove', e => displayTooltip(e.clientX, e.clientY));
-            newTrigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+            newTrigger.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+                tooltip.classList.remove('we-tooltip-war-effort');
+            });
             
             // --- NEW: Interactive Navigation ---
             newTrigger.addEventListener('click', e => {
                 e.stopPropagation();
                 tooltip.classList.remove('visible');
+                tooltip.classList.remove('we-tooltip-war-effort');
                 
                 if (triggerId === 'guild-xp-tooltip-trigger') window.location.hash = 'war-effort-xp';
                 else if (triggerId === 'guild-hk-tooltip-trigger') window.location.hash = 'war-effort-hk';
