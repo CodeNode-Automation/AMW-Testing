@@ -244,18 +244,16 @@
         </div>
     </template>
 
-    <template id="tpl-concise-podium">
+    <template id="tpl-mvp-podium-block">
         <div class="podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
-            <div class="vanguard-floating-icon" title="Vanguard" hidden>🌟</div>
-            <img src="" class="podium-avatar" alt="">
+            <img src="" class="podium-avatar">
+            <div class="podium-rank"></div>
             <div class="podium-name"></div>
             <div class="podium-pill">
-                <div class="podium-stat-line">
-                    <span class="podium-stat-val"></span>
-                    <span class="podium-stat-lbl"></span>
+                <div class="podium-trend-text">
+                    <span class="podium-trend-val"></span> <span class="podium-trend-label"></span>
                 </div>
-                <div class="podium-trend-container"></div>
             </div>
         </div>
     </template>
@@ -445,13 +443,12 @@
             <div class="ladder-hero-stats"></div>
             <div class="ladder-hero-tools">
                 <div class="ladder-find-wrap">
-                    <label class="ladder-find-label" for="ladder-rank-search">Seek a champion</label>
+                    <label class="ladder-find-label" for="ladder-rank-search">Find your rank</label>
                     <div class="ladder-find-controls">
-                        <input type="text" id="ladder-rank-search" class="ladder-find-input" list="ladder-rank-options" autocomplete="off" placeholder="Enter a character name...">
-                        <datalist id="ladder-rank-options"></datalist>
-                        <button type="button" class="ladder-find-btn">Consult the roster</button>
+                        <input type="text" id="ladder-rank-search" class="ladder-find-input" autocomplete="off" placeholder="Enter a character name...">
+                        <button type="button" class="ladder-find-btn">Jump to player</button>
                     </div>
-                    <div class="ladder-find-status" aria-live="polite">Choose a hero from the roster and jump straight to their standing.</div>
+                    <div class="ladder-find-status" aria-live="polite">Search the ladder and jump directly to any ranked character.</div>
                 </div>
             </div>
             <div class="ladder-insights-grid"></div>
