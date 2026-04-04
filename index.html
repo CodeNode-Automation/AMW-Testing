@@ -5477,6 +5477,399 @@ a,
   }
 }
 
+/* ========================================= */
+/* LADDER EXPERIENCE UPGRADES                */
+/* ========================================= */
+#concise-view.concise-view-ladder {
+  gap: 14px;
+}
+
+#concise-view.concise-view-ladder #concise-view-title {
+  margin-bottom: 8px;
+}
+
+.ladder-hero-shell {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 26px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 209, 0, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(255, 209, 0, 0.14), transparent 30%),
+    linear-gradient(135deg, rgba(24, 18, 12, 0.92) 0%, rgba(10, 10, 14, 0.96) 100%);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.5),
+    inset 0 0 25px rgba(255, 209, 0, 0.04);
+}
+
+.ladder-hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 35%, transparent 65%, rgba(255, 255, 255, 0.05));
+}
+
+.ladder-overline,
+.ladder-section-kicker,
+.ladder-insight-kicker,
+.ladder-find-label {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ladder-overline {
+  color: #ffd100;
+}
+
+.ladder-hero-head,
+.ladder-hero-stats,
+.ladder-hero-tools,
+.ladder-insights-grid,
+.ladder-podium-heading {
+  position: relative;
+  z-index: 1;
+}
+
+.ladder-hero-title,
+.ladder-section-title {
+  margin: 0;
+  font-family: "Cinzel";
+  text-shadow: 0 3px 8px #000;
+}
+
+.ladder-hero-title {
+  font-size: clamp(26px, 4vw, 38px);
+  color: #fff3c4;
+}
+
+.ladder-hero-desc,
+.ladder-section-desc,
+.ladder-find-status,
+.ladder-insight-meta,
+.podium-meta,
+.podium-rivalry,
+.ladder-row-note {
+  color: #c7bfaa;
+}
+
+.ladder-hero-desc,
+.ladder-section-desc {
+  margin: 8px 0 0;
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.ladder-hero-stats,
+.ladder-insights-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.ladder-hero-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ladder-insights-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ladder-hero-stat-card,
+.ladder-insight-card,
+.ladder-podium-heading,
+.ladder-rank-separator {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.18));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ladder-hero-stat-card,
+.ladder-insight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 98px;
+  padding: 16px 18px;
+  border-radius: 12px;
+}
+
+.ladder-hero-stat-value,
+.ladder-insight-value {
+  font-family: "Cinzel";
+  font-size: 26px;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 2px 6px #000;
+}
+
+.ladder-hero-stat-label,
+.ladder-insight-meta {
+  font-size: 12px;
+}
+
+.ladder-insight-value {
+  font-size: 20px;
+}
+
+.ladder-find-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.ladder-find-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.ladder-find-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 209, 0, 0.18);
+  background: rgba(8, 8, 12, 0.88);
+  color: #f4ecd6;
+  font-size: 14px;
+}
+
+.ladder-find-input:focus {
+  outline: none;
+  border-color: rgba(255, 209, 0, 0.7);
+  box-shadow: 0 0 0 3px rgba(255, 209, 0, 0.14);
+}
+
+.ladder-find-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 209, 0, 0.3);
+  background: linear-gradient(180deg, rgba(255, 209, 0, 0.22), rgba(140, 72, 0, 0.22));
+  color: #ffe9a6;
+  font-family: "Cinzel";
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ladder-find-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 0, 0.68);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.ladder-find-status {
+  min-height: 18px;
+  font-size: 12px;
+}
+
+.ladder-find-status.is-success {
+  color: #8ee28e;
+}
+
+.ladder-find-status.is-error {
+  color: #ff9a7a;
+}
+
+.ladder-podium-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 22px;
+  margin: 18px 0 4px;
+  border-radius: 14px;
+}
+
+.ladder-section-kicker {
+  color: #ffb14a;
+}
+
+.ladder-section-title {
+  font-size: 24px;
+  color: #fff0bf;
+}
+
+.ladder-rank-separator {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin: 10px 0 2px;
+  border-radius: 999px;
+}
+
+.ladder-rank-separator::before,
+.ladder-rank-separator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 22%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 0, 0.55), transparent);
+}
+
+.ladder-rank-separator::before {
+  left: 18px;
+}
+
+.ladder-rank-separator::after {
+  right: 18px;
+}
+
+.ladder-rank-separator-label {
+  position: relative;
+  z-index: 1;
+  padding: 0 18px;
+  color: #f5d889;
+  font-family: "Cinzel";
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ladder-row-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ladder-row-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 20%, transparent 80%, rgba(255, 255, 255, 0.03));
+}
+
+.ladder-row-pve {
+  background: linear-gradient(90deg, rgba(36, 24, 10, 0.92) 0%, rgba(15, 12, 16, 0.96) 100%);
+  border-color: rgba(255, 166, 0, 0.12);
+}
+
+.ladder-row-pvp {
+  background: linear-gradient(90deg, rgba(34, 12, 12, 0.92) 0%, rgba(15, 10, 12, 0.96) 100%);
+  border-color: rgba(255, 92, 72, 0.12);
+}
+
+.ladder-row-card .concise-row-stats-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ladder-row-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ladder-row-status.is-rising {
+  color: #95f095;
+  border-color: rgba(149, 240, 149, 0.34);
+  background: rgba(44, 104, 44, 0.28);
+}
+
+.ladder-row-status.is-holding {
+  color: #d6d0bf;
+  border-color: rgba(214, 208, 191, 0.24);
+  background: rgba(120, 112, 94, 0.18);
+}
+
+.ladder-row-status.is-slipping {
+  color: #ffb0a3;
+  border-color: rgba(255, 176, 163, 0.32);
+  background: rgba(120, 52, 44, 0.22);
+}
+
+.ladder-row-note {
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.ladder-row-flash {
+  animation: ladderFlashPulse 1.8s ease;
+}
+
+.podium-meta,
+.podium-rivalry {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.35;
+  text-shadow: 0 1px 3px #000;
+}
+
+.podium-meta {
+  margin-bottom: 6px;
+  color: #d8cfba;
+}
+
+.podium-rivalry {
+  margin-top: 8px;
+  color: #f5d889;
+}
+
+@keyframes ladderFlashPulse {
+  0% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 rgba(255, 209, 0, 0);
+  }
+  35% {
+    transform: translateX(4px);
+    box-shadow: 0 0 0 2px rgba(255, 209, 0, 0.18), 0 0 28px rgba(255, 209, 0, 0.22);
+  }
+  100% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 rgba(255, 209, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .ladder-hero-stats,
+  .ladder-insights-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .ladder-hero-shell {
+    padding: 20px;
+  }
+
+  .ladder-find-controls {
+    flex-direction: column;
+  }
+
+  .ladder-hero-stats,
+  .ladder-insights-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ladder-rank-separator::before,
+  .ladder-rank-separator::after {
+    width: 14%;
+  }
+}
     </style>
 </head>
 <body>
@@ -5889,6 +6282,7 @@ a,
             <img src="" class="podium-avatar" alt="">
             <div class="podium-rank"></div>
             <div class="podium-name"></div>
+            <div class="podium-meta"></div>
             <div class="podium-pill">
                 <div class="podium-stat-line">
                     <span class="podium-stat-val"></span>
@@ -5896,6 +6290,55 @@ a,
                 </div>
                 <div class="podium-trend-container"></div>
             </div>
+            <div class="podium-rivalry"></div>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-shell">
+        <section class="ladder-hero-shell">
+            <div class="ladder-hero-head">
+                <span class="ladder-overline"></span>
+                <h3 class="ladder-hero-title"></h3>
+                <p class="ladder-hero-desc"></p>
+            </div>
+            <div class="ladder-hero-stats"></div>
+            <div class="ladder-hero-tools">
+                <div class="ladder-find-wrap">
+                    <label class="ladder-find-label" for="ladder-rank-search">Find your rank</label>
+                    <div class="ladder-find-controls">
+                        <input type="text" id="ladder-rank-search" class="ladder-find-input" autocomplete="off" placeholder="Enter a character name...">
+                        <button type="button" class="ladder-find-btn">Jump to player</button>
+                    </div>
+                    <div class="ladder-find-status" aria-live="polite">Search the ladder and jump directly to any ranked character.</div>
+                </div>
+            </div>
+            <div class="ladder-insights-grid"></div>
+        </section>
+        <div class="ladder-podium-heading">
+            <span class="ladder-section-kicker"></span>
+            <h3 class="ladder-section-title"></h3>
+            <p class="ladder-section-desc"></p>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-hero-stat">
+        <div class="ladder-hero-stat-card">
+            <span class="ladder-hero-stat-value"></span>
+            <span class="ladder-hero-stat-label"></span>
+        </div>
+    </template>
+
+    <template id="tpl-ladder-insight-card">
+        <article class="ladder-insight-card">
+            <span class="ladder-insight-kicker"></span>
+            <span class="ladder-insight-value"></span>
+            <span class="ladder-insight-meta"></span>
+        </article>
+    </template>
+
+    <template id="tpl-ladder-rank-separator">
+        <div class="ladder-rank-separator">
+            <span class="ladder-rank-separator-label"></span>
         </div>
     </template>
 
@@ -6507,10 +6950,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T17:27:51.252998Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T19:22:53.862087Z", "active_14_days": 404, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 479, "loot": 362, "levels": 117, "total_roster": 658, "active_roster": 404}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 538, "loot": 412, "levels": 126, "total_roster": 658, "active_roster": 404}]
     </script>
 
     <script>
@@ -6705,6 +7148,244 @@ function buildConciseTrendHtml(trend) {
 
     const rootEl = clone.firstElementChild;
     return rootEl || null;
+}
+
+function getCharacterRole(cClass, specName = '') {
+    if (["Protection", "Blood"].includes(specName) || (cClass === "Druid" && specName === "Feral Combat")) return "Tank";
+    if (["Holy", "Discipline", "Restoration"].includes(specName)) return "Healer";
+    if (["Mage", "Warlock", "Hunter"].includes(cClass) || ["Balance", "Elemental", "Shadow"].includes(specName)) return "Ranged DPS";
+    return "Melee DPS";
+}
+
+function getLadderConfig(hashUrl) {
+    if (hashUrl === 'ladder-pvp') {
+        return {
+            theme: 'pvp',
+            overline: 'Guild War Board',
+            heroTitle: 'The Blood Ledger',
+            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
+            metricLabel: 'Honorable Kills',
+            metricShort: 'HKs',
+            podiumKicker: 'Battlefield Elite',
+            podiumTitle: 'Featured Champions',
+            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
+        };
+    }
+
+    return {
+        theme: 'pve',
+        overline: 'Raid Command Board',
+        heroTitle: 'The Black Temple Vanguard',
+        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
+        metricLabel: 'Item Level',
+        metricShort: 'iLvl',
+        podiumKicker: 'Raid Vanguard',
+        podiumTitle: 'Featured Champions',
+        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
+    };
+}
+
+function getLadderMetricValue(char, hashUrl) {
+    const profile = char && char.profile ? char.profile : {};
+    return hashUrl === 'ladder-pvp'
+        ? (profile.honorable_kills || 0)
+        : (profile.equipped_item_level || 0);
+}
+
+function getLadderTrendValue(char, hashUrl) {
+    const profile = char && char.profile ? char.profile : {};
+    return hashUrl === 'ladder-pvp'
+        ? (profile.trend_pvp || profile.trend_hks || 0)
+        : (profile.trend_pve || profile.trend_ilvl || 0);
+}
+
+function formatLadderMetricValue(value, hashUrl) {
+    const safeValue = Math.max(0, Number(value) || 0);
+    return hashUrl === 'ladder-pvp'
+        ? safeValue.toLocaleString()
+        : Math.round(safeValue).toLocaleString();
+}
+
+function formatCompactMetricValue(value) {
+    return new Intl.NumberFormat('en', {
+        notation: 'compact',
+        maximumFractionDigits: value >= 100000 ? 1 : 0
+    }).format(Math.max(0, Number(value) || 0));
+}
+
+function getLadderStatusMeta(trendValue) {
+    if (trendValue > 0) return { text: 'Rising', className: 'is-rising' };
+    if (trendValue < 0) return { text: 'Slipping', className: 'is-slipping' };
+    return { text: 'Holding', className: 'is-holding' };
+}
+
+function buildLadderHeroStatNode(value, label) {
+    const template = document.getElementById('tpl-ladder-hero-stat');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const valueEl = clone.querySelector('.ladder-hero-stat-value');
+    const labelEl = clone.querySelector('.ladder-hero-stat-label');
+
+    if (valueEl) valueEl.textContent = value;
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function buildLadderInsightNode(kicker, value, meta) {
+    const template = document.getElementById('tpl-ladder-insight-card');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const kickerEl = clone.querySelector('.ladder-insight-kicker');
+    const valueEl = clone.querySelector('.ladder-insight-value');
+    const metaEl = clone.querySelector('.ladder-insight-meta');
+
+    if (kickerEl) kickerEl.textContent = kicker;
+    if (valueEl) valueEl.textContent = value;
+    if (metaEl) metaEl.textContent = meta;
+
+    return clone.firstElementChild || null;
+}
+
+function buildLadderSeparatorNode(label) {
+    const template = document.getElementById('tpl-ladder-rank-separator');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const labelEl = clone.querySelector('.ladder-rank-separator-label');
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function getLadderSeparatorLabel(rankNumber, totalCount) {
+    if (rankNumber === 4) {
+        return `The Pursuing Pack • Ranks #4 - #${Math.min(9, totalCount)}`;
+    }
+
+    if (rankNumber >= 10 && (rankNumber - 10) % 5 === 0) {
+        return `Ranks #${rankNumber} - #${Math.min(rankNumber + 4, totalCount)}`;
+    }
+
+    return '';
+}
+
+function decorateLadderRows(rowNodes, totalCount) {
+    const decoratedNodes = [];
+
+    rowNodes.forEach((node, index) => {
+        const actualRank = index + 4;
+        const separatorLabel = getLadderSeparatorLabel(actualRank, totalCount);
+
+        if (separatorLabel) {
+            const separatorNode = buildLadderSeparatorNode(separatorLabel);
+            if (separatorNode) decoratedNodes.push(separatorNode);
+        }
+
+        decoratedNodes.push(node);
+    });
+
+    return decoratedNodes;
+}
+
+function findLadderCharacterIndex(characters, rawQuery) {
+    const query = (rawQuery || '').toLowerCase().trim();
+    if (!query) return -1;
+
+    const names = characters.map(char => char && char.profile && char.profile.name ? char.profile.name.toLowerCase() : '');
+
+    let matchIndex = names.findIndex(name => name === query);
+    if (matchIndex !== -1) return matchIndex;
+
+    matchIndex = names.findIndex(name => name.startsWith(query));
+    if (matchIndex !== -1) return matchIndex;
+
+    return names.findIndex(name => name.includes(query));
+}
+
+function buildLadderShell(characters, hashUrl) {
+    const template = document.getElementById('tpl-ladder-shell');
+    if (!template || !Array.isArray(characters) || characters.length === 0) return null;
+
+    const config = getLadderConfig(hashUrl);
+    const clone = template.content.cloneNode(true);
+    const shell = clone.querySelector('.ladder-hero-shell');
+    const overline = clone.querySelector('.ladder-overline');
+    const heroTitle = clone.querySelector('.ladder-hero-title');
+    const heroDesc = clone.querySelector('.ladder-hero-desc');
+    const statsGrid = clone.querySelector('.ladder-hero-stats');
+    const insightsGrid = clone.querySelector('.ladder-insights-grid');
+    const podiumKicker = clone.querySelector('.ladder-section-kicker');
+    const podiumTitle = clone.querySelector('.ladder-section-title');
+    const podiumDesc = clone.querySelector('.ladder-section-desc');
+
+    if (shell) shell.classList.add(`ladder-shell-${config.theme}`);
+    if (overline) overline.textContent = config.overline;
+    if (heroTitle) heroTitle.textContent = config.heroTitle;
+    if (heroDesc) heroDesc.textContent = config.heroDesc;
+    if (podiumKicker) podiumKicker.textContent = config.podiumKicker;
+    if (podiumTitle) podiumTitle.textContent = config.podiumTitle;
+    if (podiumDesc) podiumDesc.textContent = config.podiumDesc;
+
+    const leader = characters[0];
+    const second = characters[1] || null;
+    const leaderProfile = leader.profile || {};
+    const leaderName = leaderProfile.name || 'Unknown';
+    const leaderMetric = getLadderMetricValue(leader, hashUrl);
+    const averageMetric = Math.round(characters.reduce((sum, char) => sum + getLadderMetricValue(char, hashUrl), 0) / characters.length) || 0;
+
+    const classCounts = characters.reduce((acc, char) => {
+        const cClass = char && char.profile && char.profile.character_class && char.profile.character_class.name
+            ? (typeof char.profile.character_class.name === 'string' ? char.profile.character_class.name : char.profile.character_class.name.en_US)
+            : 'Unknown';
+        acc[cClass] = (acc[cClass] || 0) + 1;
+        return acc;
+    }, {});
+
+    const dominantClassEntry = Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0] || ['Unknown', 0];
+    const biggestMover = [...characters]
+        .sort((a, b) => getLadderTrendValue(b, hashUrl) - getLadderTrendValue(a, hashUrl))[0] || leader;
+    const biggestMoverTrend = getLadderTrendValue(biggestMover, hashUrl);
+    const rivalryGap = second ? Math.max(0, leaderMetric - getLadderMetricValue(second, hashUrl)) : 0;
+    const leaderRole = getCharacterRole(
+        leader && leader.profile && leader.profile.character_class && leader.profile.character_class.name
+            ? (typeof leader.profile.character_class.name === 'string' ? leader.profile.character_class.name : leader.profile.character_class.name.en_US)
+            : 'Unknown',
+        leaderProfile.active_spec || ''
+    );
+
+    [
+        buildLadderHeroStatNode(characters.length.toLocaleString(), 'Ranked Heroes'),
+        buildLadderHeroStatNode(formatLadderMetricValue(leaderMetric, hashUrl), `Champion ${config.metricShort}`),
+        buildLadderHeroStatNode(formatLadderMetricValue(averageMetric, hashUrl), `Average ${config.metricShort}`)
+    ].forEach(node => {
+        if (node && statsGrid) statsGrid.appendChild(node);
+    });
+
+    const insightNodes = [
+        buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
+        buildLadderInsightNode(
+            'Fastest Climb',
+            biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
+            biggestMoverTrend > 0
+                ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
+                : 'No positive climb recorded yet'
+        ),
+        buildLadderInsightNode('Most Represented Class', dominantClassEntry[0], `${dominantClassEntry[1]} heroes currently ranked`),
+        buildLadderInsightNode(
+            'Closest Rivalry',
+            second ? `${formatCompactMetricValue(rivalryGap)} ${config.metricShort}` : 'No rival yet',
+            second ? `Gap between #1 ${leaderName} and #2 ${second.profile && second.profile.name ? second.profile.name : 'Unknown'}` : 'Only one player is currently ranked'
+        )
+    ];
+
+    insightNodes.forEach(node => {
+        if (node && insightsGrid) insightsGrid.appendChild(node);
+    });
+
+    return clone;
 }
 
 // NEW: Added 'async' so we can fetch the external files
@@ -8821,7 +9502,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         statsNode,
         hashUrl,
         vanguardClass,
-        podiumClass
+        podiumClass,
+        ladderMeta = null
     }) {
         const template = document.getElementById('tpl-concise-row');
         if (!template) return null;
@@ -8842,6 +9524,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (isWarEffortLootRow) {
             bar.classList.add('concise-char-bar-war-effort-loot');
             innerWrap.classList.add('concise-row-inner-war-effort-loot');
+        }
+
+        if (ladderMeta) {
+            bar.classList.add('ladder-row-card', `ladder-row-${ladderMeta.theme}`);
+            bar.setAttribute('data-rank', String(rankNumber || ''));
         }
 
         if (isClickable) {
@@ -8891,6 +9578,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             isClickable
         });
 
+        if (ladderMeta && ladderMeta.statusText) {
+            metaEl.appendChild(document.createTextNode(' • '));
+            const statusChip = document.createElement('span');
+            statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
+            statusChip.textContent = ladderMeta.statusText;
+            metaEl.appendChild(statusChip);
+        }
+
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
             statsBottom.hidden = false;
@@ -8902,6 +9597,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsBottom.remove();
             if (statsNode) {
                 statsTop.appendChild(statsNode);
+            }
+
+            if (ladderMeta && ladderMeta.noteText) {
+                const noteEl = document.createElement('div');
+                noteEl.className = 'ladder-row-note';
+                noteEl.textContent = ladderMeta.noteText;
+                statsTop.appendChild(noteEl);
             }
         }
 
@@ -8922,7 +9624,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         vanguardClass,
         hashUrl,
         deepChar,
-        statValue
+        statValue,
+        raceName,
+        displaySpecClass,
+        rivalryText
     }) {
         const template = document.getElementById('tpl-concise-podium');
         if (!template) return null;
@@ -8934,6 +9639,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const avatar = clone.querySelector('.podium-avatar');
         const rankEl = clone.querySelector('.podium-rank');
         const nameEl = clone.querySelector('.podium-name');
+        const metaEl = clone.querySelector('.podium-meta');
+        const rivalryEl = clone.querySelector('.podium-rivalry');
         const pill = clone.querySelector('.podium-pill');
         const statLine = clone.querySelector('.podium-stat-line');
         const statValEl = clone.querySelector('.podium-stat-val');
@@ -8962,6 +9669,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         rankEl.textContent = `#${rank}`;
 
         nameEl.textContent = baseName;
+        if (metaEl) metaEl.textContent = `${raceName} • ${displaySpecClass}`;
+        if (rivalryEl) rivalryEl.textContent = rivalryText || '';
 
         if (hashUrl === 'war-effort-hk') {
             const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
@@ -9009,7 +9718,93 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Variable to track current sort method
     let currentSortMethod = 'level';
     let conciseRenderedCount = 0;
+    let pendingLadderJumpQuery = '';
     const conciseBatchSize = 25;
+
+    function setLadderJumpStatus(shellNode, message, state = '') {
+        if (!shellNode) return;
+
+        const statusEl = shellNode.querySelector('.ladder-find-status');
+        if (!statusEl) return;
+
+        statusEl.textContent = message;
+        statusEl.classList.remove('is-success', 'is-error');
+        if (state) statusEl.classList.add(state);
+    }
+
+    function scrollToLadderCharacter(query, rankNumber = null) {
+        const normalizedQuery = (query || '').toLowerCase().trim();
+        if (!normalizedQuery || !conciseList) return false;
+
+        const candidates = Array.from(conciseList.querySelectorAll('.podium-block[data-char], .concise-char-bar[data-char]'));
+        const targetNode = candidates.find(node => (node.getAttribute('data-char') || '').toLowerCase() === normalizedQuery);
+        if (!targetNode) return false;
+
+        targetNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetNode.classList.remove('ladder-row-flash');
+        void targetNode.offsetWidth;
+        targetNode.classList.add('ladder-row-flash');
+        window.setTimeout(() => targetNode.classList.remove('ladder-row-flash'), 1800);
+
+        const shellNode = conciseList.querySelector('.ladder-hero-shell')?.parentElement || conciseList;
+        setLadderJumpStatus(
+            shellNode,
+            rankNumber ? `Jumped to #${rankNumber}.` : 'Jumped to the selected player.',
+            'is-success'
+        );
+
+        return true;
+    }
+
+    function bindLadderJumpControls(shellFragment, title, characters, isRawMode) {
+        if (!shellFragment) return;
+
+        const shellNode = shellFragment.querySelector('.ladder-hero-shell')
+            ? shellFragment
+            : shellFragment.closest('.ladder-shell-wrapper') || shellFragment;
+        const input = shellFragment.querySelector('.ladder-find-input');
+        const button = shellFragment.querySelector('.ladder-find-btn');
+
+        if (!input || !button) return;
+
+        const executeJump = () => {
+            const rawQuery = input.value || '';
+            const matchIndex = findLadderCharacterIndex(characters, rawQuery);
+
+            if (matchIndex === -1) {
+                setLadderJumpStatus(shellNode, `No ranked player found for "${rawQuery.trim() || 'that search'}".`, 'is-error');
+                return;
+            }
+
+            const matchedChar = characters[matchIndex];
+            const matchedName = matchedChar && matchedChar.profile && matchedChar.profile.name
+                ? matchedChar.profile.name.toLowerCase()
+                : rawQuery.toLowerCase().trim();
+            const requiredVisibleCount = Math.max(25, matchIndex + 1);
+
+            pendingLadderJumpQuery = matchedName;
+
+            if (requiredVisibleCount > conciseRenderedCount) {
+                conciseRenderedCount = requiredVisibleCount;
+                renderConciseList(title, characters, isRawMode);
+                return;
+            }
+
+            scrollToLadderCharacter(matchedName, matchIndex + 1);
+        };
+
+        button.onclick = executeJump;
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                executeJump();
+            }
+        });
+
+        if (pendingLadderJumpQuery) {
+            input.value = pendingLadderJumpQuery;
+        }
+    }
 
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
@@ -9434,6 +10229,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
+            const isLadderCardView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+            const ladderMetric = isLadderCardView ? getLadderMetricValue(deepChar || char, hashUrl) : 0;
+            const ladderLeaderMetric = isLadderCardView && sortedCharacters[0] ? getLadderMetricValue(sortedCharacters[0], hashUrl) : 0;
+            const ladderTrend = isLadderCardView ? getLadderTrendValue(deepChar || char, hashUrl) : 0;
+            const ladderStatus = getLadderStatusMeta(ladderTrend);
+            const ladderGap = Math.max(0, ladderLeaderMetric - ladderMetric);
+            const ladderMeta = isLadderCardView && index >= 3 ? {
+                theme: hashUrl === 'ladder-pvp' ? 'pvp' : 'pve',
+                statusText: ladderStatus.text,
+                statusClass: ladderStatus.className,
+                noteText: rankNumber === 4
+                    ? `Closest challenger • ${ladderGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'} behind #1`
+                    : `Gap to #1 • ${ladderGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`
+            } : null;
+
             // 4. Render the HTML Row (or intercept for Podium)
             const rowNode = buildConciseRowHtml({
                 isClickable,
@@ -9458,7 +10268,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 statsNode,
                 hashUrl,
                 vanguardClass,
-                podiumClass
+                podiumClass,
+                ladderMeta
             });
 
             // Intercept and Build Podium Block for Top 3
@@ -9466,6 +10277,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
                 const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
+                const previousChar = index > 0 ? sortedCharacters[index - 1] : null;
+                const nextChar = sortedCharacters[index + 1] || null;
+                let rivalryText = 'Champion of the current ladder';
+
+                if (rank === 1 && nextChar) {
+                    const leadGap = Math.max(0, getLadderMetricValue(deepChar || char, hashUrl) - getLadderMetricValue(nextChar, hashUrl));
+                    rivalryText = `Leads #2 by ${leadGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
+                } else if (previousChar) {
+                    const chaseGap = Math.max(0, getLadderMetricValue(previousChar, hashUrl) - getLadderMetricValue(deepChar || char, hashUrl));
+                    rivalryText = `Trails the rank above by ${chaseGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
+                }
                 
                 const podiumNode = buildConcisePodiumHtml({
                     cleanName,
@@ -9481,7 +10303,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                     vanguardClass,
                     hashUrl,
                     deepChar,
-                    statValue
+                    statValue,
+                    raceName,
+                    displaySpecClass,
+                    rivalryText
                 });
 
                 if (podiumNode) {
@@ -9501,6 +10326,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         const visibleListNodes = isPaginatedLadder
             ? listItemNodes.slice(0, visibleListCount)
             : listItemNodes;
+        const renderedListNodes = isPaginatedLadder
+            ? decorateLadderRows(visibleListNodes, characters.length)
+            : visibleListNodes;
+
+        if (isPaginatedLadder) {
+            const ladderShell = buildLadderShell(characters, hashUrl);
+            if (ladderShell) {
+                bindLadderJumpControls(ladderShell, title, characters, isRawMode);
+                conciseList.appendChild(ladderShell);
+            }
+        }
 
         if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
@@ -9517,13 +10353,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                visibleListNodes.forEach(node => {
+                renderedListNodes.forEach(node => {
                     if (node) listWrap.appendChild(node);
                 });
                 conciseList.appendChild(listWrap);
             }
         } else {
-            visibleListNodes.forEach(node => {
+            renderedListNodes.forEach(node => {
                 if (node) conciseList.appendChild(node);
             });
         }
@@ -9574,28 +10410,39 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Bind the event listener to the newly created dropdown if it exists
-        const sortDropdown = document.getElementById('concise-sort-dropdown');
-        if (sortDropdown) {
-            sortDropdown.addEventListener('change', function(e) {
-                currentSortMethod = e.target.value;
-                // Re-render the list with the exact same parameters but new sort
-                renderConciseList(title, characters, isRawMode);
-                
-                // Re-apply any active spec filters to the newly rendered HTML
-                if (typeof applyTimelineFilters === 'function') {
-                     // Trigger a click on the active badge to re-filter the DOM elements
-                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
-                     if (activeBadge) {
-                         // Briefly remove the class so the click handler re-applies it correctly
-                         activeBadge.classList.remove('active-filter'); 
-                         activeBadge.click();
-                     }
-                }
-            });
-        } 
+        const sortDropdown = document.getElementById('concise-sort-dropdown');
+        if (sortDropdown) {
+            sortDropdown.addEventListener('change', function(e) {
+                currentSortMethod = e.target.value;
+                // Re-render the list with the exact same parameters but new sort
+                renderConciseList(title, characters, isRawMode);
+                
+                // Re-apply any active spec filters to the newly rendered HTML
+                if (typeof applyTimelineFilters === 'function') {
+                     // Trigger a click on the active badge to re-filter the DOM elements
+                     const activeBadge = document.querySelector('.dynamic-badge.active-filter');
+                     if (activeBadge) {
+                         // Briefly remove the class so the click handler re-applies it correctly
+                         activeBadge.classList.remove('active-filter'); 
+                         activeBadge.click();
+                     }
+                }
+            });
+        } 
 
-        setupTooltips();
-    }
+        if (isPaginatedLadder && pendingLadderJumpQuery) {
+            const pendingQuery = pendingLadderJumpQuery;
+            const pendingRank = findLadderCharacterIndex(characters, pendingQuery) + 1;
+
+            window.requestAnimationFrame(() => {
+                if (scrollToLadderCharacter(pendingQuery, pendingRank)) {
+                    pendingLadderJumpQuery = '';
+                }
+            });
+        }
+
+        setupTooltips();
+    }
 
     function setupTooltips() {
         const tt_chars = document.querySelectorAll('.tt-char:not(.tt-bound)');
@@ -10471,6 +11318,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const hash = window.location.hash.substring(1);
         const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+        conciseView.classList.toggle('concise-view-ladder', isLadderHash);
 
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
         conciseRenderedCount = isLadderHash ? 25 : 0;
