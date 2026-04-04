@@ -160,6 +160,13 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .analytics-kpi-wrapper { max-width: 1100px; margin: 0 auto 40px auto; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 /* Layout */
 .analytics-view-container { display: none; animation: fadeInUp 0.5s forwards; }
+.view-hidden { display: none !important; }
+.analytics-view-container.view-active,
+.full-card-container.view-active,
+.arch-view-wrapper.view-active { display: block !important; }
+#concise-view.view-active { display: flex !important; }
+.search-hidden,
+.badges-hidden { display: none !important; }
 
 /* Components */
 .stat-box-kpi-pve { border-color: #ff8000; box-shadow: inset 0 0 15px rgba(255,128,0,0.1); }
@@ -708,7 +715,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* ========================================= */
 .arch-pipeline { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; width: 100%; gap: 15px; padding: 20px 10px 40px 10px; }
 /* Layout */
-.arch-view-wrapper { animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
+.arch-view-wrapper { display: none; animation: fadeInUp 0.5s forwards; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
 
 /* Typography */
 .view-main-title { color: #ffd100; font-family: 'Cinzel', serif; text-align: center; text-shadow: 0 2px 4px #000; font-size: 32px; }
@@ -2412,7 +2419,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                 </div>
             </div>
 
-            <div id="architecture-view" class="arch-view-wrapper" style="display: none;">
+            <div id="architecture-view" class="arch-view-wrapper">
                 <h2 class="view-main-title arch-title">System Architecture</h2>
                 
                 <p class="arch-subtitle">⚡ 100% FREE & SERVERLESS ⚡</p>
@@ -2684,10 +2691,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T12:35:12.634805Z", "active_14_days": 407, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T13:13:10.695672Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 364, "loot": 277, "levels": 87, "total_roster": 660, "active_roster": 407}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 395, "loot": 305, "levels": 90, "total_roster": 660, "active_roster": 408}]
     </script>
 
     <script>
@@ -4622,7 +4629,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (specContainer) specContainer.hidden = true;
 
         if (!characters || characters.length === 0) {
-            container.style.display = 'none';
+            container.classList.add('badges-hidden');
             return;
         }
         
@@ -4665,7 +4672,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        container.style.display = 'flex';
+        container.classList.remove('badges-hidden');
 
         document.querySelectorAll('.dynamic-badge').forEach(badge => {
             badge.addEventListener('click', function() {
@@ -4921,7 +4928,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        container.style.display = 'flex';
+        container.classList.remove('badges-hidden');
 
         document.querySelectorAll('.dynamic-award-badge').forEach(badge => {
             badge.addEventListener('click', function() {
@@ -5979,19 +5986,19 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     function hideAllViews() {
-        emptyState.style.display = 'none';
-        conciseView.style.display = 'none';
-        fullCardContainer.style.display = 'none';
-        if (analyticsView) analyticsView.style.display = 'none';
-        if (architectureView) architectureView.style.display = 'none';
+        emptyState.classList.add('view-hidden');
+        conciseView.classList.remove('view-active');
+        fullCardContainer.classList.remove('view-active');
+        if (analyticsView) analyticsView.classList.remove('view-active');
+        if (architectureView) architectureView.classList.remove('view-active');
         if (searchInput) searchInput.value = '';
         if (searchAutoComplete) searchAutoComplete.classList.remove('show');
         
         // Show nav search by default on sub-pages
         const navSearch = document.querySelector('.navbar .search-container');
-        if (navSearch) navSearch.style.display = 'block';
+        if (navSearch) navSearch.classList.remove('search-hidden');
 
-        if (timeline) timeline.style.display = 'block';
+        if (timeline) timeline.classList.remove('view-hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // --- RESTORE DEFAULT TIMELINE HTML ---
@@ -6163,12 +6170,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showAnalyticsView() {
         hideAllViews();
-        if (analyticsView) analyticsView.style.display = 'block';
+        if (analyticsView) analyticsView.classList.add('view-active');
         if (navbar) {
             navbar.classList.remove('navbar-theme-home');
             navbar.classList.add('navbar-theme-app');
         }
-        if (timeline) timeline.style.display = 'none'; 
+        if (timeline) timeline.classList.add('view-hidden'); 
 
         // --- CALCULATE KPIs ---
         let totalIlvl = 0, lvl70Count = 0, totalHks = 0;
@@ -6413,12 +6420,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showArchitectureView() {
         hideAllViews();
-        if (architectureView) architectureView.style.display = 'block';
+        if (architectureView) architectureView.classList.add('view-active');
         if (navbar) {
-            navbar.classList.remove('navbar-theme-home');
+            navbar.classList.remove('navbar-theme_home');
             navbar.classList.add('navbar-theme-app');
         }
-        if (timeline) timeline.style.display = 'none'; 
+        if (timeline) timeline.classList.add('view-hidden'); 
     }
 
     window.returnToHome = function() {
@@ -6428,7 +6435,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function showHomeView() {
         hideAllViews();
-        emptyState.style.display = 'block';
+        emptyState.classList.remove('view-hidden');
         if (navbar) {
             navbar.classList.remove('navbar-theme-app');
             navbar.classList.add('navbar-theme-home');
@@ -6437,7 +6444,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Hide nav search purely on the homepage
         const navSearch = document.querySelector('.navbar .search-container');
-        if (navSearch) navSearch.style.display = 'none';
+        if (navSearch) navSearch.classList.add('search-hidden');
 
         const xpCont = document.getElementById('guild-xp-container');
         if (xpCont) xpCont.hidden = false;
@@ -6447,8 +6454,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Now that monuments exist, apply timeline filters to render them at the top
         if (timeline) { 
-            timeline.style.display = 'block'; 
-            timelineTitle.innerHTML = "📜 Guild Recent Activity"; 
+            timeline.classList.remove('view-hidden'); 
+            timelineTitle.textContent = '📜 Guild Recent Activity'; 
             window.currentFilteredChars = null; 
             applyTimelineFilters(); 
         }
@@ -6605,7 +6612,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Added defaultSort parameter to override the standard "level" start
     function showConciseView(title, characters, isRawRoster = false, showBadges = true, defaultSort = 'level') {
         hideAllViews();
-        conciseView.style.display = 'flex';
+        conciseView.classList.add('view-active');
         if (navbar) {
             navbar.classList.remove('navbar-theme-home');
             navbar.classList.add('navbar-theme-app');
@@ -6628,7 +6635,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         wrapper.classList.remove('concise-wrapper-awards-layout');
         leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
-        badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout');
+        badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout', 'badges-hidden');
         if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
 
         if (showBadges === true) {
@@ -6646,7 +6653,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             
         } else {
-            badgesContainer.style.display = 'none';
+            badgesContainer.classList.add('badges-hidden');
             const specContainer = document.getElementById('concise-spec-container');
             if (specContainer) specContainer.hidden = true;
             
@@ -6733,14 +6740,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (timeline) {
             const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
-            timelineTitle.innerHTML = `📜 ${baseTitle} Activity`;
+            timelineTitle.textContent = `📜 ${baseTitle} Activity`;
             applyTimelineFilters();
         }
     }
 
     function showFullCardView(charName) {
         hideAllViews();
-        fullCardContainer.style.display = 'block';
+        fullCardContainer.classList.add('view-active');
         fullCardContainer.textContent = '';
 
         const fullCardNode = renderFullCard(charName);
@@ -6755,7 +6762,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         if (timeline) {
             const formattedName = charName.charAt(0).toUpperCase() + charName.slice(1);
-            timelineTitle.innerHTML = `📜 ${formattedName}'s Recent Activity`;
+            timelineTitle.textContent = `📜 ${formattedName}'s Recent Activity`;
             window.currentFilteredChars = [charName.toLowerCase()]; 
             applyTimelineFilters(); 
         }
@@ -7333,7 +7340,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const dynamicBadge = document.querySelector(`.dynamic-badge[data-class="${clickedClass}"]`);
                         
                         // If we are on a concise view with the class badges visible, trigger the in-place filter
-                        if (dynamicBadge && document.getElementById('concise-view').style.display !== 'none') {
+                        if (dynamicBadge && document.getElementById('concise-view')?.classList.contains('view-active')) {
                             dynamicBadge.click(); 
                         } else {
                             // Otherwise (on the Home dashboard), route to the dedicated class roster page
