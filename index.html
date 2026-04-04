@@ -5485,102 +5485,7 @@ a,
 }
 
 #concise-view.concise-view-ladder #concise-view-title {
-  display: none;
-}
-
-.ladder-shell-pve {
-  border-color: rgba(106, 255, 187, 0.18);
-  background:
-    radial-gradient(circle at top right, rgba(106, 255, 187, 0.14), transparent 30%),
-    radial-gradient(circle at left center, rgba(255, 209, 0, 0.12), transparent 34%),
-    linear-gradient(135deg, rgba(22, 28, 22, 0.94) 0%, rgba(10, 11, 14, 0.97) 100%);
-}
-
-.ladder-shell-pvp {
-  border-color: rgba(255, 103, 76, 0.2);
-  background:
-    radial-gradient(circle at top right, rgba(255, 103, 76, 0.16), transparent 28%),
-    radial-gradient(circle at left center, rgba(129, 74, 255, 0.12), transparent 34%),
-    linear-gradient(135deg, rgba(34, 14, 16, 0.95) 0%, rgba(9, 9, 13, 0.98) 100%);
-}
-
-.ladder-hero-shell::after {
-  content: "✦ ✦ ✦";
-  position: absolute;
-  right: 24px;
-  bottom: 18px;
-  font-family: "Cinzel";
-  letter-spacing: 0.35em;
-  color: rgba(255, 209, 0, 0.18);
-  pointer-events: none;
-}
-
-.ladder-shell-pve .ladder-overline,
-.ladder-shell-pve .ladder-section-kicker {
-  color: #8ff0bf;
-}
-
-.ladder-shell-pvp .ladder-overline,
-.ladder-shell-pvp .ladder-section-kicker {
-  color: #ff9b7a;
-}
-
-.ladder-shell-pve .ladder-hero-title {
-  color: #dbffe7;
-}
-
-.ladder-shell-pvp .ladder-hero-title {
-  color: #ffd9cf;
-}
-
-.ladder-hero-stat-card:hover,
-.ladder-insight-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 209, 0, 0.22);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-#concise-view.concise-view-ladder .lb-podium-wrap .podium-block {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 44px 14px 22px;
-}
-
-#concise-view.concise-view-ladder .lb-podium-wrap .podium-name {
-  width: 100%;
-  min-height: 2.3em;
-  text-align: center;
-  white-space: normal;
-  line-height: 1.15;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#concise-view.concise-view-ladder .lb-podium-wrap .podium-pill {
-  margin-top: 0;
-}
-
-@media (max-width: 680px) {
-  #concise-view.concise-view-ladder .lb-podium-wrap {
-    gap: 6px;
-    align-items: stretch;
-  }
-
-  #concise-view.concise-view-ladder .lb-podium-wrap .podium-block {
-    min-height: 0;
-    gap: 8px;
-    padding: 38px 8px 18px;
-  }
-
-  #concise-view.concise-view-ladder .lb-podium-wrap .podium-name {
-    min-height: 2.6em;
-    font-size: 15px;
-  }
+  margin-bottom: 8px;
 }
 
 .ladder-hero-shell {
@@ -6200,18 +6105,16 @@ a,
         </div>
     </template>
 
-    <template id="tpl-concise-podium">
+    <template id="tpl-mvp-podium-block">
         <div class="podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
-            <div class="vanguard-floating-icon" title="Vanguard" hidden>🌟</div>
-            <img src="" class="podium-avatar" alt="">
+            <img src="" class="podium-avatar">
+            <div class="podium-rank"></div>
             <div class="podium-name"></div>
             <div class="podium-pill">
-                <div class="podium-stat-line">
-                    <span class="podium-stat-val"></span>
-                    <span class="podium-stat-lbl"></span>
+                <div class="podium-trend-text">
+                    <span class="podium-trend-val"></span> <span class="podium-trend-label"></span>
                 </div>
-                <div class="podium-trend-container"></div>
             </div>
         </div>
     </template>
@@ -6401,13 +6304,12 @@ a,
             <div class="ladder-hero-stats"></div>
             <div class="ladder-hero-tools">
                 <div class="ladder-find-wrap">
-                    <label class="ladder-find-label" for="ladder-rank-search">Seek a champion</label>
+                    <label class="ladder-find-label" for="ladder-rank-search">Find your rank</label>
                     <div class="ladder-find-controls">
-                        <input type="text" id="ladder-rank-search" class="ladder-find-input" list="ladder-rank-options" autocomplete="off" placeholder="Enter a character name...">
-                        <datalist id="ladder-rank-options"></datalist>
-                        <button type="button" class="ladder-find-btn">Consult the roster</button>
+                        <input type="text" id="ladder-rank-search" class="ladder-find-input" autocomplete="off" placeholder="Enter a character name...">
+                        <button type="button" class="ladder-find-btn">Jump to player</button>
                     </div>
-                    <div class="ladder-find-status" aria-live="polite">Choose a hero from the roster and jump straight to their standing.</div>
+                    <div class="ladder-find-status" aria-live="polite">Search the ladder and jump directly to any ranked character.</div>
                 </div>
             </div>
             <div class="ladder-insights-grid"></div>
@@ -7048,10 +6950,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T20:50:12.626407Z", "active_14_days": 403, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T20:54:08.796399Z", "active_14_days": 402, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 571, "loot": 434, "levels": 137, "total_roster": 658, "active_roster": 403}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 571, "loot": 434, "levels": 137, "total_roster": 658, "active_roster": 402}]
     </script>
 
     <script>
@@ -7259,27 +7161,27 @@ function getLadderConfig(hashUrl) {
     if (hashUrl === 'ladder-pvp') {
         return {
             theme: 'pvp',
-            overline: 'Arena War Ledger',
-            heroTitle: 'The Blood Ledger of Outland',
-            heroDesc: "From Nagrand to Blade's Edge skirmishes, this war board tracks the guild's most feared killers, fiercest surges, and the rivals still clawing for the crown.",
+            overline: 'Guild War Board',
+            heroTitle: 'The Blood Ledger',
+            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
             metricLabel: 'Honorable Kills',
             metricShort: 'HKs',
-            podiumKicker: 'Gladiators of the Week',
-            podiumTitle: 'Champions of the Arena Sands',
-            podiumDesc: 'These three names currently hold the line above every challenger on the war board.'
+            podiumKicker: 'Battlefield Elite',
+            podiumTitle: 'Featured Champions',
+            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
         };
     }
 
     return {
         theme: 'pve',
-        overline: 'Outland Raid Dispatch',
+        overline: 'Raid Command Board',
         heroTitle: 'The Black Temple Vanguard',
-        heroDesc: "A command ledger for the raiders leading the march through Karazhan, Serpentshrine, Hyjal, and the Black Temple itself. See who stands ready, who is surging, and who is closing on the front line.",
+        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
         metricLabel: 'Item Level',
         metricShort: 'iLvl',
         podiumKicker: 'Raid Vanguard',
-        podiumTitle: 'Champions of the Expedition',
-        podiumDesc: "The current standard-bearers for guild progression across Outland's hardest encounters."
+        podiumTitle: 'Featured Champions',
+        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
     };
 }
 
@@ -7418,7 +7320,6 @@ function buildLadderShell(characters, hashUrl) {
     const podiumKicker = clone.querySelector('.ladder-section-kicker');
     const podiumTitle = clone.querySelector('.ladder-section-title');
     const podiumDesc = clone.querySelector('.ladder-section-desc');
-    const dataList = clone.querySelector('#ladder-rank-options');
 
     if (shell) shell.classList.add(`ladder-shell-${config.theme}`);
     if (overline) overline.textContent = config.overline;
@@ -7427,17 +7328,6 @@ function buildLadderShell(characters, hashUrl) {
     if (podiumKicker) podiumKicker.textContent = config.podiumKicker;
     if (podiumTitle) podiumTitle.textContent = config.podiumTitle;
     if (podiumDesc) podiumDesc.textContent = config.podiumDesc;
-
-    if (dataList) {
-        characters.forEach(char => {
-            const name = char && char.profile && char.profile.name ? char.profile.name : '';
-            if (!name) return;
-
-            const option = document.createElement('option');
-            option.value = name;
-            dataList.appendChild(option);
-        });
-    }
 
     const leader = characters[0];
     const second = characters[1] || null;
@@ -7455,8 +7345,7 @@ function buildLadderShell(characters, hashUrl) {
     }, {});
 
     const dominantClassEntry = Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0] || ['Unknown', 0];
-    const positiveMoverPool = characters.filter(char => getLadderTrendValue(char, hashUrl) > 0);
-    const biggestMover = [...(positiveMoverPool.length ? positiveMoverPool : characters)]
+    const biggestMover = [...characters]
         .sort((a, b) => getLadderTrendValue(b, hashUrl) - getLadderTrendValue(a, hashUrl))[0] || leader;
     const biggestMoverTrend = getLadderTrendValue(biggestMover, hashUrl);
     const rivalryGap = second ? Math.max(0, leaderMetric - getLadderMetricValue(second, hashUrl)) : 0;
@@ -9667,9 +9556,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
-            appendConciseBadges(nameEl, conciseBadges);
-        }
+        appendConciseBadges(nameEl, conciseBadges);
 
         if (showVanguardBadge) {
             const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
@@ -9750,7 +9637,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const crown = clone.querySelector('.podium-crown');
         const vanguard = clone.querySelector('.vanguard-floating-icon');
         const avatar = clone.querySelector('.podium-avatar');
+        const rankEl = clone.querySelector('.podium-rank');
         const nameEl = clone.querySelector('.podium-name');
+        const metaEl = clone.querySelector('.podium-meta');
+        const rivalryEl = clone.querySelector('.podium-rivalry');
         const pill = clone.querySelector('.podium-pill');
         const statLine = clone.querySelector('.podium-stat-line');
         const statValEl = clone.querySelector('.podium-stat-val');
@@ -9776,7 +9666,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         avatar.src = portraitURL;
         avatar.alt = baseName || 'Character portrait';
 
+        rankEl.textContent = `#${rank}`;
+
         nameEl.textContent = baseName;
+        if (metaEl) metaEl.textContent = `${raceName} • ${displaySpecClass}`;
+        if (rivalryEl) rivalryEl.textContent = rivalryText || '';
 
         if (hashUrl === 'war-effort-hk') {
             const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
@@ -11755,14 +11649,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
             // Passed 'true' for Badges, and 'ilvl' for the default sort!
-            showConciseView('', sortedPve, false, true, 'ilvl');
+            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
             
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
             // Passed 'true' for Badges, and 'hks' for the default sort!
-            showConciseView('', sortedPvp, false, true, 'hks');
+            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
         } else if (hash.startsWith('war-effort-')) {
