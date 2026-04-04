@@ -2330,7 +2330,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                     </div>
                 </div>
 
-                <div id="weekly-mvps-container" class="weekly-mvps-wrapper" style="display:none;">
+                <div id="weekly-mvps-container" class="weekly-mvps-wrapper" hidden>
                     <h3 class="weekly-mvps-main-title">🏆 7-Day Guild MVPs 🏆</h3>
                     <div class="mvp-cards-container">
                         <div class="mvp-card mvp-card-pve">
@@ -2695,10 +2695,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T11:46:47.721816Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T11:52:41.517050Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 336, "loot": 254, "levels": 82, "total_roster": 660, "active_roster": 408}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 341, "loot": 258, "levels": 83, "total_roster": 660, "active_roster": 408}]
     </script>
 
     <script>
@@ -7651,7 +7651,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        mvpContainer.style.display = 'block';
+        mvpContainer.hidden = false;
 
         function generateMvpHtml(chars, isPvp) {
             if (chars.length === 0) {
