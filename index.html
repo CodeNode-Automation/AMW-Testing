@@ -938,25 +938,77 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .challenge-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
 .challenge-bar-bg { position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02); }
 .challenge-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-.challenge-fill.we-fill-xp.we-fill-state-low { background: linear-gradient(90deg, #333, #8B6508); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
-.challenge-fill.we-fill-xp.we-fill-state-mid { background: linear-gradient(90deg, #8B6508, #ffd100); box-shadow: 0 0 18px #ffd100; animation: pulseSlowXP 1.5s infinite alternate; }
-.challenge-fill.we-fill-xp.we-fill-state-high { background: linear-gradient(90deg, #8B6508, #ff8000); box-shadow: 0 0 22px #ff8000; animation: pulseFastXP 0.8s infinite alternate; }
-.challenge-fill.we-fill-xp.we-fill-state-max { background: linear-gradient(90deg, #8B6508, #ff8000); box-shadow: 0 0 20px #ff8000; animation: pulseMaxXP 1.5s infinite alternate; }
+.challenge-fill.we-fill-xp {
+    --we-fill-base: #8B6508;
+    --we-fill-mid: #ffd100;
+    --we-fill-max: #ff8000;
+    --we-fill-mid-shadow: #ffd100;
+    --we-fill-high-shadow: #ff8000;
+    --we-fill-max-shadow: #ff8000;
+    --we-fill-mid-animation: pulseSlowXP 1.5s infinite alternate;
+    --we-fill-high-animation: pulseFastXP 0.8s infinite alternate;
+    --we-fill-max-animation: pulseMaxXP 1.5s infinite alternate;
+}
 
-.challenge-fill.we-fill-hk.we-fill-state-low { background: linear-gradient(90deg, #333, #8B0000); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
-.challenge-fill.we-fill-hk.we-fill-state-mid { background: linear-gradient(90deg, #8B0000, #e74c3c); box-shadow: 0 0 18px #e74c3c; animation: pulseSlowHK 1.5s infinite alternate; }
-.challenge-fill.we-fill-hk.we-fill-state-high { background: linear-gradient(90deg, #8B0000, #ff4400); box-shadow: 0 0 22px #ff4400; animation: pulseFastHK 0.8s infinite alternate; }
-.challenge-fill.we-fill-hk.we-fill-state-max { background: linear-gradient(90deg, #8B0000, #ff4400); box-shadow: 0 0 20px #ff4400; animation: pulseMaxHK 1.5s infinite alternate; }
+.challenge-fill.we-fill-hk {
+    --we-fill-base: #8B0000;
+    --we-fill-mid: #e74c3c;
+    --we-fill-max: #ff4400;
+    --we-fill-mid-shadow: #e74c3c;
+    --we-fill-high-shadow: #ff4400;
+    --we-fill-max-shadow: #ff4400;
+    --we-fill-mid-animation: pulseSlowHK 1.5s infinite alternate;
+    --we-fill-high-animation: pulseFastHK 0.8s infinite alternate;
+    --we-fill-max-animation: pulseMaxHK 1.5s infinite alternate;
+}
 
-.challenge-fill.we-fill-loot.we-fill-state-low { background: linear-gradient(90deg, #333, #4b0082); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
-.challenge-fill.we-fill-loot.we-fill-state-mid { background: linear-gradient(90deg, #4b0082, #a335ee); box-shadow: 0 0 18px #a335ee; animation: pulseSlowLOOT 1.5s infinite alternate; }
-.challenge-fill.we-fill-loot.we-fill-state-high { background: linear-gradient(90deg, #4b0082, #ff8000); box-shadow: 0 0 22px #ff8000; animation: pulseFastLOOT 0.8s infinite alternate; }
-.challenge-fill.we-fill-loot.we-fill-state-max { background: linear-gradient(90deg, #4b0082, #ff8000); box-shadow: 0 0 20px #ff8000; animation: pulseMaxLOOT 1.5s infinite alternate; }
+.challenge-fill.we-fill-loot {
+    --we-fill-base: #4b0082;
+    --we-fill-mid: #a335ee;
+    --we-fill-max: #ff8000;
+    --we-fill-mid-shadow: #a335ee;
+    --we-fill-high-shadow: #ff8000;
+    --we-fill-max-shadow: #ff8000;
+    --we-fill-mid-animation: pulseSlowLOOT 1.5s infinite alternate;
+    --we-fill-high-animation: pulseFastLOOT 0.8s infinite alternate;
+    --we-fill-max-animation: pulseMaxLOOT 1.5s infinite alternate;
+}
 
-.challenge-fill.we-fill-zenith.we-fill-state-low { background: linear-gradient(90deg, #333, #006064); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
-.challenge-fill.we-fill-zenith.we-fill-state-mid { background: linear-gradient(90deg, #006064, #3FC7EB); box-shadow: 0 0 18px #3FC7EB; animation: pulseSlowZENITH 1.5s infinite alternate; }
-.challenge-fill.we-fill-zenith.we-fill-state-high { background: linear-gradient(90deg, #006064, #00e5ff); box-shadow: 0 0 22px #00e5ff; animation: pulseFastZENITH 0.8s infinite alternate; }
-.challenge-fill.we-fill-zenith.we-fill-state-max { background: linear-gradient(90deg, #006064, #00e5ff); box-shadow: 0 0 20px #00e5ff; animation: pulseMaxZENITH 1.5s infinite alternate; }
+.challenge-fill.we-fill-zenith {
+    --we-fill-base: #006064;
+    --we-fill-mid: #3FC7EB;
+    --we-fill-max: #00e5ff;
+    --we-fill-mid-shadow: #3FC7EB;
+    --we-fill-high-shadow: #00e5ff;
+    --we-fill-max-shadow: #00e5ff;
+    --we-fill-mid-animation: pulseSlowZENITH 1.5s infinite alternate;
+    --we-fill-high-animation: pulseFastZENITH 0.8s infinite alternate;
+    --we-fill-max-animation: pulseMaxZENITH 1.5s infinite alternate;
+}
+
+.challenge-fill.we-fill-state-low {
+    background: linear-gradient(90deg, #333, var(--we-fill-base));
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    animation: none;
+}
+
+.challenge-fill.we-fill-state-mid {
+    background: linear-gradient(90deg, var(--we-fill-base), var(--we-fill-mid));
+    box-shadow: 0 0 18px var(--we-fill-mid-shadow);
+    animation: var(--we-fill-mid-animation);
+}
+
+.challenge-fill.we-fill-state-high {
+    background: linear-gradient(90deg, var(--we-fill-base), var(--we-fill-max));
+    box-shadow: 0 0 22px var(--we-fill-high-shadow);
+    animation: var(--we-fill-high-animation);
+}
+
+.challenge-fill.we-fill-state-max {
+    background: linear-gradient(90deg, var(--we-fill-base), var(--we-fill-max));
+    box-shadow: 0 0 20px var(--we-fill-max-shadow);
+    animation: var(--we-fill-max-animation);
+}
 .challenge-glare { position: absolute; top: 0; left: 0; width: 100%; height: 45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0; }
 .challenge-tick { position: absolute; top: 0; width: 2px; height: 100%; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4; }
 .tick-25 { left: 25%; background: rgba(255,255,255,0.05); }
@@ -2291,10 +2343,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T09:05:58.984361Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T09:08:20.854879Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 248, "loot": 188, "levels": 60, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 249, "loot": 188, "levels": 61, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
