@@ -3838,7 +3838,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 ).slice(0, 5);
 
                 if (recentEvents.length > 0) {
-                    milestoneCont.style.display = 'flex';
+                    milestoneCont.hidden = false;
                     milestoneText.classList.add('milestone-text-rotator');
 
                     // 2. Pre-build the DOM elements for all 5 events
@@ -3896,7 +3896,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }, 4500);
                     }
                 } else {
-                    milestoneCont.style.display = 'none';
+                    milestoneCont.hidden = true;
                 }
             }
         }
