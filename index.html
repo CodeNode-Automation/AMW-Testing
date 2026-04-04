@@ -837,6 +837,51 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tooltip-name-wrap { display: flex; align-items: center; }
 .tooltip-class-wrap { display: flex; align-items: center; }
 
+.custom-tooltip[data-class="Druid"] { --heatmap-tooltip-accent: #FF7C0A; }
+.custom-tooltip[data-class="Hunter"] { --heatmap-tooltip-accent: #ABD473; }
+.custom-tooltip[data-class="Mage"] { --heatmap-tooltip-accent: #3FC7EB; }
+.custom-tooltip[data-class="Paladin"] { --heatmap-tooltip-accent: #F48CBA; }
+.custom-tooltip[data-class="Priest"] { --heatmap-tooltip-accent: #FFFFFF; }
+.custom-tooltip[data-class="Rogue"] { --heatmap-tooltip-accent: #FFF468; }
+.custom-tooltip[data-class="Shaman"] { --heatmap-tooltip-accent: #0070DE; }
+.custom-tooltip[data-class="Warlock"] { --heatmap-tooltip-accent: #8788EE; }
+.custom-tooltip[data-class="Warrior"] { --heatmap-tooltip-accent: #C69B6D; }
+.custom-tooltip[data-class="Death Knight"] { --heatmap-tooltip-accent: #C41E3A; }
+.custom-tooltip[data-class="Unknown"] { --heatmap-tooltip-accent: #ffd100; }
+
+.custom-tooltip[data-class="Druid"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Druid"] .tooltip-class-wrap { color: #FF7C0A; }
+
+.custom-tooltip[data-class="Hunter"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Hunter"] .tooltip-class-wrap { color: #ABD473; }
+
+.custom-tooltip[data-class="Mage"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Mage"] .tooltip-class-wrap { color: #3FC7EB; }
+
+.custom-tooltip[data-class="Paladin"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Paladin"] .tooltip-class-wrap { color: #F48CBA; }
+
+.custom-tooltip[data-class="Priest"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Priest"] .tooltip-class-wrap { color: #FFFFFF; }
+
+.custom-tooltip[data-class="Rogue"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Rogue"] .tooltip-class-wrap { color: #FFF468; }
+
+.custom-tooltip[data-class="Shaman"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Shaman"] .tooltip-class-wrap { color: #0070DE; }
+
+.custom-tooltip[data-class="Warlock"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Warlock"] .tooltip-class-wrap { color: #8788EE; }
+
+.custom-tooltip[data-class="Warrior"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Warrior"] .tooltip-class-wrap { color: #C69B6D; }
+
+.custom-tooltip[data-class="Death Knight"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Death Knight"] .tooltip-class-wrap { color: #C41E3A; }
+
+.custom-tooltip[data-class="Unknown"] .tooltip-name-wrap,
+.custom-tooltip[data-class="Unknown"] .tooltip-class-wrap { color: #ffd100; }
+
 /* Components */
 .tt-no-border { border-bottom: none !important; }
 .spec-icon-card { width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(255,255,255,0.2); }
@@ -2225,10 +2270,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:18:11.920407Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:20:27.467529Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 240, "loot": 182, "levels": 58, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 242, "loot": 184, "levels": 58, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
@@ -5296,7 +5341,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const cClass = getCharClass(char);
                 const powerName = getPowerName(cClass);
                 const raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
-                const cHex = CLASS_COLORS[cClass] || "#ffd100";
+                const tooltipClassKey = cClass || 'Unknown';
                 
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 const specIconUrl = getSpecIcon(cClass, activeSpec);
@@ -5334,7 +5379,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     const clone = template.content.cloneNode(true);
                     
                     const nameWrap = clone.querySelector('.tooltip-name-wrap');
-                    nameWrap.style.color = cHex;
+                    if (nameWrap) nameWrap.setAttribute('data-class', tooltipClassKey);
                     clone.querySelector('.tooltip-char-name').textContent = p.name || 'Unknown';
                     
                     const badgesContainer = clone.querySelector('.tooltip-badges-container');
@@ -5365,7 +5410,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     clone.querySelector('.tooltip-level-race').textContent = `${p.level || 0} / ${raceName}`;
                     
                     const classWrap = clone.querySelector('.tooltip-class-wrap');
-                    classWrap.style.color = cHex;
+                    classWrap.setAttribute('data-class', tooltipClassKey);
                     classWrap.textContent = '';
 
                     if (specIconUrl) {
@@ -5386,7 +5431,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     tooltip.appendChild(clone);
                 }
-                tooltip.style.borderLeftColor = cHex;
+                tooltip.setAttribute('data-class', tooltipClassKey);
                 
                 let x = e.clientX + 15;
                 let y = e.clientY + 15;
