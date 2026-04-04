@@ -6337,6 +6337,9 @@ a,
 
                     <div id="concise-center-col" class="concise-main-col">
                         <div id="concise-char-list"></div>
+                        <div id="concise-load-more-container" class="load-more-container" hidden>
+                            <button id="concise-load-more-btn" type="button" class="tl-load-more-btn" hidden>Load 25 More Players</button>
+                        </div>
                     </div>
                     
                 </div>
@@ -6504,10 +6507,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T17:00:30.336759Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T17:27:51.252998Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 466, "loot": 351, "levels": 115, "total_roster": 659, "active_roster": 404}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 479, "loot": 362, "levels": 117, "total_roster": 658, "active_roster": 404}]
     </script>
 
     <script>
@@ -9005,6 +9008,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Variable to track current sort method
     let currentSortMethod = 'level';
+    let conciseRenderedCount = 0;
+    const conciseBatchSize = 25;
 
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
@@ -9489,12 +9494,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         conciseList.textContent = '';
 
+        const isPaginatedLadder = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+        const visibleListCount = isPaginatedLadder
+            ? Math.max(0, conciseRenderedCount - podiumNodes.length)
+            : listItemNodes.length;
+        const visibleListNodes = isPaginatedLadder
+            ? listItemNodes.slice(0, visibleListCount)
+            : listItemNodes;
+
         if (usePodium && podiumNodes.length > 0) {
             const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
             const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
-            const isFullLadderPage = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
-            const ladderInitialCount = 22;
-            const ladderLoadBatchSize = 25;
 
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
@@ -9507,52 +9517,38 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listItemNodes.forEach((node, index) => {
-                    if (!node) return;
-
-                    if (isFullLadderPage && index >= ladderInitialCount) {
-                        node.hidden = true;
-                    }
-
-                    listWrap.appendChild(node);
+                visibleListNodes.forEach(node => {
+                    if (node) listWrap.appendChild(node);
                 });
-
                 conciseList.appendChild(listWrap);
-
-                if (isFullLadderPage && listItemNodes.length > ladderInitialCount) {
-                    const expandBtnTemplate = document.getElementById('tpl-home-leaderboard-expand-btn');
-                    const btn = expandBtnTemplate?.content?.firstElementChild?.cloneNode(true);
-
-                    if (btn) {
-                        const updateButtonText = () => {
-                            const remaining = listWrap.querySelectorAll('.concise-char-bar[hidden]').length;
-
-                            if (remaining > 0) {
-                                btn.disabled = false;
-                                btn.textContent = `Load More Ranks (${remaining} Remaining) ▼`;
-                            } else {
-                                btn.disabled = true;
-                                btn.textContent = 'All Ladder Ranks Loaded';
-                            }
-                        };
-
-                        btn.addEventListener('click', function() {
-                            const hiddenRows = Array.from(listWrap.querySelectorAll('.concise-char-bar[hidden]'));
-                            hiddenRows.slice(0, ladderLoadBatchSize).forEach(row => {
-                                row.hidden = false;
-                            });
-                            updateButtonText();
-                        });
-
-                        updateButtonText();
-                        conciseList.appendChild(btn);
-                    }
-                }
             }
         } else {
-            listItemNodes.forEach(node => {
+            visibleListNodes.forEach(node => {
                 if (node) conciseList.appendChild(node);
             });
+        }
+
+        const conciseLoadMoreContainer = document.getElementById('concise-load-more-container');
+        const conciseLoadMoreBtn = document.getElementById('concise-load-more-btn');
+
+        if (conciseLoadMoreContainer && conciseLoadMoreBtn) {
+            const hasMoreRows = isPaginatedLadder && visibleListNodes.length < listItemNodes.length;
+
+            conciseLoadMoreContainer.hidden = !hasMoreRows;
+            conciseLoadMoreBtn.hidden = !hasMoreRows;
+
+            if (hasMoreRows) {
+                const remainingRows = listItemNodes.length - visibleListNodes.length;
+                const nextLoadCount = Math.min(conciseBatchSize, remainingRows);
+
+                conciseLoadMoreBtn.textContent = `Load ${nextLoadCount} More Players`;
+                conciseLoadMoreBtn.onclick = () => {
+                    conciseRenderedCount += conciseBatchSize;
+                    renderConciseList(title, characters, isRawMode);
+                };
+            } else {
+                conciseLoadMoreBtn.onclick = null;
+            }
         }
         
         let templateId = null;
@@ -10473,7 +10469,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             navbar.classList.add('navbar-theme-app');
         }
         
+        const hash = window.location.hash.substring(1);
+        const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
+        conciseRenderedCount = isLadderHash ? 25 : 0;
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
@@ -10481,8 +10481,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        const hash = window.location.hash.substring(1);
-        const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
         const chartViews = ['total', 'active', 'raidready'];
 
         const wrapper = document.getElementById('concise-content-wrapper');
