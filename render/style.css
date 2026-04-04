@@ -5452,6 +5452,37 @@ a,
   min-width: 80px;
 }
 
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+  justify-content: center;
+  gap: 10px;
+  padding: 34px 10px 14px 10px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.15;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    padding: 30px 6px 10px 6px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+    font-size: 12px;
+  }
+}
+
 @keyframes floatCrown {
   0% {
     transform: translate(-50%, 0px) rotate(-5deg);

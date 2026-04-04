@@ -2756,6 +2756,63 @@ window.addEventListener('DOMContentLoaded', async () => {
         return clone.firstElementChild;
     }
 
+    function buildLadderPodiumHtml({
+        cleanName,
+        cClass,
+        activeSpecAttr,
+        awardsAttr,
+        stepClass,
+        rank,
+        portraitURL,
+        baseName,
+        hashUrl,
+        deepChar,
+        statValue
+    }) {
+        const template = document.getElementById('tpl-ladder-podium');
+        if (!template) return null;
+
+        const clone = template.content.cloneNode(true);
+        const block = clone.querySelector('.ladder-podium-block');
+        const crown = clone.querySelector('.podium-crown');
+        const avatar = clone.querySelector('.podium-avatar');
+        const nameEl = clone.querySelector('.podium-name');
+        const statValEl = clone.querySelector('.podium-stat-val');
+        const statLabelEl = clone.querySelector('.podium-stat-lbl');
+        const trendContainer = clone.querySelector('.podium-trend-container');
+
+        block.classList.add(stepClass);
+        block.setAttribute('data-char', cleanName);
+        block.setAttribute('data-class', cClass);
+        block.setAttribute('data-spec', activeSpecAttr);
+        block.setAttribute('data-awards', awardsAttr.join(','));
+
+        crown.hidden = rank !== 1;
+
+        avatar.src = portraitURL;
+        avatar.alt = baseName || 'Character portrait';
+
+        nameEl.textContent = baseName;
+
+        if (hashUrl === 'ladder-pve') {
+            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0;
+            statValEl.textContent = statValue;
+            statValEl.classList.add('text-ilvl');
+            statLabelEl.textContent = 'iLvl';
+            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
+        } else if (hashUrl === 'ladder-pvp') {
+            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
+            statValEl.textContent = statValue;
+            statValEl.classList.add('text-hk');
+            statLabelEl.textContent = 'HKs';
+            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
+        } else {
+            trendContainer.remove();
+        }
+
+        return clone.firstElementChild;
+    }
+
     // Variable to track current sort method
     let currentSortMethod = 'level';
     let conciseRenderedCount = 0;
@@ -3313,42 +3370,42 @@ window.addEventListener('DOMContentLoaded', async () => {
                 ladderMeta
             });
 
-            // Intercept and Build Podium Block for Top 3
+                        // Intercept and Build Podium Block for Top 3
             if (usePodium && index < 3) {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
-                const rankColor = rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32');
-                const previousChar = index > 0 ? sortedCharacters[index - 1] : null;
-                const nextChar = sortedCharacters[index + 1] || null;
-                let rivalryText = 'Champion of the current ladder';
+                const isLadderPodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
 
-                if (rank === 1 && nextChar) {
-                    const leadGap = Math.max(0, getLadderMetricValue(deepChar || char, hashUrl) - getLadderMetricValue(nextChar, hashUrl));
-                    rivalryText = `Leads #2 by ${leadGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
-                } else if (previousChar) {
-                    const chaseGap = Math.max(0, getLadderMetricValue(previousChar, hashUrl) - getLadderMetricValue(deepChar || char, hashUrl));
-                    rivalryText = `Trails the rank above by ${chaseGap.toLocaleString()} ${hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl'}`;
-                }
-                
-                const podiumNode = buildConcisePodiumHtml({
-                    cleanName,
-                    cClass,
-                    activeSpecAttr,
-                    awardsAttr,
-                    cHex,
-                    stepClass,
-                    rank,
-                    rankColor,
-                    portraitURL,
-                    baseName,
-                    vanguardClass,
-                    hashUrl,
-                    deepChar,
-                    statValue,
-                    raceName,
-                    displaySpecClass,
-                    rivalryText
-                });
+                const podiumNode = isLadderPodium
+                    ? buildLadderPodiumHtml({
+                        cleanName,
+                        cClass,
+                        activeSpecAttr,
+                        awardsAttr,
+                        stepClass,
+                        rank,
+                        portraitURL,
+                        baseName,
+                        hashUrl,
+                        deepChar,
+                        statValue
+                    })
+                    : buildConcisePodiumHtml({
+                        cleanName,
+                        cClass,
+                        activeSpecAttr,
+                        awardsAttr,
+                        cHex,
+                        stepClass,
+                        rank,
+                        rankColor: rank === 1 ? '#ffd100' : (rank === 2 ? '#c0c0c0' : '#cd7f32'),
+                        portraitURL,
+                        baseName,
+                        vanguardClass,
+                        hashUrl,
+                        deepChar,
+                        statValue
+                    });
 
                 if (podiumNode) {
                     podiumNodes.push(podiumNode);
@@ -3387,6 +3444,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
 
             if (podiumWrap) {
+                if (isPaginatedLadder) {
+                    podiumWrap.classList.add('ladder-podium-wrap');
+                }
+
                 podiumNodes.forEach(node => {
                     if (node) podiumWrap.appendChild(node);
                 });
