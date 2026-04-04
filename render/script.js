@@ -5406,17 +5406,20 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             function displayTooltip(clientX, clientY) {
                 tooltip.textContent = '';
-                
-                const header = document.createElement('div');
-                header.className = 'we-tt-header';
-                header.textContent = titleText;
-                tooltip.appendChild(header);
-                
+
+                const headerTemplate = document.getElementById('tpl-we-tooltip-header');
+                if (headerTemplate) {
+                    const headerClone = headerTemplate.content.cloneNode(true);
+                    const headerEl = headerClone.querySelector('.we-tt-header');
+                    if (headerEl) headerEl.textContent = titleText;
+                    tooltip.appendChild(headerClone);
+                }
+
                 if (sortedContributors.length === 0) {
-                    const empty = document.createElement('div');
-                    empty.className = 'we-tt-empty';
-                    empty.textContent = 'The challenges just began!';
-                    tooltip.appendChild(empty);
+                    const emptyTemplate = document.getElementById('tpl-we-tooltip-empty');
+                    if (emptyTemplate) {
+                        tooltip.appendChild(emptyTemplate.content.cloneNode(true));
+                    }
                 } else {
                     const topList = sortedContributors.slice(0, 15);
                     topList.forEach(([name, count], index) => {
@@ -5424,29 +5427,37 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const cClass = charData ? getCharClass(charData) : 'Unknown';
                         const cHex = CLASS_COLORS[cClass] || '#fff';
                         const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-                        
-                        const row = document.createElement('div');
-                        row.className = 'we-tt-row';
-                        
-                        const nameSpan = document.createElement('span');
-                        nameSpan.style.color = cHex;
-                        nameSpan.textContent = `${index + 1}. ${formattedName}`;
-                        
-                        const scoreSpan = document.createElement('span');
-                        scoreSpan.className = 'we-tt-score';
-                        scoreSpan.textContent = `+${count.toLocaleString()}`;
-                        
-                        row.appendChild(nameSpan);
-                        row.appendChild(scoreSpan);
-                        tooltip.appendChild(row);
+
+                        const rowTemplate = document.getElementById('tpl-we-tooltip-row');
+                        if (rowTemplate) {
+                            const rowClone = rowTemplate.content.cloneNode(true);
+                            const nameSpan = rowClone.querySelector('.we-tt-name');
+                            const scoreSpan = rowClone.querySelector('.we-tt-score');
+
+                            if (nameSpan) {
+                                nameSpan.style.color = cHex;
+                                nameSpan.textContent = `${index + 1}. ${formattedName}`;
+                            }
+
+                            if (scoreSpan) {
+                                scoreSpan.textContent = `+${count.toLocaleString()}`;
+                            }
+
+                            tooltip.appendChild(rowClone);
+                        }
                     });
-                    
+
                     if (sortedContributors.length > 15) {
                         const remaining = sortedContributors.slice(15).reduce((sum, [_, count]) => sum + count, 0);
-                        const footer = document.createElement('div');
-                        footer.className = 'we-tt-footer';
-                        footer.textContent = `...and +${remaining.toLocaleString()} more ${labelText}!`;
-                        tooltip.appendChild(footer);
+                        const footerTemplate = document.getElementById('tpl-we-tooltip-footer');
+                        if (footerTemplate) {
+                            const footerClone = footerTemplate.content.cloneNode(true);
+                            const footerEl = footerClone.querySelector('.we-tt-footer');
+                            if (footerEl) {
+                                footerEl.textContent = `...and +${remaining.toLocaleString()} more ${labelText}!`;
+                            }
+                            tooltip.appendChild(footerClone);
+                        }
                     }
                 }
 
