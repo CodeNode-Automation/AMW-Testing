@@ -1660,7 +1660,6 @@ a,
   width: 100%;
   max-width: 440px;
 }
-
 .concise-char-bar {
   display: flex;
   align-items: center;
@@ -1675,56 +1674,42 @@ a,
   border-left: 4px solid;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-
-.concise-char-bar[hidden],
-.leaderboard-row[hidden],
-.podium-block[hidden] {
-  display: none !important;
-}
-
 .concise-row-main {
   display: flex;
   align-items: center;
 }
-
 .concise-row-inner {
   display: flex;
   align-items: center;
   width: 100%;
 }
-
 .concise-row-stats-top {
   justify-content: flex-end;
   flex: 1;
 }
-
 .concise-char-bar-war-effort {
   width: 100%;
   max-width: 100%;
   margin-bottom: 8px;
   padding: 12px 15px;
 }
-
 .concise-char-bar-war-effort-loot {
   padding: 15px;
   flex-direction: column;
   align-items: flex-start;
   height: auto;
 }
-
 .concise-row-inner-war-effort-loot {
   justify-content: space-between;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
   padding-bottom: 12px;
   margin-bottom: 12px;
 }
-
 .concise-row-stats-bottom-war-effort-loot {
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
 }
-
 .concise-char-bar:hover {
   transform: translateX(6px);
   background: linear-gradient(90deg, rgba(40, 40, 50, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%);
@@ -1732,14 +1717,12 @@ a,
   border-left-color: var(--class-accent, transparent);
   box-shadow: -4px 8px 20px rgba(0, 0, 0, 0.5);
 }
-
 .c-main-info {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .badge-reigning-pve {
   background: rgba(255, 209, 0, 0.2);
   border-color: #ffd100;
@@ -1748,7 +1731,6 @@ a,
   box-shadow: 0 0 15px rgba(255, 209, 0, 0.8);
   animation: pulseGlow 2s infinite alternate;
 }
-
 .badge-reigning-pvp {
   background: rgba(255, 68, 0, 0.2);
   border-color: #ff4400;

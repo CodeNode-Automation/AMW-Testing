@@ -2493,74 +2493,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Variable to track current sort method
     let currentSortMethod = 'level';
 
-    const LADDER_PODIUM_COUNT = 3;
-    const LADDER_INITIAL_VISIBLE_TOTAL = 25;
-    const LADDER_INITIAL_ROW_COUNT = LADDER_INITIAL_VISIBLE_TOTAL - LADDER_PODIUM_COUNT;
-    const LADDER_LOAD_MORE_COUNT = 25;
-
-    function updateLadderLoadMoreButton(button, visibleRowCount, totalRowCount) {
-        if (!button) return;
-
-        const nextStartRank = LADDER_PODIUM_COUNT + visibleRowCount + 1;
-        const lastAvailableRank = LADDER_PODIUM_COUNT + totalRowCount;
-
-        if (nextStartRank > lastAvailableRank) {
-            button.remove();
-            return;
-        }
-
-        const nextEndRank = Math.min(
-            LADDER_PODIUM_COUNT + visibleRowCount + LADDER_LOAD_MORE_COUNT,
-            lastAvailableRank
-        );
-
-        button.textContent = `Load More Ranks ${nextStartRank}-${nextEndRank}`;
-    }
-
-    function appendLadderLoadMoreButton(container, listItemNodes) {
-        if (!container || !Array.isArray(listItemNodes) || listItemNodes.length <= LADDER_INITIAL_ROW_COUNT) {
-            return;
-        }
-
-        let visibleRowCount = LADDER_INITIAL_ROW_COUNT;
-
-        listItemNodes.forEach((node, index) => {
-            node.hidden = index >= visibleRowCount;
-        });
-
-        const btnTemplate = document.getElementById('tpl-concise-load-more-btn');
-        const button = btnTemplate?.content?.firstElementChild?.cloneNode(true);
-
-        if (!button) return;
-
-        updateLadderLoadMoreButton(button, visibleRowCount, listItemNodes.length);
-
-        button.addEventListener('click', () => {
-            const nextVisibleCount = Math.min(
-                visibleRowCount + LADDER_LOAD_MORE_COUNT,
-                listItemNodes.length
-            );
-
-            for (let i = visibleRowCount; i < nextVisibleCount; i += 1) {
-                if (listItemNodes[i]) {
-                    listItemNodes[i].hidden = false;
-                }
-            }
-
-            visibleRowCount = nextVisibleCount;
-            updateLadderLoadMoreButton(button, visibleRowCount, listItemNodes.length);
-        });
-
-        container.appendChild(button);
-    }
-
     function renderConciseList(title, characters, isRawMode = false) {
         conciseViewTitle.textContent = title;
 
         // Apply Sorting before mapping HTML
         let sortedCharacters = [...characters];
         const hashUrl = window.location.hash.substring(1);
-        const isFullLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
 
         sortedCharacters.sort((a, b) => {
             let valA, valB;
@@ -2639,7 +2577,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         
 
         // Generate the HTML for the list
-        const usePodium = isFullLadderView || hashUrl.startsWith('war-effort-');
+        const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
         const podiumNodes = [];
         const listItemNodes = [];
 
@@ -3056,11 +2994,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 listItemNodes.forEach(node => {
                     if (node) listWrap.appendChild(node);
                 });
-
-                if (isFullLadderView) {
-                    appendLadderLoadMoreButton(listWrap, listItemNodes);
-                }
-
                 conciseList.appendChild(listWrap);
             }
         } else {
@@ -3072,7 +3005,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         let templateId = null;
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
             templateId = 'tpl-sort-badges';
-        } else if (!hashUrl.startsWith('war-effort-') && !isFullLadderView) {
+        } else if (!hashUrl.startsWith('war-effort-')) {
             templateId = 'tpl-sort-default';
         }
         
@@ -3994,26 +3927,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
         
         const hash = window.location.hash.substring(1);
-        const isFullLadderView = hash === 'ladder-pve' || hash === 'ladder-pvp';
-        const chartViews = ['total', 'active', 'raidready'];
+        const chartViews = ['total', 'active', 'raidready', 'ladder-pve', 'ladder-pvp'];
 
         const wrapper = document.getElementById('concise-content-wrapper');
         const leftCol = document.getElementById('concise-left-col');
-        const centerCol = document.getElementById('concise-center-col');
         const badgesContainer = document.getElementById('concise-class-badges');
 
-        conciseView.classList.remove('concise-view-ladder');
-        wrapper.classList.remove('concise-wrapper-awards-layout', 'concise-wrapper-ladder');
+        wrapper.classList.remove('concise-wrapper-awards-layout');
         leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
-        centerCol.classList.remove('concise-main-col-ladder');
         badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout', 'badges-hidden');
         if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
-
-        if (isFullLadderView) {
-            conciseView.classList.add('concise-view-ladder');
-            wrapper.classList.add('concise-wrapper-ladder');
-            centerCol.classList.add('concise-main-col-ladder');
-        }
 
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
@@ -4116,14 +4039,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (timeline) {
-            if (isFullLadderView) {
-                timeline.classList.add('view-hidden');
-            } else {
-                const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
-                timeline.classList.remove('view-hidden');
-                timelineTitle.textContent = `📜 ${baseTitle} Activity`;
-                applyTimelineFilters();
-            }
+            const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
+            timelineTitle.textContent = `📜 ${baseTitle} Activity`;
+            applyTimelineFilters();
         }
     }
 
@@ -4316,15 +4234,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         } else if (hash === 'ladder-pve') {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
-
-            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, false, 'ilvl');
+            // Passed 'true' for Badges, and 'ilvl' for the default sort!
+            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
             
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
-
-            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, false, 'hks');
+            // Passed 'true' for Badges, and 'hks' for the default sort!
+            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
         } else if (hash.startsWith('war-effort-')) {
