@@ -824,17 +824,21 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     --heatmap-tooltip-accent: #ffd100;
 }
 
-.we-tt-name[data-class="Druid"] { color: #FF7C0A; }
-.we-tt-name[data-class="Hunter"] { color: #ABD473; }
-.we-tt-name[data-class="Mage"] { color: #3FC7EB; }
-.we-tt-name[data-class="Paladin"] { color: #F48CBA; }
-.we-tt-name[data-class="Priest"] { color: #FFFFFF; }
-.we-tt-name[data-class="Rogue"] { color: #FFF468; }
-.we-tt-name[data-class="Shaman"] { color: #0070DE; }
-.we-tt-name[data-class="Warlock"] { color: #8788EE; }
-.we-tt-name[data-class="Warrior"] { color: #C69B6D; }
-.we-tt-name[data-class="Death Knight"] { color: #C41E3A; }
-.we-tt-name[data-class="Unknown"] { color: #fff; }
+.we-tt-name[data-class="Druid"] { --we-tooltip-class-color: #FF7C0A; }
+.we-tt-name[data-class="Hunter"] { --we-tooltip-class-color: #ABD473; }
+.we-tt-name[data-class="Mage"] { --we-tooltip-class-color: #3FC7EB; }
+.we-tt-name[data-class="Paladin"] { --we-tooltip-class-color: #F48CBA; }
+.we-tt-name[data-class="Priest"] { --we-tooltip-class-color: #FFFFFF; }
+.we-tt-name[data-class="Rogue"] { --we-tooltip-class-color: #FFF468; }
+.we-tt-name[data-class="Shaman"] { --we-tooltip-class-color: #0070DE; }
+.we-tt-name[data-class="Warlock"] { --we-tooltip-class-color: #8788EE; }
+.we-tt-name[data-class="Warrior"] { --we-tooltip-class-color: #C69B6D; }
+.we-tt-name[data-class="Death Knight"] { --we-tooltip-class-color: #C41E3A; }
+.we-tt-name[data-class="Unknown"] { --we-tooltip-class-color: #fff; }
+
+.we-tt-name {
+    color: var(--we-tooltip-class-color, inherit);
+}
 .we-loot-badge { background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border: 1px solid #444; white-space: nowrap; }
 .we-loot-header { display: block; color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; }
 .we-loot-container { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; font-size: 13px; line-height: 1.2; }
