@@ -202,27 +202,27 @@ function getLadderConfig(hashUrl) {
     if (hashUrl === 'ladder-pvp') {
         return {
             theme: 'pvp',
-            overline: 'Guild War Board',
-            heroTitle: 'The Blood Ledger',
-            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
+            overline: 'Netherstorm War Ledger',
+            heroTitle: 'The Blood Ledger of Outland',
+            heroDesc: "From the Ring of Trials to the skirmishes of Hellfire and Nagrand, this war board tracks the guild's fiercest killers, sharpest climbs, and the challengers pressing toward gladiatorial glory.",
             metricLabel: 'Honorable Kills',
             metricShort: 'HKs',
-            podiumKicker: 'Battlefield Elite',
-            podiumTitle: 'Featured Champions',
-            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
+            podiumKicker: 'Arena War Council',
+            podiumTitle: 'Champions of the Arena Sands',
+            podiumDesc: 'The three duelists currently holding command of the blood-soaked ladder.'
         };
     }
 
     return {
         theme: 'pve',
-        overline: 'Raid Command Board',
+        overline: 'Outland Raid Dispatch',
         heroTitle: 'The Black Temple Vanguard',
-        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
+        heroDesc: "A command ledger for the raiders leading the march through Karazhan, Serpentshrine, Tempest Keep, Hyjal, and the Black Temple itself. See who stands ready, who is surging, and who is closing on the front line.",
         metricLabel: 'Item Level',
         metricShort: 'iLvl',
         podiumKicker: 'Raid Vanguard',
-        podiumTitle: 'Featured Champions',
-        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
+        podiumTitle: 'Champions of the Expedition',
+        podiumDesc: "The current standard-bearers for guild progression across Outland's hardest encounters."
     };
 }
 
@@ -2597,7 +2597,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        appendConciseBadges(nameEl, conciseBadges);
+        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
+            appendConciseBadges(nameEl, conciseBadges);
+        }
 
         if (showVanguardBadge) {
             const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
@@ -2619,13 +2621,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             isClickable
         });
 
-        if (ladderMeta && ladderMeta.statusText) {
-            metaEl.appendChild(document.createTextNode(' • '));
-            const statusChip = document.createElement('span');
-            statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
-            statusChip.textContent = ladderMeta.statusText;
-            metaEl.appendChild(statusChip);
-        }
+        const ladderStatusChip = ladderMeta && ladderMeta.statusText
+            ? (() => {
+                const statusChip = document.createElement('span');
+                statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
+                statusChip.textContent = ladderMeta.statusText;
+                return statusChip;
+            })()
+            : null;
 
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
@@ -2638,6 +2641,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsBottom.remove();
             if (statsNode) {
                 statsTop.appendChild(statsNode);
+
+                if (ladderStatusChip) {
+                    const statusTarget = statsTop.querySelector('.ladder-stats-inline .concise-stat-line:last-child');
+                    if (statusTarget) {
+                        statusTarget.appendChild(ladderStatusChip);
+                    } else {
+                        statsTop.appendChild(ladderStatusChip);
+                    }
+                }
             }
 
             if (ladderMeta && ladderMeta.noteText) {
@@ -2777,6 +2789,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const crown = clone.querySelector('.podium-crown');
         const avatar = clone.querySelector('.podium-avatar');
         const nameEl = clone.querySelector('.podium-name');
+        const rankEl = clone.querySelector('.podium-rank');
         const statValEl = clone.querySelector('.podium-stat-val');
         const statLabelEl = clone.querySelector('.podium-stat-lbl');
         const trendContainer = clone.querySelector('.podium-trend-container');
@@ -2793,22 +2806,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         avatar.alt = baseName || 'Character portrait';
 
         nameEl.textContent = baseName;
+        if (rankEl) rankEl.textContent = `#${rank}`;
 
-        if (hashUrl === 'ladder-pve') {
-            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0;
-            statValEl.textContent = statValue;
-            statValEl.classList.add('text-ilvl');
-            statLabelEl.textContent = 'iLvl';
-            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
-        } else if (hashUrl === 'ladder-pvp') {
-            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-            statValEl.textContent = statValue;
-            statValEl.classList.add('text-hk');
-            statLabelEl.textContent = 'HKs';
-            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
-        } else {
-            trendContainer.remove();
-        }
+        const trendVal = hashUrl === 'ladder-pvp'
+            ? (deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0)
+            : (deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0);
+
+        statValEl.textContent = statValue;
+        statValEl.classList.add(hashUrl === 'ladder-pvp' ? 'text-hk' : 'text-ilvl');
+        statLabelEl.textContent = hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl';
+        trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
 
         return clone.firstElementChild;
     }
@@ -3231,10 +3238,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             if (defaultStatsTemplate) {
                 const defaultStatsClone = defaultStatsTemplate.content.cloneNode(true);
+                const statLines = [...defaultStatsClone.querySelectorAll('.concise-stat-line')];
                 const levelEl = defaultStatsClone.querySelector('[data-role="level-value"]');
                 const labelEl = defaultStatsClone.querySelector('[data-role="stat-label"]');
                 const valueEl = defaultStatsClone.querySelector('[data-role="stat-value"]');
                 const trendSlot = defaultStatsClone.querySelector('[data-role="trend-slot"]');
+                const isLadderStatLayout = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
 
                 levelEl.textContent = level;
                 labelEl.textContent = `${statLabel} `;
@@ -3250,7 +3259,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     trendSlot.remove();
                 }
 
-                statsNode = defaultStatsClone;
+                if (isLadderStatLayout) {
+                    const inlineWrap = document.createElement('div');
+                    inlineWrap.className = 'ladder-stats-inline';
+                    statLines.forEach(line => inlineWrap.appendChild(line));
+                    statsNode = inlineWrap;
+                } else {
+                    statsNode = defaultStatsClone;
+                }
             }
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
