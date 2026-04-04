@@ -2489,6 +2489,37 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         return clone.firstElementChild;
     }
+    
+    const CONCISE_PAGE_SIZE = 25;
+
+    function isPodiumRoute(hash = '') {
+        return hash === 'ladder-pve'
+            || hash === 'ladder-pvp'
+            || hash.startsWith('war-effort-');
+    }
+
+    function isCardsOnlyRoute(hash = '') {
+        return [
+            'total',
+            'active',
+            'raidready',
+            'badges',
+            'ladder-pve',
+            'ladder-pvp'
+        ].includes(hash) || hash.startsWith('war-effort-');
+    }
+
+    function createConciseLoadMoreButton() {
+        const template = document.getElementById('tpl-concise-load-more');
+        if (!template) return null;
+
+        const clone = template.content.cloneNode(true);
+
+        return {
+            root: clone.querySelector('.concise-load-more-wrap'),
+            button: clone.querySelector('.concise-load-more-btn')
+        };
+    }   
 
     // Variable to track current sort method
     let currentSortMethod = 'level';
@@ -2577,19 +2608,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         
 
         // Generate the HTML for the list
-        const usePodium = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || hashUrl.startsWith('war-effort-');
+        const usePodium = isPodiumRoute(hashUrl);
         const podiumNodes = [];
         const listItemNodes = [];
 
         sortedCharacters.forEach((char, index) => {
             let statLabel = currentSortMethod === 'hks' ? 'HKs' : 'iLvl';
             
-            // 1. Identify if we have a deep profile
             let deepChar = isRawMode ? rosterData.find(c => c.profile && c.profile.name && c.profile.name.toLowerCase() === char.name.toLowerCase()) : char;
             
-            // 2. Setup Variables
             let isClickable = false;
-            let cleanName = ''; // <--- NEW: Strict logic name
+            let cleanName = '';
             let baseName = '';
             let displayName, cClass, raceName, cHex, portraitURL, level;
             let activeSpecAttr = 'unspecced';
@@ -2601,7 +2630,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             let awardsAttr = [];
             let conciseBadges = [];
 
-            // 3. Populate Variables
             if (deepChar && deepChar.profile) {
                 const p = deepChar.profile;
                 isClickable = true;
@@ -2624,7 +2652,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const isPveReigning = prevMvps.pve && prevMvps.pve.name && prevMvps.pve.name.toLowerCase() === (p.name || '').toLowerCase();
                 const isPvpReigning = prevMvps.pvp && prevMvps.pvp.name && prevMvps.pvp.name.toLowerCase() === (p.name || '').toLowerCase();
 
-                // 1. Build the data-awards attribute for the Bubbles
                 if (pveGold > 0) awardsAttr.push('pve_gold');
                 if (pveSilver > 0) awardsAttr.push('pve_silver');
                 if (pveBronze > 0) awardsAttr.push('pve_bronze');
@@ -2636,7 +2663,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (vCount > 0) awardsAttr.push('vanguard');
                 if (cCount > 0) awardsAttr.push('campaign');
 
-                // 2. Generate the dynamic date tooltips
                 const tPveGold = getDetailedBadgeTooltip(p.name, ['pve_gold'], `${pveGold}x PvE Gold Medal`, pveGold);
                 const tPveSilver = getDetailedBadgeTooltip(p.name, ['pve_silver'], `${pveSilver}x PvE Silver Medal`, pveSilver);
                 const tPveBronze = getDetailedBadgeTooltip(p.name, ['pve_bronze'], `${pveBronze}x PvE Bronze Medal`, pveBronze);
@@ -2666,172 +2692,92 @@ window.addEventListener('DOMContentLoaded', async () => {
                     });
                 }
 
-                if (pveGold > 0) {
-                    conciseBadges.push({
-                        text: `🛡️🥇 ${pveGold}`,
-                        title: tPveGold,
-                        classNames: ['c-badge-pill', 'c-badge-gold']
-                    });
-                }
+                if (pveGold > 0) conciseBadges.push({ text: `🥇 ${pveGold}`, title: tPveGold, classNames: ['c-badge-pill', 'c-badge-pve-gold'] });
+                if (pveSilver > 0) conciseBadges.push({ text: `🥈 ${pveSilver}`, title: tPveSilver, classNames: ['c-badge-pill', 'c-badge-pve-silver'] });
+                if (pveBronze > 0) conciseBadges.push({ text: `🥉 ${pveBronze}`, title: tPveBronze, classNames: ['c-badge-pill', 'c-badge-pve-bronze'] });
+                if (pvpGold > 0) conciseBadges.push({ text: `⚔️🥇 ${pvpGold}`, title: tPvpGold, classNames: ['c-badge-pill', 'c-badge-pvp-gold'] });
+                if (pvpSilver > 0) conciseBadges.push({ text: `⚔️🥈 ${pvpSilver}`, title: tPvpSilver, classNames: ['c-badge-pill', 'c-badge-pvp-silver'] });
+                if (pvpBronze > 0) conciseBadges.push({ text: `⚔️🥉 ${pvpBronze}`, title: tPvpBronze, classNames: ['c-badge-pill', 'c-badge-pvp-bronze'] });
+                if (pveChamp > 0) conciseBadges.push({ text: `👑 ${pveChamp}`, title: tPveChamp, classNames: ['c-badge-pill', 'c-badge-mvp-pve'] });
+                if (pvpChamp > 0) conciseBadges.push({ text: `🩸 ${pvpChamp}`, title: tPvpChamp, classNames: ['c-badge-pill', 'c-badge-mvp-pvp'] });
+                if (vCount > 0) conciseBadges.push({ text: `🌟 ${vCount}`, title: tVanguard, classNames: ['c-badge-pill', 'c-badge-vanguard'] });
+                if (cCount > 0) conciseBadges.push({ text: `🛡️ ${cCount}`, title: tCampaign, classNames: ['c-badge-pill', 'c-badge-campaign'] });
 
-                if (pveSilver > 0) {
-                    conciseBadges.push({
-                        text: `🛡️🥈 ${pveSilver}`,
-                        title: tPveSilver,
-                        classNames: ['c-badge-pill', 'c-badge-silver']
-                    });
-                }
-
-                if (pveBronze > 0) {
-                    conciseBadges.push({
-                        text: `🛡️🥉 ${pveBronze}`,
-                        title: tPveBronze,
-                        classNames: ['c-badge-pill', 'c-badge-bronze']
-                    });
-                }
-
-                if (pvpGold > 0) {
-                    conciseBadges.push({
-                        text: `⚔️🥇 ${pvpGold}`,
-                        title: tPvpGold,
-                        classNames: ['c-badge-pill', 'c-badge-gold']
-                    });
-                }
-
-                if (pvpSilver > 0) {
-                    conciseBadges.push({
-                        text: `⚔️🥈 ${pvpSilver}`,
-                        title: tPvpSilver,
-                        classNames: ['c-badge-pill', 'c-badge-silver']
-                    });
-                }
-
-                if (pvpBronze > 0) {
-                    conciseBadges.push({
-                        text: `⚔️🥉 ${pvpBronze}`,
-                        title: tPvpBronze,
-                        classNames: ['c-badge-pill', 'c-badge-bronze']
-                    });
-                }
-
-                if (pveChamp > 0) {
-                    conciseBadges.push({
-                        text: `👑 ${pveChamp}`,
-                        title: tPveChamp,
-                        classNames: ['c-badge-pill', 'c-badge-pve']
-                    });
-                }
-
-                if (pvpChamp > 0) {
-                    conciseBadges.push({
-                        text: `⚔️ ${pvpChamp}`,
-                        title: tPvpChamp,
-                        classNames: ['c-badge-pill', 'c-badge-pvp']
-                    });
-                }
-
-                if (vCount > 0) {
-                    conciseBadges.push({
-                        text: `🌟 ${vCount}`,
-                        title: tVanguard,
-                        classNames: ['c-badge-pill', 'c-badge-vanguard']
-                    });
-                }
-
-                if (cCount > 0) {
-                    conciseBadges.push({
-                        text: `🎖️ ${cCount}`,
-                        title: tCampaign,
-                        classNames: ['c-badge-pill', 'c-badge-campaign']
-                    });
-                }
-
+                cleanName = (p.name || '').toLowerCase();
                 baseName = p.name || 'Unknown';
-                cleanName = (p.name || 'Unknown').toLowerCase();
-                displayName = p.name || 'Unknown';
+                displayName = baseName;
                 cClass = getCharClass(deepChar);
-                raceName = p.race && p.race.name ? (typeof p.race.name === 'string' ? p.race.name : (p.race.name.en_US || 'Unknown')) : 'Unknown';
-                cHex = CLASS_COLORS[cClass] || "#fff";
-                portraitURL = deepChar.render_url || getClassIcon(cClass);
+                raceName = typeof p.race?.name === 'string' ? p.race.name : (p.race?.name?.en_US || 'Unknown');
+                cHex = CLASS_COLORS[cClass] || '#fff';
+                portraitURL = p.main_icon || getClassIcon(cClass);
                 level = p.level || 0;
-                
+
                 const activeSpec = p.active_spec ? p.active_spec : '';
                 activeSpecAttr = activeSpec ? activeSpec : 'unspecced';
                 specIconUrl = getSpecIcon(cClass, activeSpec) || '';
                 displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
-                
-                statValue = currentSortMethod === 'hks' ? (p.honorable_kills || 0).toLocaleString() : (p.equipped_item_level || 0);
-                statValueClass = currentSortMethod === 'hks' ? ' c-val-ilvl-hks' : '';
 
-                // Calculate Trend based on the current ladder view
-                if (currentSortMethod === 'hks' || currentSortMethod === 'ilvl') {
-                    const trend = currentSortMethod === 'hks' ? (p.trend_pvp || p.trend_hks || 0) : (p.trend_pve || p.trend_ilvl || 0);
-                    trendNode = buildConciseTrendHtml(trend);
+                if (currentSortMethod === 'hks') {
+                    statLabel = 'HKs';
+                    statValue = (p.honorable_kills || 0).toLocaleString();
+                    trendNode = buildConciseTrendHtml(p.trend_pvp || p.trend_hks || 0);
+                } else if (currentSortMethod === 'level') {
+                    statLabel = 'iLvl';
+                    statValue = p.equipped_item_level || '???';
+                    trendNode = buildConciseTrendHtml(p.trend_pve || p.trend_ilvl || 0);
+                } else if (currentSortMethod === 'ilvl') {
+                    statLabel = 'iLvl';
+                    statValue = p.equipped_item_level || '???';
+                    trendNode = buildConciseTrendHtml(p.trend_pve || p.trend_ilvl || 0);
+                } else if (currentSortMethod === 'badges') {
+                    statLabel = 'Badges';
+                    statValue = (
+                        vCount + cCount + pveChamp + pvpChamp +
+                        pveGold + pveSilver + pveBronze +
+                        pvpGold + pvpSilver + pvpBronze
+                    ).toLocaleString();
+                    trendNode = null;
+                } else {
+                    statLabel = 'iLvl';
+                    statValue = p.equipped_item_level || '???';
+                    trendNode = buildConciseTrendHtml(p.trend_pve || p.trend_ilvl || 0);
                 }
             } else {
+                cleanName = (char.name || '').toLowerCase();
                 baseName = char.name || 'Unknown';
-                cleanName = (char.name || 'Unknown').toLowerCase();
-                displayName = char.name || 'Unknown';
+                displayName = baseName;
                 cClass = char.class || 'Unknown';
                 raceName = char.race || 'Unknown';
-                cHex = CLASS_COLORS[cClass] || "#fff";
+                cHex = CLASS_COLORS[cClass] || '#fff';
                 portraitURL = getClassIcon(cClass);
                 level = char.level || 0;
-                displaySpecClass = cClass;
+                statValue = '???';
             }
 
-            // Inject Podium Classes & Rank Number if we are on a Ladder View
-            const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
-            let podiumClass = '';
-            let rankNumber = null;
-            let rankToneClass = '';
-            let rankSizeClass = '';
+            let rankNumber = index + 1;
+            let rankToneClass = 'concise-rank-default';
+            let rankSizeClass = 'concise-rank-sm';
 
-            if (isLadderView) {
-                podiumClass = index === 0 ? 'podium-1' : index === 1 ? 'podium-2' : index === 2 ? 'podium-3' : '';
-                rankToneClass = index === 0 ? 'concise-rank-gold' : index === 1 ? 'concise-rank-silver' : index === 2 ? 'concise-rank-bronze' : 'concise-rank-default';
-                rankSizeClass = index < 3 ? 'rank-size-large' : 'rank-size-small';
-                rankNumber = index + 1;
-            }
+            if (index === 0) rankToneClass = 'concise-rank-gold';
+            else if (index === 1) rankToneClass = 'concise-rank-silver';
+            else if (index === 2) rankToneClass = 'concise-rank-bronze';
 
-            // --- NEW: Vanguard Aura Logic ---
-            let vanguardClass = '';
             let showVanguardBadge = false;
             let vanguardBadgeTimeText = '';
-            if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
-                const type = hashUrl.replace('war-effort-', '');
-                if (window.warEffortVanguards[type] && window.warEffortVanguards[type].includes(cleanName)) {
-                    vanguardClass = 'vanguard-aura';
-                    showVanguardBadge = true;
-
-                    // Grab the locked timestamp and format it nicely (24-Hour)
-                    if (window.warEffortLockTimes && window.warEffortLockTimes[type]) {
-                        const dt = new Date(window.warEffortLockTimes[type]);
-                        if (!isNaN(dt)) {
-                            vanguardBadgeTimeText = `(${dt.toLocaleString('en-GB', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}).replace(',', '')})`;
-                        }
-                    }
-                }
-            }
-
-            // --- NEW: Custom War Effort Stats Overrides ---
-            const defaultStatsTemplate = document.getElementById('tpl-concise-default-stats');
+            let vanguardClass = '';
             let statsNode = null;
 
+            const defaultStatsTemplate = document.getElementById('tpl-concise-default-stats');
             if (defaultStatsTemplate) {
                 const defaultStatsClone = defaultStatsTemplate.content.cloneNode(true);
-                const levelEl = defaultStatsClone.querySelector('[data-role="level-value"]');
-                const labelEl = defaultStatsClone.querySelector('[data-role="stat-label"]');
-                const valueEl = defaultStatsClone.querySelector('[data-role="stat-value"]');
+                const lvlEl = defaultStatsClone.querySelector('[data-role="level-value"]');
+                const statLabelEl = defaultStatsClone.querySelector('[data-role="stat-label"]');
+                const statValueEl = defaultStatsClone.querySelector('[data-role="stat-value"]');
                 const trendSlot = defaultStatsClone.querySelector('[data-role="trend-slot"]');
 
-                levelEl.textContent = level;
-                labelEl.textContent = `${statLabel} `;
-                valueEl.textContent = statValue;
-
-                if (statValueClass) {
-                    valueEl.classList.add(statValueClass.trim());
-                }
+                lvlEl.textContent = level;
+                statLabelEl.textContent = statLabel;
+                statValueEl.textContent = statValue;
 
                 if (trendNode) {
                     trendSlot.replaceWith(trendNode);
@@ -2841,11 +2787,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 statsNode = defaultStatsClone;
             }
+
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
 
             if (hashUrl.startsWith('war-effort-')) {
-                // By default, stretch the bars
                 isWarEffortRow = true;
                 
                 if (hashUrl === 'war-effort-hk') {
@@ -2855,11 +2801,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const hkClone = hkTemplate.content.cloneNode(true);
                         const hkEl = hkClone.querySelector('.we-stat-hk');
                         hkEl.textContent = `+${trendVal.toLocaleString()} HKs Contributed`;
-
                         statsNode = hkClone;
                     }
                 } else if (window.warEffortContext) {
-                    const charKey = cleanName; // FIXED: Using cleanName
+                    const charKey = cleanName;
                     const contextData = window.warEffortContext[charKey];
                     
                     if (contextData) {
@@ -2869,11 +2814,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const xpClone = xpTemplate.content.cloneNode(true);
                                 const xpEl = xpClone.querySelector('.we-stat-xp');
                                 xpEl.textContent = `+${contextData} Levels Contributed`;
-
                                 statsNode = xpClone;
                             }
                         } else if (hashUrl === 'war-effort-loot') {
-                            // Turn the main bar into a column so we can stack the character info on top, and loot on the bottom
                             isWarEffortLootRow = true;
 
                             const lootTemplate = document.getElementById('tpl-we-stat-loot');
@@ -2908,7 +2851,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                                 const zenithClone = zenithTemplate.content.cloneNode(true);
                                 const zenithVal = zenithClone.querySelector('.we-zenith-val');
                                 zenithVal.textContent = contextData;
-
                                 statsNode = zenithClone;
                             }
                         }
@@ -2916,7 +2858,28 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // 4. Render the HTML Row (or intercept for Podium)
+            const isLadderView = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+            let podiumClass = '';
+
+            if (!usePodium) {
+                if (index === 0) podiumClass = 'podium-1';
+                else if (index === 1) podiumClass = 'podium-2';
+                else if (index === 2) podiumClass = 'podium-3';
+            }
+
+            if (hashUrl.startsWith('war-effort-') && window.warEffortVanguards) {
+                const type = hashUrl.replace('war-effort-', '');
+                const vanguards = window.warEffortVanguards[type] || [];
+                if (vanguards.includes(cleanName)) {
+                    showVanguardBadge = true;
+                    vanguardClass = 'vanguard-highlight';
+                    const lockedDate = warEffortLocks?.[type]?.[cleanName];
+                    if (lockedDate) {
+                        vanguardBadgeTimeText = `Locked ${lockedDate}`;
+                    }
+                }
+            }
+
             const rowNode = buildConciseRowHtml({
                 isClickable,
                 cleanName,
@@ -2943,7 +2906,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 podiumClass
             });
 
-            // Intercept and Build Podium Block for Top 3
             if (usePodium && index < 3) {
                 const rank = index + 1;
                 const stepClass = rank === 1 ? 'podium-step-1' : (rank === 2 ? 'podium-step-2' : 'podium-step-3');
@@ -2973,13 +2935,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                 listItemNodes.push(rowNode);
             }
         });
-        
+
         conciseList.textContent = '';
 
-        if (usePodium && podiumNodes.length > 0) {
-            const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
-            const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
+        const hasPodium = usePodium && podiumNodes.length > 0;
+        const initialListBatch = hasPodium
+            ? Math.max(CONCISE_PAGE_SIZE - podiumNodes.length, 0)
+            : CONCISE_PAGE_SIZE;
 
+        const podiumWrapTemplate = document.getElementById('tpl-home-leaderboard-podium-wrap');
+        const listWrapTemplate = document.getElementById('tpl-home-leaderboard-list-wrap');
+
+        let listMount = conciseList;
+
+        if (hasPodium) {
             const podiumWrap = podiumWrapTemplate?.content?.firstElementChild?.cloneNode(true);
             const listWrap = listWrapTemplate?.content?.firstElementChild?.cloneNode(true);
 
@@ -2991,15 +2960,57 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (listWrap) {
-                listItemNodes.forEach(node => {
-                    if (node) listWrap.appendChild(node);
-                });
                 conciseList.appendChild(listWrap);
+                listMount = listWrap;
             }
-        } else {
-            listItemNodes.forEach(node => {
-                if (node) conciseList.appendChild(node);
-            });
+        }
+
+        let renderedCount = 0;
+
+        const renderNextBatch = (batchSize) => {
+            const nextCount = Math.min(renderedCount + batchSize, listItemNodes.length);
+
+            for (let i = renderedCount; i < nextCount; i++) {
+                if (listItemNodes[i]) {
+                    listMount.appendChild(listItemNodes[i]);
+                }
+            }
+
+            renderedCount = nextCount;
+        };
+
+        renderNextBatch(initialListBatch);
+
+        if (renderedCount < listItemNodes.length) {
+            const loadMoreUi = createConciseLoadMoreButton();
+
+            if (loadMoreUi) {
+                const { root, button } = loadMoreUi;
+
+                const updateButtonLabel = () => {
+                    const remaining = listItemNodes.length - renderedCount;
+
+                    if (remaining <= CONCISE_PAGE_SIZE) {
+                        button.textContent = `Load Final ${remaining} Characters`;
+                    } else {
+                        button.textContent = `Load Next ${CONCISE_PAGE_SIZE} Characters`;
+                    }
+                };
+
+                updateButtonLabel();
+
+                button.addEventListener('click', () => {
+                    renderNextBatch(CONCISE_PAGE_SIZE);
+
+                    if (renderedCount >= listItemNodes.length) {
+                        root.remove();
+                    } else {
+                        updateButtonLabel();
+                    }
+                });
+
+                conciseList.appendChild(root);
+            }
         }
         
         let templateId = null;
@@ -3298,7 +3309,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const navSearch = document.querySelector('.navbar .search-container');
         if (navSearch) navSearch.classList.remove('search-hidden');
 
-        if (timeline) timeline.classList.remove('view-hidden');
+        if (timeline) {
+            timeline.classList.remove('view-hidden');
+            timeline.style.display = '';
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // --- RESTORE DEFAULT TIMELINE HTML ---
@@ -3909,16 +3923,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.location.hash = charName;
     }
 
-    // Added defaultSort parameter to override the standard "level" start
     function showConciseView(title, characters, isRawRoster = false, showBadges = true, defaultSort = 'level') {
         hideAllViews();
         conciseView.classList.add('view-active');
+
         if (navbar) {
             navbar.classList.remove('navbar-theme-home');
             navbar.classList.add('navbar-theme-app');
         }
         
-        currentSortMethod = defaultSort; // Apply the requested sort method immediately
+        currentSortMethod = defaultSort;
         renderConciseList(title, characters, isRawRoster);
         
         window.currentFilteredChars = characters.map(c => {
@@ -3931,12 +3945,52 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const wrapper = document.getElementById('concise-content-wrapper');
         const leftCol = document.getElementById('concise-left-col');
+        const mainCol = document.getElementById('concise-center-col');
+        const badgesBox = document.getElementById('concise-badges-wrapper');
         const badgesContainer = document.getElementById('concise-class-badges');
+        const specContainer = document.getElementById('concise-spec-container');
+        const donutContainer = document.getElementById('concise-donut-container');
 
-        wrapper.classList.remove('concise-wrapper-awards-layout');
+        const cardsOnlyMode = isCardsOnlyRoute(hash);
+
+        wrapper.classList.remove('concise-wrapper-awards-layout', 'concise-wrapper-cards-only');
         leftCol.classList.remove('concise-sidebar-awards-layout', 'concise-sidebar-hidden');
-        badgesContainer.classList.remove('concise-badges-default-layout', 'concise-badges-awards-layout', 'badges-hidden');
-        if (timeline) timeline.classList.remove('concise-timeline-awards-layout');
+        mainCol.classList.remove('concise-main-col-cards-only');
+        badgesBox.classList.remove('concise-badges-box-hidden');
+        badgesContainer.classList.remove(
+            'concise-badges-default-layout',
+            'concise-badges-awards-layout',
+            'badges-hidden'
+        );
+
+        if (timeline) {
+            timeline.classList.remove('concise-timeline-awards-layout', 'view-hidden');
+            timeline.style.display = '';
+        }
+
+        if (specContainer) {
+            specContainer.hidden = true;
+            specContainer.textContent = '';
+        }
+
+        if (donutContainer) {
+            donutContainer.classList.remove('is-visible');
+            donutContainer.textContent = '';
+        }
+
+        if (cardsOnlyMode) {
+            leftCol.classList.add('concise-sidebar-hidden');
+            mainCol.classList.add('concise-main-col-cards-only');
+            wrapper.classList.add('concise-wrapper-cards-only');
+            badgesBox.classList.add('concise-badges-box-hidden');
+            badgesContainer.classList.add('badges-hidden');
+
+            if (timeline) {
+                timeline.classList.add('view-hidden');
+            }
+
+            return;
+        }
 
         if (showBadges === true) {
             renderDynamicBadges(characters, isRawRoster);
@@ -3954,88 +4008,104 @@ window.addEventListener('DOMContentLoaded', async () => {
             
         } else {
             badgesContainer.classList.add('badges-hidden');
-            const specContainer = document.getElementById('concise-spec-container');
-            if (specContainer) specContainer.hidden = true;
-            
+
             if (!chartViews.includes(hash)) {
                 leftCol.classList.add('concise-sidebar-hidden');
             }
         }
 
-       // Draw the dynamic charts & KPIs
-        const donutContainer = document.getElementById('concise-donut-container');
+        if (chartViews.includes(hash) && donutContainer) {
+            donutContainer.classList.add('is-visible');
+            donutContainer.textContent = '';
 
-        if (chartViews.includes(hash)) {
-            if (donutContainer) {
-                donutContainer.classList.add('is-visible');
-                
-               donutContainer.textContent = '';
-                const template = document.getElementById('tpl-concise-dashboard-widgets');
-                if (template) {
-                    donutContainer.appendChild(template.content.cloneNode(true));
-                }
-                const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
-                
-                const addKpi = (val, label, colorHex) => {
-                    const kpiTpl = document.getElementById('tpl-concise-kpi-box');
-                    if (kpiTpl && kpiContainer) {
-                        const clone = kpiTpl.content.cloneNode(true);
-                        const box = clone.querySelector('.concise-stat-box');
-                        box.classList.add('concise-stat-box-accent');
-                        box.style.setProperty('--concise-kpi-accent', colorHex);
-                        const valSpan = clone.querySelector('.concise-stat-value');
-                        valSpan.textContent = val;
-                        clone.querySelector('.concise-stat-label').textContent = label;
-                        kpiContainer.appendChild(clone);
-                    }
-                };
-
-                if (hash === 'raidready') {
-                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    addKpi(avgIlvl, 'Average iLvl', '#ff8000');
-                } else if (hash === 'ladder-pve') {
-                    const avgIlvl = Math.round(characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length) || 0;
-                    const lvl70s = characters.filter(c => {
-                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                        return p && p.level === 70;
-                    });
-                    const avgLvl70Ilvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
-                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                        return sum + ((p && p.equipped_item_level) || 0);
-                    }, 0) / lvl70s.length) : 0;
-                    
-                    addKpi(avgIlvl, 'Avg iLvl', '#ff8000');
-                    addKpi(avgLvl70Ilvl, 'Avg Lvl 70 iLvl', '#a335ee');
-                } else if (hash === 'ladder-pvp') {
-                    const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
-                    const displayHks = totalHks >= 1000000 ? (totalHks/1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
-                    addKpi(displayHks, 'Total HKs', '#ff4400');
-                } else if (hash === 'active' || hash === 'total') {
-                    const avgLvl = Math.round(characters.reduce((sum, c) => {
-                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                        return sum + ((p && p.level) || c.level || 0);
-                    }, 0) / characters.length) || 0;
-                    const lvl70s = characters.filter(c => {
-                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                        return p && p.level === 70;
-                    });
-                    const avgIlvl = lvl70s.length > 0 ? Math.round(lvl70s.reduce((sum, c) => {
-                        const p = isRawRoster ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile : c.profile;
-                        return sum + ((p && p.equipped_item_level) || 0);
-                    }, 0) / lvl70s.length) : 0;
-                    
-                    addKpi(avgLvl, 'Avg Level', '#ffd100');
-                    addKpi(avgIlvl, 'Avg Lvl 70 iLvl', '#ff8000');
-                }
-
-                if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
-                if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
-
-                window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
-                window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
+            const template = document.getElementById('tpl-concise-dashboard-widgets');
+            if (template) {
+                donutContainer.appendChild(template.content.cloneNode(true));
             }
-        } else {
-            if (donutContainer) donutContainer.classList.remove('is-visible');
+
+            const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
+                
+            const addKpi = (val, label, colorHex) => {
+                const kpiTpl = document.getElementById('tpl-concise-kpi-box');
+                if (kpiTpl && kpiContainer) {
+                    const clone = kpiTpl.content.cloneNode(true);
+                    const box = clone.querySelector('.concise-stat-box');
+                    box.classList.add('concise-stat-box-accent');
+                    box.style.setProperty('--concise-kpi-accent', colorHex);
+                    clone.querySelector('.concise-stat-value').textContent = val;
+                    clone.querySelector('.concise-stat-label').textContent = label;
+                    kpiContainer.appendChild(clone);
+                }
+            };
+
+            if (hash === 'raidready') {
+                const avgIlvl = Math.round(
+                    characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length
+                ) || 0;
+                addKpi(avgIlvl, 'Average iLvl', '#ff8000');
+
+            } else if (hash === 'ladder-pve') {
+                const avgIlvl = Math.round(
+                    characters.reduce((sum, c) => sum + ((c.profile && c.profile.equipped_item_level) || 0), 0) / characters.length
+                ) || 0;
+
+                const lvl70s = characters.filter(c => {
+                    const p = isRawRoster
+                        ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile
+                        : c.profile;
+                    return p && p.level === 70;
+                });
+
+                const avgLvl70Ilvl = lvl70s.length > 0
+                    ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster
+                            ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile
+                            : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length)
+                    : 0;
+                    
+                addKpi(avgIlvl, 'Avg iLvl', '#ff8000');
+                addKpi(avgLvl70Ilvl, 'Avg Lvl 70 iLvl', '#a335ee');
+
+            } else if (hash === 'ladder-pvp') {
+                const totalHks = characters.reduce((sum, c) => sum + ((c.profile && c.profile.honorable_kills) || 0), 0) || 0;
+                const displayHks = totalHks >= 1000000 ? (totalHks / 1000000).toFixed(1) + 'M' : totalHks.toLocaleString();
+                addKpi(displayHks, 'Total HKs', '#ff4400');
+
+            } else if (hash === 'active' || hash === 'total') {
+                const avgLvl = Math.round(characters.reduce((sum, c) => {
+                    const p = isRawRoster
+                        ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile
+                        : c.profile;
+                    return sum + ((p && p.level) || c.level || 0);
+                }, 0) / characters.length) || 0;
+
+                const lvl70s = characters.filter(c => {
+                    const p = isRawRoster
+                        ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile
+                        : c.profile;
+                    return p && p.level === 70;
+                });
+
+                const avgIlvl = lvl70s.length > 0
+                    ? Math.round(lvl70s.reduce((sum, c) => {
+                        const p = isRawRoster
+                            ? rosterData.find(deep => deep.profile?.name?.toLowerCase() === (c.name || '').toLowerCase())?.profile
+                            : c.profile;
+                        return sum + ((p && p.equipped_item_level) || 0);
+                    }, 0) / lvl70s.length)
+                    : 0;
+                    
+                addKpi(avgLvl, 'Avg Level', '#ffd100');
+                addKpi(avgIlvl, 'Avg Lvl 70 iLvl', '#ff8000');
+            }
+
+            if (window.conciseRoleChartInstance) window.conciseRoleChartInstance.destroy();
+            if (window.conciseClassChartInstance) window.conciseClassChartInstance.destroy();
+
+            window.conciseRoleChartInstance = drawRoleChart('conciseRoleChart', characters, isRawRoster);
+            window.conciseClassChartInstance = createDonutChart('conciseClassChart', characters, isRawRoster);
         }
         
         if (timeline) {
@@ -4086,6 +4156,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const badgeRoster = rosterData.filter(c => {
                 const p = c.profile;
                 if (!p) return false;
+
                 const vCount = safeParseArray(p.vanguard_badges || c.vanguard_badges).length;
                 const cCount = safeParseArray(p.campaign_badges || c.campaign_badges).length;
                 const pveMvp = parseInt(p.pve_champ_count || c.pve_champ_count) || 0;
@@ -4096,10 +4167,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const pvpS = parseInt(p.pvp_silver || c.pvp_silver) || 0;
                 const pveB = parseInt(p.pve_bronze || c.pve_bronze) || 0;
                 const pvpB = parseInt(p.pvp_bronze || c.pvp_bronze) || 0;
+
                 return (vCount + cCount + pveMvp + pvpMvp + pveG + pvpG + pveS + pvpS + pveB + pvpB) > 0;
             });
             
-            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, 'awards', 'badges');
+            showConciseView(`🌟 Hall of Heroes (${badgeRoster.length})`, badgeRoster, false, false, 'badges');
             updateDropdownLabel('badges');
             
             // --- OVERRIDE TIMELINE FILTERS FOR BADGE LOG ---
@@ -4316,9 +4388,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                 // Note: The 'false' flag here hides the Class Badges
                 showConciseView(title, filteredRoster, false, false, sortPref); 
             }
-            
-            // Explicitly hide timeline entirely for these pages
-            if (timeline) timeline.style.display = 'none';
             
             updateDropdownLabel('all');
             
