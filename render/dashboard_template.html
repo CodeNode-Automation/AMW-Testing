@@ -206,7 +206,7 @@
     <template id="tpl-monument-highlight">
         <span class="monument-highlight-span"></span>
     </template>
-    
+
     <template id="tpl-mvp-placeholder">
         <div class="mvp-placeholder-card">
             <div class="mvp-placeholder-icon">👑</div>
@@ -246,6 +246,7 @@
 
     <template id="tpl-mvp-podium-block">
         <div class="podium-block tt-char" data-char="">
+            <div class="podium-crown" hidden>👑</div>
             <img src="" class="podium-avatar">
             <div class="podium-rank"></div>
             <div class="podium-name"></div>
@@ -257,7 +258,11 @@
         </div>
     </template>
 
-        <template id="tpl-home-leaderboard-podium">
+    <template id="tpl-mvp-podium-wrap">
+        <div class="mvp-podium-container"></div>
+    </template>
+    
+    <template id="tpl-home-leaderboard-podium">
         <div class="podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
             <img src="" class="podium-avatar">

@@ -4953,8 +4953,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return clone;
             }
             
-            const container = document.createElement('div');
-            container.className = 'mvp-podium-container';
+            const containerTemplate = document.getElementById('tpl-mvp-podium-wrap');
+            if (!containerTemplate) return document.createDocumentFragment();
+
+            const containerClone = containerTemplate.content.cloneNode(true);
+            const container = containerClone.querySelector('.mvp-podium-container');
+            if (!container) return document.createDocumentFragment();
 
             chars.forEach((char, index) => {
                 const p = char.profile;
@@ -4976,12 +4980,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 block.setAttribute('data-char', (p.name || '').toLowerCase());
                 block.setAttribute('data-class', cClass);
                 block.onclick = () => selectCharacter((p.name || '').toLowerCase());
-                
-                if (rank === 1) {
-                    const crown = document.createElement('div');
-                    crown.className = 'podium-crown';
-                    crown.textContent = '👑';
-                    block.insertBefore(crown, block.firstChild);
+
+                const crown = clone.querySelector('.podium-crown');
+                if (crown) {
+                    crown.hidden = rank !== 1;
                 }
                 
                 const avatar = clone.querySelector('.podium-avatar');
@@ -4999,7 +5001,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 container.appendChild(clone);
             });
 
-            return container;
+            return containerClone;
         }
 
         function generateGloatingHtml(mvpData, isPvp) {
