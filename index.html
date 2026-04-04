@@ -1331,7 +1331,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     <template id="tpl-we-tooltip-footer">
         <div class="we-tt-footer"></div>
     </template>
-    
+
     <template id="tpl-char-tooltip">
         <div class="tt-name tooltip-name-wrap">
             <span class="tooltip-char-name"></span>
@@ -2242,6 +2242,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 
         <div id="timeline" class="timeline-container">
             <h2 id="timeline-title" class="timeline-title">📜 Guild Recent Activity</h2>
+            <div id="monuments-container" class="monuments-grid"></div>
             <div class="timeline-filters">
                 <div class="filter-group">
                     <button class="tl-btn" data-type="all">All</button>
@@ -2285,7 +2286,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:24:07.517806Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:27:29.076879Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 242, "loot": 184, "levels": 58, "total_roster": 661, "active_roster": 410}]
@@ -7642,17 +7643,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         // --- NEW: COMPACT MONUMENTS GRID FEED ---
         const timelineEl = document.getElementById('timeline');
-        if (timelineEl) {
-            let monContainer = document.getElementById('monuments-container');
-            if (!monContainer) {
-                monContainer = document.createElement('div');
-                monContainer.id = 'monuments-container';
-                monContainer.className = 'monuments-grid';
-                const filtersEl = timelineEl.querySelector('.timeline-filters');
-                if (filtersEl) timelineEl.insertBefore(monContainer, filtersEl);
-                else timelineEl.prepend(monContainer);
-            }
-            
+        const monContainer = document.getElementById('monuments-container');
+        if (timelineEl && monContainer) {
             monContainer.innerHTML = '';
             if (window.warEffortMonuments.length > 0) {
                 window.warEffortMonuments.forEach(mon => {
