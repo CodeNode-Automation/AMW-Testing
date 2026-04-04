@@ -2695,10 +2695,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T09:56:13.917151Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T11:46:47.721816Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 282, "loot": 215, "levels": 67, "total_roster": 660, "active_roster": 408}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 336, "loot": 254, "levels": 82, "total_roster": 660, "active_roster": 408}]
     </script>
 
     <script>
@@ -7085,10 +7085,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             const specContainer = document.getElementById('home-spec-container');
             specContainer.textContent = '';
-            
-            const wrapDiv = document.createElement('div');
-            wrapDiv.className = 'class-stat-container spec-filter-wrapper';
-            
+
+            const specFilterWrapperTemplate = document.getElementById('tpl-spec-filter-wrapper');
+            const wrapDiv = specFilterWrapperTemplate?.content?.firstElementChild?.cloneNode(true);
+
+            if (!wrapDiv) return;
+
             const template = document.getElementById('tpl-home-spec-badge');
             if (template) {
                 // All Class Badge
@@ -7117,10 +7119,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                     
                     const iconUrl = getSpecIcon(formattedClass, spec);
                     if (iconUrl) {
-                        const img = document.createElement('img');
-                        img.src = iconUrl;
-                        img.className = 'spec-badge-icon';
-                        clsSpan.appendChild(img);
+                        const iconTemplate = document.getElementById('tpl-spec-badge-icon');
+                        if (iconTemplate) {
+                            const iconClone = iconTemplate.content.cloneNode(true);
+                            const img = iconClone.querySelector('.spec-badge-icon');
+                            if (img) {
+                                img.src = iconUrl;
+                                img.alt = `${spec} ${formattedClass} icon`;
+                            }
+                            clsSpan.appendChild(iconClone);
+                        }
                     }
                     clsSpan.appendChild(document.createTextNode(spec));
                     
