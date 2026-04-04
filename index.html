@@ -852,50 +852,22 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .tooltip-name-wrap { display: flex; align-items: center; }
 .tooltip-class-wrap { display: flex; align-items: center; }
 
-.custom-tooltip[data-class="Druid"] { --heatmap-tooltip-accent: #FF7C0A; }
-.custom-tooltip[data-class="Hunter"] { --heatmap-tooltip-accent: #ABD473; }
-.custom-tooltip[data-class="Mage"] { --heatmap-tooltip-accent: #3FC7EB; }
-.custom-tooltip[data-class="Paladin"] { --heatmap-tooltip-accent: #F48CBA; }
-.custom-tooltip[data-class="Priest"] { --heatmap-tooltip-accent: #FFFFFF; }
-.custom-tooltip[data-class="Rogue"] { --heatmap-tooltip-accent: #FFF468; }
-.custom-tooltip[data-class="Shaman"] { --heatmap-tooltip-accent: #0070DE; }
-.custom-tooltip[data-class="Warlock"] { --heatmap-tooltip-accent: #8788EE; }
-.custom-tooltip[data-class="Warrior"] { --heatmap-tooltip-accent: #C69B6D; }
-.custom-tooltip[data-class="Death Knight"] { --heatmap-tooltip-accent: #C41E3A; }
-.custom-tooltip[data-class="Unknown"] { --heatmap-tooltip-accent: #ffd100; }
+.custom-tooltip[data-class="Druid"] { --heatmap-tooltip-accent: #FF7C0A; --tooltip-class-color: #FF7C0A; }
+.custom-tooltip[data-class="Hunter"] { --heatmap-tooltip-accent: #ABD473; --tooltip-class-color: #ABD473; }
+.custom-tooltip[data-class="Mage"] { --heatmap-tooltip-accent: #3FC7EB; --tooltip-class-color: #3FC7EB; }
+.custom-tooltip[data-class="Paladin"] { --heatmap-tooltip-accent: #F48CBA; --tooltip-class-color: #F48CBA; }
+.custom-tooltip[data-class="Priest"] { --heatmap-tooltip-accent: #FFFFFF; --tooltip-class-color: #FFFFFF; }
+.custom-tooltip[data-class="Rogue"] { --heatmap-tooltip-accent: #FFF468; --tooltip-class-color: #FFF468; }
+.custom-tooltip[data-class="Shaman"] { --heatmap-tooltip-accent: #0070DE; --tooltip-class-color: #0070DE; }
+.custom-tooltip[data-class="Warlock"] { --heatmap-tooltip-accent: #8788EE; --tooltip-class-color: #8788EE; }
+.custom-tooltip[data-class="Warrior"] { --heatmap-tooltip-accent: #C69B6D; --tooltip-class-color: #C69B6D; }
+.custom-tooltip[data-class="Death Knight"] { --heatmap-tooltip-accent: #C41E3A; --tooltip-class-color: #C41E3A; }
+.custom-tooltip[data-class="Unknown"] { --heatmap-tooltip-accent: #ffd100; --tooltip-class-color: #ffd100; }
 
-.custom-tooltip[data-class="Druid"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Druid"] .tooltip-class-wrap { color: #FF7C0A; }
-
-.custom-tooltip[data-class="Hunter"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Hunter"] .tooltip-class-wrap { color: #ABD473; }
-
-.custom-tooltip[data-class="Mage"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Mage"] .tooltip-class-wrap { color: #3FC7EB; }
-
-.custom-tooltip[data-class="Paladin"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Paladin"] .tooltip-class-wrap { color: #F48CBA; }
-
-.custom-tooltip[data-class="Priest"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Priest"] .tooltip-class-wrap { color: #FFFFFF; }
-
-.custom-tooltip[data-class="Rogue"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Rogue"] .tooltip-class-wrap { color: #FFF468; }
-
-.custom-tooltip[data-class="Shaman"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Shaman"] .tooltip-class-wrap { color: #0070DE; }
-
-.custom-tooltip[data-class="Warlock"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Warlock"] .tooltip-class-wrap { color: #8788EE; }
-
-.custom-tooltip[data-class="Warrior"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Warrior"] .tooltip-class-wrap { color: #C69B6D; }
-
-.custom-tooltip[data-class="Death Knight"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Death Knight"] .tooltip-class-wrap { color: #C41E3A; }
-
-.custom-tooltip[data-class="Unknown"] .tooltip-name-wrap,
-.custom-tooltip[data-class="Unknown"] .tooltip-class-wrap { color: #ffd100; }
+.custom-tooltip .tooltip-name-wrap,
+.custom-tooltip .tooltip-class-wrap {
+    color: var(--tooltip-class-color, inherit);
+}
 
 /* Components */
 .tt-no-border { border-bottom: none !important; }
@@ -2311,7 +2283,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:52:10.009737Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:57:17.254970Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
         [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 247, "loot": 187, "levels": 60, "total_roster": 661, "active_roster": 410}]
