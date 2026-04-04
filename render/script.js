@@ -5018,12 +5018,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const p = char.profile;
             const cClass = getCharClass(char);
-            const cHex = CLASS_COLORS[cClass] || '#fff';
             const portraitURL = char.render_url || getClassIcon(cClass);
             
             const template = document.getElementById('tpl-mvp-gloat');
             if (!template) return document.createDocumentFragment();
             const clone = template.content.cloneNode(true);
+            
+            const card = clone.querySelector('.mvp-gloat-card');
+            if (card) card.setAttribute('data-class', cClass);
             
             const img = clone.querySelector('.gloat-avatar');
             img.src = portraitURL;
@@ -5031,7 +5033,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const nameSpan = clone.querySelector('.gloat-name');
             nameSpan.textContent = p.name;
-            nameSpan.style.color = cHex;
             nameSpan.onclick = () => selectCharacter(p.name.toLowerCase());
             
             clone.querySelector('.gloat-score').textContent = `+${mvpData.score.toLocaleString()}`;

@@ -1065,6 +1065,17 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Typography */
 .gloat-title { color: #ffd100; font-family: 'Cinzel'; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 .gloat-name { font-family: 'Cinzel'; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
+.mvp-gloat-card[data-class="Druid"] .gloat-name { color: #FF7C0A; }
+.mvp-gloat-card[data-class="Hunter"] .gloat-name { color: #ABD473; }
+.mvp-gloat-card[data-class="Mage"] .gloat-name { color: #3FC7EB; }
+.mvp-gloat-card[data-class="Paladin"] .gloat-name { color: #F48CBA; }
+.mvp-gloat-card[data-class="Priest"] .gloat-name { color: #FFFFFF; }
+.mvp-gloat-card[data-class="Rogue"] .gloat-name { color: #FFF468; }
+.mvp-gloat-card[data-class="Shaman"] .gloat-name { color: #0070DE; }
+.mvp-gloat-card[data-class="Warlock"] .gloat-name { color: #8788EE; }
+.mvp-gloat-card[data-class="Warrior"] .gloat-name { color: #C69B6D; }
+.mvp-gloat-card[data-class="Death Knight"] .gloat-name { color: #C41E3A; }
+.mvp-gloat-card[data-class="Unknown"] .gloat-name { color: #fff; }
 .gloat-score { color: #fff; font-weight: bold; font-size: 15px; text-shadow: 1px 1px 2px #000; }
 .gloat-label { font-size: 10px; color: #aaa; }
 
