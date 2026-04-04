@@ -3309,7 +3309,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         tlSpecificDate = null;
 
         const xpCont = document.getElementById('guild-xp-container');
-        if (xpCont) xpCont.style.display = 'none';
+        if (xpCont) xpCont.hidden = true;
 
         document.querySelectorAll('.tt-heatmap').forEach(c => {
             c.classList.remove('selected-date');
@@ -3747,7 +3747,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (navSearch) navSearch.style.display = 'none';
 
         const xpCont = document.getElementById('guild-xp-container');
-        if (xpCont) xpCont.style.display = 'block';
+        if (xpCont) xpCont.hidden = false;
         
         // Calculate the War Effort data AND monuments first
         if (typeof window.renderGuildXPBar === 'function') window.renderGuildXPBar();
