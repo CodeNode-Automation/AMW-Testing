@@ -1117,6 +1117,11 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 /* Typography */
 .mon-title-text { font-family: 'Cinzel'; font-size: 13px; color: #ffd100; font-weight: bold; text-shadow: 1px 1px 2px #000; }
 .monument-highlight-span { font-weight: bold; }
+.monument-highlight-span[data-monument-tone="xp"] { color: #ffd100; }
+.monument-highlight-span[data-monument-tone="hk"] { color: #ff4400; }
+.monument-highlight-span[data-monument-tone="loot"] { color: #a335ee; }
+.monument-highlight-span[data-monument-tone="zenith"] { color: #3FC7EB; }
+.monument-highlight-span[data-monument-tone="flawless"] { color: #ffd100; }
 .weapon-stats-header { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .weapon-stats-header-secondary { margin-top: 12px; }
 .weapon-stats-header-mt16 { margin-top: 16px; }

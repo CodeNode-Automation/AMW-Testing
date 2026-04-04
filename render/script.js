@@ -5368,12 +5368,25 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const descContainer = clone.querySelector('.mon-desc-text');
                         descContainer.textContent = '';
                         if (mon.highlightText) {
+                            let monumentTone = 'xp';
+                            if (mon.highlightColor === '#ff4400') monumentTone = 'hk';
+                            else if (mon.highlightColor === '#a335ee') monumentTone = 'loot';
+                            else if (mon.highlightColor === '#3FC7EB') monumentTone = 'zenith';
+                            if (mon.title === '🌟 FLAWLESS VICTORY') monumentTone = 'flawless';
+
                             if (mon.prefixText) descContainer.appendChild(document.createTextNode(mon.prefixText));
-                            const hlSpan = document.createElement('span');
-                            hlSpan.style.color = mon.highlightColor;
-                            hlSpan.classList.add('monument-highlight-span');
-                            hlSpan.textContent = mon.highlightText;
-                            descContainer.appendChild(hlSpan);
+
+                            const highlightTemplate = document.getElementById('tpl-monument-highlight');
+                            if (highlightTemplate) {
+                                const highlightClone = highlightTemplate.content.cloneNode(true);
+                                const hlSpan = highlightClone.querySelector('.monument-highlight-span');
+                                if (hlSpan) {
+                                    hlSpan.setAttribute('data-monument-tone', monumentTone);
+                                    hlSpan.textContent = mon.highlightText;
+                                }
+                                descContainer.appendChild(highlightClone);
+                            }
+
                             if (mon.suffixText) descContainer.appendChild(document.createTextNode(mon.suffixText));
                         } else {
                             descContainer.innerHTML = mon.desc;
