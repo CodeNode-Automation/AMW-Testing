@@ -944,8 +944,56 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .we-text-label { margin-right: 8px; text-transform: uppercase; }
 .we-text-crushed { color: #fff; margin-left: 8px; }
 .we-text-values { font-size: 15px; }
-.we-text-state-normal { font-size: 11px; color: #ccc; }
-.we-text-state-max { font-size: 15px; text-shadow: 0 0 8px rgba(0,0,0,0.8), 1px 1px 2px #000; }
+
+.challenge-text.we-text-state-normal {
+    font-size: 11px;
+    color: #fff;
+}
+
+.challenge-text.we-text-state-normal .we-text-label {
+    color: #ccc;
+}
+
+.challenge-text.we-text-state-max {
+    font-size: 15px;
+    text-shadow: 0 0 8px rgba(0,0,0,0.8), 1px 1px 2px #000;
+}
+
+.challenge-text.we-text-state-max .we-text-label {
+    color: #ddd;
+}
+
+.challenge-text.we-text-state-max.we-text-type-xp {
+    color: #ffd100;
+}
+
+.challenge-text.we-text-state-max.we-text-type-hk {
+    color: #e74c3c;
+}
+
+.challenge-text.we-text-state-max.we-text-type-loot {
+    color: #a335ee;
+}
+
+.challenge-text.we-text-state-max.we-text-type-zenith {
+    color: #3FC7EB;
+}
+
+.we-text-crushed.we-text-crushed-xp {
+    text-shadow: 0 0 10px #ff8000;
+}
+
+.we-text-crushed.we-text-crushed-hk {
+    text-shadow: 0 0 10px #ff4400;
+}
+
+.we-text-crushed.we-text-crushed-loot {
+    text-shadow: 0 0 10px #ff8000;
+}
+
+.we-text-crushed.we-text-crushed-zenith {
+    text-shadow: 0 0 10px #00e5ff;
+}
 .challenge-link { color: #bbb; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; border-bottom: 1px dotted rgba(255,255,255,0.3); cursor: pointer; text-shadow: none; transition: color 0.3s; letter-spacing: 0; }
 .challenge-text { color: #fff; font-family: 'Cinzel'; font-weight: bold; font-size: 13px; text-shadow: 0 2px 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8); letter-spacing: 1px; }
 .mvp-placeholder-icon { font-size: 22px; }
@@ -2158,10 +2206,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T08:08:59.976073Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T08:13:26.741837Z", "active_14_days": 410, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 238, "loot": 182, "levels": 56, "total_roster": 661, "active_roster": 410}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 239, "loot": 182, "levels": 57, "total_roster": 661, "active_roster": 410}]
     </script>
 
     <script>
@@ -7393,6 +7441,21 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             if (textEl) {
                 textEl.textContent = '';
+
+                let textTypeClass = 'we-text-type-zenith';
+                let crushedClass = 'we-text-crushed-zenith';
+
+                if (type === 'XP') {
+                    textTypeClass = 'we-text-type-xp';
+                    crushedClass = 'we-text-crushed-xp';
+                } else if (type === 'HK') {
+                    textTypeClass = 'we-text-type-hk';
+                    crushedClass = 'we-text-crushed-hk';
+                } else if (type === 'LOOT') {
+                    textTypeClass = 'we-text-type-loot';
+                    crushedClass = 'we-text-crushed-loot';
+                }
+
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'we-text-label';
                 labelSpan.textContent = labelName + ':';
@@ -7402,22 +7465,17 @@ window.addEventListener('DOMContentLoaded', async () => {
                 valSpan.textContent = `${currentVal.toLocaleString()} / ${maxVal.toLocaleString()}`;
                 
                 if (pct >= 100) {
-                    textEl.className = 'challenge-text we-text-state-max';
-                    textEl.style.color = colorMid;
-                    labelSpan.style.color = '#ddd';
+                    textEl.className = `challenge-text we-text-state-max ${textTypeClass}`;
                     
                     const crushSpan = document.createElement('span');
-                    crushSpan.className = 'we-text-crushed';
+                    crushSpan.className = `we-text-crushed ${crushedClass}`;
                     crushSpan.textContent = '🔥 CRUSHED!';
-                    crushSpan.style.textShadow = `0 0 10px ${colorMax}`;
                     
                     textEl.appendChild(labelSpan);
                     textEl.appendChild(valSpan);
                     textEl.appendChild(crushSpan);
                 } else {
-                    textEl.className = 'challenge-text we-text-state-normal';
-                    textEl.style.color = '#fff';
-                    labelSpan.style.color = '#ccc';
+                    textEl.className = `challenge-text we-text-state-normal ${textTypeClass}`;
                     
                     textEl.appendChild(labelSpan);
                     textEl.appendChild(valSpan);
