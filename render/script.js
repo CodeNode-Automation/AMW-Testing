@@ -1162,7 +1162,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const activeSpec = p.active_spec ? p.active_spec : '';
         const specIconUrl = getSpecIcon(cClass, activeSpec);
-        const specIconHtml = specIconUrl ? `<img src="${specIconUrl}" class="spec-icon-card">` : '';
         const displaySpecClass = activeSpec ? `${activeSpec} ${cClass}` : cClass;
 
         const health = st.health || 0;
