@@ -408,7 +408,7 @@ function buildLadderShell(characters, hashUrl) {
     const insightNodes = [
         buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
         buildLadderInsightNode(
-            'Fastest Climb',
+            'Current 7-Day MVP',
             biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
             biggestMoverTrend > 0
                 ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
@@ -2787,9 +2787,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const clone = template.content.cloneNode(true);
         const block = clone.querySelector('.ladder-podium-block');
         const crown = clone.querySelector('.podium-crown');
+        const rankEl = clone.querySelector('.podium-rank');
         const avatar = clone.querySelector('.podium-avatar');
         const nameEl = clone.querySelector('.podium-name');
-        const rankEl = clone.querySelector('.podium-rank');
         const statValEl = clone.querySelector('.podium-stat-val');
         const statLabelEl = clone.querySelector('.podium-stat-lbl');
         const trendContainer = clone.querySelector('.podium-trend-container');
@@ -2801,12 +2801,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         block.setAttribute('data-awards', awardsAttr.join(','));
 
         crown.hidden = rank !== 1;
+        if (rankEl) rankEl.textContent = `#${rank}`;
 
         avatar.src = portraitURL;
         avatar.alt = baseName || 'Character portrait';
 
         nameEl.textContent = baseName;
-        if (rankEl) rankEl.textContent = `#${rank}`;
 
         const trendVal = hashUrl === 'ladder-pvp'
             ? (deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0)
@@ -4767,14 +4767,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
             // Passed 'true' for Badges, and 'ilvl' for the default sort!
-            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
+            showConciseView('', sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
             
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
             // Passed 'true' for Badges, and 'hks' for the default sort!
-            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
+            showConciseView('', sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
         } else if (hash.startsWith('war-effort-')) {

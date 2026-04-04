@@ -5551,6 +5551,112 @@ a,
   }
 }
 
+.lb-podium-wrap.ladder-podium-wrap {
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 228px;
+  padding: 36px 14px 18px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
+  transform: translateY(-12px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
+  transform: translateY(0);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+  transform: translateY(8px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  bottom: auto;
+  transform: none;
+  font-family: "Cinzel";
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.92;
+  z-index: 4;
+  color: rgba(255, 244, 200, 0.92);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+  width: 100%;
+  min-height: 2.3em;
+  margin-top: 18px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.15;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin-top: auto;
+  min-width: 112px;
+  z-index: 3;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-trend-container {
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .lb-podium-wrap.ladder-podium-wrap {
+    gap: 8px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    min-height: 198px;
+    padding: 34px 8px 16px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-1,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-2,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+    transform: none;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+    min-height: 2.6em;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+    min-width: 96px;
+  }
+}
+
 @keyframes floatCrown {
   0% {
     transform: translate(-50%, 0px) rotate(-5deg);
@@ -5569,12 +5675,20 @@ a,
 /* ========================================= */
 /* LADDER EXPERIENCE UPGRADES                */
 /* ========================================= */
-#concise-view.concise-view-ladder {
-  gap: 14px;
+#concise-view.concise-view-ladder #concise-view-title {
+  display: none;
 }
 
-#concise-view.concise-view-ladder #concise-view-title {
-  margin-bottom: 8px;
+#concise-view.concise-view-ladder {
+  gap: 8px;
+}
+
+#concise-view.concise-view-ladder .ladder-hero-shell {
+  margin-bottom: 2px;
+}
+
+#concise-view.concise-view-ladder .ladder-podium-heading {
+  margin: 4px 0 0;
 }
 
 .ladder-shell-pve {
