@@ -5188,25 +5188,38 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (fillEl) {
-                setTimeout(() => { 
-                    fillEl.style.width = pct + '%'; 
+                fillEl.classList.remove(
+                    'we-fill-xp',
+                    'we-fill-hk',
+                    'we-fill-loot',
+                    'we-fill-zenith',
+                    'we-fill-state-low',
+                    'we-fill-state-mid',
+                    'we-fill-state-high',
+                    'we-fill-state-max'
+                );
+
+                if (type === 'XP') {
+                    fillEl.classList.add('we-fill-xp');
+                } else if (type === 'HK') {
+                    fillEl.classList.add('we-fill-hk');
+                } else if (type === 'LOOT') {
+                    fillEl.classList.add('we-fill-loot');
+                } else {
+                    fillEl.classList.add('we-fill-zenith');
+                }
+
+                setTimeout(() => {
+                    fillEl.style.width = pct + '%';
+
                     if (pct >= 100) {
-                        // Toned down 100% state: Natural colors, softer shadow, and a slower pulse
-                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMax})`;
-                        fillEl.style.boxShadow = `0 0 20px ${colorMax}`;
-                        fillEl.style.animation = `pulseMax${type} 1.5s infinite alternate`;
+                        fillEl.classList.add('we-fill-state-max');
                     } else if (pct >= 75) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMax})`;
-                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMax}`;
-                        fillEl.style.animation = `pulseFast${type} 0.8s infinite alternate`;
+                        fillEl.classList.add('we-fill-state-high');
                     } else if (pct >= 30) {
-                        fillEl.style.background = `linear-gradient(90deg, ${colorBase}, ${colorMid})`;
-                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px ${colorMid}`;
-                        fillEl.style.animation = `pulseSlow${type} 1.5s infinite alternate`;
+                        fillEl.classList.add('we-fill-state-mid');
                     } else {
-                        fillEl.style.background = `linear-gradient(90deg, #333, ${colorBase})`;
-                        fillEl.style.boxShadow = `0 0 ${dynamicGlow}px rgba(255, 255, 255, 0.2)`;
-                        fillEl.style.animation = 'none';
+                        fillEl.classList.add('we-fill-state-low');
                     }
                 }, 100);
             }

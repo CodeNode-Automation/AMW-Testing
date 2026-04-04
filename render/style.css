@@ -892,6 +892,25 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
 .challenge-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
 .challenge-bar-bg { position: relative; width: 100%; height: 24px; background: rgba(5, 5, 8, 0.9); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid rgba(0, 0, 0, 0.8); overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(255,255,255,0.02); }
 .challenge-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+.challenge-fill.we-fill-xp.we-fill-state-low { background: linear-gradient(90deg, #333, #8B6508); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
+.challenge-fill.we-fill-xp.we-fill-state-mid { background: linear-gradient(90deg, #8B6508, #ffd100); box-shadow: 0 0 18px #ffd100; animation: pulseSlowXP 1.5s infinite alternate; }
+.challenge-fill.we-fill-xp.we-fill-state-high { background: linear-gradient(90deg, #8B6508, #ff8000); box-shadow: 0 0 22px #ff8000; animation: pulseFastXP 0.8s infinite alternate; }
+.challenge-fill.we-fill-xp.we-fill-state-max { background: linear-gradient(90deg, #8B6508, #ff8000); box-shadow: 0 0 20px #ff8000; animation: pulseMaxXP 1.5s infinite alternate; }
+
+.challenge-fill.we-fill-hk.we-fill-state-low { background: linear-gradient(90deg, #333, #8B0000); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
+.challenge-fill.we-fill-hk.we-fill-state-mid { background: linear-gradient(90deg, #8B0000, #e74c3c); box-shadow: 0 0 18px #e74c3c; animation: pulseSlowHK 1.5s infinite alternate; }
+.challenge-fill.we-fill-hk.we-fill-state-high { background: linear-gradient(90deg, #8B0000, #ff4400); box-shadow: 0 0 22px #ff4400; animation: pulseFastHK 0.8s infinite alternate; }
+.challenge-fill.we-fill-hk.we-fill-state-max { background: linear-gradient(90deg, #8B0000, #ff4400); box-shadow: 0 0 20px #ff4400; animation: pulseMaxHK 1.5s infinite alternate; }
+
+.challenge-fill.we-fill-loot.we-fill-state-low { background: linear-gradient(90deg, #333, #4b0082); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
+.challenge-fill.we-fill-loot.we-fill-state-mid { background: linear-gradient(90deg, #4b0082, #a335ee); box-shadow: 0 0 18px #a335ee; animation: pulseSlowLOOT 1.5s infinite alternate; }
+.challenge-fill.we-fill-loot.we-fill-state-high { background: linear-gradient(90deg, #4b0082, #ff8000); box-shadow: 0 0 22px #ff8000; animation: pulseFastLOOT 0.8s infinite alternate; }
+.challenge-fill.we-fill-loot.we-fill-state-max { background: linear-gradient(90deg, #4b0082, #ff8000); box-shadow: 0 0 20px #ff8000; animation: pulseMaxLOOT 1.5s infinite alternate; }
+
+.challenge-fill.we-fill-zenith.we-fill-state-low { background: linear-gradient(90deg, #333, #006064); box-shadow: 0 0 12px rgba(255, 255, 255, 0.2); animation: none; }
+.challenge-fill.we-fill-zenith.we-fill-state-mid { background: linear-gradient(90deg, #006064, #3FC7EB); box-shadow: 0 0 18px #3FC7EB; animation: pulseSlowZENITH 1.5s infinite alternate; }
+.challenge-fill.we-fill-zenith.we-fill-state-high { background: linear-gradient(90deg, #006064, #00e5ff); box-shadow: 0 0 22px #00e5ff; animation: pulseFastZENITH 0.8s infinite alternate; }
+.challenge-fill.we-fill-zenith.we-fill-state-max { background: linear-gradient(90deg, #006064, #00e5ff); box-shadow: 0 0 20px #00e5ff; animation: pulseMaxZENITH 1.5s infinite alternate; }
 .challenge-glare { position: absolute; top: 0; left: 0; width: 100%; height: 45%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%); z-index: 3; pointer-events: none; border-radius: 10px 10px 0 0; }
 .challenge-tick { position: absolute; top: 0; width: 2px; height: 100%; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 4; }
 .tick-25 { left: 25%; background: rgba(255,255,255,0.05); }
