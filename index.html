@@ -5462,13 +5462,38 @@ a,
   min-width: 80px;
 }
 
+.lb-podium-wrap.ladder-podium-wrap {
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 34px;
+  margin-bottom: 18px;
+}
+
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
-  justify-content: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   gap: 10px;
-  padding: 34px 10px 14px 10px;
+  padding: 42px 12px 78px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
+  transform: translateY(-8px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
+  transform: translateY(2px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+  transform: translateY(10px);
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+  width: 100%;
+  padding: 0 8px;
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
@@ -5477,19 +5502,62 @@ a,
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
   margin-top: 0;
+  min-width: 112px;
+  z-index: 2;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-size: 36px;
+  line-height: 1;
+  opacity: 0.18;
+  z-index: 1;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-trend-container {
+  gap: 6px;
 }
 
 @media (max-width: 600px) {
+  .lb-podium-wrap.ladder-podium-wrap {
+    gap: 6px;
+  }
+
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
-    padding: 30px 6px 10px 6px;
+    padding: 36px 6px 72px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-1,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-2,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+    transform: none;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
     font-size: 12px;
+    min-height: 2.8em;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+    min-width: 94px;
+    bottom: 10px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+    bottom: 8px;
+    font-size: 28px;
   }
 }
 
@@ -5517,6 +5585,63 @@ a,
 
 #concise-view.concise-view-ladder #concise-view-title {
   margin-bottom: 8px;
+}
+
+.ladder-shell-pve {
+  border-color: rgba(90, 255, 190, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(95, 255, 190, 0.14), transparent 30%),
+    radial-gradient(circle at left center, rgba(255, 209, 0, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(19, 30, 24, 0.95) 0%, rgba(10, 11, 14, 0.97) 100%);
+}
+
+.ladder-shell-pvp {
+  border-color: rgba(255, 112, 86, 0.22);
+  background:
+    radial-gradient(circle at top right, rgba(255, 112, 86, 0.16), transparent 28%),
+    radial-gradient(circle at left center, rgba(133, 82, 255, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(34, 14, 18, 0.96) 0%, rgba(9, 9, 13, 0.98) 100%);
+}
+
+.ladder-hero-shell::after {
+  content: "✦ ✦ ✦";
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  font-family: "Cinzel";
+  letter-spacing: 0.35em;
+  color: rgba(255, 209, 0, 0.18);
+  pointer-events: none;
+}
+
+.ladder-shell-pve .ladder-overline,
+.ladder-shell-pve .ladder-section-kicker {
+  color: #94f2c4;
+}
+
+.ladder-shell-pvp .ladder-overline,
+.ladder-shell-pvp .ladder-section-kicker {
+  color: #ff9d82;
+}
+
+.ladder-shell-pve .ladder-hero-title {
+  color: #dbffe7;
+}
+
+.ladder-shell-pvp .ladder-hero-title {
+  color: #ffd9cf;
+}
+
+.ladder-find-wrap {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ladder-hero-stat-card:hover,
+.ladder-insight-card:hover,
+.ladder-find-wrap:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 209, 0, 0.22);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .ladder-hero-shell {
@@ -5783,13 +5908,15 @@ a,
 }
 
 .ladder-row-pve {
-  background: linear-gradient(90deg, rgba(36, 24, 10, 0.92) 0%, rgba(15, 12, 16, 0.96) 100%);
-  border-color: rgba(255, 166, 0, 0.12);
+  background: linear-gradient(90deg, rgba(34, 28, 14, 0.94) 0%, rgba(14, 13, 18, 0.97) 100%);
+  border-color: rgba(255, 174, 46, 0.16);
+  box-shadow: inset 3px 0 0 rgba(143, 242, 196, 0.16);
 }
 
 .ladder-row-pvp {
-  background: linear-gradient(90deg, rgba(34, 12, 12, 0.92) 0%, rgba(15, 10, 12, 0.96) 100%);
-  border-color: rgba(255, 92, 72, 0.12);
+  background: linear-gradient(90deg, rgba(38, 16, 16, 0.94) 0%, rgba(14, 10, 14, 0.97) 100%);
+  border-color: rgba(255, 102, 76, 0.16);
+  box-shadow: inset 3px 0 0 rgba(255, 157, 130, 0.18);
 }
 
 .ladder-row-card .concise-row-stats-top {
@@ -5798,6 +5925,32 @@ a,
   align-items: flex-end;
   justify-content: center;
   gap: 6px;
+}
+
+.ladder-stats-inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ladder-stats-inline .concise-stat-line {
+  gap: 6px;
+}
+
+.ladder-stats-inline .concise-stat-line:last-child {
+  color: #f5d889;
+}
+
+.ladder-stats-inline .trend-indicator-concise {
+  width: auto;
+  min-width: 0;
+  margin-left: 6px;
 }
 
 .ladder-row-status {
@@ -5811,6 +5964,7 @@ a,
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  margin-left: 8px;
 }
 
 .ladder-row-status.is-rising {
@@ -5834,6 +5988,15 @@ a,
 .ladder-row-note {
   font-size: 11px;
   letter-spacing: 0.03em;
+  color: #cdbf98;
+}
+
+@media (max-width: 760px) {
+  .ladder-stats-inline {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
 }
 
 .ladder-row-flash {
@@ -6337,6 +6500,7 @@ a,
                 </div>
                 <div class="podium-trend-container"></div>
             </div>
+            <div class="podium-rank"></div>
         </div>
     </template>
 
@@ -6996,10 +7160,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T21:10:37.967316Z", "active_14_days": 402, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T21:35:02.116606Z", "active_14_days": 404, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 577, "loot": 439, "levels": 138, "total_roster": 658, "active_roster": 402}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}]
     </script>
 
     <script>
@@ -7207,27 +7371,27 @@ function getLadderConfig(hashUrl) {
     if (hashUrl === 'ladder-pvp') {
         return {
             theme: 'pvp',
-            overline: 'Guild War Board',
-            heroTitle: 'The Blood Ledger',
-            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
+            overline: 'Netherstorm War Ledger',
+            heroTitle: 'The Blood Ledger of Outland',
+            heroDesc: "From the Ring of Trials to the skirmishes of Hellfire and Nagrand, this war board tracks the guild's fiercest killers, sharpest climbs, and the challengers pressing toward gladiatorial glory.",
             metricLabel: 'Honorable Kills',
             metricShort: 'HKs',
-            podiumKicker: 'Battlefield Elite',
-            podiumTitle: 'Featured Champions',
-            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
+            podiumKicker: 'Arena War Council',
+            podiumTitle: 'Champions of the Arena Sands',
+            podiumDesc: 'The three duelists currently holding command of the blood-soaked ladder.'
         };
     }
 
     return {
         theme: 'pve',
-        overline: 'Raid Command Board',
+        overline: 'Outland Raid Dispatch',
         heroTitle: 'The Black Temple Vanguard',
-        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
+        heroDesc: "A command ledger for the raiders leading the march through Karazhan, Serpentshrine, Tempest Keep, Hyjal, and the Black Temple itself. See who stands ready, who is surging, and who is closing on the front line.",
         metricLabel: 'Item Level',
         metricShort: 'iLvl',
         podiumKicker: 'Raid Vanguard',
-        podiumTitle: 'Featured Champions',
-        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
+        podiumTitle: 'Champions of the Expedition',
+        podiumDesc: "The current standard-bearers for guild progression across Outland's hardest encounters."
     };
 }
 
@@ -9602,7 +9766,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        appendConciseBadges(nameEl, conciseBadges);
+        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
+            appendConciseBadges(nameEl, conciseBadges);
+        }
 
         if (showVanguardBadge) {
             const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
@@ -9624,13 +9790,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             isClickable
         });
 
-        if (ladderMeta && ladderMeta.statusText) {
-            metaEl.appendChild(document.createTextNode(' • '));
-            const statusChip = document.createElement('span');
-            statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
-            statusChip.textContent = ladderMeta.statusText;
-            metaEl.appendChild(statusChip);
-        }
+        const ladderStatusChip = ladderMeta && ladderMeta.statusText
+            ? (() => {
+                const statusChip = document.createElement('span');
+                statusChip.className = `ladder-row-status ${ladderMeta.statusClass}`;
+                statusChip.textContent = ladderMeta.statusText;
+                return statusChip;
+            })()
+            : null;
 
         if (hashUrl === 'war-effort-loot') {
             statsTop.remove();
@@ -9643,6 +9810,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             statsBottom.remove();
             if (statsNode) {
                 statsTop.appendChild(statsNode);
+
+                if (ladderStatusChip) {
+                    const statusTarget = statsTop.querySelector('.ladder-stats-inline .concise-stat-line:last-child');
+                    if (statusTarget) {
+                        statusTarget.appendChild(ladderStatusChip);
+                    } else {
+                        statsTop.appendChild(ladderStatusChip);
+                    }
+                }
             }
 
             if (ladderMeta && ladderMeta.noteText) {
@@ -9782,6 +9958,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const crown = clone.querySelector('.podium-crown');
         const avatar = clone.querySelector('.podium-avatar');
         const nameEl = clone.querySelector('.podium-name');
+        const rankEl = clone.querySelector('.podium-rank');
         const statValEl = clone.querySelector('.podium-stat-val');
         const statLabelEl = clone.querySelector('.podium-stat-lbl');
         const trendContainer = clone.querySelector('.podium-trend-container');
@@ -9798,22 +9975,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         avatar.alt = baseName || 'Character portrait';
 
         nameEl.textContent = baseName;
+        if (rankEl) rankEl.textContent = `#${rank}`;
 
-        if (hashUrl === 'ladder-pve') {
-            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0;
-            statValEl.textContent = statValue;
-            statValEl.classList.add('text-ilvl');
-            statLabelEl.textContent = 'iLvl';
-            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
-        } else if (hashUrl === 'ladder-pvp') {
-            const trendVal = deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0;
-            statValEl.textContent = statValue;
-            statValEl.classList.add('text-hk');
-            statLabelEl.textContent = 'HKs';
-            trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
-        } else {
-            trendContainer.remove();
-        }
+        const trendVal = hashUrl === 'ladder-pvp'
+            ? (deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0)
+            : (deepChar && deepChar.profile ? (deepChar.profile.trend_pve || deepChar.profile.trend_ilvl || 0) : 0);
+
+        statValEl.textContent = statValue;
+        statValEl.classList.add(hashUrl === 'ladder-pvp' ? 'text-hk' : 'text-ilvl');
+        statLabelEl.textContent = hashUrl === 'ladder-pvp' ? 'HKs' : 'iLvl';
+        trendContainer.appendChild(createTrendSpan(trendVal, 'podium'));
 
         return clone.firstElementChild;
     }
@@ -10236,10 +10407,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             if (defaultStatsTemplate) {
                 const defaultStatsClone = defaultStatsTemplate.content.cloneNode(true);
+                const statLines = [...defaultStatsClone.querySelectorAll('.concise-stat-line')];
                 const levelEl = defaultStatsClone.querySelector('[data-role="level-value"]');
                 const labelEl = defaultStatsClone.querySelector('[data-role="stat-label"]');
                 const valueEl = defaultStatsClone.querySelector('[data-role="stat-value"]');
                 const trendSlot = defaultStatsClone.querySelector('[data-role="trend-slot"]');
+                const isLadderStatLayout = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
 
                 levelEl.textContent = level;
                 labelEl.textContent = `${statLabel} `;
@@ -10255,7 +10428,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     trendSlot.remove();
                 }
 
-                statsNode = defaultStatsClone;
+                if (isLadderStatLayout) {
+                    const inlineWrap = document.createElement('div');
+                    inlineWrap.className = 'ladder-stats-inline';
+                    statLines.forEach(line => inlineWrap.appendChild(line));
+                    statsNode = inlineWrap;
+                } else {
+                    statsNode = defaultStatsClone;
+                }
             }
             let isWarEffortRow = false;
             let isWarEffortLootRow = false;
