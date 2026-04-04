@@ -1619,52 +1619,6 @@ a,
   min-width: 300px;
   width: 100%;
 }
-.concise-wrapper-cards-only {
-  max-width: 980px;
-  gap: 0;
-}
-
-.concise-main-col-cards-only {
-  flex: 1 1 100%;
-  max-width: 100%;
-}
-
-.concise-badges-box-hidden {
-  display: none !important;
-}
-
-.concise-load-more-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: 18px;
-  width: 100%;
-}
-
-.concise-load-more-btn {
-  appearance: none;
-  border: 1px solid rgba(255, 209, 0, 0.35);
-  background: linear-gradient(180deg, rgba(42, 28, 8, 0.98) 0%, rgba(18, 12, 4, 0.98) 100%);
-  color: #ffd100;
-  font-family: "Cinzel", serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 12px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.concise-load-more-btn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 209, 0, 0.75);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45);
-}
-
-.concise-load-more-btn:active {
-  transform: translateY(0);
-}
 .concise-class-stats {
   display: none;
   width: 100%;
