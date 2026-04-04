@@ -5561,6 +5561,112 @@ a,
   }
 }
 
+.lb-podium-wrap.ladder-podium-wrap {
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 228px;
+  padding: 36px 14px 18px;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
+  transform: translateY(-12px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-2 {
+  transform: translateY(0);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+  transform: translateY(8px);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  bottom: auto;
+  transform: none;
+  font-family: "Cinzel";
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.92;
+  z-index: 4;
+  color: rgba(255, 244, 200, 0.92);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+  width: 100%;
+  min-height: 2.3em;
+  margin-top: 18px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.15;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin-top: auto;
+  min-width: 112px;
+  z-index: 3;
+}
+
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-trend-container {
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .lb-podium-wrap.ladder-podium-wrap {
+    gap: 8px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
+    min-height: 198px;
+    padding: 34px 8px 16px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-1,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-2,
+  .lb-podium-wrap.ladder-podium-wrap .podium-step-3 {
+    transform: none;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
+    min-height: 2.6em;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-pill {
+    min-width: 96px;
+  }
+}
+
 @keyframes floatCrown {
   0% {
     transform: translate(-50%, 0px) rotate(-5deg);
@@ -5579,12 +5685,20 @@ a,
 /* ========================================= */
 /* LADDER EXPERIENCE UPGRADES                */
 /* ========================================= */
-#concise-view.concise-view-ladder {
-  gap: 14px;
+#concise-view.concise-view-ladder #concise-view-title {
+  display: none;
 }
 
-#concise-view.concise-view-ladder #concise-view-title {
-  margin-bottom: 8px;
+#concise-view.concise-view-ladder {
+  gap: 8px;
+}
+
+#concise-view.concise-view-ladder .ladder-hero-shell {
+  margin-bottom: 2px;
+}
+
+#concise-view.concise-view-ladder .ladder-podium-heading {
+  margin: 4px 0 0;
 }
 
 .ladder-shell-pve {
@@ -6491,6 +6605,7 @@ a,
     <template id="tpl-ladder-podium">
         <div class="podium-block ladder-podium-block tt-char" data-char="">
             <div class="podium-crown" hidden>👑</div>
+            <div class="podium-rank"></div>
             <img src="" class="podium-avatar" alt="">
             <div class="podium-name"></div>
             <div class="podium-pill">
@@ -6500,7 +6615,6 @@ a,
                 </div>
                 <div class="podium-trend-container"></div>
             </div>
-            <div class="podium-rank"></div>
         </div>
     </template>
 
@@ -7160,10 +7274,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T21:35:02.116606Z", "active_14_days": 404, "raid_ready_count": 20, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T22:03:55.512108Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}]
+        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 17, "loot": 11, "levels": 6, "total_roster": 660, "active_roster": 404}]
     </script>
 
     <script>
@@ -7577,7 +7691,7 @@ function buildLadderShell(characters, hashUrl) {
     const insightNodes = [
         buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
         buildLadderInsightNode(
-            'Fastest Climb',
+            'Current 7-Day MVP',
             biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
             biggestMoverTrend > 0
                 ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
@@ -9956,9 +10070,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const clone = template.content.cloneNode(true);
         const block = clone.querySelector('.ladder-podium-block');
         const crown = clone.querySelector('.podium-crown');
+        const rankEl = clone.querySelector('.podium-rank');
         const avatar = clone.querySelector('.podium-avatar');
         const nameEl = clone.querySelector('.podium-name');
-        const rankEl = clone.querySelector('.podium-rank');
         const statValEl = clone.querySelector('.podium-stat-val');
         const statLabelEl = clone.querySelector('.podium-stat-lbl');
         const trendContainer = clone.querySelector('.podium-trend-container');
@@ -9970,12 +10084,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         block.setAttribute('data-awards', awardsAttr.join(','));
 
         crown.hidden = rank !== 1;
+        if (rankEl) rankEl.textContent = `#${rank}`;
 
         avatar.src = portraitURL;
         avatar.alt = baseName || 'Character portrait';
 
         nameEl.textContent = baseName;
-        if (rankEl) rankEl.textContent = `#${rank}`;
 
         const trendVal = hashUrl === 'ladder-pvp'
             ? (deepChar && deepChar.profile ? (deepChar.profile.trend_pvp || deepChar.profile.trend_hks || 0) : 0)
@@ -11936,14 +12050,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
             // Passed 'true' for Badges, and 'ilvl' for the default sort!
-            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
+            showConciseView('', sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
             
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
             // Passed 'true' for Badges, and 'hks' for the default sort!
-            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
+            showConciseView('', sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
         } else if (hash.startsWith('war-effort-')) {
