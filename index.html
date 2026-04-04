@@ -2235,7 +2235,7 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
                             <span id="countdown-timer-text" class="countdown-timer">--d --h --m --s</span>
                         </div>
                     </div>
-                    <div id="recent-milestones-container" class="ribbon-left" style="display:none;">
+                    <div id="recent-milestones-container" class="ribbon-left" hidden>
                         <div class="milestone-banner">
                             <span class="milestone-icon">🌟</span>
                             <div id="milestone-text" class="milestone-text"></div>
@@ -2695,10 +2695,10 @@ a, .item-slot, .nav-btn, .clickable-class, .tt-char, .concise-item, .tl-btn, #ba
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T12:05:53.131112Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-04T12:08:31.402509Z", "active_14_days": 408, "raid_ready_count": 21, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 347, "loot": 263, "levels": 84, "total_roster": 660, "active_roster": 408}]
+        [{"date": "2026-03-29", "day_name": "Sun", "count": 768, "loot": 584, "levels": 184, "total_roster": 643, "active_roster": 405}, {"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 349, "loot": 265, "levels": 84, "total_roster": 660, "active_roster": 408}]
     </script>
 
     <script>
@@ -6542,7 +6542,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 ).slice(0, 5);
 
                 if (recentEvents.length > 0) {
-                    milestoneCont.style.display = 'flex';
+                    milestoneCont.hidden = false;
                     milestoneText.classList.add('milestone-text-rotator');
 
                     // 2. Pre-build the DOM elements for all 5 events
@@ -6600,7 +6600,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         }, 4500);
                     }
                 } else {
-                    milestoneCont.style.display = 'none';
+                    milestoneCont.hidden = true;
                 }
             }
         }
