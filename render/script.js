@@ -4947,7 +4947,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => (b.profile.trend_pvp || b.profile.trend_hks || 0) - (a.profile.trend_pvp || a.profile.trend_hks || 0))
             .slice(0, 3);
 
-        mvpContainer.style.display = 'block';
+        mvpContainer.hidden = false;
 
         function generateMvpHtml(chars, isPvp) {
             if (chars.length === 0) {
