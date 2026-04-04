@@ -202,27 +202,27 @@ function getLadderConfig(hashUrl) {
     if (hashUrl === 'ladder-pvp') {
         return {
             theme: 'pvp',
-            overline: 'Guild War Board',
-            heroTitle: 'The Blood Ledger',
-            heroDesc: 'Track the guild\'s deadliest combatants, the fiercest climbs, and the rivalries that define the battlefield.',
+            overline: 'Arena War Ledger',
+            heroTitle: 'The Blood Ledger of Outland',
+            heroDesc: "From Nagrand to Blade's Edge skirmishes, this war board tracks the guild's most feared killers, fiercest surges, and the rivals still clawing for the crown.",
             metricLabel: 'Honorable Kills',
             metricShort: 'HKs',
-            podiumKicker: 'Battlefield Elite',
-            podiumTitle: 'Featured Champions',
-            podiumDesc: 'The three names currently ruling the blood-soaked ladder.'
+            podiumKicker: 'Gladiators of the Week',
+            podiumTitle: 'Champions of the Arena Sands',
+            podiumDesc: 'These three names currently hold the line above every challenger on the war board.'
         };
     }
 
     return {
         theme: 'pve',
-        overline: 'Raid Command Board',
+        overline: 'Outland Raid Dispatch',
         heroTitle: 'The Black Temple Vanguard',
-        heroDesc: 'See who leads the guild in raid readiness, which classes dominate the roster, and where the closest PvE rivalry is unfolding.',
+        heroDesc: "A command ledger for the raiders leading the march through Karazhan, Serpentshrine, Hyjal, and the Black Temple itself. See who stands ready, who is surging, and who is closing on the front line.",
         metricLabel: 'Item Level',
         metricShort: 'iLvl',
         podiumKicker: 'Raid Vanguard',
-        podiumTitle: 'Featured Champions',
-        podiumDesc: 'The three raiders currently setting the pace for the rest of the guild.'
+        podiumTitle: 'Champions of the Expedition',
+        podiumDesc: "The current standard-bearers for guild progression across Outland's hardest encounters."
     };
 }
 
@@ -361,6 +361,7 @@ function buildLadderShell(characters, hashUrl) {
     const podiumKicker = clone.querySelector('.ladder-section-kicker');
     const podiumTitle = clone.querySelector('.ladder-section-title');
     const podiumDesc = clone.querySelector('.ladder-section-desc');
+    const dataList = clone.querySelector('#ladder-rank-options');
 
     if (shell) shell.classList.add(`ladder-shell-${config.theme}`);
     if (overline) overline.textContent = config.overline;
@@ -369,6 +370,17 @@ function buildLadderShell(characters, hashUrl) {
     if (podiumKicker) podiumKicker.textContent = config.podiumKicker;
     if (podiumTitle) podiumTitle.textContent = config.podiumTitle;
     if (podiumDesc) podiumDesc.textContent = config.podiumDesc;
+
+    if (dataList) {
+        characters.forEach(char => {
+            const name = char && char.profile && char.profile.name ? char.profile.name : '';
+            if (!name) return;
+
+            const option = document.createElement('option');
+            option.value = name;
+            dataList.appendChild(option);
+        });
+    }
 
     const leader = characters[0];
     const second = characters[1] || null;
@@ -386,7 +398,8 @@ function buildLadderShell(characters, hashUrl) {
     }, {});
 
     const dominantClassEntry = Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0] || ['Unknown', 0];
-    const biggestMover = [...characters]
+    const positiveMoverPool = characters.filter(char => getLadderTrendValue(char, hashUrl) > 0);
+    const biggestMover = [...(positiveMoverPool.length ? positiveMoverPool : characters)]
         .sort((a, b) => getLadderTrendValue(b, hashUrl) - getLadderTrendValue(a, hashUrl))[0] || leader;
     const biggestMoverTrend = getLadderTrendValue(biggestMover, hashUrl);
     const rivalryGap = second ? Math.max(0, leaderMetric - getLadderMetricValue(second, hashUrl)) : 0;
@@ -2597,7 +2610,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        appendConciseBadges(nameEl, conciseBadges);
+        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
+            appendConciseBadges(nameEl, conciseBadges);
+        }
 
         if (showVanguardBadge) {
             const vanguardTemplate = document.getElementById('tpl-concise-vanguard-badge');
@@ -4690,14 +4705,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             const sortedPve = [...rosterData].filter(c => c.profile && (c.profile.equipped_item_level || 0) > 0)
                 .sort((a, b) => (b.profile.equipped_item_level || 0) - (a.profile.equipped_item_level || 0));
             // Passed 'true' for Badges, and 'ilvl' for the default sort!
-            showConciseView(`Full PvE Ladder (${sortedPve.length})`, sortedPve, false, true, 'ilvl');
+            showConciseView('', sortedPve, false, true, 'ilvl');
             updateDropdownLabel('all');
             
         } else if (hash === 'ladder-pvp') {
             const sortedPvp = [...rosterData].filter(c => c.profile && (c.profile.honorable_kills || 0) > 0)
                 .sort((a, b) => (b.profile.honorable_kills || 0) - (a.profile.honorable_kills || 0));
             // Passed 'true' for Badges, and 'hks' for the default sort!
-            showConciseView(`Full PvP Ladder (${sortedPvp.length})`, sortedPvp, false, true, 'hks');
+            showConciseView('', sortedPvp, false, true, 'hks');
             updateDropdownLabel('all');
             
         } else if (hash.startsWith('war-effort-')) {
