@@ -5555,8 +5555,8 @@ a,
   align-items: flex-end;
   gap: 10px;
   margin-top: 28px;
-  margin-bottom: 8px;
-  padding-top: 26px;
+  margin-bottom: 2px;
+  padding-top: 32px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
@@ -5568,6 +5568,11 @@ a,
   justify-content: flex-start;
   gap: 8px;
   padding: 18px 10px 14px;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+  will-change: transform;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5582,16 +5587,24 @@ a,
   min-height: 154px;
 }
 
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(255, 209, 0, 0.12);
+}
+
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
   width: 52px;
   height: 52px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-  top: -42px;
+  top: -54px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 6;
+  z-index: 8;
+  pointer-events: none;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
@@ -5649,8 +5662,9 @@ a,
 @media (max-width: 900px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 8px;
-    margin-top: 22px;
-    padding-top: 20px;
+    margin-top: 20px;
+    margin-bottom: 2px;
+    padding-top: 26px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5669,13 +5683,17 @@ a,
     padding: 16px 8px 12px;
   }
 
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+    transform: translateY(-4px);
+  }
+
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
     width: 46px;
     height: 46px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -38px;
+    top: -48px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
@@ -5691,8 +5709,9 @@ a,
 @media (max-width: 600px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 6px;
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 14px;
+    margin-bottom: 0;
+    padding-top: 20px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5711,13 +5730,17 @@ a,
     padding: 14px 6px 10px;
   }
 
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+    transform: translateY(-3px);
+  }
+
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
     width: 40px;
     height: 40px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -34px;
+    top: -42px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
