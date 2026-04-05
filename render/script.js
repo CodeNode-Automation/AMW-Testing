@@ -449,6 +449,149 @@ function buildLadderShell(characters, hashUrl) {
 }
 
 // NEW: Added 'async' so we can fetch the external files
+function resolveRosterProfile(char, isRawRoster = false) {
+    if (!char) return null;
+
+    if (isRawRoster) {
+        const match = rosterData.find(deep => deep.profile?.name?.toLowerCase() === (char.name || '').toLowerCase());
+        return match && match.profile ? match.profile : char;
+    }
+
+    return char.profile || char;
+}
+
+function getProfileClassName(profile) {
+    if (!profile) return 'Unknown';
+
+    if (profile.character_class && profile.character_class.name) {
+        return typeof profile.character_class.name === 'string'
+            ? profile.character_class.name
+            : (profile.character_class.name.en_US || 'Unknown');
+    }
+
+    return profile.class || 'Unknown';
+}
+
+function buildCommandHeroStatNode(value, label) {
+    const template = document.getElementById('tpl-command-view-stat');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const valueEl = clone.querySelector('.command-hero-stat-value');
+    const labelEl = clone.querySelector('.command-hero-stat-label');
+
+    if (valueEl) valueEl.textContent = value;
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function getCommandViewConfig(hashUrl, characters, isRawRoster = false) {
+    const profiles = characters
+        .map(char => resolveRosterProfile(char, isRawRoster))
+        .filter(Boolean);
+
+    if (profiles.length === 0) return null;
+
+    const now = Date.now();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    const level70s = profiles.filter(profile => (profile.level || 0) === 70);
+    const avgLevel = Math.round(profiles.reduce((sum, profile) => sum + (profile.level || 0), 0) / profiles.length) || 0;
+    const avgLvl70Ilvl = level70s.length > 0
+        ? Math.round(level70s.reduce((sum, profile) => sum + (profile.equipped_item_level || 0), 0) / level70s.length)
+        : 0;
+    const active7Days = profiles.filter(profile => {
+        const lastLogin = profile.last_login_timestamp || 0;
+        return lastLogin > 0 && (now - lastLogin) <= sevenDaysMs;
+    }).length;
+
+    const roleCounts = profiles.reduce((acc, profile) => {
+        const cClass = getProfileClassName(profile);
+        const role = getCharacterRole(cClass, profile.active_spec || '');
+        acc[role] = (acc[role] || 0) + 1;
+        return acc;
+    }, { Tank: 0, Healer: 0, 'Ranged DPS': 0, 'Melee DPS': 0 });
+
+    if (hashUrl === 'total') {
+        return {
+            overline: 'Guild Census Ledger',
+            title: "The Roll of Azeroth's Most Wanted",
+            description: 'A complete census of the guild. Use this board to understand roster depth, class spread, and who has reached the level cap without the extra noise of awards and ladder theatrics.',
+            ruleText: 'Includes the full scanned guild roster.',
+            theme: 'total',
+            stats: [
+                { value: profiles.length.toLocaleString(), label: 'Total Members' },
+                { value: level70s.length.toLocaleString(), label: 'Level 70s' },
+                { value: avgLevel.toLocaleString(), label: 'Average Level' },
+                { value: avgLvl70Ilvl.toLocaleString(), label: 'Avg Lvl 70 iLvl' }
+            ]
+        };
+    }
+
+    if (hashUrl === 'active') {
+        const active70s = profiles.filter(profile => (profile.level || 0) === 70).length;
+        const avgActiveIlvl = active70s > 0
+            ? Math.round(profiles.filter(profile => (profile.level || 0) === 70).reduce((sum, profile) => sum + (profile.equipped_item_level || 0), 0) / active70s)
+            : 0;
+
+        return {
+            overline: 'Warband Muster Roll',
+            title: 'The Fires Still Burning',
+            description: 'A present-tense view of the members still showing signs of life in the last two weeks. This page should answer who is realistically available and how battle-ready the active core looks right now.',
+            ruleText: 'Includes heroes seen within the last 14 days.',
+            theme: 'active',
+            stats: [
+                { value: profiles.length.toLocaleString(), label: 'Active in 14 Days' },
+                { value: active7Days.toLocaleString(), label: 'Active in 7 Days' },
+                { value: active70s.toLocaleString(), label: 'Active Level 70s' },
+                { value: avgActiveIlvl.toLocaleString(), label: 'Avg Active iLvl' }
+            ]
+        };
+    }
+
+    return {
+        overline: 'Vanguard Deployment Board',
+        title: 'Raid-Ready Vanguard',
+        description: 'A tactical board for officers and raiders. This view strips the roster down to characters who can step into progression content now, with the role mix and readiness counts visible at a glance.',
+        ruleText: 'Includes level 70 heroes with equipped item level 110 or higher.',
+        theme: 'raidready',
+        stats: [
+            { value: profiles.length.toLocaleString(), label: 'Ready Now' },
+            { value: roleCounts.Tank.toLocaleString(), label: 'Tanks' },
+            { value: roleCounts.Healer.toLocaleString(), label: 'Healers' },
+            { value: avgLvl70Ilvl.toLocaleString(), label: 'Average iLvl' }
+        ]
+    };
+}
+
+function buildCommandViewShell(hashUrl, characters, isRawRoster = false) {
+    const template = document.getElementById('tpl-command-view-shell');
+    if (!template || !Array.isArray(characters) || characters.length === 0) return null;
+
+    const config = getCommandViewConfig(hashUrl, characters, isRawRoster);
+    if (!config) return null;
+
+    const clone = template.content.cloneNode(true);
+    const shell = clone.querySelector('.command-hero-shell');
+    const overline = clone.querySelector('.command-overline');
+    const title = clone.querySelector('.command-hero-title');
+    const desc = clone.querySelector('.command-hero-desc');
+    const ruleText = clone.querySelector('.command-hero-ribbon-text');
+    const statsGrid = clone.querySelector('.command-hero-stats');
+
+    if (shell) shell.classList.add(`command-shell-${config.theme}`);
+    if (overline) overline.textContent = config.overline;
+    if (title) title.textContent = config.title;
+    if (desc) desc.textContent = config.description;
+    if (ruleText) ruleText.textContent = config.ruleText;
+
+    config.stats.forEach(stat => {
+        const node = buildCommandHeroStatNode(stat.value, stat.label);
+        if (node && statsGrid) statsGrid.appendChild(node);
+    });
+
+    return clone;
+}
 window.addEventListener('DOMContentLoaded', async () => {
 
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
@@ -2577,9 +2720,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const metaEl = clone.querySelector('.c-meta');
         const statsTop = clone.querySelector('.concise-row-stats-top');
         const statsBottom = clone.querySelector('.concise-row-stats-bottom');
+        const isCommandView = ['total', 'active', 'raidready'].includes(hashUrl);
 
         if (podiumClass) bar.classList.add(podiumClass);
         if (vanguardClass) bar.classList.add(vanguardClass);
+        if (isCommandView) bar.classList.add('concise-char-bar-command', `concise-char-bar-command-${hashUrl}`);
         if (isWarEffortRow) bar.classList.add('concise-char-bar-war-effort');
         if (isWarEffortLootRow) {
             bar.classList.add('concise-char-bar-war-effort-loot');
@@ -2616,7 +2761,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
+        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || isCommandView)) {
             appendConciseBadges(nameEl, conciseBadges);
         }
 
@@ -4455,7 +4600,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const hash = window.location.hash.substring(1);
         const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+        const isCommandHash = ['total', 'active', 'raidready'].includes(hash);
+        const shellHost = document.getElementById('concise-shell-host');
+
         conciseView.classList.toggle('concise-view-ladder', isLadderHash);
+        conciseView.classList.toggle('concise-view-command', isCommandHash);
+        conciseView.classList.remove('command-view-total', 'command-view-active', 'command-view-raidready');
+        if (isCommandHash) conciseView.classList.add(`command-view-${hash}`);
+
+        if (shellHost) {
+            shellHost.textContent = '';
+            if (isCommandHash) {
+                const shellFragment = buildCommandViewShell(hash, characters, isRawRoster);
+                if (shellFragment) shellHost.appendChild(shellFragment);
+            }
+        }
 
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
         conciseRenderedCount = isLadderHash ? 25 : 0;
@@ -4518,6 +4677,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const template = document.getElementById('tpl-concise-dashboard-widgets');
                 if (template) {
                     donutContainer.appendChild(template.content.cloneNode(true));
+                }
+                if (isCommandHash) {
+                    const kpiRow = donutContainer.querySelector('.concise-kpi-container');
+                    if (kpiRow) kpiRow.remove();
                 }
                 const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
                 
@@ -4631,7 +4794,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
-            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
+            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, false, 'level');
             updateDropdownLabel('all');
         } else if (hash === 'badges') {
             const badgeRoster = rosterData.filter(c => {
@@ -4669,11 +4832,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const now = Date.now();
                 return (now - lastLogin) <= (14 * 24 * 60 * 60 * 1000);
             });
-            showConciseView(`Active Members Overview (${activeRoster.length})`, activeRoster, false, true);
+            showConciseView(`Active Members Overview (${activeRoster.length})`, activeRoster, false, false, 'ilvl');
             updateDropdownLabel('all');
         } else if (hash === 'raidready') {
             const raidReadyRoster = rosterData.filter(c => c.profile && c.profile.level === 70 && (c.profile.equipped_item_level || 0) >= 110);
-            showConciseView(`Raid Ready Overview (${raidReadyRoster.length})`, raidReadyRoster, false, true);
+            showConciseView(`Raid Ready Overview (${raidReadyRoster.length})`, raidReadyRoster, false, false, 'ilvl');
             updateDropdownLabel('all');
         } else if (hash === 'all') {
             const activeLabel = active14Days > 0 ? `(${active14Days} Active)` : '';

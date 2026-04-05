@@ -497,6 +497,28 @@
         </div>
     </template>
 
+    <template id="tpl-command-view-shell">
+        <section class="command-hero-shell">
+            <div class="command-hero-head">
+                <span class="command-overline"></span>
+                <h2 class="command-hero-title"></h2>
+                <p class="command-hero-desc"></p>
+            </div>
+            <div class="command-hero-ribbon">
+                <span class="command-hero-ribbon-label">Roster Rule</span>
+                <span class="command-hero-ribbon-text"></span>
+            </div>
+            <div class="command-hero-stats"></div>
+        </section>
+    </template>
+
+    <template id="tpl-command-view-stat">
+        <div class="command-hero-stat">
+            <span class="command-hero-stat-value"></span>
+            <span class="command-hero-stat-label"></span>
+        </div>
+    </template>
+    
     <template id="tpl-concise-dashboard-widgets">
         <div class="kpi-flex-row concise-kpi-container"></div>
         <div class="charts-flex-row">
@@ -920,7 +942,7 @@
 
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
-                
+                <div id="concise-shell-host" class="concise-shell-host"></div>                
                 <div id="concise-content-wrapper" class="concise-wrapper">
                     
                     <div id="concise-left-col" class="concise-sidebar">
