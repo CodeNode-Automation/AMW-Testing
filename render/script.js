@@ -274,11 +274,12 @@ function buildLadderHeroStatNode(value, label) {
     return clone.firstElementChild || null;
 }
 
-function buildLadderInsightNode(kicker, value, meta) {
+function buildLadderInsightNode(kicker, value, meta, char = null) {
     const template = document.getElementById('tpl-ladder-insight-card');
     if (!template) return null;
 
     const clone = template.content.cloneNode(true);
+    const cardEl = clone.querySelector('.ladder-insight-card');
     const kickerEl = clone.querySelector('.ladder-insight-kicker');
     const valueEl = clone.querySelector('.ladder-insight-value');
     const metaEl = clone.querySelector('.ladder-insight-meta');
@@ -286,6 +287,18 @@ function buildLadderInsightNode(kicker, value, meta) {
     if (kickerEl) kickerEl.textContent = kicker;
     if (valueEl) valueEl.textContent = value;
     if (metaEl) metaEl.textContent = meta;
+
+    if (cardEl && char && char.profile && char.profile.name) {
+        const profile = char.profile;
+        const cClass = profile.character_class && profile.character_class.name
+            ? (typeof profile.character_class.name === 'string' ? profile.character_class.name : profile.character_class.name.en_US)
+            : 'Unknown';
+
+        cardEl.setAttribute('data-char', profile.name.toLowerCase());
+        cardEl.setAttribute('data-class', cClass);
+        cardEl.setAttribute('data-spec', profile.active_spec || 'unspecced');
+        cardEl.setAttribute('data-awards', safeParseArray(profile.badges).join(','));
+    }
 
     return clone.firstElementChild || null;
 }
@@ -406,13 +419,19 @@ function buildLadderShell(characters, hashUrl) {
     });
 
     const insightNodes = [
-        buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
+        buildLadderInsightNode(
+            'Current Champion',
+            leaderName,
+            `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`,
+            leader
+        ),
         buildLadderInsightNode(
             'Current 7-Day MVP',
             biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
             biggestMoverTrend > 0
                 ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
-                : 'No positive climb recorded yet'
+                : 'No positive climb recorded yet',
+            biggestMover
         ),
         buildLadderInsightNode('Most Represented Class', dominantClassEntry[0], `${dominantClassEntry[1]} heroes currently ranked`),
         buildLadderInsightNode(
@@ -525,7 +544,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         conciseList.addEventListener('click', (e) => {
             if (e.target.closest('.we-loot-link')) return;
 
-            const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char]');
+            const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char], .ladder-insight-card.tt-char[data-char]');
             if (!trigger) return;
 
             const charName = trigger.getAttribute('data-char');

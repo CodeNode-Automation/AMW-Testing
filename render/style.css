@@ -5860,6 +5860,10 @@ a,
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+.ladder-insight-card.tt-char {
+  cursor: pointer;
+}
+
 .ladder-hero-shell {
   position: relative;
   overflow: hidden;
