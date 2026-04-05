@@ -7622,10 +7622,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-05T08:57:00.307023Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-05T09:04:48.711733Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 110, "loot": 73, "levels": 37, "total_roster": 659, "active_roster": 404}]
+        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 114, "loot": 75, "levels": 39, "total_roster": 659, "active_roster": 404}]
     </script>
 
     <script>
@@ -11302,10 +11302,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         let templateId = null;
         const isLadderHash = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+        const isCommandHash = ['total', 'active', 'raidready'].includes(hashUrl);
 
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
             templateId = 'tpl-sort-badges';
-        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash) {
+        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash && !isCommandHash) {
             templateId = 'tpl-sort-default';
         }
         
@@ -12425,7 +12426,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
-            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, false, 'level');
+            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, [...rawGuildRoster].sort((a,b) => b.level - a.level), true, false, 'level');
             updateDropdownLabel('all');
         } else if (hash === 'badges') {
             const badgeRoster = rosterData.filter(c => {
