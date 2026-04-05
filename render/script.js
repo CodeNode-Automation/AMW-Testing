@@ -4625,7 +4625,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             return c.profile && c.profile.name ? c.profile.name.toLowerCase() : '';
         });
         
-        const chartViews = ['total', 'active', 'raidready'];
+        const chartViews = [];
 
         const wrapper = document.getElementById('concise-content-wrapper');
         const leftCol = document.getElementById('concise-left-col');
@@ -4749,7 +4749,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (timeline) {
             const baseTitle = title.replace(/ Overview \(\d+\)/, '').replace(/ \(\d+\)/, '');
 
-            if (isLadderHash) {
+            if (isLadderHash || isCommandHash) {
                 timeline.classList.add('view-hidden');
             } else {
                 timeline.classList.remove('view-hidden');

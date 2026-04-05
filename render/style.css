@@ -1592,6 +1592,14 @@ a,
 #concise-view.concise-view-command #concise-view-title {
   display: none;
 }
+#concise-view.concise-view-command .concise-wrapper {
+  display: block;
+  max-width: 1180px;
+}
+#concise-view.concise-view-command .concise-main-col {
+  flex: none;
+  max-width: 100%;
+}
 .command-hero-shell {
   position: relative;
   overflow: hidden;
