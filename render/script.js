@@ -3671,10 +3671,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         let templateId = null;
         const isLadderHash = hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp';
+        const isCommandHash = ['total', 'active', 'raidready'].includes(hashUrl);
 
         if (hashUrl === 'badges' || currentSortMethod === 'badges') {
             templateId = 'tpl-sort-badges';
-        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash) {
+        } else if (!hashUrl.startsWith('war-effort-') && !isLadderHash && !isCommandHash) {
             templateId = 'tpl-sort-default';
         }
         
@@ -4794,7 +4795,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
-            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, false, 'level');
+            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, [...rawGuildRoster].sort((a,b) => b.level - a.level), true, false, 'level');
             updateDropdownLabel('all');
         } else if (hash === 'badges') {
             const badgeRoster = rosterData.filter(c => {
