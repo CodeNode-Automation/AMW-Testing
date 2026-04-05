@@ -5565,8 +5565,8 @@ a,
   align-items: flex-end;
   gap: 10px;
   margin-top: 28px;
-  margin-bottom: 8px;
-  padding-top: 26px;
+  margin-bottom: 2px;
+  padding-top: 32px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block {
@@ -5578,6 +5578,11 @@ a,
   justify-content: flex-start;
   gap: 8px;
   padding: 18px 10px 14px;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+  will-change: transform;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5592,16 +5597,24 @@ a,
   min-height: 154px;
 }
 
+.lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(255, 209, 0, 0.12);
+}
+
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
   width: 52px;
   height: 52px;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-  top: -42px;
+  top: -54px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 6;
+  z-index: 8;
+  pointer-events: none;
 }
 
 .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
@@ -5659,8 +5672,9 @@ a,
 @media (max-width: 900px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 8px;
-    margin-top: 22px;
-    padding-top: 20px;
+    margin-top: 20px;
+    margin-bottom: 2px;
+    padding-top: 26px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5679,13 +5693,17 @@ a,
     padding: 16px 8px 12px;
   }
 
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+    transform: translateY(-4px);
+  }
+
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
     width: 46px;
     height: 46px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -38px;
+    top: -48px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-name {
@@ -5701,8 +5719,9 @@ a,
 @media (max-width: 600px) {
   .lb-podium-wrap.ladder-podium-wrap {
     gap: 6px;
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 14px;
+    margin-bottom: 0;
+    padding-top: 20px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .podium-step-1 {
@@ -5721,13 +5740,17 @@ a,
     padding: 14px 6px 10px;
   }
 
+  .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block:hover {
+    transform: translateY(-3px);
+  }
+
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-avatar {
     width: 40px;
     height: 40px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-crown {
-    top: -34px;
+    top: -42px;
   }
 
   .lb-podium-wrap.ladder-podium-wrap .ladder-podium-block .podium-rank {
@@ -7363,10 +7386,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-04T22:36:40.569611Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-05T08:06:14.912745Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 26, "loot": 19, "levels": 7, "total_roster": 660, "active_roster": 404}]
+        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 102, "loot": 69, "levels": 33, "total_roster": 659, "active_roster": 404}]
     </script>
 
     <script>
