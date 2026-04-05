@@ -1593,6 +1593,155 @@ a,
   margin-bottom: 20px;
   text-shadow: 0 2px 4px #000;
 }
+.concise-shell-host {
+  width: 100%;
+}
+#concise-view.concise-view-command {
+  gap: 16px;
+}
+#concise-view.concise-view-command #concise-view-title {
+  display: none;
+}
+.command-hero-shell {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 209, 0, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(255, 209, 0, 0.12), transparent 32%),
+    linear-gradient(135deg, rgba(22, 18, 14, 0.95) 0%, rgba(9, 10, 13, 0.98) 100%);
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.45),
+    inset 0 0 24px rgba(255, 209, 0, 0.05);
+}
+.command-hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 35%, transparent 68%, rgba(255, 255, 255, 0.04));
+}
+.command-shell-total {
+  border-color: rgba(255, 209, 0, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(88, 138, 255, 0.14), transparent 30%),
+    radial-gradient(circle at left center, rgba(255, 209, 0, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(27, 22, 18, 0.95) 0%, rgba(10, 10, 14, 0.98) 100%);
+}
+.command-shell-active {
+  border-color: rgba(255, 143, 77, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(255, 143, 77, 0.18), transparent 30%),
+    radial-gradient(circle at left center, rgba(255, 209, 0, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(36, 20, 12, 0.95) 0%, rgba(11, 10, 13, 0.98) 100%);
+}
+.command-shell-raidready {
+  border-color: rgba(111, 255, 194, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(111, 255, 194, 0.14), transparent 30%),
+    radial-gradient(circle at left center, rgba(255, 209, 0, 0.1), transparent 34%),
+    linear-gradient(135deg, rgba(18, 30, 24, 0.95) 0%, rgba(9, 10, 13, 0.98) 100%);
+}
+.command-hero-head,
+.command-hero-ribbon,
+.command-hero-stats {
+  position: relative;
+  z-index: 1;
+}
+.command-overline,
+.command-hero-ribbon-label,
+.command-hero-stat-label {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.command-overline {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffd100;
+}
+.command-shell-active .command-overline {
+  color: #ffb370;
+}
+.command-shell-raidready .command-overline {
+  color: #9ef0c4;
+}
+.command-hero-title {
+  margin: 6px 0 0;
+  font-family: "Cinzel";
+  font-size: clamp(26px, 4vw, 38px);
+  color: #fff3c4;
+  text-shadow: 0 3px 10px #000;
+}
+.command-shell-active .command-hero-title {
+  color: #ffe1c3;
+}
+.command-shell-raidready .command-hero-title {
+  color: #defeea;
+}
+.command-hero-desc {
+  margin: 10px 0 0;
+  max-width: 780px;
+  color: #cfc7b4;
+  line-height: 1.65;
+}
+.command-hero-ribbon {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 209, 0, 0.18);
+  background: rgba(8, 8, 12, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.command-hero-ribbon-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffd100;
+}
+.command-hero-ribbon-text {
+  color: #f1ead6;
+  font-size: 13px;
+}
+.command-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.command-hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(28, 24, 34, 0.72) 0%, rgba(12, 12, 16, 0.82) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.command-shell-active .command-hero-stat {
+  border-color: rgba(255, 143, 77, 0.14);
+}
+.command-shell-raidready .command-hero-stat {
+  border-color: rgba(111, 255, 194, 0.12);
+}
+.command-hero-stat-value {
+  font-family: "Cinzel";
+  font-size: 30px;
+  color: #fff;
+  text-shadow: 0 4px 18px rgba(255, 209, 0, 0.18);
+}
+.command-hero-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #9e9786;
+}
 #concise-char-list {
   display: flex;
   flex-direction: column;
@@ -1976,6 +2125,39 @@ a,
 
 .concise-char-bar {
   border-left-color: var(--class-accent, transparent);
+}
+.concise-char-bar-command {
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(21, 21, 27, 0.9) 0%, rgba(9, 9, 12, 0.96) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 4px solid var(--class-accent, transparent);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+}
+.concise-char-bar-command:hover {
+  transform: translateX(0) translateY(-3px);
+  border-color: rgba(255, 209, 0, 0.12);
+  border-left-color: var(--class-accent, transparent);
+}
+.concise-char-bar-command-total {
+  background:
+    linear-gradient(90deg, rgba(24, 22, 31, 0.92) 0%, rgba(10, 10, 14, 0.98) 100%);
+}
+.concise-char-bar-command-active {
+  background:
+    linear-gradient(90deg, rgba(34, 22, 18, 0.92) 0%, rgba(11, 10, 14, 0.98) 100%);
+}
+.concise-char-bar-command-raidready {
+  background:
+    linear-gradient(90deg, rgba(18, 31, 25, 0.92) 0%, rgba(10, 11, 14, 0.98) 100%);
+}
+.concise-char-bar-command .c-name {
+  gap: 4px 0;
+}
+.concise-char-bar-command .c-meta {
+  color: #b8b1a0;
+}
+.concise-char-bar-command .concise-row-stats-top {
+  gap: 18px;
 }
 .concise-char-bar .c-portrait {
   border-color: var(--class-accent, #fff);
@@ -3697,6 +3879,26 @@ a,
 }
 
 @media (max-width: 600px) {
+  .command-hero-shell {
+    padding: 20px 16px;
+    border-radius: 16px;
+    gap: 16px;
+  }
+  .command-hero-ribbon {
+    width: 100%;
+    border-radius: 14px;
+    align-items: flex-start;
+  }
+  .command-hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .command-hero-stat {
+    padding: 14px 12px;
+  }
+  .command-hero-stat-value {
+    font-size: 24px;
+  }
   .concise-char-bar {
     align-items: stretch;
     gap: 0;
@@ -6782,6 +6984,28 @@ a,
         </div>
     </template>
 
+    <template id="tpl-command-view-shell">
+        <section class="command-hero-shell">
+            <div class="command-hero-head">
+                <span class="command-overline"></span>
+                <h2 class="command-hero-title"></h2>
+                <p class="command-hero-desc"></p>
+            </div>
+            <div class="command-hero-ribbon">
+                <span class="command-hero-ribbon-label">Roster Rule</span>
+                <span class="command-hero-ribbon-text"></span>
+            </div>
+            <div class="command-hero-stats"></div>
+        </section>
+    </template>
+
+    <template id="tpl-command-view-stat">
+        <div class="command-hero-stat">
+            <span class="command-hero-stat-value"></span>
+            <span class="command-hero-stat-label"></span>
+        </div>
+    </template>
+    
     <template id="tpl-concise-dashboard-widgets">
         <div class="kpi-flex-row concise-kpi-container"></div>
         <div class="charts-flex-row">
@@ -7205,7 +7429,7 @@ a,
 
             <div id="concise-view">
                 <h2 id="concise-view-title">Guild Overview</h2>
-                
+                <div id="concise-shell-host" class="concise-shell-host"></div>                
                 <div id="concise-content-wrapper" class="concise-wrapper">
                     
                     <div id="concise-left-col" class="concise-sidebar">
@@ -7390,10 +7614,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-05T08:14:03.368177Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-05T08:45:55.729873Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 103, "loot": 69, "levels": 34, "total_roster": 659, "active_roster": 404}]
+        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 106, "loot": 70, "levels": 36, "total_roster": 659, "active_roster": 404}]
     </script>
 
     <script>
@@ -7848,6 +8072,149 @@ function buildLadderShell(characters, hashUrl) {
 }
 
 // NEW: Added 'async' so we can fetch the external files
+function resolveRosterProfile(char, isRawRoster = false) {
+    if (!char) return null;
+
+    if (isRawRoster) {
+        const match = rosterData.find(deep => deep.profile?.name?.toLowerCase() === (char.name || '').toLowerCase());
+        return match && match.profile ? match.profile : char;
+    }
+
+    return char.profile || char;
+}
+
+function getProfileClassName(profile) {
+    if (!profile) return 'Unknown';
+
+    if (profile.character_class && profile.character_class.name) {
+        return typeof profile.character_class.name === 'string'
+            ? profile.character_class.name
+            : (profile.character_class.name.en_US || 'Unknown');
+    }
+
+    return profile.class || 'Unknown';
+}
+
+function buildCommandHeroStatNode(value, label) {
+    const template = document.getElementById('tpl-command-view-stat');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
+    const valueEl = clone.querySelector('.command-hero-stat-value');
+    const labelEl = clone.querySelector('.command-hero-stat-label');
+
+    if (valueEl) valueEl.textContent = value;
+    if (labelEl) labelEl.textContent = label;
+
+    return clone.firstElementChild || null;
+}
+
+function getCommandViewConfig(hashUrl, characters, isRawRoster = false) {
+    const profiles = characters
+        .map(char => resolveRosterProfile(char, isRawRoster))
+        .filter(Boolean);
+
+    if (profiles.length === 0) return null;
+
+    const now = Date.now();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    const level70s = profiles.filter(profile => (profile.level || 0) === 70);
+    const avgLevel = Math.round(profiles.reduce((sum, profile) => sum + (profile.level || 0), 0) / profiles.length) || 0;
+    const avgLvl70Ilvl = level70s.length > 0
+        ? Math.round(level70s.reduce((sum, profile) => sum + (profile.equipped_item_level || 0), 0) / level70s.length)
+        : 0;
+    const active7Days = profiles.filter(profile => {
+        const lastLogin = profile.last_login_timestamp || 0;
+        return lastLogin > 0 && (now - lastLogin) <= sevenDaysMs;
+    }).length;
+
+    const roleCounts = profiles.reduce((acc, profile) => {
+        const cClass = getProfileClassName(profile);
+        const role = getCharacterRole(cClass, profile.active_spec || '');
+        acc[role] = (acc[role] || 0) + 1;
+        return acc;
+    }, { Tank: 0, Healer: 0, 'Ranged DPS': 0, 'Melee DPS': 0 });
+
+    if (hashUrl === 'total') {
+        return {
+            overline: 'Guild Census Ledger',
+            title: "The Roll of Azeroth's Most Wanted",
+            description: 'A complete census of the guild. Use this board to understand roster depth, class spread, and who has reached the level cap without the extra noise of awards and ladder theatrics.',
+            ruleText: 'Includes the full scanned guild roster.',
+            theme: 'total',
+            stats: [
+                { value: profiles.length.toLocaleString(), label: 'Total Members' },
+                { value: level70s.length.toLocaleString(), label: 'Level 70s' },
+                { value: avgLevel.toLocaleString(), label: 'Average Level' },
+                { value: avgLvl70Ilvl.toLocaleString(), label: 'Avg Lvl 70 iLvl' }
+            ]
+        };
+    }
+
+    if (hashUrl === 'active') {
+        const active70s = profiles.filter(profile => (profile.level || 0) === 70).length;
+        const avgActiveIlvl = active70s > 0
+            ? Math.round(profiles.filter(profile => (profile.level || 0) === 70).reduce((sum, profile) => sum + (profile.equipped_item_level || 0), 0) / active70s)
+            : 0;
+
+        return {
+            overline: 'Warband Muster Roll',
+            title: 'The Fires Still Burning',
+            description: 'A present-tense view of the members still showing signs of life in the last two weeks. This page should answer who is realistically available and how battle-ready the active core looks right now.',
+            ruleText: 'Includes heroes seen within the last 14 days.',
+            theme: 'active',
+            stats: [
+                { value: profiles.length.toLocaleString(), label: 'Active in 14 Days' },
+                { value: active7Days.toLocaleString(), label: 'Active in 7 Days' },
+                { value: active70s.toLocaleString(), label: 'Active Level 70s' },
+                { value: avgActiveIlvl.toLocaleString(), label: 'Avg Active iLvl' }
+            ]
+        };
+    }
+
+    return {
+        overline: 'Vanguard Deployment Board',
+        title: 'Raid-Ready Vanguard',
+        description: 'A tactical board for officers and raiders. This view strips the roster down to characters who can step into progression content now, with the role mix and readiness counts visible at a glance.',
+        ruleText: 'Includes level 70 heroes with equipped item level 110 or higher.',
+        theme: 'raidready',
+        stats: [
+            { value: profiles.length.toLocaleString(), label: 'Ready Now' },
+            { value: roleCounts.Tank.toLocaleString(), label: 'Tanks' },
+            { value: roleCounts.Healer.toLocaleString(), label: 'Healers' },
+            { value: avgLvl70Ilvl.toLocaleString(), label: 'Average iLvl' }
+        ]
+    };
+}
+
+function buildCommandViewShell(hashUrl, characters, isRawRoster = false) {
+    const template = document.getElementById('tpl-command-view-shell');
+    if (!template || !Array.isArray(characters) || characters.length === 0) return null;
+
+    const config = getCommandViewConfig(hashUrl, characters, isRawRoster);
+    if (!config) return null;
+
+    const clone = template.content.cloneNode(true);
+    const shell = clone.querySelector('.command-hero-shell');
+    const overline = clone.querySelector('.command-overline');
+    const title = clone.querySelector('.command-hero-title');
+    const desc = clone.querySelector('.command-hero-desc');
+    const ruleText = clone.querySelector('.command-hero-ribbon-text');
+    const statsGrid = clone.querySelector('.command-hero-stats');
+
+    if (shell) shell.classList.add(`command-shell-${config.theme}`);
+    if (overline) overline.textContent = config.overline;
+    if (title) title.textContent = config.title;
+    if (desc) desc.textContent = config.description;
+    if (ruleText) ruleText.textContent = config.ruleText;
+
+    config.stats.forEach(stat => {
+        const node = buildCommandHeroStatNode(stat.value, stat.label);
+        if (node && statsGrid) statsGrid.appendChild(node);
+    });
+
+    return clone;
+}
 window.addEventListener('DOMContentLoaded', async () => {
 
     const config = JSON.parse(document.getElementById('dashboard-config').textContent);
@@ -9976,9 +10343,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         const metaEl = clone.querySelector('.c-meta');
         const statsTop = clone.querySelector('.concise-row-stats-top');
         const statsBottom = clone.querySelector('.concise-row-stats-bottom');
+        const isCommandView = ['total', 'active', 'raidready'].includes(hashUrl);
 
         if (podiumClass) bar.classList.add(podiumClass);
         if (vanguardClass) bar.classList.add(vanguardClass);
+        if (isCommandView) bar.classList.add('concise-char-bar-command', `concise-char-bar-command-${hashUrl}`);
         if (isWarEffortRow) bar.classList.add('concise-char-bar-war-effort');
         if (isWarEffortLootRow) {
             bar.classList.add('concise-char-bar-war-effort-loot');
@@ -10015,7 +10384,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         portrait.src = portraitURL;
 
         nameEl.textContent = displayName;
-        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp')) {
+        if (!(hashUrl === 'ladder-pve' || hashUrl === 'ladder-pvp' || isCommandView)) {
             appendConciseBadges(nameEl, conciseBadges);
         }
 
@@ -11854,7 +12223,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         
         const hash = window.location.hash.substring(1);
         const isLadderHash = hash === 'ladder-pve' || hash === 'ladder-pvp';
+        const isCommandHash = ['total', 'active', 'raidready'].includes(hash);
+        const shellHost = document.getElementById('concise-shell-host');
+
         conciseView.classList.toggle('concise-view-ladder', isLadderHash);
+        conciseView.classList.toggle('concise-view-command', isCommandHash);
+        conciseView.classList.remove('command-view-total', 'command-view-active', 'command-view-raidready');
+        if (isCommandHash) conciseView.classList.add(`command-view-${hash}`);
+
+        if (shellHost) {
+            shellHost.textContent = '';
+            if (isCommandHash) {
+                const shellFragment = buildCommandViewShell(hash, characters, isRawRoster);
+                if (shellFragment) shellHost.appendChild(shellFragment);
+            }
+        }
 
         currentSortMethod = defaultSort; // Apply the requested sort method immediately
         conciseRenderedCount = isLadderHash ? 25 : 0;
@@ -11917,6 +12300,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const template = document.getElementById('tpl-concise-dashboard-widgets');
                 if (template) {
                     donutContainer.appendChild(template.content.cloneNode(true));
+                }
+                if (isCommandHash) {
+                    const kpiRow = donutContainer.querySelector('.concise-kpi-container');
+                    if (kpiRow) kpiRow.remove();
                 }
                 const kpiContainer = donutContainer.querySelector('.concise-kpi-container');
                 
@@ -12030,7 +12417,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             showArchitectureView();
             updateDropdownLabel('all');
         } else if (hash === 'total') {
-            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, true);
+            showConciseView(`Total Guild Roster (${rawGuildRoster.length})`, rawGuildRoster.sort((a,b) => b.level - a.level), true, false, 'level');
             updateDropdownLabel('all');
         } else if (hash === 'badges') {
             const badgeRoster = rosterData.filter(c => {
@@ -12068,11 +12455,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const now = Date.now();
                 return (now - lastLogin) <= (14 * 24 * 60 * 60 * 1000);
             });
-            showConciseView(`Active Members Overview (${activeRoster.length})`, activeRoster, false, true);
+            showConciseView(`Active Members Overview (${activeRoster.length})`, activeRoster, false, false, 'ilvl');
             updateDropdownLabel('all');
         } else if (hash === 'raidready') {
             const raidReadyRoster = rosterData.filter(c => c.profile && c.profile.level === 70 && (c.profile.equipped_item_level || 0) >= 110);
-            showConciseView(`Raid Ready Overview (${raidReadyRoster.length})`, raidReadyRoster, false, true);
+            showConciseView(`Raid Ready Overview (${raidReadyRoster.length})`, raidReadyRoster, false, false, 'ilvl');
             updateDropdownLabel('all');
         } else if (hash === 'all') {
             const activeLabel = active14Days > 0 ? `(${active14Days} Active)` : '';
