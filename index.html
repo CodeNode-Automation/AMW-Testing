@@ -5870,6 +5870,10 @@ a,
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+.ladder-insight-card.tt-char {
+  cursor: pointer;
+}
+
 .ladder-hero-shell {
   position: relative;
   overflow: hidden;
@@ -6765,7 +6769,7 @@ a,
     </template>
 
     <template id="tpl-ladder-insight-card">
-        <article class="ladder-insight-card">
+        <article class="ladder-insight-card tt-char" data-char="" data-class="" data-spec="unspecced" data-awards="">
             <span class="ladder-insight-kicker"></span>
             <span class="ladder-insight-value"></span>
             <span class="ladder-insight-meta"></span>
@@ -7386,10 +7390,10 @@ a,
     </div>
 
     <script id="dashboard-config" type="application/json">
-        {"last_updated": "2026-04-05T08:06:14.912745Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
+        {"last_updated": "2026-04-05T08:14:03.368177Z", "active_14_days": 404, "raid_ready_count": 19, "prev_mvps": {"pve": {"name": "nellena", "score": 44}, "pvp": {"name": "crowlyy", "score": 279}}}
     </script>
     <script id="heatmap-data" type="application/json">
-        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 102, "loot": 69, "levels": 33, "total_roster": 659, "active_roster": 404}]
+        [{"date": "2026-03-30", "day_name": "Mon", "count": 532, "loot": 401, "levels": 131, "total_roster": 653, "active_roster": 413}, {"date": "2026-03-31", "day_name": "Tue", "count": 431, "loot": 316, "levels": 115, "total_roster": 658, "active_roster": 415}, {"date": "2026-04-01", "day_name": "Wed", "count": 536, "loot": 412, "levels": 124, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-02", "day_name": "Thu", "count": 103, "loot": 84, "levels": 19, "total_roster": 661, "active_roster": 415}, {"date": "2026-04-03", "day_name": "Fri", "count": 810, "loot": 618, "levels": 192, "total_roster": 658, "active_roster": 410}, {"date": "2026-04-04", "day_name": "Sat", "count": 586, "loot": 444, "levels": 142, "total_roster": 660, "active_roster": 404}, {"date": "2026-04-05", "day_name": "Sun", "count": 103, "loot": 69, "levels": 34, "total_roster": 659, "active_roster": 404}]
     </script>
 
     <script>
@@ -7669,11 +7673,12 @@ function buildLadderHeroStatNode(value, label) {
     return clone.firstElementChild || null;
 }
 
-function buildLadderInsightNode(kicker, value, meta) {
+function buildLadderInsightNode(kicker, value, meta, char = null) {
     const template = document.getElementById('tpl-ladder-insight-card');
     if (!template) return null;
 
     const clone = template.content.cloneNode(true);
+    const cardEl = clone.querySelector('.ladder-insight-card');
     const kickerEl = clone.querySelector('.ladder-insight-kicker');
     const valueEl = clone.querySelector('.ladder-insight-value');
     const metaEl = clone.querySelector('.ladder-insight-meta');
@@ -7681,6 +7686,18 @@ function buildLadderInsightNode(kicker, value, meta) {
     if (kickerEl) kickerEl.textContent = kicker;
     if (valueEl) valueEl.textContent = value;
     if (metaEl) metaEl.textContent = meta;
+
+    if (cardEl && char && char.profile && char.profile.name) {
+        const profile = char.profile;
+        const cClass = profile.character_class && profile.character_class.name
+            ? (typeof profile.character_class.name === 'string' ? profile.character_class.name : profile.character_class.name.en_US)
+            : 'Unknown';
+
+        cardEl.setAttribute('data-char', profile.name.toLowerCase());
+        cardEl.setAttribute('data-class', cClass);
+        cardEl.setAttribute('data-spec', profile.active_spec || 'unspecced');
+        cardEl.setAttribute('data-awards', safeParseArray(profile.badges).join(','));
+    }
 
     return clone.firstElementChild || null;
 }
@@ -7801,13 +7818,19 @@ function buildLadderShell(characters, hashUrl) {
     });
 
     const insightNodes = [
-        buildLadderInsightNode('Current Champion', leaderName, `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`),
+        buildLadderInsightNode(
+            'Current Champion',
+            leaderName,
+            `${formatLadderMetricValue(leaderMetric, hashUrl)} ${config.metricShort} • ${leaderRole}`,
+            leader
+        ),
         buildLadderInsightNode(
             'Current 7-Day MVP',
             biggestMover && biggestMover.profile && biggestMover.profile.name ? biggestMover.profile.name : 'No movement yet',
             biggestMoverTrend > 0
                 ? `▲ ${formatLadderMetricValue(biggestMoverTrend, hashUrl)} this cycle`
-                : 'No positive climb recorded yet'
+                : 'No positive climb recorded yet',
+            biggestMover
         ),
         buildLadderInsightNode('Most Represented Class', dominantClassEntry[0], `${dominantClassEntry[1]} heroes currently ranked`),
         buildLadderInsightNode(
@@ -7920,7 +7943,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         conciseList.addEventListener('click', (e) => {
             if (e.target.closest('.we-loot-link')) return;
 
-            const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char]');
+            const trigger = e.target.closest('.concise-char-bar.tt-char[data-char], .podium-block.tt-char[data-char], .ladder-insight-card.tt-char[data-char]');
             if (!trigger) return;
 
             const charName = trigger.getAttribute('data-char');
